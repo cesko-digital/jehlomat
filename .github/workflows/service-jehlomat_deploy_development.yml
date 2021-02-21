@@ -1,0 +1,36 @@
+name: 'Deploy service-jehlomat to ECS'
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'service-jehlomat/**'
+env:
+  region: ${{ secrets.AWS_REGION }}
+  repository: ${{ secrets.AWS_REPOSITORY }}
+  serviceName: 'service-jehlomat'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Login to Repository'
+        run: |
+          aws ecr get-login-password --region ${{ env.region }} | docker login --username AWS --password-stdin ${{ env.repository }}/${{ env.serviceName }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: 'Build Docker image'
+        run: |
+          docker build -t ${{ env.serviceName }} -f ./${{ env.serviceName }}/Dockerfile .
+      - name: 'Push Docker image to repository'
+        run: |
+          docker tag ${{ env.serviceName }}:latest ${{ env.repository }}/${{ env.serviceName }}:latest
+          docker push ${{ env.repository }}/${{ env.serviceName }}:latest
+      - name: 'Redeploy to ECS'
+        run: |
+          aws --region ${{ env.region }} ecs update-service --cluster ${{ env.serviceName }} --service ${{ env.serviceName }} --force-new-deployment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
