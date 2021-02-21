@@ -1,0 +1,18 @@
+name: 'Run Snyk test once a day'
+on:
+  schedule:
+    - cron:  '0 8 * * *'
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Check vulnerabilities'
+        uses: snyk/actions/gradle@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_API_TOKEN }}
+        with:
+          args: --all-sub-projects --org=cesko.digital
+          command: monitor

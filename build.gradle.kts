@@ -19,4 +19,11 @@ allprojects {
         maven { setUrl("http://dl.bintray.com/kotlin/kotlinx") }
         maven { url = uri("https://dl.bintray.com/ekito/koin") }
     }
+
+    configurations.all {
+        // Use this to force versions across all projects for vulnerability fixes
+        resolutionStrategy {
+            force("io.netty:netty-codec-http:4.1.59.Final")
+        }
+    }
 }
