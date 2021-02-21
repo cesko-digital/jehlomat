@@ -111,6 +111,58 @@ resource "aws_cloudwatch_log_group" "service-user-lg" {
   name = "/ecs/service-user"
 }
 
+# --------
+# service-jehlomat
+# --------
+
+resource "aws_ecs_cluster" "service-jehlomat" {
+  name = "service-jehlomat"
+}
+
+resource "aws_ecs_task_definition" "service-jehlomat" {
+  family                = "service-jehlomat"
+  container_definitions = templatefile("ecs/service-jehlomat.tmpl", {
+    aws-region     = var.aws-region,
+    aws-repository = aws_ecr_repository.service-jehlomat.repository_url,
+  })
+  network_mode          = "awsvpc"
+  execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
+  task_role_arn         = aws_iam_role.ecs-task-execution-role.arn
+  memory                = "512"
+  cpu                   = "256"
+}
+
+resource "aws_ecs_service" "service-jehlomat" {
+  name                               = "service-jehlomat"
+  cluster                            = aws_ecs_cluster.service-jehlomat.id
+  task_definition                    = aws_ecs_task_definition.service-jehlomat.arn
+  launch_type                        = "FARGATE"
+  desired_count                      = 1
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+  health_check_grace_period_seconds  = 20
+
+  network_configuration {
+    subnets          = [
+      aws_subnet.private.id
+    ]
+    security_groups  = [
+      aws_security_group.private-default-sg.id
+    ]
+    assign_public_ip = false
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.service-jehlomat-tg.arn
+    container_name   = "service-jehlomat"
+    container_port   = 8082
+  }
+}
+
+resource "aws_cloudwatch_log_group" "service-jehlomat-lg" {
+  name = "/ecs/service-jehlomat"
+}
+
 # --------------
 # Load Balancers
 # --------------
