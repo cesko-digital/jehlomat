@@ -6,6 +6,14 @@ resource "aws_s3_bucket" "frontend" {
   bucket = var.development-frontend-bucket-name
   acl    = "private"
 
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
   policy = templatefile("roles/s3-cloudfront-policy.tmpl", {
     cloudfront-arn = aws_cloudfront_origin_access_identity.default.iam_arn,
     bucket-name    = var.development-frontend-bucket-name
