@@ -5,6 +5,7 @@ import koin
 import kotlinext.js.jsObject
 import kotlinx.css.*
 import react.*
+import styled.StyleSheet
 import styled.css
 import styled.styledDiv
 import utils.IConfig
@@ -12,6 +13,33 @@ import utils.IConfig
 fun RBuilder.maps() = child(
     component = maps
 )
+
+object MapsStyles: StyleSheet("MapsStyles", true) {
+    val mapContainer by css {
+        width = 500.px
+        height = 500.px
+
+        position = Position.relative
+    }
+
+    val mapMarker by css {
+        width = 20.px
+        height = 20.px
+
+        position = Position.relative
+        left = (-10).px
+        top = (-10).px
+    }
+
+    val overlayMarker by css {
+        width = 10.px
+        height = 10.px
+
+        position = Position.absolute
+        left = 50.pct - 5.px
+        top = 50.pct - 5.px
+    }
+}
 
 private val maps = functionalComponent<RProps> {
     val config = koin<IConfig>().get()
@@ -25,10 +53,7 @@ private val maps = functionalComponent<RProps> {
 
     styledDiv {
         css {
-            width = 500.px
-            height = 500.px
-
-            position = Position.relative
+            +MapsStyles.mapContainer
         }
 
         googleMap {
@@ -68,12 +93,7 @@ private val maps = functionalComponent<RProps> {
 
         styledDiv {
             css {
-                width = 10.px
-                height = 10.px
-
-                position = Position.absolute
-                left = 50.pct - 5.px
-                top = 50.pct - 5.px
+                +MapsStyles.overlayMarker
 
                 backgroundColor = Color.red
             }
@@ -96,12 +116,7 @@ private val marker = functionalComponent<MarkerProps> {
 
     styledDiv {
         css {
-            width = 20.px
-            height = 20.px
-
-            position = Position.relative
-            left = (-10).px
-            top = (-10).px
+            +MapsStyles.mapMarker
 
             backgroundColor = Color.blue
         }

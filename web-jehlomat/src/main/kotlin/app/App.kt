@@ -9,7 +9,7 @@ import react.RBuilder
 import react.RProps
 import react.child
 import react.functionalComponent
-import services.IPlaces
+import services.places.IPlaces
 import styled.styledInput
 import utils.Either
 

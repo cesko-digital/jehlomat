@@ -1,4 +1,4 @@
-package services
+package services.places
 
 import kotlinx.browser.window
 import org.w3c.fetch.Request
@@ -8,23 +8,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-
-
-interface IPlaces {
-    fun autocomplete(
-        search: String,
-        onComplete: (Either<List<AutocompleteResponse>>) -> Unit
-    )
-
-    fun geolocation(
-        placeId: String,
-        onComplete: (Either<String>) -> Unit
-    )
-}
+import services.buildParametersString
 
 class GoogleMapsPlaces(
     val googleMapsKey: String
 ) : IPlaces {
+
     override fun autocomplete(
         search: String,
         onComplete: (Either<List<AutocompleteResponse>>) -> Unit
@@ -40,10 +29,11 @@ class GoogleMapsPlaces(
         )
 
         val request = Request(
-            "https://maps.googleapis.com/maps/api/place/autocomplete/json?$parameters",
-            object : RequestInit {
-                override var method: String? = "GET"
-            })
+            input = "https://maps.googleapis.com/maps/api/place/autocomplete/json?$parameters",
+            init = RequestInit(
+                method = "GET"
+            )
+        )
 
         window.fetch(request)
             .then { response ->
@@ -86,9 +76,9 @@ class GoogleMapsPlaces(
 
         val request = Request(
             input = "https://maps.googleapis.com/maps/api/place/details/json?$parameters",
-            init = object : RequestInit {
-                override var method: String? = "GET"
-            }
+            init = RequestInit(
+                method = "GET"
+            )
         )
 
         window.fetch(request)

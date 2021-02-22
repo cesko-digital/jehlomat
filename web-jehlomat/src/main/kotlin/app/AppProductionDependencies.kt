@@ -1,8 +1,8 @@
 package app
 
 import org.koin.dsl.module
-import services.GoogleMapsPlaces
-import services.IPlaces
+import services.places.GoogleMapsPlaces
+import services.places.IPlaces
 import utils.IConfig
 import utils.ProductionConfig
 
