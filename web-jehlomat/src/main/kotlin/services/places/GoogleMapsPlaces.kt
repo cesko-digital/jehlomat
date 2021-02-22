@@ -98,11 +98,6 @@ class GoogleMapsPlaces(
     }
 }
 
-data class AutocompleteResponse(
-    val description: String,
-    val placeId: String
-)
-
 @Serializable
 data class GoogleMapsAutocompleteResponse(
     val predictions: List<Prediction>,

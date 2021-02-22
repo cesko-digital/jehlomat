@@ -6,11 +6,10 @@ import kotlinx.coroutines.launch
 import utils.Either
 
 class FakeDelayedPlaces : IPlaces {
+
     override fun autocomplete(
         search: String,
-        onComplete: (
-            Either<List<AutocompleteResponse>>
-        ) -> Unit
+        onComplete: (Either<List<AutocompleteResponse>>) -> Unit
     ) {
         GlobalScope.launch {
             delay(1000)

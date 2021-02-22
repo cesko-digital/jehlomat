@@ -13,3 +13,8 @@ interface IPlaces {
         onComplete: (Either<String>) -> Unit
     )
 }
+
+data class AutocompleteResponse(
+    val description: String,
+    val placeId: String
+)
