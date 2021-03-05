@@ -18,17 +18,13 @@ dependencies {
     implementation(npm("google-map-react", "2.1.9", false))
     implementation(npm("@types/google-map-react", "2.1.0", false))
 
-    testImplementation(kotlin("test-js"))
+    testImplementation("io.kotest:kotest-framework-engine:4.4.1")
+    testImplementation("io.kotest:kotest-assertions-core:4.4.1")
 }
 
 kotlin {
-    js() {
+    js {
         browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                }
-            }
             compilations.all {
                 kotlinOptions {
                     kotlinOptions.metaInfo = true
