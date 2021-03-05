@@ -13,7 +13,7 @@ dependencies {
     implementation("org.jetbrains:kotlin-styled:5.2.0-pre.142-kotlin-1.4.21")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-    implementation("org.koin:koin-core:3.0.1-alpha-5")
+    implementation("org.koin:koin-core:3.0.1-alpha-3")
 
     implementation(npm("google-map-react", "2.1.9", false))
     implementation(npm("@types/google-map-react", "2.1.0", false))
