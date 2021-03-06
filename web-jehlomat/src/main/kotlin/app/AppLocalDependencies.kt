@@ -2,7 +2,6 @@ package app
 
 import org.koin.dsl.module
 import services.places.FakeDelayedPlaces
-import services.places.GoogleMapsPlaces
 import services.places.IPlaces
 import utils.IConfig
 import utils.LocalConfig
@@ -13,8 +12,8 @@ val localModule = module {
     }
 
     single<IPlaces> {
-        GoogleMapsPlaces(
-            googleMapsKey = get<IConfig>().get().googleMapsKey
+        FakeDelayedPlaces(
+            delay = 100
         )
     }
 }

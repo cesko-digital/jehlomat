@@ -64,11 +64,11 @@ class GoogleMapsPlaces(
 
     override fun geolocation(
         placeId: String,
-        onComplete: (Either<String>) -> Unit
+        onComplete: (Either<GeolocationResponse>) -> Unit
     ) {
         val parameters = buildParametersString(
             parameters = hashMapOf(
-                "place_id" to "EiVTb3VrZW5uw6EsIEphYmxvbmVjIG5hZCBOaXNvdSwgxIxlc2tvIi4qLAoUChIJ3TfqI87KDkcRdsvfnh1cfWESFAoSCVXCndUsNQlHEXAiFWYPrwAE",
+                "place_id" to placeId,
                 "fields" to "name,geometry",
                 "key" to googleMapsKey
             )
@@ -84,7 +84,18 @@ class GoogleMapsPlaces(
         window.fetch(request)
             .then { response ->
                 response.text().then {
-                    onComplete(Either.Success(it))
+                    val result: GoogleMapsGeolocationResponse = Json {
+                        ignoreUnknownKeys = true
+                    }.decodeFromString(it)
+
+                    onComplete(
+                        Either.Success(
+                            GeolocationResponse(
+                                latitude = result.result.geometry.location.lat,
+                                longitude = result.result.geometry.location.lng
+                            )
+                        )
+                    )
                 }
             }
             .catch {
@@ -151,5 +162,47 @@ data class GoogleMapsAutocompleteResponse(
             val offset: Int,
             val value: String
         )
+    }
+}
+
+@Serializable
+data class GoogleMapsGeolocationResponse(
+    val result: Result,
+    val status: String
+) {
+    @Serializable
+    data class Result(
+        val geometry: Geometry,
+        val name: String
+    ) {
+        @Serializable
+        data class Geometry(
+            val location: Location,
+            val viewport: Viewport
+        ) {
+            @Serializable
+            data class Location(
+                val lat: Double,
+                val lng: Double
+            )
+
+            @Serializable
+            data class Viewport(
+                val northeast: Northeast,
+                val southwest: Southwest
+            ) {
+                @Serializable
+                data class Northeast(
+                    val lat: Double,
+                    val lng: Double
+                )
+
+                @Serializable
+                data class Southwest(
+                    val lat: Double,
+                    val lng: Double
+                )
+            }
+        }
     }
 }

@@ -5,6 +5,9 @@ import koin
 import kotlinext.js.jsObject
 import kotlinx.css.*
 import react.*
+import store.appStore
+import store.dispatch2
+import store.reducers.UpdateLocation
 import styled.StyleSheet
 import styled.css
 import styled.styledDiv
@@ -14,12 +17,15 @@ fun RBuilder.maps() = child(
     component = maps
 )
 
-object MapsStyles: StyleSheet("MapsStyles", true) {
+object MapsStyles : StyleSheet("MapsStyles", true) {
     val mapContainer by css {
-        width = 500.px
-        height = 500.px
+        position = Position.absolute
+        top = 0.px
+        left = 0.px
+        right = 0.px
+        bottom = 0.px
 
-        position = Position.relative
+        zIndex = 0
     }
 
     val mapMarker by css {
@@ -45,11 +51,18 @@ private val maps = functionalComponent<RProps> {
     val config = koin<IConfig>().get()
 
     val (mapCenter, setMapCenter) = useState(
-        Center(
-            latitude = 50.5,
-            longitude = 14.0
-        )
+        appStore.getState().newFindingState.location
     )
+
+    useEffectWithCleanup {
+        appStore.subscribe {
+            if (mapCenter != appStore.getState().newFindingState.location) {
+                setMapCenter(
+                    appStore.getState().newFindingState.location
+                )
+            }
+        }
+    }
 
     styledDiv {
         css {
@@ -69,18 +82,18 @@ private val maps = functionalComponent<RProps> {
                 yesIWantToUseGoogleMapApiInternals = true
 
                 onChange = {
-                    setMapCenter(
-                        Center(
-                            latitude = it.center.lat,
-                            longitude = it.center.lng
+                    appStore.dispatch2(
+                        UpdateLocation(
+                            latitude = it.center.lat.toDouble(),
+                            longitude = it.center.lng.toDouble()
                         )
                     )
                 }
                 onClick = {
-                    setMapCenter(
-                        Center(
-                            latitude = it.lat,
-                            longitude = it.lng
+                    appStore.dispatch2(
+                        UpdateLocation(
+                            latitude = it.lat.toDouble(),
+                            longitude = it.lng.toDouble()
                         )
                     )
                 }
@@ -122,11 +135,6 @@ private val marker = functionalComponent<MarkerProps> {
         }
     }
 }
-
-data class Center(
-    val latitude: Number,
-    val longitude: Number
-)
 
 data class MarkerProps(
     val lat: Number,
