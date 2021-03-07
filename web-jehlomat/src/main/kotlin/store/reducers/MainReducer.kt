@@ -18,6 +18,9 @@ fun appMainReducer(state: MainState, action: RAction): MainState {
         is GoToPage -> state.copy(
             page = action.page
         )
+        is CompleteNewFinding -> state.copy(
+            page = Pages.MainPage
+        )
         else -> state
     }
 }

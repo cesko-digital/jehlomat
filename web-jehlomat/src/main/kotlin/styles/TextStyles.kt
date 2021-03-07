@@ -18,4 +18,9 @@ object TextStyles : StyleSheet("text", true) {
         fontSize = 17.px
         fontWeight = FontWeight.w700
     }
+
+    val button by css {
+        fontSize = 25.px
+        fontWeight = FontWeight.w700
+    }
 }

@@ -1,5 +1,6 @@
 package store
 
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -46,7 +47,19 @@ fun Store<State, RAction, dynamic>.dispatchNavigation(
     dispatch(action)
 
     val serializedState = Json.encodeToString(state)
+    document.title = title
     window.history.pushState(serializedState, title, url)
+}
+
+fun Store<State, RAction, dynamic>.dispatchNavigationWithReplace(
+    action: RAction,
+    title: String = "Jehlomat",
+    url: String
+) {
+    val serializedState = Json.encodeToString(state)
+    window.history.replaceState(serializedState, document.title, window.location.hash)
+
+    dispatchNavigation(action, title, url)
 }
 
 data class RollbackState(
