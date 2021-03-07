@@ -4,9 +4,14 @@ import app.productionModule
 import externals.process
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.get
 import react.dom.render
+import store.RollbackState
+import store.State
+import store.appStore
 
 enum class Environment {
     Local,
@@ -31,6 +36,18 @@ fun main() {
 
         render(document.getElementById("root")) {
             app()
+        }
+    }
+
+    window.onpopstate = {
+        console.info(it)
+        if (it.state != null && it.state is String) {
+            val state: State = Json.decodeFromString(it.state as String)
+            appStore.dispatch(
+                RollbackState(
+                    state = state
+                )
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package store
 
+import kotlinx.browser.window
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -13,11 +14,14 @@ val reducer: Reducer<State, RAction> = { state, action ->
     console.info(
         Json.encodeToString(state)
     )
-
-    State(
-        appMainState = appMainReducer(state.appMainState, action),
-        newFindingState = newFindingReducer(state.newFindingState, action)
-    )
+    if (action is RollbackState) {
+        action.state
+    } else {
+        State(
+            appMainState = appMainReducer(state.appMainState, action),
+            newFindingState = newFindingReducer(state.newFindingState, action)
+        )
+    }
 }
 
 val appStore = createStore<State, RAction, dynamic>(
@@ -33,3 +37,18 @@ data class State(
 fun Store<State, RAction, dynamic>.dispatch2(action: RAction) {
     dispatch(action)
 }
+
+fun Store<State, RAction, dynamic>.dispatchNavigation(
+    action: RAction,
+    title: String = "Jehlomat",
+    url: String
+) {
+    dispatch(action)
+
+    val serializedState = Json.encodeToString(state)
+    window.history.pushState(serializedState, title, url)
+}
+
+data class RollbackState(
+    val state: State
+): RAction
