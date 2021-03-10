@@ -8,4 +8,6 @@ config.plugins = [
     }),
 ]
 
-config.devServer.host = '0.0.0.0'
+if (config.mode === 'development') {
+    config.devServer.host = '0.0.0.0'
+}
