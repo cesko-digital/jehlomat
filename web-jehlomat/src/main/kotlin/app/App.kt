@@ -4,10 +4,11 @@ import components.mainPage
 import components.newFindingPage
 import kotlinx.browser.window
 import react.*
+import store.HistoryType
 import store.appStore
-import store.dispatchNavigation
 import store.reducers.GoToPage
 import store.reducers.Pages
+import store.useReduxUntyped
 
 
 fun RBuilder.app() = child(
@@ -15,14 +16,8 @@ fun RBuilder.app() = child(
 )
 
 private val app = functionalComponent<RProps> {
-    val (page, setPage) = useState(appStore.getState().appMainState.page)
-
-    useEffectWithCleanup {
-        appStore.subscribe {
-            if (page != appStore.getState().appMainState.page) {
-                setPage(appStore.getState().appMainState.page)
-            }
-        }
+    val (page, dispatchPageAction) = useReduxUntyped {
+        appStore.getState().appMainState.page
     }
 
     /*
@@ -33,11 +28,11 @@ private val app = functionalComponent<RProps> {
     ) {
         when (window.location.hash) {
             else -> {
-                appStore.dispatchNavigation(
-                    action = GoToPage(
+                dispatchPageAction(
+                    GoToPage(
                         page = Pages.MainPage
                     ),
-                    url = "#/"
+                    HistoryType.Push
                 )
             }
         }

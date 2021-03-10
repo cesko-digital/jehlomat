@@ -40,28 +40,23 @@ fun Store<State, RAction, dynamic>.dispatch2(action: RAction) {
 }
 
 fun Store<State, RAction, dynamic>.dispatchNavigation(
-    action: RAction,
-    title: String = "Jehlomat",
-    url: String
+    action: RAction
 ) {
     dispatch(action)
 
     val serializedState = Json.encodeToString(state)
-    document.title = title
-    window.history.pushState(serializedState, title, url)
+    window.history.pushState(serializedState, document.title, window.location.hash)
 }
 
 fun Store<State, RAction, dynamic>.dispatchNavigationWithReplace(
-    action: RAction,
-    title: String = "Jehlomat",
-    url: String
+    action: RAction
 ) {
     val serializedState = Json.encodeToString(state)
     window.history.replaceState(serializedState, document.title, window.location.hash)
 
-    dispatchNavigation(action, title, url)
+    dispatchNavigation(action)
 }
 
 data class RollbackState(
     val state: State
-): RAction
+) : RAction

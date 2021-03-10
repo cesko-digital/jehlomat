@@ -2,11 +2,16 @@ package components
 
 import components.address_search.addressSearchBar
 import kotlinx.css.*
+import kotlinx.css.properties.transform
+import kotlinx.css.properties.translateX
 import react.*
+import store.HistoryType
 import store.appStore
-import store.dispatchNavigationWithReplace
 import store.reducers.GoToNewFindingPage
+import store.reducers.NewFindingAction
 import store.reducers.NewFindingPage
+import store.reducers.NewFindingState
+import store.useRedux
 import styled.css
 import styled.styledDiv
 
@@ -17,14 +22,8 @@ fun RBuilder.newFindingPage(
 )
 
 private val newFindingPage = functionalComponent<RProps> {
-    val (newFindingState, setNewFindingState) = useState(appStore.getState().newFindingState)
-
-    useEffectWithCleanup {
-        appStore.subscribe {
-            if (newFindingState.page != appStore.getState().newFindingState.page) {
-                setNewFindingState(appStore.getState().newFindingState)
-            }
-        }
+    val (newFindingState, dispatchNewFindingAction) = useRedux<NewFindingState, NewFindingAction> {
+        appStore.getState().newFindingState
     }
 
     when (newFindingState.page) {
@@ -39,8 +38,10 @@ private val newFindingPage = functionalComponent<RProps> {
                     zIndex = 100
 
                     bottom = 38.px
-                    left = 0.px
-                    right = 0.px
+                    left = 50.pct
+                    transform {
+                        translateX((-50).pct)
+                    }
 
                     display = Display.flex
                     justifyContent = JustifyContent.center
@@ -48,12 +49,11 @@ private val newFindingPage = functionalComponent<RProps> {
                 mainButton(
                     title = "Uložit polohu",
                     onCLick = {
-                        appStore.dispatchNavigationWithReplace(
-                            action = GoToNewFindingPage(
+                        dispatchNewFindingAction(
+                            GoToNewFindingPage(
                                 page = NewFindingPage.AditionalInformation
                             ),
-                            title = "Jehlomat - Nový nález",
-                            url = "#/novynalez"
+                            HistoryType.PushWithReplace
                         )
                     }
                 )

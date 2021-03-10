@@ -6,8 +6,6 @@ import react.*
 import store.appStore
 import store.dispatchNavigation
 import store.reducers.CompleteNewFinding
-import store.reducers.GoToPage
-import store.reducers.Pages
 import styled.css
 import styled.styledButton
 import styled.styledDiv
@@ -18,6 +16,9 @@ fun RBuilder.newFindingInfoPage(
     component = newFindingInfoPage
 )
 
+/* TODO:
+    Placeholder page
+ */
 private val newFindingInfoPage = functionalComponent<RProps> {
     styledDiv {
         css {
@@ -31,9 +32,7 @@ private val newFindingInfoPage = functionalComponent<RProps> {
             attrs {
                 onClickFunction = {
                     appStore.dispatchNavigation(
-                        action = CompleteNewFinding(),
-                        title = "Jehlomat",
-                        url = "#/"
+                        action = CompleteNewFinding()
                     )
                 }
             }

@@ -3,10 +3,10 @@ package components
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.*
-import store.appStore
-import store.dispatchNavigation
+import store.HistoryType
 import store.reducers.GoToPage
 import store.reducers.Pages
+import store.useReduxNoState
 import styled.css
 import styled.styledButton
 import styled.styledDiv
@@ -18,6 +18,7 @@ fun RBuilder.mainPage(
 )
 
 private val mainPage = functionalComponent<RProps> {
+    val dispatchNavigationAction = useReduxNoState<GoToPage>()
 
     styledDiv {
         css {
@@ -30,12 +31,11 @@ private val mainPage = functionalComponent<RProps> {
         styledButton {
             attrs {
                 onClickFunction = {
-                    appStore.dispatchNavigation(
-                        action = GoToPage(
+                    dispatchNavigationAction(
+                        GoToPage(
                             page = Pages.NewFinding
                         ),
-                        title = "Jehlomat - Nový nález",
-                        url = "#/novynalez"
+                        HistoryType.Push
                     )
                 }
             }
