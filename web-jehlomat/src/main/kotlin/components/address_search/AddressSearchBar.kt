@@ -9,9 +9,9 @@ import react.*
 import services.places.AutocompleteResponse
 import services.places.IPlaces
 import services.user.getUserHistoryData
-import store.appStore
-import store.dispatch2
+import store.HistoryType
 import store.reducers.UpdateLocation
+import store.useReduxNoState
 import styled.css
 import styled.styledDiv
 import utils.Either
@@ -23,6 +23,8 @@ fun RBuilder.addressSearchBar(
 )
 
 private val addressSearchBar = functionalComponent<RProps> {
+    val dispatchLocationAction = useReduxNoState<UpdateLocation>()
+
     val (autocompleteResults, setAutocompleteResults) = useState(
         AutocompleteResultState(
             autocompleteResults = getUserHistoryData(),
@@ -39,11 +41,12 @@ private val addressSearchBar = functionalComponent<RProps> {
         ) { result ->
             when (result) {
                 is Either.Success -> {
-                    appStore.dispatch2(
+                    dispatchLocationAction(
                         UpdateLocation(
                             latitude = result.value.latitude,
                             longitude = result.value.longitude
-                        )
+                        ),
+                        HistoryType.None
                     )
                     setShowResults(false)
                 }

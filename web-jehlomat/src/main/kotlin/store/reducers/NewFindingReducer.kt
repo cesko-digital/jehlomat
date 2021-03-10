@@ -28,11 +28,23 @@ fun newFindingReducer(state: NewFindingState, action: RAction): NewFindingState 
                 longitude = action.longitude
             )
         )
+        is GoToNewFindingPage -> state.copy(
+            page = action.page
+        )
+        is CompleteNewFinding -> NewFindingState()
         else -> state
     }
 }
 
+interface NewFindingAction : RAction
+
 data class UpdateLocation(
     val latitude: Double,
     val longitude: Double
-) : RAction
+) : NewFindingAction
+
+data class GoToNewFindingPage(
+    val page: NewFindingPage
+) : NewFindingAction
+
+class CompleteNewFinding : NewFindingAction

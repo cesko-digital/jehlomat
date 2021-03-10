@@ -1,11 +1,14 @@
 package app
 
-import components.address_search.addressSearchBar
-import components.maps
-import react.RBuilder
-import react.RProps
-import react.child
-import react.functionalComponent
+import components.mainPage
+import components.newFindingPage
+import kotlinx.browser.window
+import react.*
+import store.HistoryType
+import store.appStore
+import store.reducers.GoToPage
+import store.reducers.Pages
+import store.useReduxUntyped
 
 
 fun RBuilder.app() = child(
@@ -13,7 +16,30 @@ fun RBuilder.app() = child(
 )
 
 private val app = functionalComponent<RProps> {
-    addressSearchBar()
+    val (page, dispatchPageAction) = useReduxUntyped {
+        appStore.getState().appMainState.page
+    }
 
-    maps()
+    /*
+        Runs once when main component load, it's used for processing hash navigation
+     */
+    useEffect(
+        dependencies = listOf()
+    ) {
+        when (window.location.hash) {
+            else -> {
+                dispatchPageAction(
+                    GoToPage(
+                        page = Pages.MainPage
+                    ),
+                    HistoryType.Push
+                )
+            }
+        }
+    }
+
+    when (page) {
+        Pages.MainPage -> mainPage()
+        Pages.NewFinding -> newFindingPage()
+    }
 }
