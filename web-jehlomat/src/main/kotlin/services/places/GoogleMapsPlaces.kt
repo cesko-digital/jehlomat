@@ -11,7 +11,8 @@ import kotlinx.serialization.json.Json
 import services.buildParametersString
 
 class GoogleMapsPlaces(
-    val googleMapsKey: String
+    val googleMapsKey: String,
+    val baseUrl: String
 ) : IPlaces {
 
     override fun autocomplete(
@@ -29,7 +30,7 @@ class GoogleMapsPlaces(
         )
 
         val request = Request(
-            input = "https://maps.googleapis.com/maps/api/place/autocomplete/json?$parameters",
+            input = "${baseUrl}/proxy/autocomplete?$parameters",
             init = RequestInit(
                 method = "GET"
             )
@@ -75,7 +76,7 @@ class GoogleMapsPlaces(
         )
 
         val request = Request(
-            input = "https://maps.googleapis.com/maps/api/place/details/json?$parameters",
+            input = "${baseUrl}/proxy/details?$parameters",
             init = RequestInit(
                 method = "GET"
             )
