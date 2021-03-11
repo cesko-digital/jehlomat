@@ -30,6 +30,9 @@ dependencies {
 
     // Koin DI
     implementation("org.koin:koin-ktor:2.0.1")
+
+    // Http client
+    implementation("com.github.kittinunf.fuel:fuel:2.2.1")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

@@ -1,5 +1,6 @@
 package main
 
+import api.googlePlacesProxy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
@@ -48,6 +49,9 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
+        route("/api/v1/jehlomat") {
+            googlePlacesProxy()
+        }
         get("/") {
             call.respond("service-jehlomat")
         }

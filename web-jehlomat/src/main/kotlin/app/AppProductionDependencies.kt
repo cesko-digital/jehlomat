@@ -13,7 +13,8 @@ val productionModule = module {
 
     single<IPlaces> {
         GoogleMapsPlaces(
-            googleMapsKey = get<IConfig>().get().googleMapsKey
+            googleMapsKey = get<IConfig>().get().googleMapsKey,
+            baseUrl = get<IConfig>().get().jehlomatServiceUrl
         )
     }
 }
