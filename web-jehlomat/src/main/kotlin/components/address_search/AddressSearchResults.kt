@@ -23,7 +23,22 @@ private val addressSearchResults = functionalComponent<AddressSearchResultsProps
 
     if (props.isLoading) {
         styledDiv {
-            +"Loading ..."
+            css {
+                margin(left = 22.px)
+                padding(vertical = 22.px)
+                backgroundColor = Color.white
+                borderBottomLeftRadius = 10.px
+
+                display = Display.flex
+                justifyContent = JustifyContent.center
+                alignItems = Align.center
+            }
+            styledImg(src = "/images/refresh-icon.svg") {
+                css {
+                    width = 44.px
+                    height = 44.px
+                }
+            }
         }
     } else {
         styledDiv {

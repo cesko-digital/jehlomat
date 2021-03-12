@@ -11,7 +11,7 @@ enum class NewFindingPage {
 @Serializable
 data class NewFindingState(
     val page: NewFindingPage = NewFindingPage.Location,
-    val location: Location = Location(0.0, 0.0)
+    val location: Location = Location(50.925784, 15.07)
 )
 
 @Serializable

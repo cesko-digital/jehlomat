@@ -96,7 +96,7 @@ external interface MapOptions {
     var mapTypeControl: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var mapTypeControlOptions: Any?
+    var mapTypeControlOptions: dynamic
         get() = definedExternally
         set(value) = definedExternally
     var mapTypeId: String?
@@ -283,7 +283,7 @@ external interface Props : RProps {
     var hoverDistance: Number?
         get() = definedExternally
         set(value) = definedExternally
-    var options: dynamic /* MapOptions? | ((maps: Maps) -> MapOptions)? */
+    var options: MapOptions? /* MapOptions? | ((maps: Maps) -> MapOptions)? */
         get() = definedExternally
         set(value) = definedExternally
     var margin: Array<Any>?

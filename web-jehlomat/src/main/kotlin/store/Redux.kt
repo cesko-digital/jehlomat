@@ -15,6 +15,7 @@ val reducer: Reducer<State, RAction> = { state, action ->
     console.info(
         Json.encodeToString(state)
     )
+    console.info(action)
     if (action is RollbackState) {
         action.state
     } else {
