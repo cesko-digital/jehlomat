@@ -1,6 +1,7 @@
 package components
 
 import components.address_search.addressSearchBar
+import components.map.maps
 import kotlinx.css.*
 import kotlinx.css.properties.transform
 import kotlinx.css.properties.translateX
@@ -29,6 +30,7 @@ private val newFindingPage = functionalComponent<RProps> {
     when (newFindingState.page) {
         NewFindingPage.Location -> {
             addressSearchBar()
+            logoMobile()
 
             maps()
 

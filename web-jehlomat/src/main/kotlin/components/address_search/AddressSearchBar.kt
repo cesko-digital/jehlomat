@@ -103,10 +103,10 @@ private val addressSearchBar = functionalComponent<RProps> {
             }
         }
         css {
-            width = 80.pct
+            width = 100.pct - 74.px
 
             position = Position.absolute
-            top = 20.px
+            top = 50.px
             right = 0.px
 
             zIndex = 100

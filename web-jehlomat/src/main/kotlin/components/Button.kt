@@ -33,6 +33,7 @@ private val button = functionalComponent<ButtonProps> { props ->
             +TextStyles.button
 
             height = (props.height).px
+            whiteSpace = WhiteSpace.nowrap
 
             backgroundColor = Colors.secondary
             color = Color.white
@@ -41,7 +42,7 @@ private val button = functionalComponent<ButtonProps> { props ->
             justifyContent = JustifyContent.center
             alignItems = Align.center
 
-            padding(horizontal = 38.px)
+            padding(horizontal = ((props.height * 2) / 3).px)
 
             border(
                 style = BorderStyle.solid,
@@ -70,4 +71,4 @@ private data class ButtonProps(
     val height: Int,
     val onCLick: (Event) -> Unit,
     val title: String
-): RProps
+) : RProps
