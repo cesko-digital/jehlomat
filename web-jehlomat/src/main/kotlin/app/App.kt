@@ -1,17 +1,14 @@
 package app
 
-import components.maps
-import koin
-import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
-import org.w3c.dom.HTMLInputElement
-import react.RBuilder
-import react.RProps
-import react.child
-import react.functionalComponent
-import services.places.IPlaces
-import styled.styledInput
-import utils.Either
+import components.mainPage
+import components.newFindingPage
+import kotlinx.browser.window
+import react.*
+import store.HistoryType
+import store.appStore
+import store.reducers.GoToPage
+import store.reducers.Pages
+import store.useReduxUntyped
 
 
 fun RBuilder.app() = child(
@@ -19,26 +16,30 @@ fun RBuilder.app() = child(
 )
 
 private val app = functionalComponent<RProps> {
-    styledInput(type = InputType.text) {
-        attrs {
-            onChangeFunction = { event ->
-                koin<IPlaces>().autocomplete(
-                    search = (event.target as HTMLInputElement).value
-                ) { places ->
-                    when (places) {
-                        is Either.Error -> {
-                            console.error(places.exception)
-                        }
-                        is Either.Success -> {
-                            places.value.forEach {
-                                console.info(it.description)
-                            }
-                        }
-                    }
-                }
+    val (page, dispatchPageAction) = useReduxUntyped {
+        appStore.getState().appMainState.page
+    }
+
+    /*
+        Runs once when main component load, it's used for processing hash navigation
+     */
+    useEffect(
+        dependencies = listOf()
+    ) {
+        when (window.location.hash) {
+            else -> {
+                dispatchPageAction(
+                    GoToPage(
+                        page = Pages.MainPage
+                    ),
+                    HistoryType.Push
+                )
             }
         }
     }
 
-    maps()
+    when (page) {
+        Pages.MainPage -> mainPage()
+        Pages.NewFinding -> newFindingPage()
+    }
 }

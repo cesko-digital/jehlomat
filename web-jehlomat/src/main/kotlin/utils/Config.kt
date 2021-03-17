@@ -22,8 +22,8 @@ class LocalConfig : IConfig {
 class ProductionConfig : IConfig {
     override fun get(): Config {
         return Config(
-            userServiceUrl = "https://app.jehlomat.cz/api/v1/users",
-            jehlomatServiceUrl = "https://app.jehlomat.cz/api/v1/jehlomat",
+            userServiceUrl = "/api/v1/users",
+            jehlomatServiceUrl = "/api/v1/jehlomat",
             googleMapsKey = when (process.env.GOOGLE_MAPS_KEY) {
                 undefined -> {
                     throw Exception("Missing GOOGLE_MAPS_KEY env variable.")
