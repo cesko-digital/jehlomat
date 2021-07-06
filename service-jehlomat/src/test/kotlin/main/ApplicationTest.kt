@@ -1,5 +1,6 @@
 package main
 
+import api.syringes
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -42,7 +43,7 @@ class ApplicationTest {
 
     @Test
     fun testSyringes() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "/api/v1/jehlomat/syringes")) {
+        with(handleRequest(HttpMethod.Get, "/api/v1/jehlomat/syringe/all")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(SYRINGES_STRING, response.content)
         }
@@ -85,7 +86,7 @@ class ApplicationTest {
 
     @Test
     fun testPostSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "/api/v1/jehlomat/syringe") {
+        with(handleRequest(HttpMethod.Post, "/api/v1/jehlomat/syringe/") {
             addHeader("Content-Type", "application/json")
             setBody(SYRINGE_STRING)
         }) {
