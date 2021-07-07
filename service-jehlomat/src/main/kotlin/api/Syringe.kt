@@ -7,8 +7,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.Demolisher
 import model.Syringe
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 val syringes = mutableListOf<Syringe>()
@@ -24,27 +22,39 @@ fun Route.syringeApi(): Route {
         count = 10,
         "note",
         Demolisher.CITY_POLICE,
-        "10L:10W"
+        "10.0,11.0",
+        city = "Prague"
     )
 
     return route("/") {
         get("all") {
-            val format = SimpleDateFormat.getInstance()
             val parameters = call.request.queryParameters
 
-            val city = parameters["city"]
-            val username = parameters["username"]
-            val from = Date(parameters["from"]?.toLong() ?: 0L)
-            val to = Date(parameters["to"]?.toLong() ?: System.currentTimeMillis())
-            val liquidationStatus = try {
-                parameters["status"]?.let { Demolisher.valueOf(it) } ?: run { Demolisher.NO }
+            val city = parameters["city"] ?: ""
+            val username = parameters["username"] ?: ""
+            val from = parameters["from"]?.toLong() ?: 0L
+            val to = parameters["to"]?.toLong() ?: System.currentTimeMillis()
+            val demolisher = try {
+                parameters["demolisher"]?.let { Demolisher.valueOf(it) } ?: run { Demolisher.NO }
             } catch (ex: IllegalArgumentException) {
                 Demolisher.NO
             }
 
-            // pass to database query and retrieve from it
+            var filteredSyringes = syringes.filter{ it.timestamp in from..to && it.demolisher == demolisher}
 
-            call.respond(listOf(syringe))
+            if (city.isNotBlank()) {
+                filteredSyringes = filteredSyringes.filter{ it.city == city }
+            }
+
+            if (username.isNotBlank()) {
+                filteredSyringes = filteredSyringes.filter{ it.username == username }
+            }
+
+            if (filteredSyringes.isEmpty()) {
+                call.respond(HttpStatusCode.NotFound, listOf<Syringe>())
+            } else {
+                call.respond(filteredSyringes)
+            }
         }
 
         post {
