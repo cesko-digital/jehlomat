@@ -19,8 +19,9 @@ class ApplicationTest {
   "photo" : 0,
   "count" : 10,
   "note" : "note",
-  "demolisher" : "CITY_POLICE",
-  "gps_coordinates" : "10L:10W"
+  "demolisher" : "NO",
+  "gps_coordinates" : "10.0,11.0",
+  "city" : "Prague"
 }"""
 
     val SYRINGES_STRING = """[ $SYRINGE_STRING ]""".trimIndent()
@@ -32,9 +33,12 @@ class ApplicationTest {
         photo = 0,
         count = 10,
         "note",
-        Demolisher.CITY_POLICE,
-        "10L:10W"
+        Demolisher.NO,
+        "10.0,11.0",
+        city="Prague"
     )
+
+    val API_PATH = "/api/v1/jehlomat/syringe"
 
     @BeforeTest
     fun beforeEach() {
@@ -43,15 +47,67 @@ class ApplicationTest {
 
     @Test
     fun testSyringes() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "/api/v1/jehlomat/syringe/all")) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all"){
+            syringes.add(SYRINGE)
+        }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(SYRINGES_STRING, response.content)
         }
     }
 
     @Test
+    fun testSyringesFilterByCity() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?city=Brno"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testSyringesFilterByUsername() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?username=None"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testSyringesFilterByFrom() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?from=2"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testSyringesFilterByTo() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?to=0"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testSyringesFilterByDemolisher() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?demolisher=CITY_POLICE"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
     fun testGetSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "/api/v1/jehlomat/syringe/0") {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/0") {
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -61,7 +117,7 @@ class ApplicationTest {
 
     @Test
     fun testGetSyringeNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "/api/v1/jehlomat/syringe/1")) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/1")) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }
@@ -69,9 +125,9 @@ class ApplicationTest {
 
     @Test
     fun testPutSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "/api/v1/jehlomat/syringe/0") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH/0") {
             addHeader("Content-Type", "application/json")
-            setBody(SYRINGE_STRING.replace("CITY_POLICE", "NO"))
+            setBody(SYRINGE_STRING.replace( "NO", "CITY_POLICE"))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
@@ -79,14 +135,14 @@ class ApplicationTest {
 
     @Test
     fun testDeleteSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Delete, "/api/v1/jehlomat/syringe/0")) {
+        with(handleRequest(HttpMethod.Delete, "$API_PATH/0")) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
     }
 
     @Test
     fun testPostSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "/api/v1/jehlomat/syringe/") {
+        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(SYRINGE_STRING)
         }) {

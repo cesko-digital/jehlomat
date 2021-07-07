@@ -9,4 +9,5 @@ data class Syringe(
     val note: String,
     val demolisher: Demolisher,
     val gps_coordinates: String,
+    val city: String
 )
