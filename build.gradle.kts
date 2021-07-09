@@ -17,7 +17,6 @@ allprojects {
         maven { setUrl("http://dl.bintray.com/kotlin/kotlinx.html") }
         maven { setUrl("http://dl.bintray.com/kotlin/kotlin-js-wrappers") }
         maven { setUrl("http://dl.bintray.com/kotlin/kotlinx") }
-        maven { url = uri("https://dl.bintray.com/ekito/koin") }
     }
 
     configurations.all {
