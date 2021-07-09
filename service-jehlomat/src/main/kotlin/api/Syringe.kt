@@ -14,18 +14,6 @@ val syringes = mutableListOf<Syringe>()
 
 fun Route.syringeApi(): Route {
 
-    val syringe = Syringe(
-        0,
-        1,
-        "username",
-        photo = 0,
-        count = 10,
-        "note",
-        Demolisher.CITY_POLICE,
-        "10.0,11.0",
-        city = "Prague"
-    )
-
     return route("/") {
         get("all") {
             val parameters = call.request.queryParameters
