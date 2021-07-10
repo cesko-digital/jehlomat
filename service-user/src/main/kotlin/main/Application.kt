@@ -1,5 +1,6 @@
 package main
 
+import api.userApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
@@ -48,11 +49,8 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        get("/") {
-            call.respond("service-user")
-        }
-        get("/api/v1/users/1") {
-            call.respond("service-user")
+        route("/api/v1/users") {
+            userApi()
         }
     }
 }
