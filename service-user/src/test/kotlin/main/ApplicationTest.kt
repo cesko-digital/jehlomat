@@ -4,50 +4,34 @@ import api.users
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import model.User
 import model.UserInfo
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
+const val API_PATH = "/api/v1/users"
+
+val USER = User(
+    "username",
+    "passwordhash",
+    "email@example.org",
+    null,
+    "+420123456789",
+    false
+)
+
+val USER_INFO = UserInfo(
+    "username",
+    "email@example.org",
+    null,
+    "+420123456789",
+    false
+)
+
 class ApplicationTest {
-
-    val API_PATH = "/api/v1/users"
-
-    val USER = User(
-        "username",
-        "passwordhash",
-        "email@example.org",
-        null,
-        "+420 123 456 789",
-        false
-    )
-
-    val USER_STRING = """{
-  "username" : "username",
-  "password" : "passwordhash",
-  "email" : "email@example.org",
-  "organization" : null,
-  "phone_number" : "+420 123 456 789",
-  "verified" : false
-}"""
-
-    val USER_INFO = UserInfo(
-        "username",
-        "email@example.org",
-        null,
-        "+420 123 456 789",
-        false
-    )
-
-    val USER_INFO_STRING = """{
-  "username" : "username",
-  "email" : "email@example.org",
-  "organization" : null,
-  "phone_number" : "+420 123 456 789",
-  "verified" : false
-}"""
-
     @BeforeTest
     fun beforeEach() {
         users.clear()
@@ -59,7 +43,16 @@ class ApplicationTest {
             users.add(USER)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(USER_INFO_STRING, response.content)
+            assertEquals(
+                """{
+  "username" : "username",
+  "email" : "email@example.org",
+  "organization" : null,
+  "phone_number" : "+420123456789",
+  "verified" : false
+}""",
+                response.content
+            )
         }
     }
 
@@ -77,9 +70,8 @@ class ApplicationTest {
             users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
             setBody(
-                USER_INFO_STRING
-                    .replace( "email@example.org", "newemail@example.org")
-                    .replace( "false", "true"))
+                Json.encodeToString(
+                    USER_INFO.copy(email = "newemail@example.org", verified = true)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(USER.copy(verified = true, email = "newemail@example.org"), users[0])
@@ -91,7 +83,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER)
             addHeader("Content-Type", "application/json")
-            setBody(USER_INFO_STRING)
+            setBody(Json.encodeToString(USER_INFO))
         }) {
             assertEquals(HttpStatusCode.PreconditionFailed, response.status())
             assertEquals("User is not verified yet", response.content)
@@ -104,7 +96,7 @@ class ApplicationTest {
             users.add(USER.copy(verified = true))
             users.add(USER.copy(username="username1", email = "new@example.org"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_INFO_STRING.replace( "email@example.org", "new@example.org"))
+            setBody(Json.encodeToString(USER_INFO.copy( email ="new@example.org")))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
@@ -117,7 +109,7 @@ class ApplicationTest {
             users.add(USER.copy(verified = true))
             users.add(USER.copy(username="username1", phone_number = "123456"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_INFO_STRING.replace( "+420 123 456 789", "123456"))
+            setBody(Json.encodeToString(USER_INFO.copy(phone_number = "123456")))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
@@ -129,7 +121,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
-            setBody(USER_INFO_STRING.replace( "null", "\"NEW_ORGANIZATION\""))
+            setBody(Json.encodeToString(USER_INFO.copy(organization = "\"NEW_ORGANIZATION\"")))
         }) {
             assertEquals(HttpStatusCode.NotAcceptable, response.status())
             assertEquals("Organization does not exist", response.content)
@@ -140,7 +132,7 @@ class ApplicationTest {
     fun testPostUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING)
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             assertEquals(USER, users[0])
@@ -152,7 +144,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             users.add(USER)
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING)
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
         }
@@ -163,7 +155,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             users.add(USER.copy(username="new_existing_username", phone_number = USER.phone_number + "1"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING)
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
@@ -175,7 +167,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             users.add(USER.copy(username = "new_existing_username", email = USER.email + "1"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING)
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
@@ -186,7 +178,7 @@ class ApplicationTest {
     fun testPostUserOrganizationNotExists() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING.replace("null", "\"NOT_EXISTING_ORGANIZATION\""))
+            setBody(Json.encodeToString(USER.copy(organization = "NOT_EXISTING_ORGANIZATION")))
         }) {
             assertEquals(HttpStatusCode.NotAcceptable, response.status())
             assertEquals("Organization does not exist", response.content)

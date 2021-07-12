@@ -11,7 +11,7 @@ import model.toUser
 import model.toUserInfo
 
 val users = mutableListOf<User>()
-val organizations = mutableListOf<String>("")
+val organizations = mutableListOf<String>()
 
 
 fun Route.userApi(): Route {
