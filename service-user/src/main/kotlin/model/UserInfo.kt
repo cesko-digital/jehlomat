@@ -1,16 +1,16 @@
 package model
 
-data class User(
+data class UserInfo(
     val username: String,
-    val password: String,
     val email: String,
     val organization: String?,
     val phone_number: String?,
     val verified: Boolean
 )
 
-fun User.toUserInfo() = UserInfo(
+fun UserInfo.toUser() = User(
     username = username,
+    password = "",
     email = email,
     organization = organization,
     phone_number = phone_number,

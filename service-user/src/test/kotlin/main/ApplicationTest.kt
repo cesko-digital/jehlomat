@@ -5,20 +5,12 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import model.User
+import model.UserInfo
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 class ApplicationTest {
-
-    val USER_STRING = """{
-  "username" : "username",
-  "password" : "passwordhash",
-  "email" : "email@example.org",
-  "organization" : null,
-  "phone_number" : "+420 123 456 789",
-  "verified" : false
-}"""
 
     val API_PATH = "/api/v1/users"
 
@@ -31,6 +23,31 @@ class ApplicationTest {
         false
     )
 
+    val USER_STRING = """{
+  "username" : "username",
+  "password" : "passwordhash",
+  "email" : "email@example.org",
+  "organization" : null,
+  "phone_number" : "+420 123 456 789",
+  "verified" : false
+}"""
+
+    val USER_INFO = UserInfo(
+        "username",
+        "email@example.org",
+        null,
+        "+420 123 456 789",
+        false
+    )
+
+    val USER_INFO_STRING = """{
+  "username" : "username",
+  "email" : "email@example.org",
+  "organization" : null,
+  "phone_number" : "+420 123 456 789",
+  "verified" : false
+}"""
+
     @BeforeTest
     fun beforeEach() {
         users.clear()
@@ -42,7 +59,7 @@ class ApplicationTest {
             users.add(USER)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(USER_STRING, response.content)
+            assertEquals(USER_INFO_STRING, response.content)
         }
     }
 
@@ -59,7 +76,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING.replace( "null", "\"NEW_ORGANIZATION\""))
+            setBody(USER_INFO_STRING.replace( "null", "\"NEW_ORGANIZATION\""))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(USER.copy(organization = "NEW_ORGANIZATION"), users[0])
@@ -71,7 +88,7 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER)
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING)
+            setBody(USER_INFO_STRING)
         }) {
             assertEquals(HttpStatusCode.PreconditionFailed, response.status())
             assertEquals("User is not verified yet", response.content)
@@ -84,7 +101,7 @@ class ApplicationTest {
             users.add(USER.copy(verified = true))
             users.add(USER.copy(username="username1", email = "new@example.org"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING.replace( "email@example.org", "new@example.org"))
+            setBody(USER_INFO_STRING.replace( "email@example.org", "new@example.org"))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
@@ -97,7 +114,7 @@ class ApplicationTest {
             users.add(USER.copy(verified = true))
             users.add(USER.copy(username="username1", phone_number = "123456"))
             addHeader("Content-Type", "application/json")
-            setBody(USER_STRING.replace( "+420 123 456 789", "123456"))
+            setBody(USER_INFO_STRING.replace( "+420 123 456 789", "123456"))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
