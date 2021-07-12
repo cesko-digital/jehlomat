@@ -11,14 +11,15 @@ import model.toUser
 import model.toUserInfo
 
 val users = mutableListOf<User>()
+val organizations = mutableListOf<String>("")
 
 
 fun Route.userApi(): Route {
 
     fun checkPhoneNumberOrEmailAlreadyTaken(users: List<User>, newUser: UserInfo): Boolean {
-        return users.filter {
+        return users.any {
             it.phone_number == newUser.phone_number || it.email == newUser.email
-        }.isNotEmpty()
+        }
     }
 
     return route("/") {
@@ -35,43 +36,47 @@ fun Route.userApi(): Route {
         post {
             val newUser = call.receive<User>()
 
-            // TODO: check password, email if satisfy condition
-            // TODO: check if organization exists
-            if (users.filter { it.username == newUser.username }.isEmpty()){
-                if (checkPhoneNumberOrEmailAlreadyTaken(users, newUser.toUserInfo())) {
+            // TODO: check if values satisfy condition
+            when {
+                users.any { it.username == newUser.username } -> {
+                    call.respond(HttpStatusCode.Conflict)
+                }
+                newUser.organization != null && newUser.organization !in organizations -> {
+                    call.respond(HttpStatusCode.NotAcceptable, "Organization does not exist")
+                }
+                checkPhoneNumberOrEmailAlreadyTaken(users, newUser.toUserInfo()) -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
-                } else {
+                }
+                else -> {
                     users.add(newUser.copy(verified = false))
                     call.respond(HttpStatusCode.Created)
                 }
-            } else {
-                call.respond(HttpStatusCode.Conflict)
             }
         }
 
         put {
             val newUserInfo = call.receive<UserInfo>()
             val userToChange = users.filter { it.username == newUserInfo.username }
+            val usersToCheck = users.filter { it.username != newUserInfo.username }
 
-            // TODO: check password, email if satisfy condition
-            // TODO: check if organization exists
-            // TODO: check if logged user is the same like username in new user
-            if (userToChange.isEmpty()) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                val usersToCheck = users.filter{ it.username != newUserInfo.username }
-                when {
-                    checkPhoneNumberOrEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
-                        call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
-                    }
-                    userToChange[0].verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
-                    }
-                    else -> {
-                        users.removeIf{ it.username == newUserInfo.username }
-                        users.add(newUserInfo.toUser().copy(password = userToChange[0].password))
-                        call.respond(HttpStatusCode.OK)
-                    }
+            // TODO: check if values satisfy condition
+            when {
+                userToChange.isEmpty() -> {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+                checkPhoneNumberOrEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
+                    call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
+                }
+                newUserInfo.organization != null && newUserInfo.organization !in organizations -> {
+                    call.respond(HttpStatusCode.NotAcceptable, "Organization does not exist")
+                }
+                userToChange[0].verified.not() -> {
+                    call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                }
+                else -> {
+                    users.removeIf { it.username == newUserInfo.username }
+                    users.add(newUserInfo.toUser().copy(password = userToChange[0].password))
+                    call.respond(HttpStatusCode.OK)
                 }
             }
         }

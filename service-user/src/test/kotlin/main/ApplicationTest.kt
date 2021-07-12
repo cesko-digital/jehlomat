@@ -76,10 +76,13 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
-            setBody(USER_INFO_STRING.replace( "null", "\"NEW_ORGANIZATION\""))
+            setBody(
+                USER_INFO_STRING
+                    .replace( "email@example.org", "newemail@example.org")
+                    .replace( "false", "true"))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(USER.copy(organization = "NEW_ORGANIZATION"), users[0])
+            assertEquals(USER.copy(verified = true, email = "newemail@example.org"), users[0])
         }
     }
 
@@ -118,6 +121,18 @@ class ApplicationTest {
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
             assertEquals("Email or phone number already taken", response.content)
+        }
+    }
+
+    @Test
+    fun testPutUserOrganizationNotExists() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+            users.add(USER.copy(verified = true))
+            addHeader("Content-Type", "application/json")
+            setBody(USER_INFO_STRING.replace( "null", "\"NEW_ORGANIZATION\""))
+        }) {
+            assertEquals(HttpStatusCode.NotAcceptable, response.status())
+            assertEquals("Organization does not exist", response.content)
         }
     }
 
@@ -166,5 +181,17 @@ class ApplicationTest {
             assertEquals("Email or phone number already taken", response.content)
         }
     }
+
+    @Test
+    fun testPostUserOrganizationNotExists() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(USER_STRING.replace("null", "\"NOT_EXISTING_ORGANIZATION\""))
+        }) {
+            assertEquals(HttpStatusCode.NotAcceptable, response.status())
+            assertEquals("Organization does not exist", response.content)
+        }
+    }
+
 }
 
