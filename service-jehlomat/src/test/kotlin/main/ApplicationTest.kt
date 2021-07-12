@@ -56,6 +56,16 @@ class ApplicationTest {
     }
 
     @Test
+    fun testSyringesFilterByAll() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?city=Prague&username=username&from=1&to=1&demolisher=NO"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("[ $SYRINGE_STRING ]", response.content)
+        }
+    }
+
+    @Test
     fun testSyringesFilterByCity() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$API_PATH/all?city=Brno"){
             syringes.add(SYRINGE)
@@ -130,6 +140,7 @@ class ApplicationTest {
             setBody(SYRINGE_STRING.replace( "NO", "CITY_POLICE"))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(listOf(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)), syringes)
         }
     }
 
@@ -137,6 +148,7 @@ class ApplicationTest {
     fun testDeleteSyringe() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Delete, "$API_PATH/0")) {
             assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(listOf<Syringe>(), syringes)
         }
     }
 
@@ -147,6 +159,7 @@ class ApplicationTest {
             setBody(SYRINGE_STRING)
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
+            assertEquals(listOf(SYRINGE), syringes)
         }
     }
 }
