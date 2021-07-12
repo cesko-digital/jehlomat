@@ -4,41 +4,30 @@ import api.syringes
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import model.Demolisher
 import model.Syringe
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
+val SYRINGE = Syringe(
+    0,
+    1,
+    "username",
+    photo = 0,
+    count = 10,
+    "note",
+    Demolisher.NO,
+    "10.0,11.0",
+    city="Prague"
+)
+
+const val API_PATH = "/api/v1/jehlomat/syringe"
+
+
 class ApplicationTest {
-
-    val SYRINGE_STRING = """{
-  "id" : 0,
-  "timestamp" : 1,
-  "username" : "username",
-  "photo" : 0,
-  "count" : 10,
-  "note" : "note",
-  "demolisher" : "NO",
-  "gps_coordinates" : "10.0,11.0",
-  "city" : "Prague"
-}"""
-
-    val SYRINGES_STRING = """[ $SYRINGE_STRING ]""".trimIndent()
-
-    val SYRINGE = Syringe(
-        0,
-        1,
-        "username",
-        photo = 0,
-        count = 10,
-        "note",
-        Demolisher.NO,
-        "10.0,11.0",
-        city="Prague"
-    )
-
-    val API_PATH = "/api/v1/jehlomat/syringe"
 
     @BeforeTest
     fun beforeEach() {
@@ -51,7 +40,9 @@ class ApplicationTest {
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(SYRINGES_STRING, response.content)
+            assertEquals(
+                Json.encodeToString(listOf(SYRINGE)),
+                response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
@@ -61,7 +52,9 @@ class ApplicationTest {
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals("[ $SYRINGE_STRING ]", response.content)
+            assertEquals(
+                Json.encodeToString(listOf(SYRINGE)),
+                response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
@@ -121,7 +114,9 @@ class ApplicationTest {
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(SYRINGE_STRING, response.content)
+            assertEquals(
+                Json.encodeToString(SYRINGE),
+                response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
@@ -137,7 +132,7 @@ class ApplicationTest {
     fun testPutSyringe() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$API_PATH/0") {
             addHeader("Content-Type", "application/json")
-            setBody(SYRINGE_STRING.replace( "NO", "CITY_POLICE"))
+            setBody(Json.encodeToString(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(listOf(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)), syringes)
@@ -156,7 +151,7 @@ class ApplicationTest {
     fun testPostSyringe() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(SYRINGE_STRING)
+            setBody(Json.encodeToString(SYRINGE))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             assertEquals(listOf(SYRINGE), syringes)
