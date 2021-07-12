@@ -3,6 +3,7 @@ val ktorVersion: String by project
 plugins {
     application
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -20,7 +21,9 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Jackson serializer modules
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.10.1")
