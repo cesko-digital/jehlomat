@@ -1,9 +1,11 @@
 val ktorVersion: String by project
+val googleMapsServiceVersion: String = "0.18.1"
 
 plugins {
     application
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
+    kotlin("plugin.serialization")
 }
 
 application {
@@ -20,7 +22,10 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
+    implementation("com.google.maps:google-maps-services:$googleMapsServiceVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Jackson serializer modules
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.10.1")

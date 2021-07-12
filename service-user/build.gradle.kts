@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Jackson serializer modules
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.10.1")

@@ -1,14 +1,19 @@
 package main
 
-import api.googlePlacesProxy
+import api.syringeApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.jackson.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.Koin
+import java.util.*
+
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -49,14 +54,8 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        route("/api/v1/jehlomat") {
-            googlePlacesProxy()
-        }
-        get("/") {
-            call.respond("service-jehlomat")
-        }
-        get("/api/v1/jehlomat/1") {
-            call.respond("service-jehlomat")
+        route("/api/v1/jehlomat/syringe") {
+            syringeApi()
         }
     }
 }
