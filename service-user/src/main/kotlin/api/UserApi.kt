@@ -15,9 +15,9 @@ val users = mutableListOf<User>()
 
 fun Route.userApi(): Route {
 
-    fun checkPhoneNumberOrEmailAlreadyTaken(users: List<User>, newUser: UserInfo): Boolean {
+    fun checkEmailAlreadyTaken(users: List<User>, newUser: UserInfo): Boolean {
         return users.any {
-            it.phone_number == newUser.phone_number || it.email == newUser.email
+            it.email == newUser.email
         }
     }
 
@@ -40,7 +40,7 @@ fun Route.userApi(): Route {
                 users.any { it.username == newUser.username } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
-                checkPhoneNumberOrEmailAlreadyTaken(users, newUser.toUserInfo()) -> {
+                checkEmailAlreadyTaken(users, newUser.toUserInfo()) -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
                 }
                 else -> {
@@ -55,12 +55,12 @@ fun Route.userApi(): Route {
             val userToChange = users.filter { it.username == newUserInfo.username }
             val usersToCheck = users.filter { it.username != newUserInfo.username }
 
-            // TODO: check if values satisfy condition
+            // TODO: check if values satisfy condition about email format, etc.
             when {
                 userToChange.isEmpty() -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                checkPhoneNumberOrEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
+                checkEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
                 }
                 userToChange[0].verified.not() -> {

@@ -43,9 +43,6 @@ fun Route.organizationApi(): Route {
                 users.any { it.email == organization.administrator.email } -> {
                     call.respond(HttpStatusCode.Conflict, "Email already taken")
                 }
-                users.any { it.phone_number == organization.administrator.phone_number } -> {
-                    call.respond(HttpStatusCode.Conflict, "Phone number already taken")
-                }
                 else -> {
                     organizations.add(organization)
                     call.respond(HttpStatusCode.Created)
