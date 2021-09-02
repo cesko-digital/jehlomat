@@ -23,8 +23,7 @@ val ADMINISTRATOR = UserInfo(
 val ORGANIZATION = Organization(
     name="ceska jehlova",
     administrator=ADMINISTRATOR,
-    location = "Prague",
-    usernames = listOf()
+    teams = listOf()
 )
 
 
@@ -48,8 +47,7 @@ class OrganizationTest {
     "email" : "administrator@example.org",
     "verified" : true
   },
-  "location" : "Prague",
-  "usernames" : [ ]
+  "teams" : [ ]
 }""",
                 response.content
             )
@@ -63,71 +61,7 @@ class OrganizationTest {
             assertEquals(null, response.content)
         }
     }
-//
-//    @Test
-//    fun testPutUser() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-//            users.add(USER.copy(verified = true))
-//            addHeader("Content-Type", "application/json")
-//            setBody(
-//                Json.encodeToString(
-//                    USER_INFO.copy(email = "newemail@example.org", verified = true)))
-//        }) {
-//            assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals(USER.copy(verified = true, email = "newemail@example.org"), users[0])
-//        }
-//    }
-//
-//    @Test
-//    fun testPutChangingNotVerifiedUser() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-//            users.add(USER)
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(USER_INFO))
-//        }) {
-//            assertEquals(HttpStatusCode.PreconditionFailed, response.status())
-//            assertEquals("User is not verified yet", response.content)
-//        }
-//    }
-//
-//    @Test
-//    fun testPutUserEmailAlreadyExists() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-//            users.add(USER.copy(verified = true))
-//            users.add(USER.copy(username="username1", email = "new@example.org"))
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(USER_INFO.copy( email ="new@example.org")))
-//        }) {
-//            assertEquals(HttpStatusCode.Conflict, response.status())
-//            assertEquals("Email or phone number already taken", response.content)
-//        }
-//    }
-//
-//    @Test
-//    fun testPutUserPhoneNumberAlreadyExists() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-//            users.add(USER.copy(verified = true))
-//            users.add(USER.copy(username="username1", phone_number = "123456"))
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(USER_INFO.copy(phone_number = "123456")))
-//        }) {
-//            assertEquals(HttpStatusCode.Conflict, response.status())
-//            assertEquals("Email or phone number already taken", response.content)
-//        }
-//    }
-//
-//    @Test
-//    fun testPutUserOrganizationNotExists() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-//            users.add(USER.copy(verified = true))
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(USER_INFO.copy(organization = "\"NEW_ORGANIZATION\"")))
-//        }) {
-//            assertEquals(HttpStatusCode.NotAcceptable, response.status())
-//            assertEquals("Organization does not exist", response.content)
-//        }
-//    }
-//
+
     @Test
     fun testPostOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {

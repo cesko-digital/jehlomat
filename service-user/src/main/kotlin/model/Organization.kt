@@ -6,6 +6,5 @@ import kotlinx.serialization.Serializable
 data class Organization(
     val name: String,
     val administrator: UserInfo,
-    val location: String,
-    val usernames: List<UserInfo>
+    val teams: List<Team>
 )

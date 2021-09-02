@@ -8,6 +8,7 @@ import io.ktor.routing.*
 import model.*
 
 val organizations = mutableListOf<Organization>()
+val teams = mutableListOf<Team>()
 
 
 fun Route.organizationApi(): Route {
@@ -31,13 +32,11 @@ fun Route.organizationApi(): Route {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            val usersInfo = users.map { it.toUserInfo() }
-
             when {
                 organizations.any { it.name == organization.name } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
-                organization.usernames.any { it !in usersInfo } -> {
+                organization.teams.any { it !in teams } -> {
                     call.respond(HttpStatusCode.NotFound, "One of more username from users does not exists")
                 }
                 else -> {
@@ -52,7 +51,6 @@ fun Route.organizationApi(): Route {
             // TODO: check if adminitrator is logged user
 
             val newOrganization = call.receive<Organization>()
-            val usersInfo = users.map { it.toUserInfo() }
 
             val currentOrganizations = organizations.filter { it == newOrganization }
 
@@ -68,7 +66,7 @@ fun Route.organizationApi(): Route {
                     organizations.any { it.name == newOrganization.name } -> {
                         call.respond(HttpStatusCode.Conflict)
                     }
-                    newOrganization.usernames.any { it !in usersInfo } -> {
+                    newOrganization.teams.any { it !in teams } -> {
                         call.respond(HttpStatusCode.NotFound, "One of more username from users does not exists")
                     }
                     currentOrganization.administrator.verified.not() -> {
