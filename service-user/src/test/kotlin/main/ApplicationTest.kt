@@ -18,14 +18,12 @@ val USER = User(
     "username",
     "passwordhash",
     "email@example.org",
-    "+420123456789",
     false
 )
 
 val USER_INFO = UserInfo(
     "username",
     "email@example.org",
-    "+420123456789",
     false
 )
 
@@ -45,7 +43,6 @@ class ApplicationTest {
                 """{
   "username" : "username",
   "email" : "email@example.org",
-  "phone_number" : "+420123456789",
   "verified" : false
 }""",
                 response.content
@@ -101,19 +98,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun testPutUserPhoneNumberAlreadyExists() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER.copy(verified = true))
-            users.add(USER.copy(username="username1", phone_number = "123456"))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER_INFO.copy(phone_number = "123456")))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Email or phone number already taken", response.content)
-        }
-    }
-
-    @Test
     fun testPostUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
@@ -138,19 +122,7 @@ class ApplicationTest {
     @Test
     fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
-            users.add(USER.copy(username="new_existing_username", phone_number = USER.phone_number + "1"))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Email or phone number already taken", response.content)
-        }
-    }
-
-    @Test
-    fun testPostAlreadyExistingPhoneNumber() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
-            users.add(USER.copy(username = "new_existing_username", email = USER.email + "1"))
+            users.add(USER.copy(username="new_existing_username"))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER))
         }) {

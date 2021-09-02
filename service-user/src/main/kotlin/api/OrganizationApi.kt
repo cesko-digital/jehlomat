@@ -40,9 +40,6 @@ fun Route.organizationApi(): Route {
                 organization.usernames.any { it !in usersInfo } -> {
                     call.respond(HttpStatusCode.NotFound, "One of more username from users does not exists")
                 }
-                users.any { it.email == organization.administrator.email } -> {
-                    call.respond(HttpStatusCode.Conflict, "Email already taken")
-                }
                 else -> {
                     organizations.add(organization)
                     call.respond(HttpStatusCode.Created)

@@ -17,7 +17,6 @@ const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 val ADMINISTRATOR = UserInfo(
     username="administrator",
     email = "administrator@example.org",
-    phone_number = null,
     verified = true
 )
 
@@ -47,7 +46,6 @@ class OrganizationTest {
   "administrator" : {
     "username" : "administrator",
     "email" : "administrator@example.org",
-    "phone_number" : null,
     "verified" : true
   },
   "location" : "Prague",
@@ -144,59 +142,16 @@ class OrganizationTest {
     @Test
     fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-            // new administrator to check just same organization name
-
-            // na usera prolinkovat organizaci ?
-            // nejdriv se pres api zalozi user a pak se k nemu pripoji organizace ?
-            // user bude mit u sebe ulozenou organizaci
-            // puvodni plan
             organizations.add(
                 ORGANIZATION.copy(
                     administrator=ADMINISTRATOR.copy(
                         username="new_username",
                         email="newemail@example.org",
-                        phone_number="1234567890"
                     )))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(ORGANIZATION))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
-        }
-    }
-
-    @Test
-    fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-            organizations.add(
-                ORGANIZATION.copy(
-                    name="new_existing_username",
-                    administrator=ADMINISTRATOR.copy(
-                        username="new_username",
-                        phone_number="1234567890"
-                    )))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(ORGANIZATION))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Email already taken", response.content)
-        }
-    }
-
-    @Test
-    fun testPostAlreadyExistingPhoneNumber() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-            organizations.add(
-                ORGANIZATION.copy(
-                    name="new_existing_username",
-                    administrator=ADMINISTRATOR.copy(
-                        username="new_username",
-                        email= "new_email@example.com"
-                    )))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(ORGANIZATION))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Phone number already taken", response.content)
         }
     }
 }
