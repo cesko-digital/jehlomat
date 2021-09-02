@@ -8,7 +8,6 @@ import io.ktor.routing.*
 import model.*
 
 val organizations = mutableListOf<Organization>()
-val teams = mutableListOf<Team>()
 
 
 fun Route.organizationApi(): Route {

@@ -1,6 +1,7 @@
 package main
 
 import api.organizationApi
+import api.teamApi
 import api.userApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
@@ -54,6 +55,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi()
+        }
+        route("/api/v1/jehlomat/team") {
+            teamApi()
         }
     }
 }
