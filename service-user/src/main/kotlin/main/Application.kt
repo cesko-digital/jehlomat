@@ -1,12 +1,12 @@
 package main
 
+import api.organizationApi
 import api.userApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.jackson.*
-import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.Koin
 
@@ -49,8 +49,11 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        route("/api/v1/users") {
+        route("/api/v1/jehlomat/users") {
             userApi()
+        }
+        route("/api/v1/jehlomat/organization") {
+            organizationApi()
         }
     }
 }

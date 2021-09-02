@@ -12,13 +12,12 @@ import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
-const val API_PATH = "/api/v1/users"
+const val API_PATH = "/api/v1/jehlomat/users"
 
 val USER = User(
     "username",
     "passwordhash",
     "email@example.org",
-    null,
     "+420123456789",
     false
 )
@@ -26,7 +25,6 @@ val USER = User(
 val USER_INFO = UserInfo(
     "username",
     "email@example.org",
-    null,
     "+420123456789",
     false
 )
@@ -47,7 +45,6 @@ class ApplicationTest {
                 """{
   "username" : "username",
   "email" : "email@example.org",
-  "organization" : null,
   "phone_number" : "+420123456789",
   "verified" : false
 }""",
@@ -117,18 +114,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun testPutUserOrganizationNotExists() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER.copy(verified = true))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER_INFO.copy(organization = "\"NEW_ORGANIZATION\"")))
-        }) {
-            assertEquals(HttpStatusCode.NotAcceptable, response.status())
-            assertEquals("Organization does not exist", response.content)
-        }
-    }
-
-    @Test
     fun testPostUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
@@ -173,17 +158,5 @@ class ApplicationTest {
             assertEquals("Email or phone number already taken", response.content)
         }
     }
-
-    @Test
-    fun testPostUserOrganizationNotExists() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER.copy(organization = "NOT_EXISTING_ORGANIZATION")))
-        }) {
-            assertEquals(HttpStatusCode.NotAcceptable, response.status())
-            assertEquals("Organization does not exist", response.content)
-        }
-    }
-
 }
 

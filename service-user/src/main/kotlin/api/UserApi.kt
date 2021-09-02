@@ -11,7 +11,6 @@ import model.toUser
 import model.toUserInfo
 
 val users = mutableListOf<User>()
-val organizations = mutableListOf<String>()
 
 
 fun Route.userApi(): Route {
@@ -41,9 +40,6 @@ fun Route.userApi(): Route {
                 users.any { it.username == newUser.username } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
-                newUser.organization != null && newUser.organization !in organizations -> {
-                    call.respond(HttpStatusCode.NotAcceptable, "Organization does not exist")
-                }
                 checkPhoneNumberOrEmailAlreadyTaken(users, newUser.toUserInfo()) -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
                 }
@@ -66,9 +62,6 @@ fun Route.userApi(): Route {
                 }
                 checkPhoneNumberOrEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
-                }
-                newUserInfo.organization != null && newUserInfo.organization !in organizations -> {
-                    call.respond(HttpStatusCode.NotAcceptable, "Organization does not exist")
                 }
                 userToChange[0].verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
