@@ -59,9 +59,6 @@ fun Route.organizationApi(): Route {
                 val currentOrganization = currentOrganizations[0]
 
                 when {
-                    currentOrganizations.isEmpty() -> {
-                        call.respond(HttpStatusCode.NotFound)
-                    }
                     organizations.any { it.name == newOrganization.name } -> {
                         call.respond(HttpStatusCode.Conflict)
                     }

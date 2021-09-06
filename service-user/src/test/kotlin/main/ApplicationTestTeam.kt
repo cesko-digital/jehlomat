@@ -1,6 +1,5 @@
 package main
 
-import api.organizations
 import api.teams
 import io.ktor.application.*
 import io.ktor.http.*
@@ -24,7 +23,7 @@ val TEAM_ADMINISTRATOR = UserInfo(
 
 val TEAM = Team(
     name="ceska jehlova",
-    administrator=ADMINISTRATOR,
+    administrator=TEAM_ADMINISTRATOR,
     location = Location("Jihoceske kraj", "Tyn nad Vltavou", "Bukovina", ""),
     usernames = listOf()
 )
@@ -33,7 +32,7 @@ val TEAM = Team(
 class TeamTest {
     @BeforeTest
     fun beforeEach() {
-        organizations.clear()
+        teams.clear()
     }
 
     @Test
@@ -63,39 +62,34 @@ class TeamTest {
         }
     }
 
-//    @Test
-//    fun testGetOrganizationNotFound() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Get, "$API_PATH/not_existing_organization")) {
-//            assertEquals(HttpStatusCode.NotFound, response.status())
-//            assertEquals(null, response.content)
-//        }
-//    }
-//
-//    @Test
-//    fun testPostOrganization() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(ORGANIZATION))
-//        }) {
-//            assertEquals(HttpStatusCode.Created, response.status())
-//            assertEquals(ORGANIZATION, organizations[0])
-//        }
-//    }
-//
-//    @Test
-//    fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-//            organizations.add(
-//                ORGANIZATION.copy(
-//                    administrator=ADMINISTRATOR.copy(
-//                        username="new_username",
-//                        email="newemail@example.org",
-//                    )))
-//            addHeader("Content-Type", "application/json")
-//            setBody(Json.encodeToString(ORGANIZATION))
-//        }) {
-//            assertEquals(HttpStatusCode.Conflict, response.status())
-//        }
-//    }
+    @Test
+    fun testGetTeamNotFound() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/not_existing_team")) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals(null, response.content)
+        }
+    }
+
+    @Test
+    fun testPostTeam() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(TEAM))
+        }) {
+            assertEquals(HttpStatusCode.Created, response.status())
+            assertEquals(TEAM, teams[0])
+        }
+    }
+
+    @Test
+    fun testPostAlreadyExistingTeam() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
+            teams.add(TEAM)
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(TEAM))
+        }) {
+            assertEquals(HttpStatusCode.Conflict, response.status())
+        }
+    }
 }
 
