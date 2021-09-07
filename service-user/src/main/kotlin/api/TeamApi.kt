@@ -10,12 +10,12 @@ import model.*
 val teams = mutableListOf<Team>()
 
 
+// TODO: all operations need to be atomic
 fun Route.teamApi(): Route {
 
     return route("/") {
         get("/{team}") {
             // TODO: check if adminitrator is logged user
-
             val team = call.parameters["team"]
             try {
                 val filteredOrganization = teams.filter { it.name == team }[0]
@@ -28,7 +28,6 @@ fun Route.teamApi(): Route {
         post {
             val team = call.receive<Team>()
             // TODO: check if adminitrator is logged user
-
             when {
                 teams.any { it.name == team.name } -> {
                     call.respond(HttpStatusCode.Conflict)
@@ -42,31 +41,18 @@ fun Route.teamApi(): Route {
 
         put {
             // TODO: check if adminitrator is logged user
-
             val newTeam = call.receive<Team>()
-            val currentTeams = teams.filter { it == newTeam }
+            val currentTeams = teams.filter { it.name == newTeam.name }
 
             if (currentTeams.isEmpty()) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
                 val currentTeam = currentTeams[0]
-
-                when {
-                    teams.any { it.name == newTeam.name } -> {
-                        call.respond(HttpStatusCode.Conflict)
-                    }
-                    currentTeam.administrator.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "Administrator is not verified yet")
-                    }
-                    else -> {
-                        teams.removeIf { it.name == currentTeam.name }
-                        teams.add(currentTeam)
-                        call.respond(HttpStatusCode.OK)
-                    }
-                }
+                // TODO: check if administrator exists
+                teams.removeIf { it.name == currentTeam.name }
+                teams.add(newTeam)
+                call.respond(HttpStatusCode.OK)
             }
-
-
         }
     }
 }

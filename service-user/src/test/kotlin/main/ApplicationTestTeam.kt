@@ -91,5 +91,30 @@ class TeamTest {
             assertEquals(HttpStatusCode.Conflict, response.status())
         }
     }
+
+    @Test
+    fun testPutTeamNotExists() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(TEAM))
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testPutTeam() = withTestApplication(Application::module) {
+        val newAdministrator = UserInfo("a", "a", false)
+        val newTeam = TEAM.copy(administrator = newAdministrator)
+
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+            teams.add(TEAM)
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(newTeam))
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(listOf(newTeam), teams)
+        }
+    }
 }
 
