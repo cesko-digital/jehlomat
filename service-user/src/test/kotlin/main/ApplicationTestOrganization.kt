@@ -88,5 +88,30 @@ class OrganizationTest {
             assertEquals(HttpStatusCode.Conflict, response.status())
         }
     }
+
+    @Test
+    fun testPutOrganizationNotExists() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(ORGANIZATION))
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testPutOrganization() = withTestApplication(Application::module) {
+        val newAdministrator = UserInfo("a", "a", false)
+        val newOrganization = ORGANIZATION.copy(administrator = newAdministrator)
+
+        with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
+            organizations.add(ORGANIZATION)
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(newOrganization))
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(listOf(newOrganization), organizations)
+        }
+    }
 }
 

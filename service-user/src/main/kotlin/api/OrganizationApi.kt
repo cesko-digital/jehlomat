@@ -51,7 +51,7 @@ fun Route.organizationApi(): Route {
 
             val newOrganization = call.receive<Organization>()
 
-            val currentOrganizations = organizations.filter { it == newOrganization }
+            val currentOrganizations = organizations.filter { it.name == newOrganization.name }
 
             if (currentOrganizations.isEmpty()) {
                 call.respond(HttpStatusCode.NotFound)
@@ -59,18 +59,12 @@ fun Route.organizationApi(): Route {
                 val currentOrganization = currentOrganizations[0]
 
                 when {
-                    organizations.any { it.name == newOrganization.name } -> {
-                        call.respond(HttpStatusCode.Conflict)
-                    }
                     newOrganization.teams.any { it !in teams } -> {
-                        call.respond(HttpStatusCode.NotFound, "One of more username from users does not exists")
-                    }
-                    currentOrganization.administrator.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "Administrator is not verified yet")
+                        call.respond(HttpStatusCode.NotFound, "One of more team from teams does not exists")
                     }
                     else -> {
                         organizations.removeIf { it.name == currentOrganization.name }
-                        organizations.add(currentOrganization)
+                        organizations.add(newOrganization)
                         call.respond(HttpStatusCode.OK)
                     }
                 }
