@@ -23,7 +23,7 @@ val TEAM_ADMINISTRATOR = UserInfo(
 val TEAM = Team(
     name="ceska jehlova",
     administrator=TEAM_ADMINISTRATOR,
-    location = Location("Jihoceske kraj", "Tyn nad Vltavou", "Bukovina", ""),
+    location = Location("Tyn nad Vltavou", "Bukovina", ""),
     usernames = listOf()
 )
 
@@ -48,7 +48,6 @@ class TeamTest {
     "verified" : true
   },
   "location" : {
-    "kraj" : "Jihoceske kraj",
     "okres" : "Tyn nad Vltavou",
     "mesto" : "Bukovina",
     "mestkaCast" : ""

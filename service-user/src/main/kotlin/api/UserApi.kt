@@ -44,24 +44,21 @@ fun Route.userApi(): Route {
         }
 
         put {
-            val newUserInfo = call.receive<UserInfo>()
-            val userToChange = users.filter { it.email == newUserInfo.email }
-            val usersToCheck = users.filter { it.email != newUserInfo.email }
+            val newUser = call.receive<User>()
+            val userToChange = users.filter { it.email == newUser.email }
+            val usersToCheck = users.filter { it.email != newUser.email }
 
             // TODO: check if values satisfy condition about email format, etc.
             when {
                 userToChange.isEmpty() -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                usersToCheck.any { it.email == newUserInfo.email } -> {
-                    call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
-                }
                 userToChange[0].verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                 }
                 else -> {
-                    users.removeIf { it.email == newUserInfo.email }
-                    users.add(newUserInfo.toUser().copy(password = userToChange[0].password))
+                    users.removeIf { it.email == newUser.email }
+                    users.add(newUser)
                     call.respond(HttpStatusCode.OK)
                 }
             }

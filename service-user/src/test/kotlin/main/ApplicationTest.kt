@@ -60,12 +60,10 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
-            setBody(
-                Json.encodeToString(
-                    USER_INFO.copy(email = "newemail@example.org", verified = true)))
+            setBody(Json.encodeToString(USER.copy(password = "new password")))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(USER.copy(verified = true, email = "newemail@example.org"), users[0])
+            assertEquals(USER.copy(password = "new password"), users[0])
         }
     }
 
@@ -74,23 +72,10 @@ class ApplicationTest {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER)
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER_INFO))
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.PreconditionFailed, response.status())
             assertEquals("User is not verified yet", response.content)
-        }
-    }
-
-    @Test
-    fun testPutUserEmailAlreadyExists() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER.copy(verified = true))
-            users.add(USER.copy(email = "new@example.org"))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER_INFO.copy( email ="new@example.org")))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Email or phone number already taken", response.content)
         }
     }
 
