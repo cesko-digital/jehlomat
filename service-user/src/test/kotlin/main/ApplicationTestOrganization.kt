@@ -34,7 +34,7 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/ceska jehlova") {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org") {
             organizations.add(ORGANIZATION)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -54,7 +54,7 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganizationNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/not_existing_organization")) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/administrator@example.org")) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }
@@ -74,11 +74,7 @@ class OrganizationTest {
     @Test
     fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-            organizations.add(
-                ORGANIZATION.copy(
-                    administrator=ADMINISTRATOR.copy(
-                        email="newemail@example.org",
-                    )))
+            organizations.add(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(ORGANIZATION))
         }) {
@@ -98,8 +94,7 @@ class OrganizationTest {
 
     @Test
     fun testPutOrganization() = withTestApplication(Application::module) {
-        val newAdministrator = UserInfo("a", false)
-        val newOrganization = ORGANIZATION.copy(administrator = newAdministrator)
+        val newOrganization = ORGANIZATION.copy(name="different name")
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
             organizations.add(ORGANIZATION)

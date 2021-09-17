@@ -13,13 +13,14 @@ val organizations = mutableListOf<Organization>()
 fun Route.organizationApi(): Route {
 
     return route("/") {
-        get("/{organization}") {
+        get("/{email}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            val organization = call.parameters["organization"]
             try {
-                val filteredOrganization = organizations.filter { it.name == organization }[0]
+                val filteredOrganization = organizations.filter {
+                    it.administrator.email == call.parameters["email"]
+                }[0]
                 call.respond(HttpStatusCode.OK, filteredOrganization)
             } catch (ex: IndexOutOfBoundsException) {
                 call.respond(HttpStatusCode.NotFound)
@@ -32,7 +33,7 @@ fun Route.organizationApi(): Route {
             // TODO: check if adminitrator is logged user
 
             when {
-                organizations.any { it.name == organization.name } -> {
+                organizations.any { it.administrator.email == organization.administrator.email } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
                 organization.teams.any { it !in teams } -> {
@@ -51,7 +52,7 @@ fun Route.organizationApi(): Route {
 
             val newOrganization = call.receive<Organization>()
 
-            val currentOrganizations = organizations.filter { it.name == newOrganization.name }
+            val currentOrganizations = organizations.filter { it.administrator.email == newOrganization.administrator.email }
 
             if (currentOrganizations.isEmpty()) {
                 call.respond(HttpStatusCode.NotFound)
