@@ -15,14 +15,12 @@ import kotlin.test.assertEquals
 const val API_PATH = "/api/v1/jehlomat/users"
 
 val USER = User(
-    "username",
-    "passwordhash",
     "email@example.org",
+    "passwordhash",
     false
 )
 
 val USER_INFO = UserInfo(
-    "username",
     "email@example.org",
     false
 )
@@ -35,13 +33,12 @@ class ApplicationTest {
 
     @Test
     fun testGetUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/username") {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/email@example.org") {
             users.add(USER)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
-  "username" : "username",
   "email" : "email@example.org",
   "verified" : false
 }""",
@@ -88,7 +85,7 @@ class ApplicationTest {
     fun testPutUserEmailAlreadyExists() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
             users.add(USER.copy(verified = true))
-            users.add(USER.copy(username="username1", email = "new@example.org"))
+            users.add(USER.copy(email = "new@example.org"))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER_INFO.copy( email ="new@example.org")))
         }) {
@@ -116,18 +113,6 @@ class ApplicationTest {
             setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
-        }
-    }
-
-    @Test
-    fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
-            users.add(USER.copy(username="new_existing_username"))
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER))
-        }) {
-            assertEquals(HttpStatusCode.Conflict, response.status())
-            assertEquals("Email or phone number already taken", response.content)
         }
     }
 }

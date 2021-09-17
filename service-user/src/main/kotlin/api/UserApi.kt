@@ -15,17 +15,10 @@ val users = mutableListOf<User>()
 
 fun Route.userApi(): Route {
 
-    fun checkEmailAlreadyTaken(users: List<User>, newUser: UserInfo): Boolean {
-        return users.any {
-            it.email == newUser.email
-        }
-    }
-
     return route("/") {
-        get("/{username}") {
-            val username = call.parameters["username"]
+        get("/{email}") {
             try {
-                val filteredUser = users.filter { it.username == username }[0]
+                val filteredUser = users.filter { it.email == call.parameters["email"] }[0]
                 call.respond(HttpStatusCode.OK, filteredUser.toUserInfo())
             } catch (ex: IndexOutOfBoundsException) {
                 call.respond(HttpStatusCode.NotFound)
@@ -37,10 +30,10 @@ fun Route.userApi(): Route {
 
             // TODO: check if values satisfy condition
             when {
-                users.any { it.username == newUser.username } -> {
+                users.any { it.email == newUser.email } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
-                checkEmailAlreadyTaken(users, newUser.toUserInfo()) -> {
+                users.any { it.email == newUser.email } -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
                 }
                 else -> {
@@ -52,22 +45,22 @@ fun Route.userApi(): Route {
 
         put {
             val newUserInfo = call.receive<UserInfo>()
-            val userToChange = users.filter { it.username == newUserInfo.username }
-            val usersToCheck = users.filter { it.username != newUserInfo.username }
+            val userToChange = users.filter { it.email == newUserInfo.email }
+            val usersToCheck = users.filter { it.email != newUserInfo.email }
 
             // TODO: check if values satisfy condition about email format, etc.
             when {
                 userToChange.isEmpty() -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                checkEmailAlreadyTaken(usersToCheck, newUserInfo) -> {
+                usersToCheck.any { it.email == newUserInfo.email } -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
                 }
                 userToChange[0].verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                 }
                 else -> {
-                    users.removeIf { it.username == newUserInfo.username }
+                    users.removeIf { it.email == newUserInfo.email }
                     users.add(newUserInfo.toUser().copy(password = userToChange[0].password))
                     call.respond(HttpStatusCode.OK)
                 }

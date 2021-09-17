@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
 val TEAM_ADMINISTRATOR = UserInfo(
-    username="administrator",
     email = "administrator@example.org",
     verified = true
 )
@@ -45,7 +44,6 @@ class TeamTest {
                 """{
   "name" : "ceska jehlova",
   "administrator" : {
-    "username" : "administrator",
     "email" : "administrator@example.org",
     "verified" : true
   },
@@ -104,7 +102,7 @@ class TeamTest {
 
     @Test
     fun testPutTeam() = withTestApplication(Application::module) {
-        val newAdministrator = UserInfo("a", "a", false)
+        val newAdministrator = UserInfo("a", false)
         val newTeam = TEAM.copy(administrator = newAdministrator)
 
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {

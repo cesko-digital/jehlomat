@@ -15,7 +15,6 @@ import kotlin.test.assertEquals
 const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 
 val ADMINISTRATOR = UserInfo(
-    username="administrator",
     email = "administrator@example.org",
     verified = true
 )
@@ -43,7 +42,6 @@ class OrganizationTest {
                 """{
   "name" : "ceska jehlova",
   "administrator" : {
-    "username" : "administrator",
     "email" : "administrator@example.org",
     "verified" : true
   },
@@ -79,7 +77,6 @@ class OrganizationTest {
             organizations.add(
                 ORGANIZATION.copy(
                     administrator=ADMINISTRATOR.copy(
-                        username="new_username",
                         email="newemail@example.org",
                     )))
             addHeader("Content-Type", "application/json")
@@ -101,7 +98,7 @@ class OrganizationTest {
 
     @Test
     fun testPutOrganization() = withTestApplication(Application::module) {
-        val newAdministrator = UserInfo("a", "a", false)
+        val newAdministrator = UserInfo("a", false)
         val newOrganization = ORGANIZATION.copy(administrator = newAdministrator)
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
