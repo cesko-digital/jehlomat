@@ -15,14 +15,8 @@ import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
-val TEAM_ADMINISTRATOR = UserInfo(
-    email = "administrator@example.org",
-    verified = true
-)
-
 val TEAM = Team(
     name="ceska jehlova",
-    administrator=TEAM_ADMINISTRATOR,
     location = Location("Tyn nad Vltavou", "Bukovina", ""),
     usernames = listOf()
 )
@@ -43,10 +37,6 @@ class TeamTest {
             assertEquals(
                 """{
   "name" : "ceska jehlova",
-  "administrator" : {
-    "email" : "administrator@example.org",
-    "verified" : true
-  },
   "location" : {
     "okres" : "Tyn nad Vltavou",
     "mesto" : "Bukovina",
@@ -101,8 +91,8 @@ class TeamTest {
 
     @Test
     fun testPutTeam() = withTestApplication(Application::module) {
-        val newAdministrator = UserInfo("a", false)
-        val newTeam = TEAM.copy(administrator = newAdministrator)
+        val user = UserInfo("a", false)
+        val newTeam = TEAM.copy(usernames = listOf(user))
 
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
             teams.add(TEAM)
