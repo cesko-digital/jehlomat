@@ -18,31 +18,33 @@ fun Route.syringeApi(): Route {
         get("all") {
             val parameters = call.request.queryParameters
 
-            val city = parameters["city"] ?: ""
-            val username = parameters["username"] ?: ""
             val from = parameters["from"]?.toLong() ?: 0L
             val to = parameters["to"]?.toLong() ?: System.currentTimeMillis()
+            val email = parameters["email"] ?: ""
             val demolisher = try {
                 parameters["demolisher"]?.let { Demolisher.valueOf(it) } ?: run { Demolisher.NO }
             } catch (ex: IllegalArgumentException) {
                 Demolisher.NO
             }
+            val gpsCoordinates = parameters["gps_coordinates"] ?: ""
+            val demolished = parameters["demolished"]?.toBoolean() ?: false
 
-            var filteredSyringes = syringes.filter{ it.timestamp in from..to && it.demolisher == demolisher}
-
-            if (city.isNotBlank()) {
-                filteredSyringes = filteredSyringes.filter{ it.city == city }
+            val filteredSyringes = syringes.filter{
+                it.timestamp in from..to
+                        && it.demolisher == demolisher
+                        && (email.isBlank() || it.email == email )
+                        // todo: use postgis in future
+                        && (gpsCoordinates.isBlank() || it.gps_coordinates == gpsCoordinates )
+                        && demolished == it.demolished
             }
 
-            if (username.isNotBlank()) {
-                filteredSyringes = filteredSyringes.filter{ it.username == username }
-            }
-
-            if (filteredSyringes.isEmpty()) {
-                call.respond(HttpStatusCode.NotFound, listOf<Syringe>())
+            val responseCode = if (filteredSyringes.isEmpty()) {
+                HttpStatusCode.NotFound
             } else {
-                call.respond(filteredSyringes)
+                HttpStatusCode.OK
             }
+
+            call.respond(responseCode, filteredSyringes)
         }
 
         post {
