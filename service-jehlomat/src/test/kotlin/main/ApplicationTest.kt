@@ -15,13 +15,13 @@ import kotlin.test.assertEquals
 val SYRINGE = Syringe(
     0,
     1,
-    "username",
-    photo = 0,
+    "email@example.com",
+    photo = "",
     count = 10,
     "note",
     Demolisher.NO,
     "10.0,11.0",
-    city="Prague"
+    demolished = false
 )
 
 const val API_PATH = "/api/v1/jehlomat/syringe"
@@ -35,7 +35,7 @@ class ApplicationTest {
     }
 
     @Test
-    fun testSyringes() = withTestApplication(Application::module) {
+    fun testGetSyringes() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$API_PATH/all"){
             syringes.add(SYRINGE)
         }) {
@@ -48,7 +48,7 @@ class ApplicationTest {
 
     @Test
     fun testSyringesFilterByAll() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?city=Prague&username=username&from=1&to=1&demolisher=NO"){
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?email=email@example.com&from=1&to=1&demolisher=NO&gps_coordinates=10.0,11.0&demolished=false"){
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -59,8 +59,8 @@ class ApplicationTest {
     }
 
     @Test
-    fun testSyringesFilterByCity() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?city=Brno"){
+    fun testSyringesFilterByGPSCoordinates() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?gps_coordinates=11.1,11.1"){
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
@@ -69,8 +69,8 @@ class ApplicationTest {
     }
 
     @Test
-    fun testSyringesFilterByUsername() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?username=None"){
+    fun testSyringesFilterByEmail() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?email=notfound@example.com"){
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
@@ -101,6 +101,16 @@ class ApplicationTest {
     @Test
     fun testSyringesFilterByDemolisher() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$API_PATH/all?demolisher=CITY_POLICE"){
+            syringes.add(SYRINGE)
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testSyringesFilterByDemolished() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/all?demolished=true"){
             syringes.add(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
