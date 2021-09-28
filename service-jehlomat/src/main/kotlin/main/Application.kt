@@ -58,5 +58,11 @@ fun Application.module(testing: Boolean = false) {
         get("/api/v1/jehlomat/1") {
             call.respond("service-jehlomat")
         }
+        get("/") {
+            call.respond("service-user")
+        }
+        get("/api/v1/users/1") {
+            call.respond("service-user")
+        }
     }
 }
