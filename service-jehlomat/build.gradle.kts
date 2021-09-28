@@ -12,8 +12,6 @@ application {
 }
 
 dependencies {
-    implementation(project(":common"))
-
     implementation(kotlin("stdlib"))
 
     // Ktor
@@ -36,6 +34,9 @@ dependencies {
 
     // Http client
     implementation("com.github.kittinunf.fuel:fuel:2.2.1")
+
+    // Config
+    implementation("com.typesafe:config:1.4.0")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
