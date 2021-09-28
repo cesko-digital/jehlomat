@@ -1,5 +1,5 @@
 val ktorVersion: String by project
-val googleMapsServiceVersion: String = "0.18.1"
+val ktormVersion: String = "3.4.1"
 
 plugins {
     application
@@ -22,7 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
-    implementation("com.google.maps:google-maps-services:$googleMapsServiceVersion")
+//    implementation("com.google.maps:google-maps-services:$googleMapsServiceVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
@@ -38,6 +38,10 @@ dependencies {
 
     // Http client
     implementation("com.github.kittinunf.fuel:fuel:2.2.1")
+
+    // Ktorm
+    implementation("org.ktorm:ktorm-core:${ktormVersion}")
+
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

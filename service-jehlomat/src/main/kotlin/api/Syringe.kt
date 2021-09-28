@@ -1,5 +1,6 @@
 package api
 
+import db.DatabaseServiceImpl
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -12,7 +13,7 @@ import model.Syringe
 val syringes = mutableListOf<Syringe>()
 
 
-fun Route.syringeApi(): Route {
+fun Route.syringeApi(database: DatabaseServiceImpl): Route {
 
     return route("/") {
         get("all") {
@@ -48,7 +49,7 @@ fun Route.syringeApi(): Route {
         }
 
         post {
-            syringes.add(call.receive())
+            database.insertSyringe(call.receive())
             call.respond(HttpStatusCode.Created)
         }
 
