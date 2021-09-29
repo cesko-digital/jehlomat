@@ -2,6 +2,7 @@
 .idea
 out
 build
+dist
 *.iml
 *.ipr
 *.iws
