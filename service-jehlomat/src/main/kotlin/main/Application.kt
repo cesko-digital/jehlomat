@@ -1,24 +1,17 @@
 package main
 
-import api.syringeApi
-import api.googlePlacesProxy
 import api.organizationApi
+import api.syringeApi
 import api.teamApi
 import api.userApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
 import io.ktor.features.*
-import io.ktor.http.*
 import io.ktor.jackson.*
-import io.ktor.request.*
-import io.ktor.response.*
 import io.ktor.routing.*
-import model.Demolisher
 import model.Syringe
 import org.koin.ktor.ext.Koin
-import java.text.SimpleDateFormat
-import java.util.*
 
 val syringes = mutableListOf<Syringe>()
 
@@ -60,17 +53,6 @@ fun Application.module(testing: Boolean = false) {
             }
         )
     }
-
-    val syringe = Syringe(
-        0,
-        1,
-        "username",
-        photo = 0,
-        count = 10,
-        "note",
-        Demolisher.CITY_POLICE,
-        "10L:10W"
-    )
 
     routing {
         route("/api/v1/jehlomat/syringe") {
