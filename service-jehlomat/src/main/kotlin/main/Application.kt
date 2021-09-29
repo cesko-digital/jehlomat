@@ -1,6 +1,9 @@
 package main
 
 import api.googlePlacesProxy
+import api.organizationApi
+import api.teamApi
+import api.userApi
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
@@ -58,11 +61,14 @@ fun Application.module(testing: Boolean = false) {
         get("/api/v1/jehlomat/1") {
             call.respond("service-jehlomat")
         }
-        get("/") {
-            call.respond("service-user")
+        route("/api/v1/jehlomat/users") {
+            userApi()
         }
-        get("/api/v1/users/1") {
-            call.respond("service-user")
+        route("/api/v1/jehlomat/organization") {
+            organizationApi()
+        }
+        route("/api/v1/jehlomat/team") {
+            teamApi()
         }
     }
 }
