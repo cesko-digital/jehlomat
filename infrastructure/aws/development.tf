@@ -24,15 +24,6 @@ resource "aws_s3_bucket" "frontend" {
 # ECR (Docker repositories)
 # ----------
 
-resource "aws_ecr_repository" "service-user" {
-  name                 = "service-user"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
 resource "aws_ecr_repository" "service-jehlomat" {
   name                 = "service-jehlomat"
   image_tag_mutability = "MUTABLE"
@@ -65,58 +56,6 @@ resource "aws_iam_role_policy_attachment" "secrets-manager-policy-attachment" {
 resource aws_iam_role_policy_attachment lambda-policy-attachment {
   role       = aws_iam_role.ecs-task-execution-role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
-}
-
-# --------
-# service-user
-# --------
-
-resource "aws_ecs_cluster" "service-user" {
-  name = "service-user"
-}
-
-resource "aws_ecs_task_definition" "service-user" {
-  family                = "service-user"
-  container_definitions = templatefile("ecs/service-user.tmpl", {
-    aws-region     = var.aws-region,
-    aws-repository = aws_ecr_repository.service-user.repository_url,
-  })
-  network_mode          = "awsvpc"
-  execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn         = aws_iam_role.ecs-task-execution-role.arn
-  memory                = "512"
-  cpu                   = "256"
-}
-
-resource "aws_ecs_service" "service-user" {
-  name                               = "service-user"
-  cluster                            = aws_ecs_cluster.service-user.id
-  task_definition                    = aws_ecs_task_definition.service-user.arn
-  launch_type                        = "FARGATE"
-  desired_count                      = 1
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
-  health_check_grace_period_seconds  = 20
-
-  network_configuration {
-    subnets          = [
-      aws_subnet.private.id
-    ]
-    security_groups  = [
-      aws_security_group.private-default-sg.id
-    ]
-    assign_public_ip = false
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.service-user-tg.arn
-    container_name   = "service-user"
-    container_port   = 8081
-  }
-}
-
-resource "aws_cloudwatch_log_group" "service-user-lg" {
-  name = "/ecs/service-user"
 }
 
 # --------
@@ -175,17 +114,6 @@ resource "aws_cloudwatch_log_group" "service-jehlomat-lg" {
 # Load Balancers
 # --------------
 
-resource "aws_lb_listener" "service-user-elb-listener" {
-  load_balancer_arn = aws_lb.service-elb.arn
-  port              = "8081"
-  protocol          = "TCP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.service-user-tg.arn
-  }
-}
-
 resource "aws_lb_listener" "service-jehlomat-elb-listener" {
   load_balancer_arn = aws_lb.service-elb.arn
   port              = "8082"
@@ -195,14 +123,6 @@ resource "aws_lb_listener" "service-jehlomat-elb-listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.service-jehlomat-tg.arn
   }
-}
-
-resource "aws_lb_target_group" "service-user-tg" {
-  name        = "service-user-tg"
-  port        = 8081
-  protocol    = "TCP"
-  vpc_id      = aws_vpc.vpc.id
-  target_type = "ip"
 }
 
 resource "aws_lb_target_group" "service-jehlomat-tg" {
@@ -220,7 +140,8 @@ resource "aws_lb_target_group" "service-jehlomat-tg" {
 resource "aws_api_gateway_vpc_link" "service-link" {
   name        = "service-link"
   target_arns = [
-    aws_lb.service-elb.arn]
+    aws_lb.service-elb.arn
+  ]
 }
 
 resource "aws_api_gateway_rest_api" "service-api" {
@@ -238,27 +159,15 @@ resource "aws_api_gateway_resource" "api" {
   path_part   = "api"
 }
 
-resource "aws_api_gateway_resource" "v1" {
+resource "aws_api_gateway_resource" "service-proxy" {
   rest_api_id = aws_api_gateway_rest_api.service-api.id
   parent_id   = aws_api_gateway_resource.api.id
-  path_part   = "v1"
-}
-
-resource "aws_api_gateway_resource" "users" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "users"
-}
-
-resource "aws_api_gateway_resource" "service-user-proxy" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  parent_id   = aws_api_gateway_resource.users.id
   path_part   = "{proxy+}"
 }
 
-resource "aws_api_gateway_method" "service-user-proxy" {
+resource "aws_api_gateway_method" "service-proxy" {
   rest_api_id        = aws_api_gateway_rest_api.service-api.id
-  resource_id        = aws_api_gateway_resource.service-user-proxy.id
+  resource_id        = aws_api_gateway_resource.service-proxy.id
   http_method        = "ANY"
   authorization      = "NONE"
   request_parameters = {
@@ -266,80 +175,14 @@ resource "aws_api_gateway_method" "service-user-proxy" {
   }
 }
 
-resource "aws_api_gateway_integration" "service-user-proxy" {
+resource "aws_api_gateway_integration" "service-proxy" {
   rest_api_id = aws_api_gateway_rest_api.service-api.id
-  resource_id = aws_api_gateway_resource.service-user-proxy.id
-  http_method = aws_api_gateway_method.service-user-proxy.http_method
+  resource_id = aws_api_gateway_resource.service-proxy.id
+  http_method = aws_api_gateway_method.service-proxy.http_method
 
   type                    = "HTTP_PROXY"
-  uri                     = "http://${aws_lb.service-elb.dns_name}:8081/api/v1/users/{proxy}"
-  integration_http_method = aws_api_gateway_method.service-user-proxy.http_method
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
-
-  connection_type = "VPC_LINK"
-  connection_id   = aws_api_gateway_vpc_link.service-link.id
-}
-
-resource "aws_api_gateway_method" "service-user-root" {
-  rest_api_id        = aws_api_gateway_rest_api.service-api.id
-  resource_id        = aws_api_gateway_resource.users.id
-  http_method        = "ANY"
-  authorization      = "NONE"
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
-}
-
-resource "aws_api_gateway_integration" "service-user-root" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  resource_id = aws_api_gateway_resource.users.id
-  http_method = aws_api_gateway_method.service-user-root.http_method
-
-  type                    = "HTTP_PROXY"
-  uri                     = "http://${aws_lb.service-elb.dns_name}:8081/api/v1/users"
-  integration_http_method = aws_api_gateway_method.service-user-proxy.http_method
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
-
-  connection_type = "VPC_LINK"
-  connection_id   = aws_api_gateway_vpc_link.service-link.id
-}
-
-resource "aws_api_gateway_resource" "jehlomat" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "jehlomat"
-}
-
-resource "aws_api_gateway_resource" "service-jehlomat-proxy" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  parent_id   = aws_api_gateway_resource.jehlomat.id
-  path_part   = "{proxy+}"
-}
-
-resource "aws_api_gateway_method" "service-jehlomat-proxy" {
-  rest_api_id        = aws_api_gateway_rest_api.service-api.id
-  resource_id        = aws_api_gateway_resource.service-jehlomat-proxy.id
-  http_method        = "ANY"
-  authorization      = "NONE"
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
-}
-
-resource "aws_api_gateway_integration" "service-jehlomat-proxy" {
-  rest_api_id = aws_api_gateway_rest_api.service-api.id
-  resource_id = aws_api_gateway_resource.service-jehlomat-proxy.id
-  http_method = aws_api_gateway_method.service-jehlomat-proxy.http_method
-
-  type                    = "HTTP_PROXY"
-  uri                     = "http://${aws_lb.service-elb.dns_name}:8082/api/v1/jehlomat/{proxy}"
-  integration_http_method = aws_api_gateway_method.service-user-proxy.http_method
+  uri                     = "http://${aws_lb.service-elb.dns_name}:8082/api/{proxy}"
+  integration_http_method = aws_api_gateway_method.service-proxy.http_method
 
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
@@ -351,11 +194,11 @@ resource "aws_api_gateway_integration" "service-jehlomat-proxy" {
 
 resource "aws_api_gateway_deployment" "service" {
   depends_on = [
-    aws_api_gateway_integration.service-user-proxy
+    aws_api_gateway_integration.service-proxy
   ]
 
   rest_api_id = aws_api_gateway_rest_api.service-api.id
-  stage_name  = "deployment"
+  stage_name  = "development"
 }
 
 # ------------
@@ -378,7 +221,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   origin {
     domain_name = replace(aws_api_gateway_deployment.service.invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = aws_api_gateway_deployment.service.id
-    origin_path = "/deployment"
+    origin_path = "/development"
 
     custom_origin_config {
       http_port              = 80
@@ -387,7 +230,8 @@ resource "aws_cloudfront_distribution" "distribution" {
       origin_ssl_protocols   = [
         "TLSv1",
         "TLSv1.1",
-        "TLSv1.2"]
+        "TLSv1.2"
+      ]
     }
   }
 
@@ -402,10 +246,12 @@ resource "aws_cloudfront_distribution" "distribution" {
   default_cache_behavior {
     allowed_methods  = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     cached_methods   = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     target_origin_id = "S3-${aws_s3_bucket.frontend.id}"
 
     forwarded_values {
@@ -423,7 +269,7 @@ resource "aws_cloudfront_distribution" "distribution" {
 
   # Cache behavior with precedence 0
   ordered_cache_behavior {
-    path_pattern     = "/api/v1/*"
+    path_pattern     = "/api/*"
     allowed_methods  = [
       "GET",
       "HEAD",
@@ -431,17 +277,18 @@ resource "aws_cloudfront_distribution" "distribution" {
       "PUT",
       "POST",
       "PATCH",
-      "DELETE"]
+      "DELETE"
+    ]
     cached_methods   = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     target_origin_id = aws_api_gateway_deployment.service.id
 
     forwarded_values {
       query_string = true
       headers      = [
         "Authorization",
-        "X-ApplicationId"
       ]
       cookies {
         forward = "all"

@@ -6,7 +6,7 @@ RUN gradle shadowJar --no-daemon
 
 FROM gcr.io/distroless/java:11
 
-EXPOSE 8081
+EXPOSE 8082
 
 COPY --from=gradle --chown=nonroot:nonroot /home/gradle/server/service-jehlomat/build/libs/service-jehlomat-all.jar /app/service-jehlomat-all.jar
 
