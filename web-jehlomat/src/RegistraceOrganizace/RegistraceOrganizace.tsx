@@ -7,7 +7,7 @@ import { FormHeading, FormItemLabel } from '../Components/Utils/Typography';
 import { FormItem, FormWrapper, Wrapper } from '../Components/Form/Form';
 import PrimaryButton from '../Components/Buttons/PrimaryButton/PrimaryButton';
 
-interface IRegistrace {}
+interface IRegistraceOrganizace {}
 
 interface Values {
     email: string;
@@ -15,7 +15,7 @@ interface Values {
     jmeno: string;
 }
 
-const Registrace: FC<IRegistrace> = ({}) => {
+const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
     return (
         <Wrapper>
             <FormHeading>Admin organizace</FormHeading>
@@ -55,4 +55,4 @@ const Registrace: FC<IRegistrace> = ({}) => {
     );
 };
 
-export default Registrace;
+export default RegistraceOrganizace;

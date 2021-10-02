@@ -1,68 +1,56 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
-import styled from 'styled-components';
-import SearchInput from '../Components/Inputs/SearchInput/SearchInput';
-import AddButton from '../Components/Buttons/AddButton/AddButton';
-import { usersMock } from './usersMock';
-import { grey } from '../Components/Utils/Colors';
-import ListItem from '../Components/List/ListItem/ListItem';
+import { Formik, Form, FormikHelpers } from 'formik';
+import TextInput from '../Components/Inputs/TextInput/TextInput';
+import { FormHeading, FormItemLabel, H1, H4 } from '../Components/Utils/Typography';
+import { FormItem, FormWrapper, Wrapper } from '../Components/Form/Form';
+import PrimaryButton from '../Components/Buttons/PrimaryButton/PrimaryButton';
 
 interface IRegistraceUzivatele {}
 
-const LayoutWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-
-    & > * + * {
-        margin-top: 10px;
-    }
-`;
-
-const TopWrapper = styled.div`
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-
-    & > * + * {
-        margin-left: 10px;
-    }
-`;
-
-const ListWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-
-    & > * + * {
-        margin-top: 10px;
-    }
-`;
-
-const ListInfo = styled.div`
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
-    color: ${grey};
-`;
+interface Values {
+    email: string;
+    heslo: string;
+    jmeno: string;
+}
 
 const RegistraceUzivatele: FC<IRegistraceUzivatele> = ({}) => {
-    const [users, setUsers] = useState(usersMock);
-    const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
-
     return (
-        <LayoutWrapper>
-            <TopWrapper>
-                <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
-                <AddButton style={{ marginLeft: '10px' }} />
-            </TopWrapper>
-            <ListInfo>{listTitle}</ListInfo>
-            <ListWrapper>
-                {users.map((item, index) => {
-                    return <ListItem key={`item-${index}`} {...item} />;
-                })}
-            </ListWrapper>
-        </LayoutWrapper>
+        <Wrapper>
+            <FormHeading>Pracovnik Organizace </FormHeading>
+            <Formik
+                initialValues={{ email: '', heslo: '', jmeno: '' }}
+                onSubmit={(values: Values, { setSubmitting }: FormikHelpers<Values>) => {
+                    console.log(values);
+                }}
+            >
+                {({ handleSubmit, touched, handleChange, handleBlur, values, errors }) => {
+                    return (
+                        <FormWrapper onSubmit={handleSubmit}>
+                            <FormItem>
+                                <FormItemLabel>Email Pracovnika</FormItemLabel>
+                                <TextInput onChange={handleChange} onBlur={handleBlur} value={values.email} type="text" name="email" placeholder="Email" />
+                            </FormItem>
+
+                            <FormItem>
+                                <FormItemLabel>Uzivatelske jmeno *</FormItemLabel>
+                                <TextInput onChange={handleChange} onBlur={handleBlur} value={values.jmeno} type="text" name="jmeno" placeholder="Jmeno" />
+                            </FormItem>
+
+                            <FormItem>
+                                <FormItemLabel>Heslo *</FormItemLabel>
+                                <TextInput onChange={handleChange} onBlur={handleBlur} value={values.heslo} type="heslo" name="heslo" placeholder="heslo" />
+                            </FormItem>
+                            <FormItem>
+                                <FormItemLabel>Potvrzeni hesla *</FormItemLabel>
+                                <TextInput type="heslo" name="heslo" placeholder="Password" />
+                            </FormItem>
+                            <PrimaryButton text="Zalozit" type="submit" />
+                        </FormWrapper>
+                    );
+                }}
+            </Formik>
+        </Wrapper>
     );
 };
 
