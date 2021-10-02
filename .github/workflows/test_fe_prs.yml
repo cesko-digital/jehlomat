@@ -1,0 +1,21 @@
+name: 'Test FE pull requests'
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'web-jehlomat/**'
+env:
+  name: 'web-jehlomat'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Build'
+        run: |
+          yarn install
+          yarn build
+        working-directory: ${{ env.name }}

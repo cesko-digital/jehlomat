@@ -37,3 +37,16 @@ export const H4 = styled.span`
   letter-spacing: 1.25px;
   text-transform: uppercase;
 `;
+
+export const NavigationTitle = styled.span`
+  ${fontFamilyRoboto};
+  font-size: 20px;
+  line-height: 24px;
+  color: white;
+`;
+export const FormItemLabel = styled.span`
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+  color: black;
+`;
