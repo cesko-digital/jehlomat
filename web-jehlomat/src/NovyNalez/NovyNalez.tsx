@@ -1,9 +1,15 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
+import ZadatNalezMapa from "./ZadatNalezMapa";
 
 interface INovyNalez {}
 
 const NovyNalez: FC<INovyNalez> = ({}) => {
-  return <div>NovyNalez</div>;
+  return (
+    <Fragment>
+      <div>NovyNalez</div>
+      <ZadatNalezMapa />
+    </Fragment>
+  );
 };
 
 export default NovyNalez;
