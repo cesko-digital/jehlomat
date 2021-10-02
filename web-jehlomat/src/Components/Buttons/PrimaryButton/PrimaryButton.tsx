@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { ButtonHTMLAttributes, FC } from "react";
 import styled from "styled-components";
 import {primaryDark, white} from '../../Utils/Colors'
 import { H4 } from "../../Utils/Typography";
 
-interface PrimaryButton {
+interface PrimaryButton extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: String;
 }
 
@@ -18,9 +18,9 @@ const Button = styled.button`
   padding: 0px 20px;
 `;
 
-const PrimaryButton: FC<PrimaryButton> = ({ text }) => {
+const PrimaryButton: FC<PrimaryButton> =  ({ text, ...props }) => {
   return (
-    <Button>
+    <Button {...props}>
       <H4>{text}</H4>
     </Button>
   );
