@@ -58,7 +58,7 @@ class Mailer() {
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://www.google.com",
+                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgName=${organization.name}",
                     organization
                 )
             )
