@@ -1,11 +1,14 @@
 import { FC, Fragment, useEffect, useState } from 'react';
-import ZapnoutPolohu from '../fragments/ZapnoutPolohu';
-import Mapa from '../fragments/Mapa';
+import ZapnoutPolohu from './ZapnoutPolohu';
+import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
+import { INovaJehla, STEPS } from '../NovyNalez';
 
-interface IZadatNalezMapa {}
+interface IZadatNalezMapa {
+    handleStepChange: (newStep: STEPS, newInfo?: Partial<INovaJehla>) => void;
+}
 
-const ZadatNalezMapa: FC<IZadatNalezMapa> = () => {
+const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
     const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
 
@@ -25,19 +28,17 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = () => {
 
         // TO-DO: Nefunguje to správně, mapa se nerefreshne
         //
-        // setUserPosition([lat, lng]);
+        setUserPosition([lat, lng]);
     };
     const handleDenyGeolocation = () => {
         setModalVisible(false);
     };
 
     return (
-        <Fragment>
-            <div>
-                <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} />
-                <Mapa userPosition={userPosition} />
-            </div>
-        </Fragment>
+        <div>
+            <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} />
+            <Mapa userPosition={userPosition} handleStepChange={handleStepChange} />
+        </div>
     );
 };
 

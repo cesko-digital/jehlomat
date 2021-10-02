@@ -1,12 +1,11 @@
-import {FC} from 'react'
-import styled from 'styled-components'
-import {white} from '../../Components/Utils/Colors'
-import TextInput from '../../Components/Inputs/TextInput/TextInput'
-import { FormItemLabel } from '../../Components/Utils/Typography'
-import { FormWrapper, FormItem } from '../../Components/Form/Form'
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
-import TitleBar from '../../Components/Navigation/TitleBar'
-
+import { FC } from 'react';
+import styled from 'styled-components';
+import { white } from '../../Components/Utils/Colors';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
+import { FormItemLabel } from '../../Components/Utils/Typography';
+import { FormWrapper, FormItem } from '../../Components/Form/Form';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
+import TitleBar from '../../Components/Navigation/TitleBar';
 
 const Container = styled.div`
     display: flex;
@@ -16,45 +15,36 @@ const Container = styled.div`
     text-align: center;
     background-color: ${white};
     padding: 1rem;
-`
-interface iZadavaniNalezu {
-}
+`;
+interface IZadavaniNalezu {}
 
-const ZadavaniNalezu:FC<iZadavaniNalezu> = () => {
-    return <Container>
+const ZadavaniNalezu: FC<IZadavaniNalezu> = () => {
+    return (
+        <Container>
             <TitleBar>
-                <p>
-                    3 icons navigation
-                </p>
+                <p>Podrobnější informace o nálezu</p>
             </TitleBar>
             <FormWrapper>
                 <FormItem>
-                    <FormItemLabel>
-                        Počet jehel
-                    </FormItemLabel>
-                    <TextInput type="text"/>
+                    <FormItemLabel>Počet jehel</FormItemLabel>
+                    <TextInput type="number" placeholder="Zadejte počet stříkaček" />
                 </FormItem>
                 <FormItem>
-                    <FormItemLabel>
-                        Datum a čas nálezu
-                    </FormItemLabel>
-                    <TextInput type="date"/>
+                    <FormItemLabel>Datum a čas nálezu</FormItemLabel>
+                    <TextInput type="date" />
                 </FormItem>
                 <FormItem>
-                    <FormItemLabel>
-                        Poznámky
-                    </FormItemLabel>
-                    <TextInput type="text"/>
+                    <FormItemLabel>Poznámky</FormItemLabel>
+                    <TextInput type="text" />
                 </FormItem>
                 <FormItem>
-                    <FormItemLabel>
-                        Foto z místa nálezu
-                    </FormItemLabel>
-                    <TextInput type="text"/>
+                    <FormItemLabel>Foto z místa nálezu</FormItemLabel>
+                    <TextInput type="text" />
                 </FormItem>
             </FormWrapper>
-            <PrimaryButton text="Dokončit"/>
+            <PrimaryButton text="Dokončit" />
         </Container>
+    );
 };
 
 export default ZadavaniNalezu;

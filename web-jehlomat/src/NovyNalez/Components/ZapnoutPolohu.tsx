@@ -1,4 +1,3 @@
-import { LatLngExpression } from 'leaflet';
 import { FC } from 'react';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../Components/Buttons/TextButton/TextButton';
