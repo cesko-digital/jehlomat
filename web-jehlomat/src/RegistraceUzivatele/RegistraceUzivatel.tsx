@@ -7,7 +7,6 @@ import {
   FormHeading,
   FormItemLabel,
   H1,
-  H2,
   H4,
 } from "../Components/Utils/Typography";
 import { FormItem, FormWrapper, Wrapper } from "../Components/Form/Form";
@@ -21,10 +20,10 @@ interface Values {
   jmeno: string;
 }
 
-const Registrace: FC<IRegistrace> = ({}) => {
+const RegistraceUzivatel: FC<IRegistrace> = ({}) => {
   return (
     <Wrapper>
-      <FormHeading>Admin organizace</FormHeading>
+      <FormHeading>Pracovnik Organizace </FormHeading>
       <Formik
         initialValues={{ email: "", heslo: "", jmeno: "" }}
         onSubmit={(
@@ -44,8 +43,10 @@ const Registrace: FC<IRegistrace> = ({}) => {
         }) => {
           return (
             <FormWrapper onSubmit={handleSubmit}>
+              <H1>Pracovnik organizace</H1>
+
               <FormItem>
-                <FormItemLabel>Email organizace</FormItemLabel>
+                <FormItemLabel>Email Pracovnika</FormItemLabel>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -92,4 +93,4 @@ const Registrace: FC<IRegistrace> = ({}) => {
   );
 };
 
-export default Registrace;
+export default RegistraceUzivatel;

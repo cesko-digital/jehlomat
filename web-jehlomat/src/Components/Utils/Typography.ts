@@ -44,9 +44,14 @@ export const NavigationTitle = styled.span`
   line-height: 24px;
   color: white;
 `;
-export const FormItemLabel = styled.span`
+export const FormItemLabel = styled.label`
+  font-size: Menlo;
   font-size: 16px;
   letter-spacing: 1.25px;
   text-transform: uppercase;
+  color: grey;
+`;
+
+export const FormHeading = styled.p`
   color: black;
 `;

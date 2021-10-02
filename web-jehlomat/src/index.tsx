@@ -16,8 +16,11 @@ const Organizace = lazy(() => import("./Organizace/Organizace"));
 const Profil = lazy(() => import("./Profil/Profil"));
 const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
-const Dekujeme = lazy(() => import("./Dekujeme/Dekujeme"));
+const Dekujeme = lazy(() => import("./Registrace/Dekujeme"));
 const Registrace = lazy(() => import("./Registrace/Registrace"));
+const RegistraceUzivatel = lazy(
+  () => import("./RegistraceUzivatele/RegistraceUzivatel")
+);
 // **********************************************************************
 
 /**
@@ -32,6 +35,9 @@ ReactDOM.render(
       <HashRouter>
         <Navigation />
         <Switch>
+          <Route path="/registraceUzivatel" component={RegistraceUzivatel}>
+            <RegistraceUzivatel />
+          </Route>
           <Route
             path="/registrace"
             render={({ match: { url } }) => (
