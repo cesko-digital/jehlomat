@@ -9,6 +9,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 // @ts-ignore
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 let DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -39,9 +40,6 @@ const Mapa: FC<IMapa> = ({ userPosition }) => {
         }
     }, [userPosition]);
 
-    // Divné chování zoomu, na každý zoom change se sice provolá,
-    // map.getCenter(), ale lokace stredu nedava smysl = zůstává
-    // pořád stejný, i když je marker na jiné zemi Evropy
     function MapCustomEvents() {
         const map = useMapEvents({
             drag: () => handleMapCenterChange(map, setMarkerPosition),
@@ -62,7 +60,7 @@ const Mapa: FC<IMapa> = ({ userPosition }) => {
             center={position}
             zoom={DEFAULT_ZOOM_LEVEL}
             scrollWheelZoom={false}
-            style={{ width: '800px', height: '600px', zIndex: 5 }}
+            style={{ width: '360px', height: '705px', zIndex: 1 }}
             preferCanvas
             whenCreated={map => {
                 handleMapCenterChange(map, setMarkerPosition);
@@ -72,6 +70,8 @@ const Mapa: FC<IMapa> = ({ userPosition }) => {
             <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
             {markerPosition && <Marker position={markerPosition} />}
+
+            {/* TO-DO: Přidat button pro propsání polohy do formuláře a pokračovat v procesu */}
         </MapContainer>
     );
 };

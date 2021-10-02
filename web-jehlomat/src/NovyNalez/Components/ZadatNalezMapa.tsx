@@ -1,6 +1,6 @@
 import { FC, Fragment, useEffect, useState } from 'react';
-import ZapnoutPolohu from './fragments/ZapnoutPolohu';
-import Mapa from './fragments/Mapa';
+import ZapnoutPolohu from '../fragments/ZapnoutPolohu';
+import Mapa from '../fragments/Mapa';
 import { LatLngExpression } from 'leaflet';
 
 interface IZadatNalezMapa {}
