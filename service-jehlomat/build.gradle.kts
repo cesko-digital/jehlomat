@@ -37,6 +37,9 @@ dependencies {
 
     // Config
     implementation("com.typesafe:config:1.4.0")
+
+    //Mailjet
+    implementation("com.mailjet:mailjet-client:5.2.0")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

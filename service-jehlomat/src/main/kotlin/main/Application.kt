@@ -1,9 +1,6 @@
 package main
 
-import api.organizationApi
-import api.syringeApi
-import api.teamApi
-import api.userApi
+import api.*
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
@@ -63,6 +60,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi()
+        }
+        route("/api/v1/jehlomat/verification") {
+            verificationApi()
         }
         route("/api/v1/jehlomat/team") {
             teamApi()
