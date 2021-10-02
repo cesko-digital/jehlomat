@@ -7,22 +7,17 @@ import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
 import model.UserInfo
-import model.User
 import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
 class Mailer() {
-    var client: MailjetClient? = null;
-    init {
-        client = MailjetClient(
-            ClientOptions.builder()
-                .apiKey(DefaultConfig().get().getString("mailjet.publicKey"))
-                .apiSecretKey(DefaultConfig().get().getString("mailjet.privateKey"))
-                .build())
-    }
-
-
+    private val appConfig = DefaultConfig().get()
+    private val client = MailjetClient(
+        ClientOptions.builder()
+            .apiKey(appConfig.getString("mailjet.publicKey"))
+            .apiSecretKey(appConfig.getString("mailjet.privateKey"))
+            .build())
 
     fun prepareBody(templateId: Int, subject: String, link: String,
                     organization: Organization? = null, user: UserInfo? = null): JSONArray {
@@ -62,7 +57,8 @@ class Mailer() {
                     organization
                 )
             )
-        val response: MailjetResponse = client!!.post(request)
+        val response: MailjetResponse = client.post(request)
+
         System.out.println(response.getStatus())
         System.out.println(response.getData())
     }
@@ -78,7 +74,8 @@ class Mailer() {
                     user=user
                 )
             )
-        val response: MailjetResponse = client!!.post(request)
+        val response: MailjetResponse = client.post(request)
+
         System.out.println(response.getStatus())
         System.out.println(response.getData())
     }
@@ -94,7 +91,8 @@ class Mailer() {
                     organization
                 )
             )
-        val response: MailjetResponse = client!!.post(request)
+        val response: MailjetResponse = client.post(request)
+
         System.out.println(response.getStatus())
         System.out.println(response.getData())
     }
