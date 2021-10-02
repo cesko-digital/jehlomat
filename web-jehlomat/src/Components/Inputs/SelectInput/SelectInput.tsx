@@ -1,9 +1,9 @@
 import { FC } from "react";
 
-interface TextInput {}
+interface SelectInput {}
 
-const TextInput: FC<TextInput> = ({}) => {
-  return <div>TextInput</div>;
+const SelectInput: FC<SelectInput> = ({}) => {
+  return <div>SelectInput</div>;
 };
 
-export default TextInput;
+export default SelectInput;
