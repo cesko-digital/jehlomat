@@ -1,37 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {FC} from "react";
+import * as s from "./NavigationStyles";
+import {NavigationButtonType, PrimaryNavigationButton, SecondaryNavigationButton} from "./NavigationButton";
+import {useHistory, useLocation} from "react-router-dom";
 
-export default function Navigation() {
-  return (
-    <div>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Domů</Link>
-          </li>
-          <li>
-            <Link to="/registrace/dekujeme">Děkujeme</Link>
-          </li>
-          <li>
-            <Link to="/organizace">Organizace</Link>
-          </li>
-          <li>
-            <Link to="/registraceUzivatele">Registrace uzivatele</Link>
-          </li>
-          <li>
-            <Link to="/nalezy">Nalezy</Link>
-          </li>
-          <li>
-            <Link to="/novy-nalez">Novy nalez</Link>
-          </li>
-          <li>
-            <Link to="/profil">Profil</Link>
-          </li>
-          <li>
-            <Link to="/registrace">Registrace</Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  );
+const Navigation: FC = ({}) => {
+  let history = useHistory()
+  let location = useLocation()
+
+  return <s.Container>
+    <s.GlobalBody />
+    <s.LeftBar>
+      <SecondaryNavigationButton route="/profile" selected={ location.pathname === "/profile"} type={NavigationButtonType.Profile}/>
+      <SecondaryNavigationButton route="/nalezy" selected={ location.pathname === "/nalezy"} type={NavigationButtonType.SyringeList}/>
+      <SecondaryNavigationButton route="/organizace" selected={ location.pathname === "/organizace"} type={NavigationButtonType.Users}/>
+    </s.LeftBar>
+    <s.PrimaryBar onClick={ () => history.push("/novy-nalez")}>
+      <PrimaryNavigationButton />
+    </s.PrimaryBar>
+  </s.Container>
 }
+
+export default Navigation
