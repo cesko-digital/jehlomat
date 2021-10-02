@@ -61,4 +61,10 @@ export const FormHeading = styled.p`
     width: 80%;
     color: black;
     font-size: 15px;
+    @media (min-width: 420px) {
+        width: 50%;
+    }
+    @media (min-width: 700px) {
+        width: 340px;
+    }
 `;
