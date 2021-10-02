@@ -1,12 +1,12 @@
 package service
 
-import api.SyringeTable
-import api.UserTable
-import model.Syringe
-import model.User
+import api.*
+import model.*
 import org.ktorm.database.Database
-import org.ktorm.dsl.insert
-import org.ktorm.dsl.insertAndGenerateKey
+import org.ktorm.dsl.*
+import org.ktorm.entity.sequenceOf
+import org.ktorm.support.postgresql.bulkInsert
+import org.ktorm.support.postgresql.insertOrUpdate
 
 
 interface DatabaseService {
@@ -22,28 +22,71 @@ class DatabaseServiceImpl(
     val user: String="jehlomat",
     val password: String="jehlomat"
 ): DatabaseService {
-
-//    fun getDatabaseInstance(): Database {
-//        return getInstance(
-//
-//        )
-//    }
-
-//    fun getInstance(
-//        host: String,
-//        port: String,
-//        database: String,
-//        user: String,
-//        password: String
-//    ): Database {
-//        return Database.connect(
-//            "jdbc:postgresql://$host:$port/$database", user = user, password = password
-//        )
-//    }
-
     val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
+
+    fun selectSyringeById(id: Int): Syringe {
+        return databaseInstance
+            .from(SyringeTable)
+            .select()
+            .where { SyringeTable.id eq id }
+            .map { row -> SyringeTable.createEntity(row) }
+            .first()
+    }
+
+    fun selectSyringes(): List<Syringe> {
+        return databaseInstance
+            .from(SyringeTable)
+            .select()
+            .orderBy(SyringeTable.id.asc())
+            .map { row -> SyringeTable.createEntity(row) }
+    }
+
+    fun selectTeams(): List<Team> {
+        return databaseInstance
+            .from(TeamTable)
+            .innerJoin(UserTeamTable, on=UserTeamTable.team_name eq TeamTable.name)
+            .innerJoin(UserTable, on=UserTeamTable.user_email eq UserTable.email)
+            .select()
+            .orderBy(TeamTable.name.asc())
+            .map { row -> TeamTable.createEntity(row) }
+    }
+
+    fun selectOrganizations(): List<Organization> {
+        return databaseInstance
+            .from(OrganizationTable)
+            .innerJoin(AdminOrganizationTable, on=AdminOrganizationTable.organization_name eq OrganizationTable.name)
+            .select()
+            .orderBy(OrganizationTable.name.asc())
+            .map { row -> Organization(row[OrganizationTable.name]!!, UserInfo(row[AdminOrganizationTable.admin_email]!!, false)) }
+    }
+
+     fun updateUser(user: User) {
+        databaseInstance.update(UserTable) {
+            set(it.email, user.email)
+            set(it.password, user.password)
+            set(it.verified, user.verified)
+        }
+    }
+
+    fun updateOrganization(organization: Organization) {
+        databaseInstance.update(OrganizationTable) {
+            set(it.name, organization.name)
+        }
+        databaseInstance.update(AdminOrganizationTable) {
+            set(it.organization_name, organization.name)
+            set(it.admin_email, organization.administrator.email)
+        }
+    }
+
+    fun updateTeam(team: Team) {
+        databaseInstance.update(TeamTable) {
+            set(it.name, team.name)
+            set(it.location_id, team.location.id)
+            set(it.organization_name, team.organization.name)
+        }
+    }
 
     override fun insertSyringe(syringe: Syringe) {
         databaseInstance.insertAndGenerateKey(SyringeTable) {
@@ -58,10 +101,64 @@ class DatabaseServiceImpl(
     }
 
     override fun insertUser(user: User) {
-        databaseInstance.insert(UserTable) {
+        databaseInstance.insertOrUpdate(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password)
             set(it.verified, user.verified)
+        }
+    }
+
+    fun insertOrganization(organization: Organization) {
+        databaseInstance.insertOrUpdate(OrganizationTable) {
+            set(it.name, organization.name)
+        }
+        databaseInstance.insertOrUpdate(AdminOrganizationTable) {
+            set(it.admin_email, organization.administrator.email)
+            set(it.organization_name, organization.name)
+        }
+    }
+
+    fun insertTeam(team: Team) {
+        databaseInstance.insertOrUpdate(LocationTable) {
+            set(it.mestka_cast, team.location.mestkaCast)
+            set(it.okres, team.location.okres)
+            set(it.mesto, team.location.mesto)
+        }
+        databaseInstance.insertOrUpdate(TeamTable) {
+            set(it.organization_name, team.organization.name)
+            set(it.location_id, team.location.id)
+            set(it.name, team.name)
+        }
+    }
+
+    fun insertUsersToTeam(team: Team, users: List<User>) {
+        databaseInstance.bulkInsert(UserTeamTable) {
+            users.map { user ->
+                item {
+                    set(it.team_name, team.name)
+                    set(it.user_email, user.email)
+                }
+            }
+        }
+    }
+
+    fun deleteSyringe(id: Int) {
+        databaseInstance.delete(SyringeTable) { it.id eq id }
+    }
+
+    fun deleteTeam(name: String) {
+        databaseInstance.delete(TeamTable) { it.name eq name }
+    }
+
+    fun deleteAdminFromOrganization(email: String, orgName: String) {
+        databaseInstance.delete(AdminOrganizationTable) {
+            (it.admin_email eq email) and (it.organization_name eq orgName)
+        }
+    }
+
+    fun deleteUserFromTeam(email: String, teamName: String) {
+        databaseInstance.delete(UserTeamTable) {
+            (it.user_email eq email) and (it.team_name eq teamName)
         }
     }
 }
