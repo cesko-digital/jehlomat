@@ -9,10 +9,10 @@ import model.*
 import services.Mailer
 
 val organizations = mutableListOf<Organization>()
-val mailer = Mailer()
+
 
 fun Route.organizationApi(): Route {
-
+    val mailer = Mailer()
     return route("/") {
         get("/{email}") {
             // TODO: check if values satisfy condition
