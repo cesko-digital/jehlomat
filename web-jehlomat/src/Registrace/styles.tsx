@@ -70,7 +70,5 @@ export const Label = styled.label`
   flex-direction: column;
   text-align: flex-start;
   color: black;
-  font-family: "Raleway", sans-serif;
-  font-size: 0.8em;
   margin: 0.5em 0;
 `;
