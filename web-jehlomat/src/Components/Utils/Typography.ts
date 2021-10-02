@@ -37,3 +37,10 @@ export const H4 = styled.span`
   letter-spacing: 1.25px;
   text-transform: uppercase;
 `;
+
+export const FormItemLabel = styled.span`
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+  color: black;
+`;
