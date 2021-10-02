@@ -1,11 +1,11 @@
-import { ButtonHTMLAttributes, FC } from "react";
-import styled from "styled-components";
-import { grey, greyLight, primaryDark, white } from '../../Utils/Colors'
-import { fontFamilyRoboto, fontWeightBold, H4 } from "../../Utils/Typography";
+import { ButtonHTMLAttributes, FC } from 'react';
+import styled from 'styled-components';
+import { grey, greyLight, primaryDark, white } from '../../Utils/Colors';
+import { fontFamilyRoboto, fontWeightBold, H4 } from '../../Utils/Typography';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
-interface IListItem {
+export interface IListItem {
     id: Number;
     name?: String;
     email: String;
@@ -23,7 +23,7 @@ const Edit = styled.div`
     padding: 10px;
     flex-direction: column;
     justify-content: center;
-    align-item: flex-end;
+    align-items: flex-end;
 `;
 
 const Name = styled.div`
@@ -44,17 +44,17 @@ const Email = styled.div`
     line-height: 16px;
 `;
 const List = styled.ul`
-  list-style: none;
-  padding: 0px 20px;
-  background-color: ${white};
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.16);
+    list-style: none;
+    padding: 0px 20px;
+    background-color: ${white};
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.16);
 `;
 
 const ListIt = styled.li`
     list-style: none;
-    background: ${white}};
+    background: ${white};
     border: 1px solid ${greyLight};
     box-sizing: border-box;
     border-radius: 10px;
@@ -64,16 +64,17 @@ const ListIt = styled.li`
 `;
 
 const ListItem: FC<IListItem> = ({ ...props }) => {
-    return <ListIt>
-        <Text>
-            {props.name ? <Name>{props.name}</Name> : null}
-            <Email>{props.email}</Email>
-        </Text>
-        <Edit>
-            <FontAwesomeIcon icon={faPencilAlt} size="1x" color={primaryDark}/>
-        </Edit>
-
-    </ListIt>;
+    return (
+        <ListIt>
+            <Text>
+                {props.name ? <Name>{props.name}</Name> : null}
+                <Email>{props.email}</Email>
+            </Text>
+            <Edit>
+                <FontAwesomeIcon icon={faPencilAlt} size="1x" color={primaryDark} />
+            </Edit>
+        </ListIt>
+    );
 };
 
 export default ListItem;

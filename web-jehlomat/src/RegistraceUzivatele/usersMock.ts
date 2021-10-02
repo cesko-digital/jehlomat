@@ -1,32 +1,27 @@
-export interface IUser {
-    id: number;
-    status: 'active' | 'innactive';
-    name: string;
-    email: string;
-}
+import { IListItem } from '../Components/List/ListItem/ListItem';
 
-export const usersMock: IUser[] = [
+export const usersMock: IListItem[] = [
     {
         id: 1233,
-        status: 'active',
+        state: 'active',
         name: 'Joe Biden',
         email: 'biden@email.com',
     },
     {
         id: 32,
-        status: 'innactive',
+        state: 'innactive',
         name: 'Donald Trump',
         email: 'trump@email.com',
     },
     {
         id: 2313,
-        status: 'innactive',
+        state: 'innactive',
         name: 'Barack Obama',
         email: 'obama@email.com',
     },
     {
         id: 1109,
-        status: 'innactive',
+        state: 'innactive',
         name: 'George Bush',
         email: 'bush@email.com',
     },

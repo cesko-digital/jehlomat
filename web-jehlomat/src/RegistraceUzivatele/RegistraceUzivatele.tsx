@@ -5,6 +5,7 @@ import SearchInput from '../Components/Inputs/SearchInput/SearchInput';
 import AddButton from '../Components/Buttons/AddButton/AddButton';
 import { usersMock } from './usersMock';
 import { grey } from '../Components/Utils/Colors';
+import ListItem from '../Components/List/ListItem/ListItem';
 
 interface IRegistraceUzivatele {}
 
@@ -47,18 +48,18 @@ const ListInfo = styled.div`
 
 const RegistraceUzivatele: FC<IRegistraceUzivatele> = ({}) => {
     const [users, setUsers] = useState(usersMock);
-    const listTitle = `${usersMock.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
+    const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
 
     return (
         <LayoutWrapper>
             <TopWrapper>
-                <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name.includes(e.target.value)))} />
+                <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
                 <AddButton style={{ marginLeft: '10px' }} />
             </TopWrapper>
             <ListInfo>{listTitle}</ListInfo>
             <ListWrapper>
                 {users.map((item, index) => {
-                    return <span key={`item-${index}`}>{JSON.stringify(item)}</span>;
+                    return <ListItem key={`item-${index}`} {...item} />;
                 })}
             </ListWrapper>
         </LayoutWrapper>
