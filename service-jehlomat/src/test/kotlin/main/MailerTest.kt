@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import model.Organization
 import model.User
 import model.UserInfo
 import org.junit.Test
@@ -15,9 +16,10 @@ import services.Mailer
 
 
 
-val user = UserInfo(
-    "email@example.org",
-    false
+val user = Organization(
+    "TestOrg",
+    UserInfo("email@example.org", false),
+    teams = listOf()
 )
 
 class MailerTest {
