@@ -21,6 +21,9 @@ export default function Navigation() {
           <li>
             <Link to="/profil">Profil</Link>
           </li>
+          <li>
+            <Link to="/registrace">Registrace</Link>
+          </li>
         </ul>
       </nav>
     </div>

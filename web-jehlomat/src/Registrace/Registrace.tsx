@@ -1,12 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 import { FormWrapper, Wrapper } from "./styles";
 import { Formik, Field, Form } from "formik";
 
-const Register: React.FC<{}> = () => {
+interface IRegistrace {}
+
+const Registrace: FC<IRegistrace> = ({}) => {
   console.log("Test");
   return (
     <Wrapper>
-      <h1>Jehhlomat registrace oraganizace</h1>
+      <h1>Jehlomat registrace oraganizace</h1>
 
       <Formik
         initialValues={{
@@ -38,4 +40,4 @@ const Register: React.FC<{}> = () => {
   );
 };
 
-export default Register;
+export default Registrace;
