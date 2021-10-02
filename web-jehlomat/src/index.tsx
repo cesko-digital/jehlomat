@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import App from "./App/App";
+import { Register } from "./pages/Register";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -18,6 +19,9 @@ ReactDOM.render(
         </Route>
         <Route path="/">
           <App />
+        </Route>
+        <Route path="/register">
+          <div><h1>Register</h1></div>
         </Route>
       </Switch>
     </Router>
