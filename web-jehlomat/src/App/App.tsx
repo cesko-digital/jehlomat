@@ -1,13 +1,10 @@
-import React from 'react';
-import Navigation from '../Components/Navigation';
+import React from "react";
 
 const HelloJehlomat = () => {
   return (
     <>
-      <Navigation />
       <h3>Hello Jehlomat</h3>
     </>
-
   );
 };
 

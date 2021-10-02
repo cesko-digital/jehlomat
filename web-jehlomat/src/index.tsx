@@ -1,26 +1,48 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import App from "./App/App";
+import Navigation from "./Components/Navigation";
+
+/**
+ * Lazy loading routes
+ */
+const Organizace = lazy(() => import("./Organizace/Organizace"));
+const Profil = lazy(() => import("./Profil/Profil"));
+const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
+const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
+// **********************************************************************
+
+/**
+ *
+ * TO-DO: Wrap whole application with AppContainer to simulate local state with logged user.
+ * For future requests etc.
+ */
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <Switch>
-        <Route path="/about">
-          <div><h1>About</h1></div>
-        </Route>
-        <Route path="/">
-          <App />
-        </Route>
-      </Switch>
-    </Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Router>
+        <Navigation />
+        <Switch>
+          <Route path="/profil" component={Profil}>
+            <Profil />
+          </Route>
+          <Route path="/organizace" component={Organizace}>
+            <Organizace />
+          </Route>
+          <Route path="/novy-nalez" component={NovyNalez}>
+            <NovyNalez />
+          </Route>
+          <Route path="/nalezy" component={Nalezy}>
+            <Nalezy />
+          </Route>
+          <Route path="/">
+            <App />
+          </Route>
+        </Switch>
+      </Router>
+    </Suspense>
   </React.StrictMode>,
   document.getElementById("root")
 );
