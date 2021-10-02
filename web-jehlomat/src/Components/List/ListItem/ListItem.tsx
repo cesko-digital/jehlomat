@@ -4,6 +4,7 @@ import { grey, greyLight, primaryDark, white } from '../../Utils/Colors';
 import { fontFamilyRoboto, fontWeightBold, H4 } from '../../Utils/Typography';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { useHistory } from 'react-router';
 
 export interface IListItem {
     id: Number;
@@ -24,6 +25,7 @@ const Edit = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: flex-end;
+    cursor: pointer;
 `;
 
 const Name = styled.div`
@@ -64,13 +66,15 @@ const ListIt = styled.li`
 `;
 
 const ListItem: FC<IListItem> = ({ ...props }) => {
+    const history = useHistory();
+
     return (
         <ListIt>
             <Text>
                 {props.name ? <Name>{props.name}</Name> : null}
                 <Email>{props.email}</Email>
             </Text>
-            <Edit>
+            <Edit onClick={e => history.push('/uzivatel/upravit')}>
                 <FontAwesomeIcon icon={faPencilAlt} size="1x" color={primaryDark} />
             </Edit>
         </ListIt>
