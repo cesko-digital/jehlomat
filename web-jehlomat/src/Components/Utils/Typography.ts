@@ -33,7 +33,7 @@ export const H3 = styled.span`
 export const H4 = styled.span`
     ${fontFamilyRoboto}
     ${fontWeightBold}
-  font-size: 16px;
+    font-size: 16px;
     letter-spacing: 1.25px;
     text-transform: uppercase;
 `;
@@ -53,7 +53,9 @@ export const FormItemLabel = styled.label`
 `;
 
 export const FormHeading = styled.p`
-    width: 50%;
+    ${fontFamilyRoboto}
+    ${fontWeightBold}
+    width: 80%;
     color: black;
     font-size: 15px;
 `;

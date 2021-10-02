@@ -42,11 +42,11 @@ const RegistraceUzivatele: FC<IRegistraceUzivatele> = ({}) => {
 
                                 <FormItem>
                                     <FormItemLabel>Heslo *</FormItemLabel>
-                                    <TextInput onChange={handleChange} onBlur={handleBlur} value={values.heslo} type="heslo" name="heslo" placeholder="heslo" />
+                                    <TextInput onChange={handleChange} onBlur={handleBlur} value={values.heslo} type="password" name="heslo" placeholder="Heslo" />
                                 </FormItem>
                                 <FormItem>
                                     <FormItemLabel>Potvrzeni hesla *</FormItemLabel>
-                                    <TextInput type="heslo" name="heslo" placeholder="Password" />
+                                    <TextInput type="password" name="heslo" placeholder="Heslo" />
                                 </FormItem>
                                 <PrimaryButton text="Zalozit" type="submit" />
                             </FormWrapper>
