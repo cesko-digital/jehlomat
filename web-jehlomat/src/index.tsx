@@ -11,7 +11,7 @@ const Organizace = lazy(() => import("./Organizace/Organizace"));
 const Profil = lazy(() => import("./Profil/Profil"));
 const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
-const Registrace = lazy(() => import("./Registrace/Registrace"));
+const Dekujeme = lazy(() => import("./Registrace/Dekujeme"));
 // **********************************************************************
 
 /**
@@ -26,8 +26,8 @@ ReactDOM.render(
       <Router>
         <Navigation />
         <Switch>
-          <Route path="/registrace" component={Registrace}>
-            <Registrace />
+          <Route path="/registrace/dekujeme" component={Dekujeme}>
+            <Dekujeme />
           </Route>
           <Route path="/profil" component={Profil}>
             <Profil />
