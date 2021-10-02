@@ -12,6 +12,7 @@ const Profil = lazy(() => import("./Profil/Profil"));
 const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
 const Dekujeme = lazy(() => import("./Registrace/Dekujeme"));
+const OvereniEmailu = lazy(() => import("./Registrace/OvereniEmailu"));
 // **********************************************************************
 
 /**
@@ -28,6 +29,9 @@ ReactDOM.render(
         <Switch>
           <Route path="/registrace/dekujeme" component={Dekujeme}>
             <Dekujeme />
+          </Route>
+          <Route path="/registrace/overeni-emailu" component={OvereniEmailu}>
+            <OvereniEmailu />
           </Route>
           <Route path="/profil" component={Profil}>
             <Profil />
