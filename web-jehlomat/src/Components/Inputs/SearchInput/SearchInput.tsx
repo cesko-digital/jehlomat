@@ -8,6 +8,8 @@ interface SearchInput extends InputHTMLAttributes<HTMLInputElement> {}
 
 const Layout = styled.div`
     position: relative;
+    max-width: 340px;
+    width: 100%;
 `;
 
 const IconWrapper = styled.label`
@@ -22,7 +24,6 @@ const IconWrapper = styled.label`
 const Input = styled.input`
     height: 36px;
     width: 100%;
-    max-width: 340px;
     padding: 0px 32px;
 
     border: 1px solid ${primaryLight};
