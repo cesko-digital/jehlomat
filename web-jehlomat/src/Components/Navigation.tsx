@@ -13,6 +13,9 @@ export default function Navigation() {
             <Link to="/organizace">Organizace</Link>
           </li>
           <li>
+            <Link to="/registrace/dekujeme">dekujeme</Link>
+          </li>
+          <li>
             <Link to="/nalezy">Nalezy</Link>
           </li>
           <li>
