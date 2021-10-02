@@ -1,6 +1,11 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, HashRouter, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  HashRouter,
+  Route,
+  Switch,
+} from "react-router-dom";
 import App from "./App/App";
 import Navigation from "./Components/Navigation/Navigation";
 
@@ -11,7 +16,8 @@ const Organizace = lazy(() => import("./Organizace/Organizace"));
 const Profil = lazy(() => import("./Profil/Profil"));
 const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
-const Dekujeme = lazy(() => import("./Registrace/Dekujeme"));
+const Dekujeme = lazy(() => import("./Dekujeme/Dekujeme"));
+const Registrace = lazy(() => import("./Registrace/Registrace"));
 // **********************************************************************
 
 /**
@@ -30,7 +36,7 @@ ReactDOM.render(
             path="/registrace"
             render={({ match: { url } }) => (
               <>
-                <Route path={`${url}`} component={Profil} exact />
+                <Route path={`${url}`} component={Registrace} exact />
                 <Route path={`${url}/dekujeme`} component={Dekujeme} />
               </>
             )}
