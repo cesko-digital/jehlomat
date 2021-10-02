@@ -1,170 +1,105 @@
 package main
 
-import api.syringes
+import api.users
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import model.Demolisher
-import model.Syringe
+import model.User
+import model.UserInfo
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
-val SYRINGE = Syringe(
-    0,
-    1,
-    "email@example.com",
-    photo = "",
-    count = 10,
-    "note",
-    Demolisher.NO,
-    "10.0,11.0",
-    demolished = false
+const val API_PATH = "/api/v1/jehlomat/users"
+
+val USER = User(
+    "email@example.org",
+    "passwordhash",
+    false
 )
 
-const val API_PATH = "/api/v1/jehlomat/syringe"
-
+val USER_INFO = UserInfo(
+    "email@example.org",
+    false
+)
 
 class ApplicationTest {
 
     @BeforeTest
     fun beforeEach() {
-        syringes.clear()
+        users.clear()
     }
 
     @Test
-    fun testGetSyringes() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all"){
-            syringes.add(SYRINGE)
+    fun testGetUser() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/email@example.org") {
+            users.add(USER)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
-                Json.encodeToString(listOf(SYRINGE)),
-                response.content?.replace(" ", "")?.replace("\n", ""))
+                """{
+  "email" : "email@example.org",
+  "verified" : false
+}""",
+                response.content
+            )
         }
     }
 
     @Test
-    fun testSyringesFilterByAll() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?email=email@example.com&from=1&to=1&demolisher=NO&gps_coordinates=10.0,11.0&demolished=false"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(
-                Json.encodeToString(listOf(SYRINGE)),
-                response.content?.replace(" ", "")?.replace("\n", ""))
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByGPSCoordinates() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?gps_coordinates=11.1,11.1"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByEmail() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?email=notfound@example.com"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByFrom() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?from=2"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByTo() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?to=0"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByDemolisher() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?demolisher=CITY_POLICE"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByDemolished() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/all?demolished=true"){
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testGetSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/0") {
-            syringes.add(SYRINGE)
-        }) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(
-                Json.encodeToString(SYRINGE),
-                response.content?.replace(" ", "")?.replace("\n", ""))
-        }
-    }
-
-    @Test
-    fun testGetSyringeNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/1")) {
+    fun testGetUserNotFound() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$API_PATH/not_exists_username")) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }
     }
 
     @Test
-    fun testPutSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/0") {
+    fun testPutUser() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+            users.add(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)))
+            setBody(Json.encodeToString(USER.copy(password = "new password")))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(listOf(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)), syringes)
+            assertEquals(USER.copy(password = "new password"), users[0])
         }
     }
 
     @Test
-    fun testDeleteSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Delete, "$API_PATH/0")) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(listOf<Syringe>(), syringes)
+    fun testPutChangingNotVerifiedUser() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+            users.add(USER)
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(USER))
+        }) {
+            assertEquals(HttpStatusCode.PreconditionFailed, response.status())
+            assertEquals("User is not verified yet", response.content)
         }
     }
 
     @Test
-    fun testPostSyringe() = withTestApplication(Application::module) {
+    fun testPostUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE))
+            setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals(listOf(SYRINGE), syringes)
+            assertEquals(USER, users[0])
+        }
+    }
+
+    @Test
+    fun testPostAlreadyExistingUser() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+            users.add(USER)
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(USER))
+        }) {
+            assertEquals(HttpStatusCode.Conflict, response.status())
         }
     }
 }
+

@@ -1,9 +1,6 @@
 package api
 
-import org.ktorm.schema.Table
-import org.ktorm.schema.int
-import org.ktorm.schema.long
-import org.ktorm.schema.varchar
+import org.ktorm.schema.*
 
 object DemolisherTable: Table<Nothing>("demolisher") {
     val type = varchar("type").primaryKey()
@@ -19,4 +16,10 @@ object SyringeTable: Table<Nothing>("syringes") {
     val note = varchar("note")
     val demolisherType = varchar("demolisher_type")
     val gps_coordinates = varchar("gps_coordinates")
+}
+
+object UserTable: Table<Nothing>("users") {
+    val email = text("email").primaryKey()
+    val password = text("password")
+    val verified = boolean("verified")
 }

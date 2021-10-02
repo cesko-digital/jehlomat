@@ -4,8 +4,8 @@ val ktormVersion: String = "3.4.1"
 plugins {
     application
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
     kotlin("plugin.serialization")
+    id("com.github.johnrengelman.shadow")
 }
 
 application {
@@ -13,8 +13,6 @@ application {
 }
 
 dependencies {
-    implementation(project(":common"))
-
     implementation(kotlin("stdlib"))
 
     // Ktor
@@ -22,7 +20,6 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
-//    implementation("com.google.maps:google-maps-services:$googleMapsServiceVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
@@ -41,7 +38,11 @@ dependencies {
 
     // Ktorm
     implementation("org.ktorm:ktorm-core:${ktormVersion}")
+    implementation("org.ktorm:ktorm-support-postgresql:${ktormVersion}")
+    implementation("postgresql:postgresql:9.0-801.jdbc4")
 
+    // Config
+    implementation("com.typesafe:config:1.4.0")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
