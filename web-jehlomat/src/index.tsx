@@ -11,8 +11,8 @@ const Organizace = lazy(() => import('./Organizace/Organizace'));
 const Profil = lazy(() => import('./Profil/Profil'));
 const NovyNalez = lazy(() => import('./NovyNalez/NovyNalez'));
 const Nalezy = lazy(() => import('./Nalezy/Nalezy'));
-const Dekujeme = lazy(() => import('./Registrace/Dekujeme'));
-const Registrace = lazy(() => import('./Registrace/Registrace'));
+const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
+const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
 // **********************************************************************
@@ -40,10 +40,10 @@ ReactDOM.render(
                         )}
                     />
                     <Route
-                        path="/registrace"
+                        path="/organizace"
                         render={({ match: { url } }) => (
                             <>
-                                <Route path={`${url}`} component={Registrace} exact />
+                                <Route path={`${url}/novy`} component={RegistraceOrganizace} exact />
                                 <Route path={`${url}/dekujeme`} component={Dekujeme} />
                             </>
                         )}
