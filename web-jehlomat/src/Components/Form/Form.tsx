@@ -23,7 +23,7 @@ export const FormItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 5;
+  margin: 0.2rem;
   text-align: flex-start;
   width: 100%;
   font-family: Roboto;
