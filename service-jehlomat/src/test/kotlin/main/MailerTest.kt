@@ -18,7 +18,7 @@ import services.Mailer
 
 val user = Organization(
     "TestOrg",
-    UserInfo("email@example.org", false),
+    UserInfo("bares.jakub@gmail.com", false),
     teams = listOf()
 )
 
