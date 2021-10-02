@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 interface SearchInput extends InputHTMLAttributes<HTMLInputElement> {}
 
 const Layout = styled.div`
-    width: 100%;
     position: relative;
 `;
 
@@ -21,7 +20,7 @@ const IconWrapper = styled.label`
 `;
 
 const Input = styled.input`
-    height: 32px;
+    height: 36px;
     width: 100%;
     max-width: 340px;
     padding: 0px 32px;
