@@ -60,7 +60,7 @@ const Mapa: FC<IMapa> = ({ userPosition }) => {
             center={position}
             zoom={DEFAULT_ZOOM_LEVEL}
             scrollWheelZoom={false}
-            style={{ width: '360px', height: '705px', zIndex: 1 }}
+            style={{ width: '360px', height: '575px', zIndex: 1 }}
             preferCanvas
             whenCreated={map => {
                 handleMapCenterChange(map, setMarkerPosition);
