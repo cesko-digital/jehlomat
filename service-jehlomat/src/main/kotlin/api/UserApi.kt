@@ -10,14 +10,10 @@ import model.User
 import model.UserInfo
 import model.toUser
 import model.toUserInfo
+import utils.isValidMail
 import java.util.function.Predicate.not
 
 val users = mutableListOf<User>()
-
-fun isValidMail(value: String): Boolean {
-    return "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})".toRegex().matches(value)
-}
-
 
 fun Route.userApi(): Route {
 
@@ -40,7 +36,7 @@ fun Route.userApi(): Route {
             //  what to do next here: hash password and store in DB
 
             when {
-                (!isValidMail(newUser.email)) -> {
+                (!newUser.email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
                 users.any { it.email == newUser.email } -> {
@@ -68,7 +64,7 @@ fun Route.userApi(): Route {
                 userToChange[0].verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                 }
-                (!isValidMail(userToChange[0].email)) -> {
+                (!userToChange[0].email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
                 else -> {
