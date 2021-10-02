@@ -46,6 +46,9 @@ dependencies {
 
     // Mock
     testImplementation("io.mockk:mockk:1.12.0")
+
+    //Mailjet
+    implementation("com.mailjet:mailjet-client:5.2.0")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

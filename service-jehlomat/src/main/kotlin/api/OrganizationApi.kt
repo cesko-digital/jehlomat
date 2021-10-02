@@ -6,12 +6,13 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
+import services.Mailer
 
 val organizations = mutableListOf<Organization>()
 
 
 fun Route.organizationApi(): Route {
-
+    val mailer = Mailer()
     return route("/") {
         get("/{email}") {
             // TODO: check if values satisfy condition
@@ -41,6 +42,7 @@ fun Route.organizationApi(): Route {
                 }
                 else -> {
                     organizations.add(organization)
+                    mailer.sendRegistrationConfirmationEmail(organization)
                     call.respond(HttpStatusCode.Created)
                 }
             }

@@ -6,15 +6,19 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.Demolisher
+import model.Organization
 import model.Syringe
 import service.DatabaseService
 
+import model.UserInfo
+import services.Mailer
 
 val syringes = mutableListOf<Syringe>()
 
 
 fun Route.syringeApi(database: DatabaseService): Route {
 
+    val mailer = Mailer()
     return route("/") {
         get("all") {
             val parameters = call.request.queryParameters
@@ -49,6 +53,15 @@ fun Route.syringeApi(database: DatabaseService): Route {
         }
 
         post {
+            val dummyOrganization  = Organization(
+                "TestOrg",
+                UserInfo("bares.jakub@gmail.com", false),
+                teams = listOf(),
+                verified = true
+            )
+            val dummyUser = UserInfo("bares.jakub@gmail.com", false)
+            mailer.sendSyringeFindingConfirmation(dummyUser)
+            mailer.sendSyringeFinding(dummyOrganization)
             database.insertSyringe(call.receive())
             call.respond(HttpStatusCode.Created)
         }

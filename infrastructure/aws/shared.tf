@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.14.7"
+  required_version = ">= 0.15.4"
 
   required_providers {
     aws = ">= 3.28.0"
@@ -22,6 +22,8 @@ provider "aws" {
 
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
+
+  enable_dns_hostnames = true
 
   tags = {
     Name = var.codename
@@ -48,6 +50,16 @@ resource "aws_subnet" "public" {
   }
 }
 
+resource aws_subnet secondary-private {
+  cidr_block        = "10.0.32.0/20"
+  vpc_id            = aws_vpc.vpc.id
+  availability_zone = "${var.aws-region}b"
+
+  tags = {
+    Name = "${var.codename}-secondary-private"
+  }
+}
+
 # ---------
 # Internet Gateway
 # ---------
@@ -67,9 +79,38 @@ resource "aws_eip" "nat-gateway-ip" {
   vpc = true
 }
 
-resource "aws_nat_gateway" "nat-gateway" {
-  subnet_id     = aws_subnet.public.id
+data "aws_ami" "nat-gateway" {
+  owners      = [
+    "amazon"
+  ]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = [
+      "amzn-ami-vpc-nat-*-x86_64-ebs"
+    ]
+  }
+}
+
+resource "aws_eip_association" "nat-gateway" {
+  instance_id   = aws_instance.nat-gateway.id
   allocation_id = aws_eip.nat-gateway-ip.id
+}
+
+resource "aws_instance" "nat-gateway" {
+  ami                     = data.aws_ami.nat-gateway.id
+  instance_type           = "t2.micro"
+  subnet_id               = aws_subnet.public.id
+  source_dest_check       = false
+  disable_api_termination = false
+  availability_zone       = "${var.aws-region}a"
+  vpc_security_group_ids  = [
+    aws_security_group.private-default-sg.id
+  ]
+
+  tags = {
+    Name = "NAT-${var.codename}"
+  }
 }
 
 # Routing table settings, we have 2 routing tables
@@ -94,8 +135,8 @@ resource "aws_route_table" "private-routes" {
   vpc_id = aws_vpc.vpc.id
 
   route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat-gateway.id
+    cidr_block  = "0.0.0.0/0"
+    instance_id = aws_instance.nat-gateway.id
   }
 
   tags = {
@@ -117,6 +158,39 @@ resource "aws_route_table_association" "public-subnet" {
 # Security Groups
 # -----------
 
+resource "aws_security_group" "public-gateway-sg" {
+  name        = "${var.codename}-public-sg"
+  description = "Security group for public gateway (pfSense)."
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [
+      "10.0.0.0/16"
+    ]
+  }
+
+  ingress {
+    from_port   = 1194
+    to_port     = 1194
+    protocol    = "udp"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+}
+
 resource "aws_security_group" "private-default-sg" {
   name        = "${var.codename}-private-default-sg"
   description = "Default, fully open SG for private network."
@@ -127,7 +201,8 @@ resource "aws_security_group" "private-default-sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [
-      "10.0.0.0/16"]
+      "10.0.0.0/16"
+    ]
   }
 
   egress {
@@ -135,7 +210,8 @@ resource "aws_security_group" "private-default-sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [
-      "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
 }
 

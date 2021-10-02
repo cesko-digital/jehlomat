@@ -8,6 +8,7 @@ import io.ktor.routing.*
 import model.User
 import model.toUserInfo
 import service.DatabaseService
+import utils.isValidMail
 
 val users = mutableListOf<User>()
 
@@ -28,9 +29,13 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
             val newUser = call.receive<User>()
 
             // TODO: check if values satisfy condition
+            // Throw-in question:
+            //  check values... e-mail for valid format?
+            //  what to do next here: hash password and store in DB
+
             when {
-                users.any { it.email == newUser.email } -> {
-                    call.respond(HttpStatusCode.Conflict)
+                (!newUser.email.isValidMail()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
                 users.any { it.email == newUser.email } -> {
                     call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
@@ -55,6 +60,9 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
                 }
                 userToChange[0].verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                }
+                (!userToChange[0].email.isValidMail()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
                 else -> {
                     users.removeIf { it.email == newUser.email }

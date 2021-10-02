@@ -12,3 +12,5 @@ class DefaultConfig: IConfig {
         return ConfigFactory.load("application.conf").resolve()
     }
 }
+
+// Test

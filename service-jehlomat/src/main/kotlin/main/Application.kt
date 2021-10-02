@@ -48,7 +48,19 @@ fun Application.module(testing: Boolean = false) {
     install(CallLogging)
 
     install(Koin) {
-        modules(helloAppModule)
+        modules(
+            if (isLocal()) {
+                listOf(
+                    localModule,
+                    helloAppModule
+                )
+            } else {
+                listOf(
+                    productionModule,
+                    helloAppModule
+                )
+            }
+        )
     }
 
     val service by inject<DatabaseService>()
@@ -62,6 +74,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi()
+        }
+        route("/api/v1/jehlomat/verification") {
+            verificationApi()
         }
         route("/api/v1/jehlomat/team") {
             teamApi()
