@@ -13,7 +13,8 @@ const NovyNalez = lazy(() => import('./NovyNalez/NovyNalez'));
 const Nalezy = lazy(() => import('./Nalezy/Nalezy'));
 const Dekujeme = lazy(() => import('./Registrace/Dekujeme'));
 const Registrace = lazy(() => import('./Registrace/Registrace'));
-const RegistraceUzivatel = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatel'));
+const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
+const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
 // **********************************************************************
 
 /**
@@ -28,9 +29,16 @@ ReactDOM.render(
             <HashRouter>
                 <Navigation />
                 <Switch>
-                    <Route path="/registraceUzivatele" component={RegistraceUzivatel}>
-                        <RegistraceUzivatel />
-                    </Route>
+                    <Route
+                        path="/uzivatel"
+                        render={({ match: { url } }) => (
+                            <>
+                                <Route path={`${url}`} component={SeznamUzivatelu} exact />
+                                <Route path={`${url}/novy`} component={RegistraceUzivatele} />
+                                <Route path={`${url}/upravit`} component={RegistraceUzivatele} />
+                            </>
+                        )}
+                    />
                     <Route
                         path="/registrace"
                         render={({ match: { url } }) => (
