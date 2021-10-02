@@ -5,6 +5,7 @@ import TextInput from "../Components/Inputs/TextInput/TextInput";
 import SecondaryButton from "../Components/Buttons/SecondaryButton/SecondaryButton";
 import { FormItemLabel, H4 } from "../Components/Utils/Typography";
 import { FormItem, FormWrapper, Wrapper } from "../Components/Form/Form";
+import PrimaryButton from "../Components/Buttons/PrimaryButton/PrimaryButton";
 
 interface IRegistrace {}
 
@@ -76,7 +77,7 @@ const Registrace: FC<IRegistrace> = ({}) => {
                   <FormItemLabel>Potvrzeni hesla *</FormItemLabel>
                   <TextInput type="heslo" name="heslo" placeholder="Password" />
                 </FormItem>
-                <SecondaryButton text="Zalozit" type="submit" />
+                <PrimaryButton text="Zalozit" type="submit" />
               </FormWrapper>
             </Form>
           );
