@@ -13,7 +13,7 @@ const Container = styled.div`
   align-items: center;
 `
 
-export default function Registrace() {
+export default function Dekujeme() {
   return (
     <Container>
       <h2>Teď už je to na nás</h2>
