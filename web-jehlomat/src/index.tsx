@@ -1,8 +1,8 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, HashRouter, Route, Switch } from "react-router-dom";
 import App from "./App/App";
-import Navigation from "./Components/Navigation";
+import Navigation from "./Components/Navigation/Navigation";
 
 /**
  * Lazy loading routes
@@ -24,15 +24,19 @@ const OvereniEmailu = lazy(() => import("./Registrace/OvereniEmailu"));
 ReactDOM.render(
   <React.StrictMode>
     <Suspense fallback={<div>Loading...</div>}>
-      <Router>
+      <HashRouter>
         <Navigation />
         <Switch>
-          <Route path="/registrace/dekujeme" component={Dekujeme}>
-            <Dekujeme />
-          </Route>
-          <Route path="/registrace/overeni-emailu" component={OvereniEmailu}>
-            <OvereniEmailu />
-          </Route>
+          <Route
+            path="/registrace"
+            render={({ match: { url } }) => (
+              <>
+                <Route path={`${url}`} component={Profil} exact />
+                <Route path={`${url}/dekujeme`} component={Dekujeme} />
+                <Route path={`${url}/overeni-emailu`} component={OvereniEmailu} />
+              </>
+            )}
+          />
           <Route path="/profil" component={Profil}>
             <Profil />
           </Route>
@@ -49,7 +53,7 @@ ReactDOM.render(
             <App />
           </Route>
         </Switch>
-      </Router>
+      </HashRouter>
     </Suspense>
   </React.StrictMode>,
   document.getElementById("root")
