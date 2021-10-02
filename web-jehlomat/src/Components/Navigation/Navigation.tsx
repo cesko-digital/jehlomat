@@ -12,7 +12,7 @@ const Navigation: FC = ({}) => {
     <s.LeftBar>
       <SecondaryNavigationButton route="/profile" selected={ location.pathname === "/profile"} type={NavigationButtonType.Profile}/>
       <SecondaryNavigationButton route="/nalezy" selected={ location.pathname === "/nalezy"} type={NavigationButtonType.SyringeList}/>
-      <SecondaryNavigationButton route="/organizace" selected={ location.pathname === "/organizace"} type={NavigationButtonType.Users}/>
+      <SecondaryNavigationButton route="/uzivatel" selected={ location.pathname === "/uzivatel"} type={NavigationButtonType.Users}/>
     </s.LeftBar>
     <s.PrimaryBar onClick={ () => history.push("/novy-nalez")}>
       <PrimaryNavigationButton />
