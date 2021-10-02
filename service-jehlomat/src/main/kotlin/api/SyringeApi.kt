@@ -53,7 +53,8 @@ fun Route.syringeApi(): Route {
             val dummyOrganization  = Organization(
                 "TestOrg",
                 UserInfo("bares.jakub@gmail.com", false),
-                teams = listOf()
+                teams = listOf(),
+                verified = true
             )
             val dummyUser = UserInfo("bares.jakub@gmail.com", false)
             mailer.sendSyringeFindingConfirmation(dummyUser)

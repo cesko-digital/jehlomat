@@ -11,7 +11,6 @@ import model.UserInfo
 import model.toUser
 import model.toUserInfo
 import utils.isValidMail
-import java.util.function.Predicate.not
 
 val users = mutableListOf<User>()
 
