@@ -2,12 +2,16 @@
 .idea
 out
 build
+dist
 *.iml
 *.ipr
 *.iws
 .historys
 .DS_Store
+
+# Terraform
 .terraform
 .terraform.lock.hcl
-.serverless
+*.tfvars
+
 node_modules

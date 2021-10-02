@@ -6,8 +6,13 @@ on:
     paths:
       - 'infrastructure/aws/**'
 env:
-  tf_version: '0.14.7'
+  tf_version: '0.15.4'
   tf_working_dir: 'infrastructure/aws'
+  TF_VAR_development-domain-certificate-arn: ${{ secrets.DEVELOPMENT_DOMAIN_CERTIFICATE_ARN }}
+  TF_VAR_development-public-domain: ${{ secrets.DEVELOPMENT_PUBLIC_DOMAIN }}
+  TF_VAR_development-frontend-bucket-name: ${{ secrets.DEVELOPMENT_FRONTEND_BUCKET_NAME }}
+  TF_VAR_database-username: ${{ secrets.DATABASE_USERNAME }}
+  TF_VAR_database-password: ${{ secrets.DATABASE_PASSWORD }}
 jobs:
   terraform:
     name: 'Terraform'

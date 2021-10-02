@@ -1,0 +1,32 @@
+name: 'Deploy development web-jehlomat to S3'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'web-jehlomat/**'
+env:
+  bucket: ${{ secrets.DEVELOPMENT_FRONTEND_BUCKET_NAME }}
+  cloudFrontDeploymentId: ${{ secrets.AWS_CLOUDFRONT_DEVELOPMENT_DEPLOYMENT_ID }}
+  name: 'web-jehlomat'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Build'
+        run: |
+          yarn install
+          yarn build
+        working-directory: ${{ env.name }}
+      - name: 'Deploy to AWS'
+        run: |
+          aws s3 sync --acl public-read --delete . s3://${{ env.bucket }}
+          aws cloudfront create-invalidation --distribution-id ${{ env.cloudFrontDeploymentId }} --paths "/*"
+        working-directory: ${{ env.name }}/dist
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'eu-central-1'
