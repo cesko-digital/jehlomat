@@ -7,7 +7,6 @@ import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
 import model.UserInfo
-import model.User
 import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
@@ -58,7 +57,8 @@ class Mailer() {
                     organization
                 )
             )
-        val response: MailjetResponse = client!!.post(request)
+        val response: MailjetResponse = client.post(request)
+
         System.out.println(response.getStatus())
         System.out.println(response.getData())
     }
@@ -74,7 +74,8 @@ class Mailer() {
                     user=user
                 )
             )
-        val response: MailjetResponse = client!!.post(request)
+        val response: MailjetResponse = client.post(request)
+
         System.out.println(response.getStatus())
         System.out.println(response.getData())
     }
