@@ -27,6 +27,7 @@ ReactDOM.render(
     <React.StrictMode>
         <Suspense fallback={<div>Loading...</div>}>
             <HashRouter>
+                {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
                 <Navigation />
                 <Switch>
                     <Route path="/registraceUzivatele" component={RegistraceUzivatel}>
