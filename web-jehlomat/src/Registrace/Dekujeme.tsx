@@ -29,6 +29,9 @@ const InfoText = styled.div`
 const SecondaryIcon = styled(FontAwesomeIcon)`
   color: ${tickColor};
 `;
+const Body = styled.div`
+  flex: 1;
+`
 
 export default function Dekujeme() {
   return (

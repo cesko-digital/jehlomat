@@ -10,11 +10,13 @@ export default function Navigation() {
             <Link to="/">Domů</Link>
           </li>
           <li>
-            <Link to="/registrace/dekujeme">Děkujeme</Link>
-          </li>
-          <li>
             <Link to="/organizace">Organizace</Link>
           </li>
+          <ul>
+            <li>
+              <Link to="/organizace/dekujeme">Děkujeme</Link>
+            </li>
+          </ul>
           <li>
             <Link to="/registraceUzivatele">Registrace uzivatele</Link>
           </li>
@@ -30,6 +32,11 @@ export default function Navigation() {
           <li>
             <Link to="/registrace">Registrace</Link>
           </li>
+          <ul>
+            <li>
+              <Link to="/registrace-uzivatele/overeni-emailu">Ověření emailu</Link>
+            </li>
+          </ul>
         </ul>
       </nav>
     </div>
