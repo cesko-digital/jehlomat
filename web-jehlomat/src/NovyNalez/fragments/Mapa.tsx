@@ -9,7 +9,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 // @ts-ignore
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
+
 let DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -60,7 +60,7 @@ const Mapa: FC<IMapa> = ({ userPosition }) => {
             center={position}
             zoom={DEFAULT_ZOOM_LEVEL}
             scrollWheelZoom={false}
-            style={{ width: '360px', height: '575px', zIndex: 1 }}
+            style={{ width: '360px', height: '560px', zIndex: 1 }}
             preferCanvas
             whenCreated={map => {
                 handleMapCenterChange(map, setMarkerPosition);
