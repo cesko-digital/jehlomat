@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 export default function Navigation() {
   return (
     <div>
@@ -17,7 +16,7 @@ export default function Navigation() {
             <Link to="/organizace">Organizace</Link>
           </li>
           <li>
-            <Link to="/registrace/dekujeme">Děkujeme</Link>
+            <Link to="/registraceUzivatele">Registrace uzivatele</Link>
           </li>
           <li>
             <Link to="/nalezy">Nalezy</Link>

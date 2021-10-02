@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import TextInput from '../Components/Inputs/TextInput/TextInput';
 import SecondaryButton from '../Components/Buttons/SecondaryButton/SecondaryButton';
-import { FormHeading, FormItemLabel } from '../Components/Utils/Typography';
+import { FormHeading, FormItemLabel, H1, H4 } from '../Components/Utils/Typography';
 import { FormItem, FormWrapper, Wrapper } from '../Components/Form/Form';
 import PrimaryButton from '../Components/Buttons/PrimaryButton/PrimaryButton';
 
@@ -15,10 +15,10 @@ interface Values {
     jmeno: string;
 }
 
-const Registrace: FC<IRegistrace> = ({}) => {
+const RegistraceUzivatel: FC<IRegistrace> = ({}) => {
     return (
         <Wrapper>
-            <FormHeading>Admin organizace</FormHeading>
+            <FormHeading>Pracovnik Organizace </FormHeading>
             <Formik
                 initialValues={{ email: '', heslo: '', jmeno: '' }}
                 onSubmit={(values: Values, { setSubmitting }: FormikHelpers<Values>) => {
@@ -29,7 +29,7 @@ const Registrace: FC<IRegistrace> = ({}) => {
                     return (
                         <FormWrapper onSubmit={handleSubmit}>
                             <FormItem>
-                                <FormItemLabel>Email organizace</FormItemLabel>
+                                <FormItemLabel>Email Pracovnika</FormItemLabel>
                                 <TextInput onChange={handleChange} onBlur={handleBlur} value={values.email} type="text" name="email" placeholder="Email" />
                             </FormItem>
 
@@ -55,4 +55,4 @@ const Registrace: FC<IRegistrace> = ({}) => {
     );
 };
 
-export default Registrace;
+export default RegistraceUzivatel;
