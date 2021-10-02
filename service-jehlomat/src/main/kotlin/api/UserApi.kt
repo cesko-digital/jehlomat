@@ -6,16 +6,13 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.User
-import model.UserInfo
-import model.toUser
 import model.toUserInfo
-import org.ktorm.database.Database
 import service.DatabaseService
 
 val users = mutableListOf<User>()
 
 
-fun Route.userApi(databaseInstance: Database): Route {
+fun Route.userApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
         get("/{email}") {
@@ -40,7 +37,7 @@ fun Route.userApi(databaseInstance: Database): Route {
                 }
                 else -> {
                     users.add(newUser.copy(verified = false))
-                    DatabaseService.insertUser(databaseInstance, newUser)
+                    databaseInstance.insertUser(newUser)
                     call.respond(HttpStatusCode.Created)
                 }
             }

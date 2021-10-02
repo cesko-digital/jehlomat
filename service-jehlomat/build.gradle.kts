@@ -43,6 +43,9 @@ dependencies {
 
     // Config
     implementation("com.typesafe:config:1.4.0")
+
+    // Mock
+    testImplementation("io.mockk:mockk:1.12.0")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

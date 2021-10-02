@@ -12,26 +12,13 @@ import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
-import org.ktorm.database.Database
-import org.ktorm.dsl.insertAndGenerateKey
-
-import org.ktorm.dsl.from
-import org.ktorm.dsl.select
 import service.DatabaseService
-//import service.DatabaseServiceImpl
+import service.DatabaseServiceImpl
 
 
-interface HelloService {
-    fun sayHello(): String
+val helloAppModule = module {
+    single<DatabaseService> { DatabaseServiceImpl() }
 }
-
-class HelloServiceImpl() : HelloService {
-    override fun sayHello() = "Hello !"
-}
-
-//val helloAppModule = module {
-//    single<HelloService> { HelloServiceImpl() } // get() Will resolve HelloRepository
-//}
 
 
 val syringes = mutableListOf<Syringe>()
@@ -61,38 +48,17 @@ fun Application.module(testing: Boolean = false) {
     install(CallLogging)
 
     install(Koin) {
-        modules(
-            if (isLocal()) {
-                listOf(
-                    localModule
-                )
-            } else {
-                listOf(
-                    productionModule
-                )
-            }
-        )
+        modules(helloAppModule)
     }
 
-    val host = "localhost"
-    val port = "5432"
-    val database = "postgres"
-    val user = "jehlomat"
-    val password = "jehlomat"
+    val service by inject<DatabaseService>()
 
     routing {
-        val databaseInstance = DatabaseService.getInstance(
-            host=host,
-            port=port,
-            database=database,
-            user=user,
-            password=password
-        )
         route("/api/v1/jehlomat/syringe") {
-            syringeApi(databaseInstance)
+            syringeApi(service)
         }
         route("/api/v1/jehlomat/users") {
-            userApi(databaseInstance)
+            userApi(service)
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi()

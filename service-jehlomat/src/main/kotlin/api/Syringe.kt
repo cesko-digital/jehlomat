@@ -7,14 +7,13 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.Demolisher
 import model.Syringe
-import org.ktorm.database.Database
 import service.DatabaseService
 
 
 val syringes = mutableListOf<Syringe>()
 
 
-fun Route.syringeApi(databaseInstance: Database): Route {
+fun Route.syringeApi(database: DatabaseService): Route {
 
     return route("/") {
         get("all") {
@@ -50,7 +49,7 @@ fun Route.syringeApi(databaseInstance: Database): Route {
         }
 
         post {
-            DatabaseService.insertSyringe(databaseInstance, call.receive())
+            database.insertSyringe(call.receive())
             call.respond(HttpStatusCode.Created)
         }
 
