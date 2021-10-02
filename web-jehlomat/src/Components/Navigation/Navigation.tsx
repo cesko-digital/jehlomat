@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 export default function Navigation() {
   return (
     <div>
@@ -8,6 +9,9 @@ export default function Navigation() {
         <ul>
           <li>
             <Link to="/">Domů</Link>
+          </li>
+          <li>
+            <Link to="/registrace/dekujeme">Děkujeme</Link>
           </li>
           <li>
             <Link to="/organizace">Organizace</Link>

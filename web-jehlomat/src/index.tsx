@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, HashRouter, Route, Switch } from "react-router-dom";
 import App from "./App/App";
-import Navigation from "./Components/Navigation";
+import Navigation from "./Components/Navigation/Navigation";
 
 /**
  * Lazy loading routes

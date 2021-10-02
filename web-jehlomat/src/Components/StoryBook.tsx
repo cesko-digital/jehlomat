@@ -15,8 +15,8 @@ const Layout = styled.div`
 const StoryBook: FC<StoryBook> = ({}) => {
   return(
       <Layout>
-          <PrimaryButton text="Primary" />
-          <SecondaryButton text="Secondary" />
+          <PrimaryButton onClick={e => alert("PrimaryButton")} text="Primary" />
+          <SecondaryButton onClick={e => alert("SecondaryButton")} text="Secondary" />
           <TextInput onChange={e => console.log(e.target.value)}/>
       </Layout>
   );
