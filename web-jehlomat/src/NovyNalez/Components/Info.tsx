@@ -1,9 +1,11 @@
+import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap, faCheck, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { primaryDark, white } from '../../Components/Utils/Colors';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
+import Navigation from '../../Components/Navigation/Navigation';
+import TitleBar from '../../Components/Navigation/TitleBar';
+import { primaryDark, white } from '../../Components/Utils/Colors';
 import { STEPS } from '../NovyNalez';
 
 interface iInfo {
@@ -61,6 +63,7 @@ const MutedText = styled.p`
 const Info: FC<iInfo> = ({ handleStepChange }) => {
     return (
         <Container>
+            <TitleBar>Zadávaní nálezu</TitleBar>
             <Card backgroundColor="#BFE3E0">
                 <Icon>
                     <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
@@ -85,6 +88,7 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
             <Card backgroundColor="#EEF8F7">
                 <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
             </Card>
+            <Navigation></Navigation>
         </Container>
     );
 };
