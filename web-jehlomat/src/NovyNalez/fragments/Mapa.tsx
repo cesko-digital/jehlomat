@@ -1,6 +1,14 @@
 import L, { LatLngExpression } from "leaflet";
-import { FC, useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { FC, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  MapConsumer,
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from "./constants";
 
@@ -27,15 +35,34 @@ interface IMapa {
 const Mapa: FC<IMapa> = ({ lat, long }) => {
   const [position, setPosition] = useState<LatLngExpression>(DEFAULT_POSITION);
 
+  const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(
+    null
+  );
+
   /**
    * Sets new position after change of Latitude and Longtitude after getting
    * users geolocation from BrowserAPI
    */
+
   useEffect(() => {
     if (lat && Number(lat) && long && Number(long)) {
       setPosition([lat, long]);
     }
   }, [lat, long]);
+
+  function MapCustomEvents() {
+    const map = useMapEvents({
+      drag: () => handleMapCenterChange(map, setMarkerPosition),
+    });
+
+    return null;
+  }
+
+  function handleMapCenterChange(map: L.Map, setMarkerPosition: any) {
+    const { lat, lng } = map.getCenter();
+    console.log("Map center:", map.getCenter());
+    setMarkerPosition([lat, lng]);
+  }
 
   return (
     <MapContainer
@@ -43,16 +70,19 @@ const Mapa: FC<IMapa> = ({ lat, long }) => {
       zoom={DEFAULT_ZOOM_LEVEL}
       scrollWheelZoom={false}
       style={{ width: "800px", height: "600px" }}
+      preferCanvas
+      // get access to the map instance
+      whenCreated={(map) => {
+        handleMapCenterChange(map, setMarkerPosition);
+      }}
     >
+      <MapCustomEvents />
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={position}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
+
+      {markerPosition && <Marker position={markerPosition} />}
     </MapContainer>
   );
 };
