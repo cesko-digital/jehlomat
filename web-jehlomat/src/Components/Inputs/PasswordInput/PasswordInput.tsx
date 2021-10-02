@@ -1,32 +1,18 @@
 import { FC, InputHTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
-import { primaryDark, primaryLight } from '../../Utils/Colors';
+import { primaryDark, primaryLight, white } from '../../Utils/Colors';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface PasswordInput extends InputHTMLAttributes<HTMLInputElement> {}
 
-const Layout = styled.div`
-    position: relative;
-    width: 100%;
-`;
-
-const IconWrapper = styled.button`
-    background-color: white;
-    border: 0;
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: ${primaryDark};
-`;
+const Container = styled.div``;
 
 const Input = styled.input`
     height: 64px;
     width: 100%;
     max-width: 340px;
-    padding: 0px 40px;
-    width: 100%;
+    padding: 0px 15px;
 
     border: 1px solid ${primaryDark};
     box-sizing: border-box;
@@ -37,15 +23,24 @@ const Input = styled.input`
     }
 `;
 
+const IconWrapper = styled.button`
+    flex: 0 0;
+    background-color: ${white};
+    border: none;
+    position: absolute;
+    top: 38%;
+    right: 16%;
+`;
+
 const PasswordInput: FC<PasswordInput> = props => {
     const [show, setShow] = useState<boolean>(false);
     return (
-        <Layout>
+        <Container>
+            <Input type={show ? 'text' : 'password'} {...props} />
             <IconWrapper onClick={() => setShow(!show)}>
                 <FontAwesomeIcon icon={show ? faEye : faEyeSlash} />
             </IconWrapper>
-            <Input type={show ? 'text' : 'password'} {...props} />
-        </Layout>
+        </Container>
     );
 };
 

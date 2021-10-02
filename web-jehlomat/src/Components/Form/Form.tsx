@@ -23,4 +23,12 @@ export const FormItem = styled.div`
     width: 80%;
     font-family: Roboto;
     margin: 10px;
+    @media (min-width: 420px) {
+        align-items: center;
+        width: 50%;
+    }
+    @media (min-width: 700px) {
+        align-items: center;
+        width: 340px;
+    }
 `;

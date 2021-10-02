@@ -50,6 +50,9 @@ export const FormItemLabel = styled.label`
     letter-spacing: 1.25px;
     text-transform: uppercase;
     color: grey;
+    @media (min-width: 420px) {
+        align-self: flex-start;
+    }
 `;
 
 export const FormHeading = styled.p`
