@@ -7,7 +7,7 @@ import Navigation from "./Components/Navigation/Navigation";
 /**
  * Lazy loading routes
  */
-const Organizace = lazy(() => import("./Organizace/Organizace"));
+const Organizace = lazy(() => imort("./Organizace/Organizace"));
 const Profil = lazy(() => import("./Profil/Profil"));
 const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
