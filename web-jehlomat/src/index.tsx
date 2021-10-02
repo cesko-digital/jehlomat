@@ -18,7 +18,7 @@ const NovyNalez = lazy(() => import("./NovyNalez/NovyNalez"));
 const Nalezy = lazy(() => import("./Nalezy/Nalezy"));
 const Dekujeme = lazy(() => import("./Registrace/Dekujeme"));
 const Registrace = lazy(() => import("./Registrace/Registrace"));
-const OvereniEmailu = lazy(() => import("./Registrace/OvereniEmailu"));
+const OvereniEmailu = lazy(() => import("./RegistraceUzivatele/OvereniEmailu"));
 // **********************************************************************
 
 /**
