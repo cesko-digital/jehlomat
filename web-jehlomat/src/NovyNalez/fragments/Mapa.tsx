@@ -1,38 +1,26 @@
 import L, { LatLngExpression } from "leaflet";
-import { FC, SetStateAction, useEffect, useRef, useState } from "react";
-import {
-  MapConsumer,
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
-
+import { FC, useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from "./constants";
 
-// Leaflet hack
-import "leaflet/dist/leaflet.css";
+// Leaflet hack to make it works
 // @ts-ignore
 import icon from "leaflet/dist/images/marker-icon.png";
 // @ts-ignore
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
+import "leaflet/dist/leaflet.css";
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
 });
-
 L.Marker.prototype.options.icon = DefaultIcon;
 // ------------
 
 interface IMapa {
-  lat?: number;
-  long?: number;
+  userPosition: LatLngExpression | null;
 }
 
-const Mapa: FC<IMapa> = ({ lat, long }) => {
+const Mapa: FC<IMapa> = ({ userPosition }) => {
   const [position, setPosition] = useState<LatLngExpression>(DEFAULT_POSITION);
 
   const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(
@@ -40,15 +28,18 @@ const Mapa: FC<IMapa> = ({ lat, long }) => {
   );
 
   /**
-   * Sets new position after change of Latitude and Longtitude after getting
-   * users geolocation from BrowserAPI
+   * Mělo by nastavit novou pozici, kterou získá z prohlížeče.
+   * Pozici nastaví, ale props mapy jsou immutable, takže se
+   * lokace do mapy nepropíše.
+   *
+   * Nepodařilo se mi aplikovat nějaký workaround.
    */
-
   useEffect(() => {
-    if (lat && Number(lat) && long && Number(long)) {
-      setPosition([lat, long]);
+    if (userPosition) {
+      console.log("User position changed:", userPosition);
+      setPosition(userPosition);
     }
-  }, [lat, long]);
+  }, [userPosition]);
 
   function MapCustomEvents() {
     const map = useMapEvents({
@@ -69,9 +60,8 @@ const Mapa: FC<IMapa> = ({ lat, long }) => {
       center={position}
       zoom={DEFAULT_ZOOM_LEVEL}
       scrollWheelZoom={false}
-      style={{ width: "800px", height: "600px" }}
+      style={{ width: "800px", height: "600px", zIndex: 5 }}
       preferCanvas
-      // get access to the map instance
       whenCreated={(map) => {
         handleMapCenterChange(map, setMarkerPosition);
       }}

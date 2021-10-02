@@ -1,33 +1,44 @@
 import { FC, Fragment, useEffect, useState } from "react";
 import ZapnoutPolohu from "./fragments/ZapnoutPolohu";
 import Mapa from "./fragments/Mapa";
-
-function getUsersGeolocation() {
-  navigator.geolocation.getCurrentPosition(
-    (position) => console.log(position),
-    (positionError) => console.log(positionError)
-  );
-}
+import { LatLngExpression } from "leaflet";
 
 interface IZadatNalezMapa {}
 
 const ZadatNalezMapa: FC<IZadatNalezMapa> = () => {
-  const [geoAvailible, setGeoAvailible] = useState<boolean | null>(null);
+  const [modalVisible, setModalVisible] = useState<boolean | null>(null);
+  const [userPosition, setUserPosition] = useState<LatLngExpression | null>(
+    null
+  );
+
   useEffect(() => {
     if ("geolocation" in navigator) {
-      setGeoAvailible(true);
-      console.log("Available");
-      // getUsersGeolocation();
+      setModalVisible(true);
     } else {
-      setGeoAvailible(false);
-      console.log("Not Available");
+      setModalVisible(false);
     }
   }, []);
+
+  const handleAllowGeolocation = (lat: number, lng: number): void => {
+    setModalVisible(false);
+
+    // TO-DO: Nefunguje to správně, mapa se nerefreshne
+    //
+    // setUserPosition([lat, lng]);
+  };
+  const handleDenyGeolocation = () => {
+    setModalVisible(false);
+  };
+
   return (
     <Fragment>
       <div>
-        <ZapnoutPolohu />
-        <Mapa />
+        <ZapnoutPolohu
+          visible={modalVisible!}
+          handleAllowGeolocation={handleAllowGeolocation}
+          handleDenyGeolocation={handleDenyGeolocation}
+        />
+        <Mapa userPosition={userPosition} />
       </div>
     </Fragment>
   );
