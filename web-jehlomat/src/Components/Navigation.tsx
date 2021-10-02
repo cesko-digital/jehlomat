@@ -10,13 +10,10 @@ export default function Navigation() {
             <Link to="/">Domů</Link>
           </li>
           <li>
-            <Link to="/registrace/dekujeme">Děkujeme</Link>
-          </li>
-          <li>
             <Link to="/organizace">Organizace</Link>
           </li>
           <li>
-            <Link to="/registrace/dekujeme">dekujeme</Link>
+            <Link to="/registrace/dekujeme">Děkujeme</Link>
           </li>
           <li>
             <Link to="/nalezy">Nalezy</Link>

@@ -6,7 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 
-import { primary as bgColor, white as textColor } from '../Components/Utils/Colors' 
+import { 
+  primary as bgColor, 
+  secondary as tickColor,
+  white as textColor 
+} from '../Components/Utils/Colors' 
 import SecondaryButton from '../Components/Buttons/SecondaryButton/SecondaryButton';
 
 const Container = styled.div`
@@ -24,12 +28,15 @@ const InfoText = styled.div`
   display: flex;
   text-align: center;
 `
+const SecondaryIcon = styled(FontAwesomeIcon)`
+  color: ${tickColor};
+`
 
 export default function Dekujeme() {
   return (
     <Container>
       <h2>Teď už je to na nás</h2>
-      <FontAwesomeIcon icon={faCheckCircle} size="3x" />
+      <SecondaryIcon icon={faCheckCircle} size="3x" />
       <InfoText>Vaši registraci jsme přijali, po schválení vám přijde email
         s přihlašovacími údaji.</InfoText>
       <Link to="/">
