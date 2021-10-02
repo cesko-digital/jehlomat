@@ -1,13 +1,13 @@
-import { ButtonHTMLAttributes, FC } from "react";
-import styled from "styled-components";
-import {primary, white} from '../../Utils/Colors'
+import { ButtonHTMLAttributes, FC } from 'react';
+import styled from 'styled-components';
+import { primary, white } from '../../Utils/Colors';
 
 interface AddButton extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const Button = styled.button`
-    position:relative;
-    display:inline-block;
-    vertical-align:middle;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
 
     height: 48px;
     width: 48px;
@@ -20,7 +20,8 @@ const Button = styled.button`
 `;
 
 const Plus = styled.div`
-    :before,:after {
+    :before,
+    :after {
         content: '';
         position: absolute;
         top: 0;
@@ -29,20 +30,22 @@ const Plus = styled.div`
         bottom: 0;
         background: ${primary};
     }
-    :before{
+    :before {
         width: 4px;
         margin: 8px auto;
     }
-    :after{
+    :after {
         margin: auto 8px;
         height: 4px;
     }
-`
+`;
 
-const AddButton: FC<AddButton> =  ({ ...props }) => {
-  return (
-    <Button {...props}><Plus/></Button>
-  );
+const AddButton: FC<AddButton> = ({ ...props }) => {
+    return (
+        <Button {...props}>
+            <Plus />
+        </Button>
+    );
 };
 
 export default AddButton;
