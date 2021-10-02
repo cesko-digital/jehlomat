@@ -32,16 +32,12 @@ const SecondaryIcon = styled(FontAwesomeIcon)`
   color: ${tickColor};
 `
 
-interface OvereniEmailu {
-  email: String;
-}
-
-export default function OvereniEmailu({ email }: OvereniEmailu) {
+export default function OvereniEmailu() {
   return (
     <Container>
       <h2>Ověření emailové adresy</h2>
       <SecondaryIcon icon={faEnvelope} size="3x" />
-      <InfoText>Zaslali jsme vám ověřovací email na adresu {email}. 
+      <InfoText>Zaslali jsme vám ověřovací email na adresu TBD. 
         Pro dokončení registrace klikněte na link v e-mailu.</InfoText>
       <Link to="/">
         <SecondaryButton text="Zpět na přihlášení" />
