@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import Info from './Components/Info';
+import NahledNalezu from './Components/NahledNalezu';
 import Potvrzeni from './Components/Potvrzeni';
 import ZadatNalezMapa from './Components/ZadatNalezMapa';
 import ZadavaniNalezu from './Components/ZadavaniNalezu';
@@ -11,6 +12,7 @@ export enum STEPS {
     Mapa,
     Info,
     Potvrzeni,
+    Nahled,
 }
 
 const NovyNalez: FC<INovyNalez> = ({}) => {
@@ -25,6 +27,8 @@ const NovyNalez: FC<INovyNalez> = ({}) => {
             return <ZadatNalezMapa />;
         case STEPS.Info:
             return <ZadavaniNalezu />;
+        case STEPS.Nahled:
+            return <NahledNalezu />;
         case STEPS.Potvrzeni:
             return <Potvrzeni />;
         default:
