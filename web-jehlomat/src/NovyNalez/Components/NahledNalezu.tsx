@@ -17,14 +17,14 @@ const Container = styled.div`
     justify-content: center;
     text-align: center;
     background-color: ${white};
-    /* padding: 1rem; */
 `;
 
-const Link = styled.a`
-    color: ${primary};
-    text-size: 18px;
-    margin: 1rem 0rem;
-    text-decoration: none;
+const ButtonContainer = styled.div`
+    margin: auto;
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    margin-top: 18px;
 `;
 
 interface INahledNalezu {
@@ -60,8 +60,10 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
                     <TextInput type="text" readOnly value={info} placeholder="Nezadali jste poznámky" />
                 </FormItem>
             </FormWrapper>
-            <PrimaryButton text="Uložit" onClick={onSaveClick} />
-            <TextButton text="Editovat nález" onClick={onEditClick} />
+            <ButtonContainer>
+                <TextButton text="Editovat nález" onClick={onEditClick} />
+                <PrimaryButton text="Uložit" onClick={onSaveClick} />
+            </ButtonContainer>
         </Container>
     );
 };
