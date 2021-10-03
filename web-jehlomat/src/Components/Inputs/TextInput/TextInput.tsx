@@ -13,6 +13,7 @@ const Input = styled.input`
     border: 1px solid ${primaryDark};
     box-sizing: border-box;
     border-radius: 5px;
+    background-color: white;
 
     :disabled {
         border: 1px solid rgba(0, 0, 0, 0.15);
@@ -22,7 +23,8 @@ const Input = styled.input`
 
     :read-only {
         user-select: none;
-        height: 48px;
+        height: 54px;
+        background-color: rgba(0, 0, 0, 0.03);
     }
 `;
 

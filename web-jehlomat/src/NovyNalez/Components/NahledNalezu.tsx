@@ -44,7 +44,7 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet jehel</FormItemLabel>
-                    <TextInput type="number" readOnly value={count} placeholder="Nezadali jste počet" />
+                    <TextInput type="number" readOnly value={count} placeholder="Počet nebyl zadán" />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Místo nálezu</FormItemLabel>
@@ -53,11 +53,11 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
                 <TextButton text="Zobrazit a upravit na mapě" onClick={onLocationChangeClick} />
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                    <TextInput type="date" readOnly value={datetime} placeholder="Nezadali jste datum" />
+                    <TextInput type="date" readOnly value={datetime} placeholder="Datum nebylo zadáno" />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Poznámka k nálezu</FormItemLabel>
-                    <TextInput type="text" readOnly value={info} placeholder="Nezadali jste poznámky" />
+                    <TextInput type="text" readOnly value={info} placeholder="Poznámky nebyly zadány" />
                 </FormItem>
             </FormWrapper>
             <ButtonContainer>
