@@ -6,6 +6,8 @@ import { FormItemLabel } from '../../Components/Utils/Typography';
 import { FormWrapper, FormItem } from '../../Components/Form/Form';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TitleBar from '../../Components/Navigation/TitleBar';
+import { Handler } from 'leaflet';
+import { INovaJehla } from '../NovyNalez';
 
 const Container = styled.div`
     display: flex;
@@ -14,11 +16,15 @@ const Container = styled.div`
     justify-content: center;
     text-align: center;
     background-color: ${white};
-    padding: 1rem;
 `;
-interface IZadavaniNalezu {}
+interface IZadavaniNalezu {
+    onInputChange: (key: string, value: string) => void;
+    onSumbit: () => void;
+    syringeInfo: INovaJehla;
+}
 
-const ZadavaniNalezu: FC<IZadavaniNalezu> = () => {
+const ZadavaniNalezu: FC<IZadavaniNalezu> = ({ syringeInfo, onInputChange, onSumbit }) => {
+    const { lat, lng, info, datetime, count } = syringeInfo;
     return (
         <Container>
             <TitleBar>
@@ -27,22 +33,24 @@ const ZadavaniNalezu: FC<IZadavaniNalezu> = () => {
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet jehel</FormItemLabel>
-                    <TextInput type="number" placeholder="Zadejte počet stříkaček" />
+                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                    <TextInput type="date" />
+                    <TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Poznámky</FormItemLabel>
-                    <TextInput type="text" />
+                    <TextInput type="text" value={info} placeholder="Rozšiřující informace" onChange={e => onInputChange('info', e.target.value)} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Foto z místa nálezu</FormItemLabel>
-                    <TextInput type="text" />
+                    <TextInput type="text" disabled placeholder="Tuto funkci brzy zpřístupníme" />
+                </FormItem>
+                <FormItem>
+                    <PrimaryButton text="Dokončit" onClick={onSumbit} />
                 </FormItem>
             </FormWrapper>
-            <PrimaryButton text="Dokončit" />
         </Container>
     );
 };

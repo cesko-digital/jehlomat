@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.section`
-    padding: 4em;
+    /* padding: 4em; */
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -18,10 +18,9 @@ export const FormWrapper = styled.form`
 export const FormItem = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: baseline;
-    justify-content: center;
-    text-align: flex-start;
-    width: 50%;
+    align-items: center;
+    justify-content: baseline;
+    width: 90%;
     font-family: Roboto;
-    margin: 10px;
+    margin: 12px;
 `;

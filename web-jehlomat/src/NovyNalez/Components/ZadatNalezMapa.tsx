@@ -6,9 +6,10 @@ import { INovaJehla, STEPS } from '../NovyNalez';
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: STEPS, newInfo?: Partial<INovaJehla>) => void;
+    userSelectedLocation: [number | undefined, number | undefined];
 }
 
-const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange }) => {
+const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
     const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
 
@@ -16,7 +17,9 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange }) => {
     // toto povolení vydrží a podle toho možná uložit cookie?
     // Podle cookie potom řešit, zda se má modal vůbec ukázat?
     useEffect(() => {
-        if ('geolocation' in navigator) {
+        if (userSelectedLocation[0] != undefined && userSelectedLocation[1] != undefined) {
+            setUserPosition(userSelectedLocation as LatLngExpression);
+        } else if ('geolocation' in navigator && userSelectedLocation[0] == undefined && userSelectedLocation[1] == undefined) {
             setModalVisible(true);
         } else {
             setModalVisible(false);
@@ -25,9 +28,6 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange }) => {
 
     const handleAllowGeolocation = (lat: number, lng: number): void => {
         setModalVisible(false);
-
-        // TO-DO: Nefunguje to správně, mapa se nerefreshne
-        //
         setUserPosition([lat, lng]);
     };
     const handleDenyGeolocation = () => {
