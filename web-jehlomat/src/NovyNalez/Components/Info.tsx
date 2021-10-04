@@ -1,20 +1,22 @@
-import {FC} from 'react'
-import styled from 'styled-components'
+import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap, faCheck, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { primaryDark, white } from '../../Components/Utils/Colors'
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
-import TitleBar from '../../Components/Navigation/TitleBar';
+import { FC } from 'react';
+import styled from 'styled-components';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import Navigation from '../../Components/Navigation/Navigation';
+import TitleBar from '../../Components/Navigation/TitleBar';
+import { primaryDark, white } from '../../Components/Utils/Colors';
+import { STEPS } from '../NovyNalez';
 
 interface iInfo {
-};
+    handleStepChange: (newStep: STEPS) => void;
+}
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
-`
+`;
 interface iCard {
     backgroundColor: string;
 }
@@ -27,7 +29,7 @@ const Card = styled.div<iCard>`
     background: ${props => props.backgroundColor};
     padding: 1rem 0rem;
     flex-grow: 1;
-`
+`;
 
 const Icon = styled.div`
     background-color: ${white};
@@ -39,7 +41,7 @@ const Icon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-`
+`;
 
 const Title = styled.h6`
     text-align: center;
@@ -47,60 +49,48 @@ const Title = styled.h6`
     line-height: 18.75px;
     color: ${primaryDark};
     margin: 0.5rem 0;
-`
+`;
 
 const MutedText = styled.p`
     text-align: center;
-    color: #898A8D;
+    color: #898a8d;
     font-size: 14px;
     font-weight: 400;
     line-height: 16.4px;
     margin: 0;
-`
+`;
 
-const Info:FC<iInfo> = () => {
+const Info: FC<iInfo> = ({ handleStepChange }) => {
     return (
         <Container>
             <TitleBar>Zadávaní nálezu</TitleBar>
             <Card backgroundColor="#BFE3E0">
                 <Icon>
-                <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark}/>
+                    <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
                 </Icon>
-                <Title>
-                    Přidat do mapy
-                </Title>
-                <MutedText>
-                    Nejprve označte místo nálezu do mapy
-                </MutedText>
+                <Title>Přidat do mapy</Title>
+                <MutedText>Nejprve označte místo nálezu do mapy</MutedText>
             </Card>
             <Card backgroundColor="#CDEAE7">
                 <Icon>
-                <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
+                    <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
                 </Icon>
-                <Title>
-                    Přidat podrobnosti do mapy
-                </Title>
-                <MutedText>
-                    Poté vložte podrobnosti o nálezu a jeho fotografii.
-                </MutedText>
+                <Title>Přidat podrobnosti do mapy</Title>
+                <MutedText>Poté vložte podrobnosti o nálezu a jeho fotografii.</MutedText>
             </Card>
             <Card backgroundColor="#DEF1EF">
                 <Icon>
-                 <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
+                    <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
                 </Icon>
-                <Title>
-                    Úspěšné vložení nálezu
-                </Title>
-                <MutedText>
-                    Nález bude profesionálně zlikvidován
-                </MutedText>
+                <Title>Úspěšné vložení nálezu</Title>
+                <MutedText>Nález bude profesionálně zlikvidován</MutedText>
             </Card>
             <Card backgroundColor="#EEF8F7">
-                <PrimaryButton text="Zadat nález do mapy" />
+                <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
             </Card>
             <Navigation></Navigation>
         </Container>
-    )
+    );
 };
 
 export default Info;

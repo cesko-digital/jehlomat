@@ -29,10 +29,6 @@ const Input = styled.input`
     border: 1px solid ${primaryLight};
     box-sizing: border-box;
     border-radius: 28px;
-
-    :focus {
-        outline: none;
-    }
 `;
 
 const SearchInput: FC<SearchInput> = props => {

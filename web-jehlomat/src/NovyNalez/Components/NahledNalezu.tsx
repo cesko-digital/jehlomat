@@ -1,13 +1,14 @@
-import {FC} from 'react'
-import styled from 'styled-components'
-import {white, primary} from '../../Components/Utils/Colors'
-import TextInput from '../../Components/Inputs/TextInput/TextInput'
-import { FormItemLabel } from '../../Components/Utils/Typography'
-import { FormWrapper, FormItem } from '../../Components/Form/Form'
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
-import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton'
-import TitleBar from '../../Components/Navigation/TitleBar'
-
+import { FC } from 'react';
+import styled from 'styled-components';
+import { white, primary } from '../../Components/Utils/Colors';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
+import { FormItemLabel } from '../../Components/Utils/Typography';
+import { FormWrapper, FormItem } from '../../Components/Form/Form';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
+import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton';
+import TitleBar from '../../Components/Navigation/TitleBar';
+import TextButton from '../../Components/Buttons/TextButton/TextButton';
+import { INovaJehla } from '../NovyNalez';
 
 const Container = styled.div`
     display: flex;
@@ -16,58 +17,55 @@ const Container = styled.div`
     justify-content: center;
     text-align: center;
     background-color: ${white};
-    padding: 1rem;
-`
+`;
 
-const Link = styled.a`
-    color: ${primary};
-    text-size: 18px;
-    margin: 1rem 0rem;
-    text-decoration: none;
-`
+const ButtonContainer = styled.div`
+    margin: auto;
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    margin-top: 18px;
+`;
 
-interface iNahledNalezu {
+interface INahledNalezu {
+    syringeInfo: INovaJehla;
+    onSaveClick: () => void;
+    onEditClick: () => void;
+    onLocationChangeClick: () => void;
 }
 
-const NahledNalezu:FC<iNahledNalezu> = () => {
-    return <Container>
+const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationChangeClick, onSaveClick }) => {
+    const { lat, lng, datetime, info, count } = syringeInfo;
+    return (
+        <Container>
             <TitleBar>
-                <p>
-                    3 icons navigation
-                </p>
+                <p>Kontrola zadaných údajů o nálezu</p>
             </TitleBar>
             <FormWrapper>
-            <FormItem>
-                <FormItemLabel>
-                    Počet jehel
-                </FormItemLabel>
-                <TextInput type="number" readOnly value="2"/>
-            </FormItem>
-            <FormItem>
-                <FormItemLabel>
-                    Místo nálezu
-                </FormItemLabel>
-                <TextInput type="text" readOnly value="Benešov - Ječna, 2"/>
-            </FormItem>
-            <SecondaryButton text="Zobrazit a upravit na mapě"/>
-            <FormItem>
-                <FormItemLabel>
-                    Datum a čas nálezu
-                </FormItemLabel>
-                <TextInput type="date" readOnly value="04/15/2021"/>
-            </FormItem>
-            <FormItem>
-                <FormItemLabel>
-                    Poznámka k nálezu
-                </FormItemLabel>
-                <TextInput type="text" readOnly value="Zlomené"/>
-            </FormItem>
+                <FormItem>
+                    <FormItemLabel>Počet jehel</FormItemLabel>
+                    <TextInput type="number" readOnly value={count} placeholder="Počet nebyl zadán" />
+                </FormItem>
+                <FormItem>
+                    <FormItemLabel>Místo nálezu</FormItemLabel>
+                    <TextInput type="text" readOnly value={`${lat}, ${lng}`} />
+                </FormItem>
+                <TextButton text="Zobrazit a upravit na mapě" onClick={onLocationChangeClick} />
+                <FormItem>
+                    <FormItemLabel>Datum a čas nálezu</FormItemLabel>
+                    <TextInput type="date" readOnly value={datetime} placeholder="Datum nebylo zadáno" />
+                </FormItem>
+                <FormItem>
+                    <FormItemLabel>Poznámka k nálezu</FormItemLabel>
+                    <TextInput type="text" readOnly value={info} placeholder="Poznámky nebyly zadány" />
+                </FormItem>
             </FormWrapper>
-            <PrimaryButton text="Uložit"/>
-            <Link href="#">
-                EDITOVAT NÁLEZ
-            </Link>
+            <ButtonContainer>
+                <TextButton text="Editovat nález" onClick={onEditClick} />
+                <PrimaryButton text="Uložit" onClick={onSaveClick} />
+            </ButtonContainer>
         </Container>
+    );
 };
 
 export default NahledNalezu;
