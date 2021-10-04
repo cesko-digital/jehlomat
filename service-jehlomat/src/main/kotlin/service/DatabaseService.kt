@@ -59,7 +59,16 @@ class DatabaseServiceImpl(
             .innerJoin(AdminOrganizationTable, on=AdminOrganizationTable.organization_name eq OrganizationTable.name)
             .select()
             .orderBy(OrganizationTable.name.asc())
-            .map { row -> Organization(row[OrganizationTable.name]!!, UserInfo(row[AdminOrganizationTable.admin_email]!!, false)) }
+            .map { row ->
+                Organization(
+                    row[OrganizationTable.name]!!,
+                    UserInfo(
+                        row[AdminOrganizationTable.admin_email]!!,
+                        false,
+                    ),
+                    row[OrganizationTable.verified]!!
+                )
+            }
     }
 
      fun updateUser(user: User) {

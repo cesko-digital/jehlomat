@@ -37,9 +37,6 @@ fun Route.organizationApi(): Route {
                 organizations.any { it.administrator.email == organization.administrator.email } -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
-                organization.teams.any { it !in teams } -> {
-                    call.respond(HttpStatusCode.NotFound, "One of more username from users does not exists")
-                }
                 else -> {
                     organizations.add(organization)
                     mailer.sendRegistrationConfirmationEmail(organization)
@@ -60,17 +57,9 @@ fun Route.organizationApi(): Route {
                 call.respond(HttpStatusCode.NotFound)
             } else {
                 val currentOrganization = currentOrganizations[0]
-
-                when {
-                    newOrganization.teams.any { it !in teams } -> {
-                        call.respond(HttpStatusCode.NotFound, "One of more team from teams does not exists")
-                    }
-                    else -> {
-                        organizations.removeIf { it.name == currentOrganization.name }
-                        organizations.add(newOrganization)
-                        call.respond(HttpStatusCode.OK)
-                    }
-                }
+                organizations.removeIf { it.name == currentOrganization.name }
+                organizations.add(newOrganization)
+                call.respond(HttpStatusCode.OK)
             }
 
 

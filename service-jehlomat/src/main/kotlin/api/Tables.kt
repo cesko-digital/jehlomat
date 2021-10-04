@@ -35,6 +35,7 @@ object LocationTable: Table<Nothing>("locations") {
 
 object OrganizationTable: Table<Nothing>("organizations") {
     val name = varchar("name").primaryKey()
+    val verified = boolean("verified")
 }
 
 object TeamTable: Table<Nothing>("teams") {

@@ -56,7 +56,6 @@ fun Route.syringeApi(database: DatabaseService): Route {
             val dummyOrganization  = Organization(
                 "TestOrg",
                 UserInfo("bares.jakub@gmail.com", false),
-                teams = listOf(),
                 verified = true
             )
             val dummyUser = UserInfo("bares.jakub@gmail.com", false)
