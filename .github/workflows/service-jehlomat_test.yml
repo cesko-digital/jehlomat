@@ -15,6 +15,12 @@ jobs:
         with:
           java-version: 11
       - name: 'Run unit tests'
+        env:
+          DATABASE_HOST: ${{ secrets.$DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.$DATABASE_PORT }}
+          DATABASE_USERNAME: ${{ secrets.$DATABASE_USERNAME }}
+          PGPASSWORD: ${{ secrets.$DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.$DATABASE_NAME }}
         run: |
           psql -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USERNAME -d $DATABASE_NAME -f .service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon
