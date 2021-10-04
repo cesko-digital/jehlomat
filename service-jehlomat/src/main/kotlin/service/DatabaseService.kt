@@ -5,6 +5,7 @@ import model.*
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.sequenceOf
+import org.ktorm.support.postgresql.InsertOrUpdateExpression
 import org.ktorm.support.postgresql.bulkInsert
 import org.ktorm.support.postgresql.insertOrUpdate
 
@@ -16,13 +17,13 @@ interface DatabaseService {
 
 
 class DatabaseServiceImpl(
-    val host: String="localhost",
-    val port: String="5432",
-    val database: String="postgres",
-    val user: String="jehlomat",
-    val password: String="jehlomat"
+    private val host: String="localhost",
+    private val port: String="5432",
+    private val database: String="postgres",
+    private val user: String="jehlomat",
+    private val password: String="jehlomat"
 ): DatabaseService {
-    val databaseInstance = Database.connect(
+    private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
 
@@ -32,7 +33,7 @@ class DatabaseServiceImpl(
             .select()
             .where { SyringeTable.id eq id }
             .map { row -> SyringeTable.createEntity(row) }
-            .first()
+            .first<Syringe>()
     }
 
     fun selectSyringes(): List<Syringe> {
@@ -110,7 +111,7 @@ class DatabaseServiceImpl(
     }
 
     override fun insertUser(user: User) {
-        databaseInstance.insertOrUpdate(UserTable) {
+        databaseInstance.insert(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password)
             set(it.verified, user.verified)
