@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.section`
-    /* padding: 4em; */
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -18,9 +17,18 @@ export const FormWrapper = styled.form`
 export const FormItem = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: baseline;
-    width: 90%;
+    align-items: baseline;
+    justify-content: center;
+    text-align: flex-start;
+    width: 80%;
     font-family: Roboto;
-    margin: 12px;
+    margin: 10px;
+    @media (min-width: 420px) {
+        align-items: center;
+        width: 50%;
+    }
+    @media (min-width: 700px) {
+        align-items: center;
+        width: 340px;
+    }
 `;
