@@ -17,11 +17,11 @@ interface DatabaseService {
 
 
 class DatabaseServiceImpl(
-    private val host: String="localhost",
-    private val port: String="5432",
-    private val database: String="postgres",
-    private val user: String="jehlomat",
-    private val password: String="jehlomat"
+    private val host: String=System.getenv("DATABASE_HOST"),
+    private val port: String=System.getenv("DATABASE_PORT"),
+    private val database: String=System.getenv("DATABASE_NAME"),
+    private val user: String=System.getenv("DATABASE_USERNAME"),
+    private val password: String=System.getenv("DATABASE_PASSWORD")
 ): DatabaseService {
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
