@@ -14,10 +14,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: 'Install open vpn'
+      - name: 'Install OpenVPN'
+        env:
+          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
         run: |
-          apt -y update
-          apt -y install openvpn
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+          echo $OPENVPN_CONFIG >> /etc/openvpn/database.ovpn
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v1"
+        with:
+          config_file: /etc/openvpn/database.ovpn
       - name: 'Run unit tests'
         env:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
@@ -25,9 +32,6 @@ jobs:
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
           PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
         run: |
-          echo $OPENVPN_CONFIG >> /etc/openvpn/database.ovpn
-          nohup openvpn --config /etc/openvpn/database.ovpn &
           psql -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USERNAME -d $DATABASE_NAME -f .service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon
