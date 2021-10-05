@@ -20,11 +20,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
-          echo $OPENVPN_CONFIG >> ./github/workflows/client.ovpn
+          echo $OPENVPN_CONFIG > client.ovpn
       - name: Connect to VPN
         uses: "kota65535/github-openvpn-connect-action@v1"
         with:
-          config_file: ./github/workflows/client.ovpn
+          config_file: client.ovpn
       - name: 'Run unit tests'
         env:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
