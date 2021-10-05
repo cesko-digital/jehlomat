@@ -18,18 +18,18 @@ jobs:
         env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
         run: |
-          apt install sudo
-          sudo apt update
-          sudo apt install -y openvpn openvpn-systemd-resolved
+          apt update
+          apt install -y openvpn openvpn-systemd-resolved
           rm -r /dev/net/tun
           mkdir -p /dev/net
           mknod /dev/net/tun c 10 200
           chmod 600 /dev/net/tun
-          echo $OPENVPN_CONFIG > client.ovpn
+          echo $OPENVPN_CONFIG > /client.ovpn
+          apt install sudo
       - name: Connect to VPN
         uses: "kota65535/github-openvpn-connect-action@v1"
         with:
-          config_file: client.ovpn
+          config_file: /client.ovpn
       - name: 'Print openvpn status'
         if: always()
         run: |
