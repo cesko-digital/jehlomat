@@ -18,9 +18,10 @@ jobs:
         env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
         run: |
-          apt instal sudo
+          apt install sudo
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
+          rm -r /dev/net/tun
           mkdir -p /dev/net
           mknod /dev/net/tun c 10 200
           chmod 600 /dev/net/tun
