@@ -18,13 +18,21 @@ jobs:
         env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
         run: |
+          apt instal sudo
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
+          mkdir -p /dev/net
+          mknod /dev/net/tun c 10 200
+          chmod 600 /dev/net/tun
           echo $OPENVPN_CONFIG > client.ovpn
       - name: Connect to VPN
         uses: "kota65535/github-openvpn-connect-action@v1"
         with:
           config_file: client.ovpn
+      - name: 'Print openvpn status'
+        if: always()
+        run: |
+          - cat openvpn.log
       - name: 'Run unit tests'
         env:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
@@ -33,5 +41,6 @@ jobs:
           PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
         run: |
+          sudo apt install postgresql postgresql-contrib
           psql -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USERNAME -d $DATABASE_NAME -f .service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon
