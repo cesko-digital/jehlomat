@@ -32,7 +32,7 @@ jobs:
       - name: 'Print openvpn status'
         if: always()
         run: |
-          - cat openvpn.log
+          cat openvpn.log
       - name: 'Run unit tests'
         env:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
