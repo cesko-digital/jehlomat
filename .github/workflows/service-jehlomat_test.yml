@@ -14,34 +14,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: 'Install OpenVPN'
-        env:
-          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
-        run: |
-          apt update
-          apt install -y openvpn openvpn-systemd-resolved
-          rm -r /dev/net/tun
-          mkdir -p /dev/net
-          mknod /dev/net/tun c 10 200
-          chmod 600 /dev/net/tun
-          echo $OPENVPN_CONFIG > /client.ovpn
-          apt install sudo
-      - name: Connect to VPN
-        uses: "kota65535/github-openvpn-connect-action@v1"
+      - uses: harmon758/postgresql-action@v1
         with:
-          config_file: /client.ovpn
-      - name: 'Print openvpn status'
-        if: always()
-        run: |
-          cat openvpn.log
+          postgresql db: 'jehlomat'
+          postgresql user: 'jehlomat'
+          postgresql password: 'password'
       - name: 'Run unit tests'
         env:
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USERNAME: jehlomat
+          PGPASSWORD: password
+          DATABASE_NAME: jehlomat
         run: |
-          sudo apt install postgresql postgresql-contrib
-          psql -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USERNAME -d $DATABASE_NAME -f .service-jehlomat/src/main/resources/create_table.sql
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f .service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon
