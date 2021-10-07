@@ -1,4 +1,5 @@
 val ktorVersion: String by project
+val ktormVersion: String = "3.4.1"
 
 plugins {
     application
@@ -35,8 +36,16 @@ dependencies {
     // Http client
     implementation("com.github.kittinunf.fuel:fuel:2.2.1")
 
+    // Ktorm
+    implementation("org.ktorm:ktorm-core:${ktormVersion}")
+    implementation("org.ktorm:ktorm-support-postgresql:${ktormVersion}")
+    implementation("org.postgresql:postgresql:42.2.24")
+
     // Config
     implementation("com.typesafe:config:1.4.0")
+
+    // Mock
+    testImplementation("io.mockk:mockk:1.12.0")
 
     //Mailjet
     implementation("com.mailjet:mailjet-client:5.2.0")

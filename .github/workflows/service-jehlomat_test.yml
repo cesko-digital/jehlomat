@@ -13,7 +13,23 @@ jobs:
       - name: 'Setup Java'
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 8
+      - uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: 'jehlomat'
+          postgresql user: 'jehlomat'
+          postgresql password: 'password'
+      - name: Wait / Sleep
+        uses: jakejarvis/wait-action@v0.1.0
+        with:
+          time: '10s'
       - name: 'Run unit tests'
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USERNAME: jehlomat
+          PGPASSWORD: password
+          DATABASE_NAME: jehlomat
         run: |
-          ./gradlew service-jehlomat:test --no-daemon
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/create_table.sql
+          ./gradlew service-jehlomat:test --no-daemon --stacktrace

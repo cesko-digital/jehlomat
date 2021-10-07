@@ -25,4 +25,10 @@ allprojects {
             force("io.netty:netty-codec-http:4.1.59.Final")
         }
     }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 }

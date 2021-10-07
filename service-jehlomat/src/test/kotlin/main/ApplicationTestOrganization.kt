@@ -23,7 +23,6 @@ val ADMINISTRATOR = UserInfo(
 val ORGANIZATION = Organization(
     name="ceska jehlova",
     administrator=ADMINISTRATOR,
-    teams = listOf(),
     verified = false
 )
 
@@ -47,7 +46,6 @@ class OrganizationTest {
     "email" : "administrator@example.org",
     "verified" : true
   },
-  "teams" : [ ],
   "verified" : false
 }""",
                 response.content
@@ -63,6 +61,7 @@ class OrganizationTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     @Ignore("Need to solve how to pass jetmail api key to application")
     fun testPostOrganization() = withTestApplication(Application::module) {
@@ -75,6 +74,7 @@ class OrganizationTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
@@ -86,6 +86,7 @@ class OrganizationTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPutOrganizationNotExists() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
@@ -96,6 +97,7 @@ class OrganizationTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPutOrganization() = withTestApplication(Application::module) {
         val newOrganization = ORGANIZATION.copy(name="different name")

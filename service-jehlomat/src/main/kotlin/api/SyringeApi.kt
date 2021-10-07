@@ -8,12 +8,16 @@ import io.ktor.routing.*
 import model.Demolisher
 import model.Organization
 import model.Syringe
+import service.DatabaseService
+
 import model.UserInfo
 import services.Mailer
 
 val syringes = mutableListOf<Syringe>()
 
-fun Route.syringeApi(): Route {
+
+fun Route.syringeApi(database: DatabaseService): Route {
+
     val mailer = Mailer()
     return route("/") {
         get("all") {
@@ -49,11 +53,9 @@ fun Route.syringeApi(): Route {
         }
 
         post {
-            syringes.add(call.receive<Syringe>())
             val dummyOrganization  = Organization(
                 "TestOrg",
                 UserInfo("bares.jakub@gmail.com", false),
-                teams = listOf(),
                 verified = true
             )
             val dummyUser = UserInfo("bares.jakub@gmail.com", false)
