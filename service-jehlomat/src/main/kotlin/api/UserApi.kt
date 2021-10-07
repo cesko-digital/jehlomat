@@ -51,7 +51,6 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
         put {
             val newUser = call.receive<User>()
             val userToChange = users.filter { it.email == newUser.email }
-            val usersToCheck = users.filter { it.email != newUser.email }
 
             // TODO: check if values satisfy condition about email format, etc.
             when {
