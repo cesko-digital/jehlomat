@@ -21,7 +21,7 @@ class DatabaseServiceImpl(
     private val port: String=System.getenv("DATABASE_PORT"),
     private val database: String=System.getenv("DATABASE_NAME"),
     private val user: String=System.getenv("DATABASE_USERNAME"),
-    private val password: String=System.getenv("DATABASE_PASSWORD") ?: ""
+    private val password: String=System.getenv("PGPASSWORD") ?: ""
 ): DatabaseService {
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
