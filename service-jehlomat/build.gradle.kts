@@ -39,7 +39,7 @@ dependencies {
     // Ktorm
     implementation("org.ktorm:ktorm-core:${ktormVersion}")
     implementation("org.ktorm:ktorm-support-postgresql:${ktormVersion}")
-    implementation("postgresql:postgresql:9.0-801.jdbc4")
+    implementation("org.postgresql:postgresql:42.2.24")
 
     // Config
     implementation("com.typesafe:config:1.4.0")
