@@ -19,6 +19,10 @@ jobs:
           postgresql db: 'jehlomat'
           postgresql user: 'jehlomat'
           postgresql password: 'password'
+      - name: Wait / Sleep
+        uses: jakejarvis/wait-action@v0.1.0
+        with:
+          time: '10s'
       - name: 'Run unit tests'
         env:
           DATABASE_HOST: localhost
@@ -27,6 +31,5 @@ jobs:
           PGPASSWORD: password
           DATABASE_NAME: jehlomat
         run: |
-          pg_isready
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f .service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon
