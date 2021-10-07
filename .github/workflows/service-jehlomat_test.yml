@@ -32,4 +32,4 @@ jobs:
           DATABASE_NAME: jehlomat
         run: |
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/create_table.sql
-          ./gradlew service-jehlomat:test --no-daemon
+          ./gradlew service-jehlomat:test --no-daemon --stacktrace
