@@ -10,7 +10,7 @@ export const Container = styled.div`
   justify-content: space-between;
   overflow: hidden;
   width: 100%;
-  height: 88px;
+  height: 80px;
   font-size: 1em;
   line-height: 16px;
   letter-spacing: 1.25px;
@@ -20,4 +20,5 @@ export const Container = styled.div`
 export const LinkContainer= styled.div`
     display: flex;
     flex-direction: row;
+  margin-right: 1.5em;
     `
