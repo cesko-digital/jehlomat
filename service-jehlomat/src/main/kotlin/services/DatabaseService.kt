@@ -3,6 +3,7 @@ package service
 import api.*
 import model.*
 import org.ktorm.database.Database
+import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
 import org.ktorm.entity.sequenceOf
 import org.ktorm.support.postgresql.InsertOrUpdateExpression
@@ -13,6 +14,7 @@ import org.ktorm.support.postgresql.insertOrUpdate
 interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
     fun insertUser(user: User)
+    fun getObec(gpsCoordinates: String): String
 }
 
 
@@ -106,7 +108,7 @@ class DatabaseServiceImpl(
             set(it.count, syringe.count)
             set(it.note, syringe.note)
             set(it.demolisherType, syringe.demolisher)
-            set(it.gps_coordinates, syringe.gps_coordinates)
+            set(it.gpsCoordinates, syringe.gps_coordinates)
         }
     }
 
@@ -170,5 +172,18 @@ class DatabaseServiceImpl(
         databaseInstance.delete(UserTeamTable) {
             (it.user_email eq email) and (it.team_name eq teamName)
         }
+    }
+
+    override fun getObec(gpsCoordinates: String): String {
+
+        val obec = databaseInstance.useConnection { conn ->
+            val sql = "SELECT nazev_lau2 FROM sph_obec WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, sph_obec.wkb_geometry)"
+
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map { it.getString(1) }
+            }
+        }
+
+        return obec.first()
     }
 }

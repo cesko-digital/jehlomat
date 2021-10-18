@@ -17,7 +17,7 @@ object SyringeTable: Table<Nothing>("syringes") {
     val count = int("count")
     val note = varchar("note")
     val demolisherType = varchar("demolisher_type")
-    val gps_coordinates = varchar("gps_coordinates")
+    val gpsCoordinates = varchar("gps_coordinates")
 }
 
 object UserTable: Table<Nothing>("users") {
