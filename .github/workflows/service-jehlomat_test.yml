@@ -14,11 +14,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: harmon758/postgresql-action@v1
+      - uses: huaxk/postgis-action@v1
         with:
-          postgresql db: 'jehlomat'
-          postgresql user: 'jehlomat'
           postgresql password: 'password'
+          postgresql user: 'jehlomat'
+          postgresql db: 'jehlomat'
       - name: Wait / Sleep
         uses: jakejarvis/wait-action@v0.1.0
         with:
