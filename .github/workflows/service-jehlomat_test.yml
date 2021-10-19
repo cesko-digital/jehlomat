@@ -1,9 +1,7 @@
 name: 'Test service-jehlomat'
 
 on:
-  push:
-    branches:
-      - "**"
+  pull_request:
     paths:
       - 'service-jehlomat/**'
 jobs:
