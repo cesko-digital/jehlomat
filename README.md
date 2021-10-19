@@ -11,14 +11,25 @@ https://postgis.net/install/
 
 ### RUIAN
 
-https://vdp.cuzk.cz/vdp/ruian/vymennyformat/vyhledej?vf.pu=S&_vf.pu=on&_vf.pu=on&vf.cr=U&vf.up=ST&vf.ds=Z&vf.vu=Z&_vf.vu=on&_vf.vu=on&_vf.vu=on&_vf.vu=on&search=Vyhledat
+https://geoportal.cuzk.cz/zakazky/SPH/SPH_SHP_WGS84.zip
 
 ```shell
-ogr2ogr -f PostgreSQL PG:dbname=jehlomat 20210930_ST_UZSZ.xml
+unzip SPH_SHP_WGS84.zip
+cd SPH_SHP_WGS84
+
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=<USER> password=<PASSWORD> dbname=<DBNAME>" SPH_OBEC.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=<USER> password=<PASSWORD> dbname=<DBNAME>" SPH_MC.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=<USER> password=<PASSWORD> dbname=<DBNAME>" SPH_OKRES.shp
 ```
 
-### Format RUIAN
+# Create test dataset
 
 ```shell
-xmllint 20210930_ST_UZSZ.xml | XMLLINT_INDENT=$'\t' xmllint --format --encode utf-8 - > 20210930_ST_UZSZ_formated.xml
+pg_dump -t 'sph_*' jehlomat > db.sql
+```
+
+Remove lines for sph_* tables to make small test sample
+
+```shell
+psql -h localhost -p 5432 -U jehlomat -d jehlomat < db.sql
 ```

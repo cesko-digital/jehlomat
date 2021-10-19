@@ -14,11 +14,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: harmon758/postgresql-action@v1
+      - uses: huaxk/postgis-action@v1
         with:
-          postgresql db: 'jehlomat'
-          postgresql user: 'jehlomat'
           postgresql password: 'password'
+          postgresql user: 'jehlomat'
+          postgresql db: 'jehlomat'
       - name: Wait / Sleep
         uses: jakejarvis/wait-action@v0.1.0
         with:
@@ -31,5 +31,7 @@ jobs:
           PGPASSWORD: password
           DATABASE_NAME: jehlomat
         run: |
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/postgis.sql
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon --stacktrace
