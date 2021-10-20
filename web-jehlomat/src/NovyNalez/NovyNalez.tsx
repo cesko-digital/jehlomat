@@ -31,8 +31,8 @@ const NovyNalez: FC<INovyNalez> = ({}) => {
 
     const handleStepChange = (newStep: STEPS, newInfo?: Partial<INovaJehla>) => {
         if (newInfo != null) {
-            const { lat, lng, info, datetime, count } = newInfo;
-            setNewSyringeInfo({ lat, lng, info, datetime, count });
+            const { lat, lng } = newInfo;
+            setNewSyringeInfo({ ...newSyringeInfo, lat, lng });
         }
         setCurrentStep(newStep);
     };

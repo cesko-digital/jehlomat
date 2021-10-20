@@ -24,7 +24,9 @@ interface IZadavaniNalezu {
 }
 
 const ZadavaniNalezu: FC<IZadavaniNalezu> = ({ syringeInfo, onInputChange, onSumbit }) => {
-    const { lat, lng, info, datetime, count } = syringeInfo;
+    const handleInputChange = (e: any) => {
+        onInputChange(e.target.name, e.target.value);
+    };
     return (
         <Container>
             <TitleBar>
@@ -33,15 +35,15 @@ const ZadavaniNalezu: FC<IZadavaniNalezu> = ({ syringeInfo, onInputChange, onSum
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet jehel</FormItemLabel>
-                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} />
+                    <TextInput name="count" type="number" value={syringeInfo.count} placeholder="Zadejte počet stříkaček" onChange={handleInputChange} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                    <TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />
+                    <TextInput name="datetime" type="date" value={syringeInfo.datetime} onChange={handleInputChange} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Poznámky</FormItemLabel>
-                    <TextInput type="text" value={info} placeholder="Rozšiřující informace" onChange={e => onInputChange('info', e.target.value)} />
+                    <TextInput name="info" type="text" value={syringeInfo.info} placeholder="Rozšiřující informace" onChange={handleInputChange} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Foto z místa nálezu</FormItemLabel>
