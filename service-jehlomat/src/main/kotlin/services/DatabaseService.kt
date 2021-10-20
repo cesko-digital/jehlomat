@@ -15,6 +15,8 @@ interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
     fun insertUser(user: User)
     fun getObec(gpsCoordinates: String): String
+    fun getMC(gpsCoordinates: String): String
+    fun getOkres(gpsCoordinates: String): String
 }
 
 
@@ -174,16 +176,27 @@ class DatabaseServiceImpl(
         }
     }
 
-    override fun getObec(gpsCoordinates: String): String {
-
-        val obec = databaseInstance.useConnection { conn ->
-            val sql = "SELECT nazev_lau2 FROM sph_obec WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, sph_obec.wkb_geometry)"
+    fun postgisLocation(table: String, gpsCoordinates: String, column: String): String {
+        val names = databaseInstance.useConnection { conn ->
+            val sql = "SELECT $column FROM $table WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, $table.wkb_geometry)"
 
             conn.prepareStatement(sql).use { statement ->
                 statement.executeQuery().asIterable().map { it.getString(1) }
             }
         }
 
-        return obec.first()
+        return names.firstOrNull() ?: ""
+    }
+
+    override fun getObec(gpsCoordinates: String): String {
+        return postgisLocation("sph_obec", gpsCoordinates, "nazev_lau2")
+    }
+
+    override fun getMC(gpsCoordinates: String): String {
+        return postgisLocation("sph_mc", gpsCoordinates, "nazev_mc")
+    }
+
+    override fun getOkres(gpsCoordinates: String): String {
+        return postgisLocation("sph_okres", gpsCoordinates, "nazev_lau1")
     }
 }
