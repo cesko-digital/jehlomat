@@ -1,10 +1,13 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from 'styled-components';
+import { default as MIconButton } from "@material-ui/core/IconButton";
+import AddIcon from '@material-ui/icons/add';
 import { primary, white } from '../../Utils/Colors';
 
-interface AddButton extends ButtonHTMLAttributes<HTMLButtonElement> {}
+interface AddButton extends ButtonHTMLAttributes<HTMLButtonElement> { }
 
-const Button = styled.button`
+const IconButton = styled(MIconButton)`
+&& {
     position: relative;
     display: inline-block;
     vertical-align: middle;
@@ -17,34 +20,15 @@ const Button = styled.button`
     color: ${white};
     cursor: pointer;
     padding: 0px 20px;
+}
 `;
 
-const Plus = styled.div`
-    :before,
-    :after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: ${primary};
-    }
-    :before {
-        width: 4px;
-        margin: 8px auto;
-    }
-    :after {
-        margin: auto 8px;
-        height: 4px;
-    }
-`;
 
 const AddButton: FC<AddButton> = ({ ...props }) => {
     return (
-        <Button {...props}>
-            <Plus />
-        </Button>
+        <IconButton onClick={props.onClick}>
+            <AddIcon style={{fill: `${primary}`}} fontSize="large" />
+        </IconButton>
     );
 };
 
