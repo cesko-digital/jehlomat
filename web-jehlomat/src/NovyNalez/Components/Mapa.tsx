@@ -30,9 +30,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 interface IMapa {
     userPosition: LatLngExpression | null;
     handleStepChange: (newStep: STEPS, newInfo?: Partial<INovaJehla>) => void;
+    width: number;
+    height: number;
 }
 
-const Mapa: FC<IMapa> = ({ userPosition, handleStepChange }) => {
+const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height }) => {
     const [position, setPosition] = useState<LatLngExpression | null>(null);
 
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
@@ -75,7 +77,7 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange }) => {
                     center={DEFAULT_POSITION}
                     zoom={DEFAULT_ZOOM_LEVEL}
                     scrollWheelZoom={false}
-                    style={{ width: '375px', height: '578px', zIndex: 1 }}
+                    style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
                     preferCanvas
                     whenCreated={map => {
                         handleMapCenterChange(map, setMarkerPosition);
@@ -98,7 +100,7 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange }) => {
                     center={position}
                     zoom={DEFAULT_ZOOM_LEVEL}
                     scrollWheelZoom={false}
-                    style={{ width: '375px', height: '578px', zIndex: 1 }}
+                    style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
                     preferCanvas
                     whenCreated={map => {
                         handleMapCenterChange(map, setMarkerPosition);

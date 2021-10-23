@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
@@ -12,6 +12,7 @@ interface IZadatNalezMapa {
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
     const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
+    const [mapSize, setMapSize] = useState<Record<'height' | 'width', number> | null>(null);
 
     // Je potřeba zjistit, jak dlouho po odkliknutí povolit polohu v prohlížeči
     // toto povolení vydrží a podle toho možná uložit cookie?
@@ -26,6 +27,30 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
         }
     }, []);
 
+    /**
+     * Získá aktuální velikost containeru.
+     */
+    const resizeMap = () => {
+        const map = document.getElementById('map-container');
+        if (map) {
+            setMapSize({ width: map.clientWidth, height: map.clientHeight });
+        }
+    };
+
+    /**
+     * Tohle nefunguje úplně jak by mělo, protože Leaflet componenta má immutable props, takže se při změně props nepřerendruje mapa, ale komponenta jako taková ano.
+     *
+     * Nechám to tady, když se nám podaří najít nějaký hack, tak abychom na to nezapomněli.
+     */
+    useEffect(() => {
+        resizeMap();
+        window.addEventListener('resize', resizeMap);
+
+        return () => {
+            window.removeEventListener('resize', resizeMap);
+        };
+    }, []);
+
     const handleAllowGeolocation = (lat: number, lng: number): void => {
         setModalVisible(false);
         setUserPosition([lat, lng]);
@@ -35,9 +60,9 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
     };
 
     return (
-        <div>
+        <div id="map-container" style={{ width: 'calc(100vw - 12px)', height: 'calc(100vh - 106px)', margin: 'auto', paddingTop: '8px' }}>
             <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} />
-            <Mapa userPosition={userPosition} handleStepChange={handleStepChange} />
+            {mapSize && mapSize.width != 0 && mapSize.height != 0 && <Mapa userPosition={userPosition} handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} />}
         </div>
     );
 };
