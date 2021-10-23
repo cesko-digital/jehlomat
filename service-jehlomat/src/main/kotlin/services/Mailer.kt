@@ -11,7 +11,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
-class Mailer() {
+class Mailer {
     private val appConfig = DefaultConfig().get()
     private val client = MailjetClient(
         ClientOptions.builder()
@@ -19,8 +19,8 @@ class Mailer() {
             .apiSecretKey(appConfig.getString("mailjet.privateKey"))
             .build())
 
-    fun prepareBody(templateId: Int, subject: String, link: String,
-                    organization: Organization? = null, user: UserInfo? = null): JSONArray {
+    private fun prepareBody(templateId: Int, subject: String, link: String,
+                            organization: Organization? = null, user: UserInfo? = null): JSONArray {
         return JSONArray()
         .put(
             JSONObject()
@@ -59,8 +59,8 @@ class Mailer() {
             )
         val response: MailjetResponse = client.post(request)
 
-        System.out.println(response.getStatus())
-        System.out.println(response.getData())
+        println(response.status)
+        println(response.data)
     }
 
     @Throws(MailjetException::class)
@@ -76,8 +76,8 @@ class Mailer() {
             )
         val response: MailjetResponse = client.post(request)
 
-        System.out.println(response.getStatus())
-        System.out.println(response.getData())
+        println(response.status)
+        println(response.data)
     }
 
     @Throws(MailjetException::class)
@@ -93,7 +93,7 @@ class Mailer() {
             )
         val response: MailjetResponse = client.post(request)
 
-        System.out.println(response.getStatus())
-        System.out.println(response.getData())
+        println(response.status)
+        println(response.data)
     }
 }

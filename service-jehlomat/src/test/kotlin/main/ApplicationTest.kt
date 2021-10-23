@@ -4,13 +4,19 @@ import api.users
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.User
 import model.UserInfo
 import org.junit.Test
+import org.ktorm.database.Database
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+
 
 const val API_PATH = "/api/v1/jehlomat/users"
 
@@ -26,6 +32,7 @@ val USER_INFO = UserInfo(
 )
 
 class ApplicationTest {
+
     @BeforeTest
     fun beforeEach() {
         users.clear()
@@ -86,7 +93,6 @@ class ApplicationTest {
             setBody(Json.encodeToString(USER))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals(USER, users[0])
         }
     }
 

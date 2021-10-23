@@ -1,17 +1,27 @@
 package main
 
 import api.*
+import model.Syringe
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.content.*
 import io.ktor.jackson.*
 import io.ktor.routing.*
-import model.Syringe
+import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.inject
+import service.DatabaseService
+import service.DatabaseServiceImpl
+
+
+val helloAppModule = module {
+    single<DatabaseService> { DatabaseServiceImpl() }
+}
+
 
 val syringes = mutableListOf<Syringe>()
-
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -41,22 +51,26 @@ fun Application.module(testing: Boolean = false) {
         modules(
             if (isLocal()) {
                 listOf(
-                    localModule
+                    localModule,
+                    helloAppModule
                 )
             } else {
                 listOf(
-                    productionModule
+                    productionModule,
+                    helloAppModule
                 )
             }
         )
     }
 
+    val service by inject<DatabaseService>()
+
     routing {
         route("/api/v1/jehlomat/syringe") {
-            syringeApi()
+            syringeApi(service)
         }
         route("/api/v1/jehlomat/users") {
-            userApi()
+            userApi(service)
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi()
@@ -66,6 +80,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/team") {
             teamApi()
+        }
+        static("/static") {
+            resources("files")
         }
     }
 }

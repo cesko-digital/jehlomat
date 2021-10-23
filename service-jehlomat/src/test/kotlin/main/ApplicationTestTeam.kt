@@ -7,6 +7,7 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.Location
+import model.Organization
 import model.Team
 import model.UserInfo
 import org.junit.Test
@@ -17,8 +18,9 @@ const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
 val TEAM = Team(
     name="ceska jehlova",
-    location = Location("Tyn nad Vltavou", "Bukovina", ""),
-    usernames = listOf()
+    location = Location(0,"Tyn nad Vltavou", "Bukovina", ""),
+    usernames = listOf(),
+    organization = Organization("org1", UserInfo("email", true), true)
 )
 
 
@@ -38,11 +40,20 @@ class TeamTest {
                 """{
   "name" : "ceska jehlova",
   "location" : {
+    "id" : 0,
     "okres" : "Tyn nad Vltavou",
     "mesto" : "Bukovina",
     "mestkaCast" : ""
   },
-  "usernames" : [ ]
+  "usernames" : [ ],
+  "organization" : {
+    "name" : "org1",
+    "administrator" : {
+      "email" : "email",
+      "verified" : true
+    },
+    "verified" : true
+  }
 }""",
                 response.content
             )
@@ -57,6 +68,7 @@ class TeamTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPostTeam() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
@@ -68,6 +80,7 @@ class TeamTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPostAlreadyExistingTeam() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
@@ -79,6 +92,7 @@ class TeamTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPutTeamNotExists() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
@@ -89,6 +103,7 @@ class TeamTest {
         }
     }
 
+    @ExperimentalSerializationApi
     @Test
     fun testPutTeam() = withTestApplication(Application::module) {
         val user = UserInfo("a", false)

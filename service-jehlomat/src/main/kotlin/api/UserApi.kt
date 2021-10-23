@@ -1,20 +1,19 @@
 package api
 
-import com.sun.net.httpserver.HttpsServer
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.User
-import model.UserInfo
-import model.toUser
 import model.toUserInfo
+import service.DatabaseService
 import utils.isValidMail
 
 val users = mutableListOf<User>()
 
-fun Route.userApi(): Route {
+
+fun Route.userApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
         get("/{email}") {
@@ -43,8 +42,7 @@ fun Route.userApi(): Route {
                 }
                 else -> {
                     users.add(newUser.copy(verified = false))
-
-                    //
+                    databaseInstance.insertUser(newUser)
                     call.respond(HttpStatusCode.Created)
                 }
             }
@@ -53,7 +51,6 @@ fun Route.userApi(): Route {
         put {
             val newUser = call.receive<User>()
             val userToChange = users.filter { it.email == newUser.email }
-            val usersToCheck = users.filter { it.email != newUser.email }
 
             // TODO: check if values satisfy condition about email format, etc.
             when {
