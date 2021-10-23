@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App/App';
 import Navigation from './Components/Navigation/Navigation';
+import { HeaderMobile } from './Components/Header/HeaderMobile';
 
 /**
  * Lazy loading routes
@@ -28,8 +29,11 @@ ReactDOM.render(
         <Suspense fallback={<div>Loading...</div>}>
             <HashRouter>
                 {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
-                <Navigation />
+                {/*<Navigation />*/}
                 <Switch>
+                    <Route path="/mobile">
+                        <HeaderMobile />
+                        </Route>
                     <Route
                         path="/uzivatel"
                         render={({ match: { url } }) => (

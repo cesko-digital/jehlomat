@@ -5,18 +5,21 @@ import { useHistory } from 'react-router-dom';
 export enum HeaderLinkType {
     AboutApp,
     CreateOrgAccount,
+    Watch,
     Login,
+
 }
 
 export interface IHeaderLink {
     type: HeaderLinkType
     route: string
+    mobile?: boolean
 }
 
-export const HeaderLink: FC<IHeaderLink> = ({type, route}) => {
+export const HeaderLink: FC<IHeaderLink> = ({type, route, mobile}) => {
     let history = useHistory()
 
-    return <s.Container onClick={ () => history.push(route) }><s.Link>{titleForType(type)}</s.Link></s.Container>
+    return <s.Container mobile={mobile} onClick={ () => history.push(route) }><s.Link mobile={mobile}>{titleForType(type)}</s.Link></s.Container>
 }
 
 function titleForType(type: HeaderLinkType): string {
@@ -24,8 +27,11 @@ function titleForType(type: HeaderLinkType): string {
         case HeaderLinkType.AboutApp:
             return "O aplikaci";
         case HeaderLinkType.CreateOrgAccount:
-            return "Založit účet organizaci";
+            return "Založit organizaci";
+        case HeaderLinkType.Watch:
+            return "Sledovat nález";
         case HeaderLinkType.Login:
             return "Přihlásit se";
+
     }
 }

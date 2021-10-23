@@ -1,9 +1,11 @@
 import styled, {createGlobalStyle} from "styled-components";
 
-export const Container = styled.div`
-  text-transform: uppercase;
+export const Container = styled("div")<{mobile?: boolean}>`
   align-self: center;
-  border-right: 1px solid #fff;
+  ${props => !props.mobile && `
+    border-right: 1px solid #fff;`}
+  ${props => props.mobile && `
+    max-width: 6em;`}
   padding: 5px 15px;
   font-size: 1em;
   line-height: 16px;
@@ -13,7 +15,18 @@ export const Container = styled.div`
   }
 `
 
-export const Link = styled.div`
+export const Link = styled("div")<{mobile?: boolean}>`
     align-content: center;
-    text-align: right;
+    ${props => !props.mobile && `
+    text-transform: uppercase;
+    text-align: right;`}
+    
 `
+
+
+/*
+export const Link2 = styled.div(props => ({
+    alignContent: "center",
+    textAlign: "right",
+    textTransform: props.transform
+}));*/
