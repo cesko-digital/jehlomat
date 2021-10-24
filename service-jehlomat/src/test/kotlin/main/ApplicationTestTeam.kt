@@ -20,7 +20,7 @@ val TEAM = Team(
     name="ceska jehlova",
     location = Location(0,"Tyn nad Vltavou", "Bukovina", ""),
     usernames = listOf(),
-    organization = Organization("org1", UserInfo("email", true), true)
+    organization = "org1"
 )
 
 

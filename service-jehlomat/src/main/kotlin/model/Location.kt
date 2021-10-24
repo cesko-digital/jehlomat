@@ -7,6 +7,6 @@ import org.ktorm.entity.Entity
 data class Location(
     val id: Int,
     val okres: String,
-    val mesto: String,
+    val obec: String,
     val mestkaCast: String
 )

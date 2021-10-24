@@ -14,6 +14,11 @@ val organizations = mutableListOf<Organization>()
 fun Route.organizationApi(): Route {
     val mailer = Mailer()
     return route("/") {
+
+        get {
+            call.respond(HttpStatusCode.OK, organizations)
+        }
+
         get("/{email}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user

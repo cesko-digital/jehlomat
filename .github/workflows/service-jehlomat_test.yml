@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'service-jehlomat/**'
+  push:
+    paths:
+      - 'service-jehlomat/**'
 jobs:
   test:
     runs-on: ubuntu-latest

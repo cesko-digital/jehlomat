@@ -7,5 +7,5 @@ data class Team(
     val name: String,
     val location: Location,
     val usernames: List<UserInfo>,
-    val organization: Organization
+    val organization: String
 )
