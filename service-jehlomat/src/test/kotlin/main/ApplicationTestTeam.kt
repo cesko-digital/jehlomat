@@ -42,18 +42,11 @@ class TeamTest {
   "location" : {
     "id" : 0,
     "okres" : "Tyn nad Vltavou",
-    "mesto" : "Bukovina",
+    "obec" : "Bukovina",
     "mestkaCast" : ""
   },
   "usernames" : [ ],
-  "organization" : {
-    "name" : "org1",
-    "administrator" : {
-      "email" : "email",
-      "verified" : true
-    },
-    "verified" : true
-  }
+  "organization" : "org1"
 }""",
                 response.content
             )
