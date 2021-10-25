@@ -15,6 +15,8 @@ const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
+const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
+
 // **********************************************************************
 
 /**
@@ -49,18 +51,11 @@ ReactDOM.render(
                             </>
                         )}
                     />
-                    <Route path="/profil" component={Profil}>
-                        <Profil />
-                    </Route>
-                    <Route path="/organizace" component={Organizace}>
-                        <Organizace />
-                    </Route>
-                    <Route path="/novy-nalez" component={NovyNalez}>
-                        <NovyNalez />
-                    </Route>
-                    <Route path="/nalezy" component={Nalezy}>
-                        <Nalezy />
-                    </Route>
+                    <Route path="/profil" component={Profil}/>
+                    <Route path="/organizace" component={Organizace}/>
+                    <Route path="/novy-nalez" component={NovyNalez}/>
+                    <Route path="/nalezy" component={Nalezy}/>
+                    <Route path="/error" component={ErrorPage}/>
                     <Route path="/">
                         <App />
                     </Route>

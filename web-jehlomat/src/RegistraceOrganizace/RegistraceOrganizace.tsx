@@ -35,7 +35,6 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                 onSubmit={async (values: Values, { setErrors}) => {
                     try {
                         const response:AxiosResponse<any> = await API.post("/api/v1/jehlomat/organization", values);
-                        console.log("response", response);
                         const status = response.status;
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
@@ -45,14 +44,12 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                             }
                             case status === 409: {
                                 //for validation error; 
-                                console.log("invalid", status);
                                 const fieldName = response.data.fieldName
                                 setErrors({[fieldName]: response.data.status})
                                 break;
                             }
                             default: {
                                 //all others goes to error page; TODO push to error page
-                                console.log("error", status);
                                 break;
                             }
                         }
