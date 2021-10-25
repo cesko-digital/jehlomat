@@ -28,7 +28,7 @@ ReactDOM.render(
         <Suspense fallback={<div>Loading...</div>}>
             <HashRouter>
                 {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
-                <Navigation />
+                {/*<Navigation />*/}
                 <Switch>
                     <Route
                         path="/uzivatel"
