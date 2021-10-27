@@ -2,7 +2,6 @@ import { FC, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { primaryDark, grey, primary } from '../../Utils/Colors';
 import { default as MInput } from "@material-ui/core/TextField";
-import AddIcon from '@material-ui/icons/add';
 
 interface TextInput extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
