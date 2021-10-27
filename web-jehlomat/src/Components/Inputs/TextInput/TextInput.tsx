@@ -29,6 +29,7 @@ const TextInput: FC<TextInput> = (props) => {
         <Input>
             <Label htmlFor={props.name}>{props.label}</Label>
             <MInput
+                id={props.id}
                 variant="outlined"
                 name={props.name}
                 type={props.type}

@@ -20,12 +20,12 @@ const validationSchema = yup.object({
     organizace: yup.string().required('Název organizace je povinné pole'),
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
     heslo: yup.string()
-        .min(8, 'Password should be of minimum 8 characters length')
+        .min(8, 'Heslo musí být 8 znaků dlouhé')
         .required('Heslo je povinné pole'),
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná')
 });
 
-const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
+const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
     let history = useHistory();
     return (
         <>
@@ -36,9 +36,10 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                     try {
                         const response:AxiosResponse<any> = await API.post("/api/v1/jehlomat/organization", values);
                         const status = response.status;
+                        
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
-                                //for all success response; 
+                                //for all success response;
                                 history.push("/organizace/dekujeme")
                                 break;
                             }
@@ -64,6 +65,7 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                     return (
                         <Form onSubmit={handleSubmit}>
                             <TextInput
+                                id="organizace"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.organizace}
@@ -91,7 +93,7 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                                 value={values.heslo}
                                 type="password"
                                 name="heslo"
-                                placeholder="Potvrzení hesla"
+                                placeholder="Heslo"
                                 label="Heslo *"
                                 required={true}
                                 error={touched.heslo && Boolean(errors.heslo) ? errors.heslo : undefined}
@@ -107,7 +109,7 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
                                 required={true}
                                 error={touched.hesloConfirm && Boolean(errors.hesloConfirm) ? errors.hesloConfirm : undefined}
                             />
-                            <PrimaryButton text="Zalozit" type="submit" disabled={!isValid}/>
+                            <PrimaryButton id="submit" text="Zalozit" type="submit" disabled={!isValid}/>
                         </Form>
                     );
                 }}
