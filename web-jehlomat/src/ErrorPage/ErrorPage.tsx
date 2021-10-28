@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ErrorOutline from '@material-ui/icons/ErrorOutline';
+import ErrorOutline from '@mui/icons-material/ErrorOutline';
 
 
 import { primary as bgColor, secondary as tickColor, white as textColor } from '../Components/Utils/Colors';

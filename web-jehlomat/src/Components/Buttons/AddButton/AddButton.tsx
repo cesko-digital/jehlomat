@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from 'styled-components';
-import { default as MIconButton } from "@material-ui/core/IconButton";
-import AddIcon from '@material-ui/icons/Add';
+import { default as MIconButton } from "@mui/material/IconButton";
+import AddIcon from '@mui/icons-material/Add';
 import { primary, white } from '../../Utils/Colors';
 
 interface AddButton extends ButtonHTMLAttributes<HTMLButtonElement> { }
