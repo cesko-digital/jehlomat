@@ -11,12 +11,12 @@ import model.Syringe
 import service.DatabaseService
 
 import model.UserInfo
-import services.Mailer
+import services.MailerService
 
 val syringes = mutableListOf<Syringe>()
 
 
-fun Route.syringeApi(database: DatabaseService, mailer: Mailer): Route {
+fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
     return route("/") {
         get("all") {

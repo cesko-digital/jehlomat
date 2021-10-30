@@ -16,7 +16,9 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 import service.DatabaseService
 import service.DatabaseServiceImpl
+import services.FakeMailer
 import services.Mailer
+import services.MailerService
 
 
 val databaseModule = module {
@@ -24,14 +26,15 @@ val databaseModule = module {
 }
 
 val mailerModule = module {
-    single { Mailer() }
+    single<MailerService> { Mailer() }
+}
+
+val testMailerModule = module {
+    single<MailerService> { FakeMailer() }
 }
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-fun isLocal(): Boolean {
-    return System.getenv("isLocal")?.toBoolean() ?: false
-}
 
 @Suppress("unused", "UNUSED_PARAMETER") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -73,11 +76,11 @@ fun Application.module(testing: Boolean = false) {
 
     install(Koin) {
         modules(
-            if (isLocal()) {
+            if (testing){
                 listOf(
                     localModule,
                     databaseModule,
-                    mailerModule
+                    testMailerModule
                 )
             } else {
                 listOf(
@@ -90,7 +93,7 @@ fun Application.module(testing: Boolean = false) {
     }
 
     val service by inject<DatabaseService>()
-    val mailer by inject<Mailer>()
+    val mailer by inject<MailerService>()
 
     routing {
         get("/openapi.json") {

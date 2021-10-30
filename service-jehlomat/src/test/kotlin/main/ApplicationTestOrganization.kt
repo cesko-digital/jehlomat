@@ -10,6 +10,8 @@ import model.Organization
 import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
@@ -63,8 +65,7 @@ class OrganizationTest {
 
     @ExperimentalSerializationApi
     @Test
-    @Ignore("Need to solve how to pass jetmail api key to application")
-    fun testPostOrganization() = withTestApplication(Application::module) {
+    fun testPostOrganization() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(ORGANIZATION))

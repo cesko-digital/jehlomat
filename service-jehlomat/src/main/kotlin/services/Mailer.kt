@@ -11,7 +11,28 @@ import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
-class Mailer {
+
+interface MailerService {
+    fun sendRegistrationConfirmationEmail(organization: Organization)
+    fun sendSyringeFindingConfirmation(user: UserInfo)
+    fun sendSyringeFinding(organization: Organization)
+}
+
+
+class FakeMailer: MailerService {
+    override fun sendRegistrationConfirmationEmail(organization: Organization) {
+        println("sendRegistrationConfirmationEmail")
+    }
+    override fun sendSyringeFindingConfirmation(user: UserInfo) {
+        println("sendSyringeFindingConfirmation")
+    }
+    override fun sendSyringeFinding(organization: Organization) {
+        println("sendSyringeFinding")
+    }
+}
+
+
+class Mailer: MailerService {
     private val appConfig = DefaultConfig().get()
     private val client = MailjetClient(
         ClientOptions.builder()
@@ -47,7 +68,7 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendRegistrationConfirmationEmail(organization: Organization) {
+    override fun sendRegistrationConfirmationEmail(organization: Organization) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
@@ -64,7 +85,7 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendSyringeFindingConfirmation(user: UserInfo) {
+    override fun sendSyringeFindingConfirmation(user: UserInfo) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
@@ -81,7 +102,7 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendSyringeFinding(organization: Organization) {
+    override fun sendSyringeFinding(organization: Organization) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(

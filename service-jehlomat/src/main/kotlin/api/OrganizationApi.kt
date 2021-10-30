@@ -6,12 +6,12 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
-import services.Mailer
+import services.MailerService
 
 val organizations = mutableListOf<Organization>()
 
 
-fun Route.organizationApi(mailer: Mailer): Route {
+fun Route.organizationApi(mailer: MailerService): Route {
     return route("/") {
         get("/{email}") {
             // TODO: check if values satisfy condition
