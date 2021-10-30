@@ -165,6 +165,7 @@ class ApplicationTestSyringe {
             setBody(Json.encodeToString(SYRINGE))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
+            assertEquals(listOf(SYRINGE), syringes)
         }
     }
 }

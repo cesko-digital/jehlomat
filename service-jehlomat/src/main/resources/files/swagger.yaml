@@ -66,6 +66,110 @@ paths:
           description: Sucess
         '404':
           description: Organization not found
+  /syringe/all:
+    get:
+      summary: Get all syringes by parameters
+      description: Returns a single organization
+      produces:
+        - application/json
+      parameters:
+        - name: from
+          in: query
+          description: Lower bound for timestamp
+          type: integer
+        - name: to
+          in: query
+          description: Upper bound for timestamp
+          type: integer
+        - name: email
+          in: query
+          description: User email
+          type: string
+        - name: demolisher
+          in: query
+          description: Who demolisher syringe
+          items:
+            type: string
+            enum:
+              - USER
+              - NO
+              - CITY_POLICE
+            default: NO
+        - name: gpsCoordinates
+          in: query
+          type: string
+        - name: demolished
+          in: query
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Syringe'
+        '404':
+          description: Syringe not found
+  /syringe/:
+    post:
+      summary: Add a new syringe
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Found syringe object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Syringe'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing syringe
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Syringe object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/Syringe'
+      responses:
+        '200':
+          description: Success
+  /syringe/{id}:
+    get:
+      summary: Find syringe by ID
+      description: Returns a single syringe
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Syringe'
+        '404':
+          description: Syringe not found
+    delete:
+      summary: Delete syringe by ID
+      description: Delete a single syringe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -78,6 +182,16 @@ definitions:
       verified:
         type: boolean
         default: false
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      verified:
+        type: boolean
+        default: false
   Organization:
     type: object
     properties:
@@ -85,3 +199,29 @@ definitions:
         type: string
       administrator:
         $ref: '#/definitions/UserInfo'
+  Syringe:
+    type: object
+    properties:
+      id:
+        type: integer
+      timestamp:
+        type: integer
+      email:
+        type: string
+      photo:
+        type: string
+      count:
+        type: integer
+      note:
+        type: string
+      demolisher:
+        type: string
+        enum:
+          - USER
+          - NO
+          - CITY_POLICE
+        default: NO
+      gps_coordinates:
+        type: string
+      demolished:
+        type: boolean
