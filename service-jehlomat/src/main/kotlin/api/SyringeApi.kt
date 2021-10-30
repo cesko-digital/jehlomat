@@ -16,9 +16,8 @@ import services.Mailer
 val syringes = mutableListOf<Syringe>()
 
 
-fun Route.syringeApi(database: DatabaseService): Route {
+fun Route.syringeApi(database: DatabaseService, mailer: Mailer): Route {
 
-    val mailer = Mailer()
     return route("/") {
         get("all") {
             val parameters = call.request.queryParameters

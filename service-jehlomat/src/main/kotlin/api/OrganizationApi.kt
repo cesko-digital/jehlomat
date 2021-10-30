@@ -11,8 +11,7 @@ import services.Mailer
 val organizations = mutableListOf<Organization>()
 
 
-fun Route.organizationApi(): Route {
-    val mailer = Mailer()
+fun Route.organizationApi(mailer: Mailer): Route {
     return route("/") {
         get("/{email}") {
             // TODO: check if values satisfy condition
@@ -24,7 +23,7 @@ fun Route.organizationApi(): Route {
                 }[0]
                 call.respond(HttpStatusCode.OK, filteredOrganization)
             } catch (ex: IndexOutOfBoundsException) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.NotFound, "Organization not found")
             }
         }
 
@@ -35,7 +34,7 @@ fun Route.organizationApi(): Route {
 
             when {
                 organizations.any { it.administrator.email == organization.administrator.email } -> {
-                    call.respond(HttpStatusCode.Conflict)
+                    call.respond(HttpStatusCode.Conflict, "Organization email already exists")
                 }
                 else -> {
                     organizations.add(organization)
@@ -51,10 +50,12 @@ fun Route.organizationApi(): Route {
 
             val newOrganization = call.receive<Organization>()
 
-            val currentOrganizations = organizations.filter { it.administrator.email == newOrganization.administrator.email }
+            val currentOrganizations = organizations.filter {
+                it.administrator.email == newOrganization.administrator.email
+            }
 
             if (currentOrganizations.isEmpty()) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.NotFound, "Organization not found")
             } else {
                 val currentOrganization = currentOrganizations[0]
                 organizations.removeIf { it.name == currentOrganization.name }

@@ -1,0 +1,87 @@
+swagger: '2.0'
+info:
+  description: >-
+    Jehlomat REST api
+  version: 0.0.1
+  title: Jehlomat
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: radekludacka@gmail.com
+host: localhost:8082
+basePath: /api/v1/jehlomat
+schemes:
+  - http
+paths:
+  /organization/{organizationId}:
+    get:
+      summary: Find organization by ID
+      description: Returns a single organization
+      produces:
+        - application/json
+      parameters:
+        - name: organizationId
+          in: path
+          description: ID of organization to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Organization'
+        '404':
+          description: Organization not found
+  /organization/:
+    post:
+      summary: Add a new organization
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Organization object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing organization
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Organization object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
+      responses:
+        '200':
+          description: Sucess
+        '404':
+          description: Organization not found
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+definitions:
+  UserInfo:
+    type: object
+    properties:
+      email:
+        type: string
+      verified:
+        type: boolean
+        default: false
+  Organization:
+    type: object
+    properties:
+      name:
+        type: string
+      administrator:
+        $ref: '#/definitions/UserInfo'

@@ -49,6 +49,9 @@ dependencies {
 
     //Mailjet
     implementation("com.mailjet:mailjet-client:5.2.0")
+
+    //Swager API
+    implementation("com.github.papsign:Ktor-OpenAPI-Generator:-SNAPSHOT")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
