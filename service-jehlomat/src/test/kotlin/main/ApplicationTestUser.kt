@@ -17,7 +17,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 
-const val API_PATH = "/api/v1/jehlomat/users"
+const val API_PATH = "/api/v1/jehlomat/user"
 
 
 val team = Team(
