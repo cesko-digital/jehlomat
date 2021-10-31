@@ -17,14 +17,10 @@ import kotlin.test.assertEquals
 
 const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 
-val ADMINISTRATOR = UserInfo(
-    email = "administrator@example.org",
-    verified = true
-)
-
 val ORGANIZATION = Organization(
     name="ceska jehlova",
-    administrator=ADMINISTRATOR,
+    email="email@example.org",
+    password="password",
     verified = false
 )
 
@@ -37,17 +33,15 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org") {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/ceska jehlova") {
             organizations.add(ORGANIZATION)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
   "name" : "ceska jehlova",
-  "administrator" : {
-    "email" : "administrator@example.org",
-    "verified" : true
-  },
+  "email" : "email@example.org",
+  "password" : "password",
   "verified" : false
 }""",
                 response.content
@@ -101,7 +95,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutOrganization() = withTestApplication(Application::module) {
-        val newOrganization = ORGANIZATION.copy(name="different name")
+        val newOrganization = ORGANIZATION.copy(email="different email")
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
             organizations.add(ORGANIZATION)

@@ -5,12 +5,9 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.Demolisher
-import model.Organization
-import model.Syringe
+import model.*
 import service.DatabaseService
 
-import model.UserInfo
 import services.MailerService
 
 val syringes = mutableListOf<Syringe>()
@@ -54,10 +51,12 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
         post {
             val dummyOrganization  = Organization(
                 "TestOrg",
-                UserInfo("example@example.org", false),
+                "example@example.org",
+                "password",
                 verified = true
             )
-            val dummyUser = UserInfo("example@example.org", false)
+
+            val dummyUser = UserInfo("example@example.org", "team1", false)
             syringes.add(call.receive())
             mailer.sendSyringeFindingConfirmation(dummyUser)
             mailer.sendSyringeFinding(dummyOrganization)

@@ -10,8 +10,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import model.User
-import model.UserInfo
+import model.*
 import org.junit.Test
 import org.ktorm.database.Database
 import kotlin.test.BeforeTest
@@ -20,14 +19,23 @@ import kotlin.test.assertEquals
 
 const val API_PATH = "/api/v1/jehlomat/users"
 
+
+val team = Team(
+    "name",
+    Location(0,"a", "b", "c"),
+    "org1",
+)
+
 val USER = User(
     "email@example.org",
     "passwordhash",
-    false
+    false,
+    "team1"
 )
 
 val USER_INFO = UserInfo(
     "email@example.org",
+    "team1",
     false
 )
 
@@ -47,6 +55,7 @@ class ApplicationTest {
             assertEquals(
                 """{
   "email" : "email@example.org",
+  "teamName" : "team1",
   "verified" : false
 }""",
                 response.content

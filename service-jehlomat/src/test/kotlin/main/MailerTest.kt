@@ -19,7 +19,8 @@ import services.Mailer
 
 val user = Organization(
     "TestOrg",
-    UserInfo("bares.jakub@gmail.com", false),
+    "bares.jakub@gmail.com",
+    "password",
     verified = false
 )
 

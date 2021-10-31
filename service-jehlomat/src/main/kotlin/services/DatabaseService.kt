@@ -49,8 +49,6 @@ class DatabaseServiceImpl(
     fun selectTeams(): List<Team> {
         return databaseInstance
             .from(TeamTable)
-            .innerJoin(UserTeamTable, on=UserTeamTable.team_name eq TeamTable.name)
-            .innerJoin(UserTable, on=UserTeamTable.user_email eq UserTable.email)
             .select()
             .orderBy(TeamTable.name.asc())
             .map { row -> TeamTable.createEntity(row) }
@@ -59,16 +57,13 @@ class DatabaseServiceImpl(
     fun selectOrganizations(): List<Organization> {
         return databaseInstance
             .from(OrganizationTable)
-            .innerJoin(AdminOrganizationTable, on=AdminOrganizationTable.organization_name eq OrganizationTable.name)
             .select()
             .orderBy(OrganizationTable.name.asc())
             .map { row ->
                 Organization(
                     row[OrganizationTable.name]!!,
-                    UserInfo(
-                        row[AdminOrganizationTable.admin_email]!!,
-                        false,
-                    ),
+                    row[OrganizationTable.email]!!,
+                    row[OrganizationTable.password]!!,
                     row[OrganizationTable.verified]!!
                 )
             }
@@ -85,10 +80,9 @@ class DatabaseServiceImpl(
     fun updateOrganization(organization: Organization) {
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
-        }
-        databaseInstance.update(AdminOrganizationTable) {
-            set(it.organization_name, organization.name)
-            set(it.admin_email, organization.administrator.email)
+            set(it.email, organization.email)
+            set(it.password, organization.password)
+            set(it.verified, organization.verified)
         }
     }
 
@@ -96,7 +90,7 @@ class DatabaseServiceImpl(
         databaseInstance.update(TeamTable) {
             set(it.name, team.name)
             set(it.location_id, team.location.id)
-            set(it.organization_name, team.organization.name)
+            set(it.organization_name, team.organizationName)
         }
     }
 
@@ -123,10 +117,9 @@ class DatabaseServiceImpl(
     fun insertOrganization(organization: Organization) {
         databaseInstance.insertOrUpdate(OrganizationTable) {
             set(it.name, organization.name)
-        }
-        databaseInstance.insertOrUpdate(AdminOrganizationTable) {
-            set(it.admin_email, organization.administrator.email)
-            set(it.organization_name, organization.name)
+            set(it.email, organization.email)
+            set(it.password, organization.password)
+            set(it.verified, organization.verified)
         }
     }
 
@@ -137,20 +130,9 @@ class DatabaseServiceImpl(
             set(it.mesto, team.location.mesto)
         }
         databaseInstance.insertOrUpdate(TeamTable) {
-            set(it.organization_name, team.organization.name)
+            set(it.organization_name, team.organizationName)
             set(it.location_id, team.location.id)
             set(it.name, team.name)
-        }
-    }
-
-    fun insertUsersToTeam(team: Team, users: List<User>) {
-        databaseInstance.bulkInsert(UserTeamTable) {
-            users.map { user ->
-                item {
-                    set(it.team_name, team.name)
-                    set(it.user_email, user.email)
-                }
-            }
         }
     }
 
@@ -160,18 +142,6 @@ class DatabaseServiceImpl(
 
     fun deleteTeam(name: String) {
         databaseInstance.delete(TeamTable) { it.name eq name }
-    }
-
-    fun deleteAdminFromOrganization(email: String, orgName: String) {
-        databaseInstance.delete(AdminOrganizationTable) {
-            (it.admin_email eq email) and (it.organization_name eq orgName)
-        }
-    }
-
-    fun deleteUserFromTeam(email: String, teamName: String) {
-        databaseInstance.delete(UserTeamTable) {
-            (it.user_email eq email) and (it.team_name eq teamName)
-        }
     }
 
     override fun getObec(gpsCoordinates: String): String {

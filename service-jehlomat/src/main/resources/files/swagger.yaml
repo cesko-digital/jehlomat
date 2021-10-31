@@ -225,3 +225,21 @@ definitions:
         type: string
       demolished:
         type: boolean
+  Location:
+    id:
+      type: integer
+    okres:
+      type: Location
+    mesto:
+      type: string
+    mestkaCast:
+      type: string
+  Team:
+    type: object
+    properties:
+      name:
+        type: string
+      location:
+        $ref: '#/definitions/Location'
+      organization:
+        type: string

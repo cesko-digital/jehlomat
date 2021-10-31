@@ -13,13 +13,13 @@ val organizations = mutableListOf<Organization>()
 
 fun Route.organizationApi(mailer: MailerService): Route {
     return route("/") {
-        get("/{email}") {
+        get("/{name}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
             try {
                 val filteredOrganization = organizations.filter {
-                    it.administrator.email == call.parameters["email"]
+                    it.name == call.parameters["name"]
                 }[0]
                 call.respond(HttpStatusCode.OK, filteredOrganization)
             } catch (ex: IndexOutOfBoundsException) {
@@ -33,7 +33,7 @@ fun Route.organizationApi(mailer: MailerService): Route {
             // TODO: check if adminitrator is logged user
 
             when {
-                organizations.any { it.administrator.email == organization.administrator.email } -> {
+                organizations.any { it.name == organization.name } -> {
                     call.respond(HttpStatusCode.Conflict, "Organization email already exists")
                 }
                 else -> {
@@ -51,7 +51,7 @@ fun Route.organizationApi(mailer: MailerService): Route {
             val newOrganization = call.receive<Organization>()
 
             val currentOrganizations = organizations.filter {
-                it.administrator.email == newOrganization.administrator.email
+                it.name == newOrganization.name
             }
 
             if (currentOrganizations.isEmpty()) {

@@ -19,8 +19,7 @@ const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 val TEAM = Team(
     name="ceska jehlova",
     location = Location(0,"Tyn nad Vltavou", "Bukovina", ""),
-    usernames = listOf(),
-    organization = Organization("org1", UserInfo("email", true), true)
+    organizationName = "org1"
 )
 
 
@@ -45,15 +44,7 @@ class TeamTest {
     "mesto" : "Bukovina",
     "mestkaCast" : ""
   },
-  "usernames" : [ ],
-  "organization" : {
-    "name" : "org1",
-    "administrator" : {
-      "email" : "email",
-      "verified" : true
-    },
-    "verified" : true
-  }
+  "organizationName" : "org1"
 }""",
                 response.content
             )
@@ -106,8 +97,7 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeam() = withTestApplication(Application::module) {
-        val user = UserInfo("a", false)
-        val newTeam = TEAM.copy(usernames = listOf(user))
+        val newTeam = TEAM.copy(organizationName = "org1")
 
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
             teams.add(TEAM)
