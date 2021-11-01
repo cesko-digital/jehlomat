@@ -33,3 +33,21 @@ Remove lines for sph_* tables to make small test sample
 ```shell
 psql -h localhost -p 5432 -U jehlomat -d jehlomat < db.sql
 ```
+
+
+# Swagger UI
+
+```
+http://localhost:8082/swagger-ui/index.html?url=/static/swagger.yaml#/default
+```
+
+You also need to set Jetmail API keys:
+
+```
+mailjet {
+    publicKey = ""
+    privateKey = ""
+}
+```
+
+in `service-jehlomat/src/main/resources/application.conf`
