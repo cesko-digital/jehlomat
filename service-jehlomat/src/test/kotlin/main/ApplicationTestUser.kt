@@ -84,18 +84,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun testPutChangingNotVerifiedUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER)
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER))
-        }) {
-            assertEquals(HttpStatusCode.PreconditionFailed, response.status())
-            assertEquals("User is not verified yet", response.content)
-        }
-    }
-
-    @Test
     fun testPostUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")

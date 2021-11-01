@@ -5,8 +5,7 @@ import model.*
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
-import org.ktorm.entity.sequenceOf
-import org.ktorm.support.postgresql.InsertOrUpdateExpression
+import org.ktorm.schema.ColumnDeclaring
 import org.ktorm.support.postgresql.bulkInsert
 import org.ktorm.support.postgresql.insertOrUpdate
 
@@ -14,17 +13,23 @@ import org.ktorm.support.postgresql.insertOrUpdate
 interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
     fun insertUser(user: User)
+    fun insertTeam(team: Team)
     fun getObec(gpsCoordinates: String): String
+    fun getMC(gpsCoordinates: String): String
+    fun getOkres(gpsCoordinates: String): String
+    fun resolveNearestTeam(gpsCoordinates: String): Team
+    fun cleanLocation(): Int
+    fun cleanTeams(): Int
 }
 
 
 class DatabaseServiceImpl(
-    private val host: String=System.getenv("DATABASE_HOST"),
-    private val port: String=System.getenv("DATABASE_PORT"),
-    private val database: String=System.getenv("DATABASE_NAME"),
-    private val user: String=System.getenv("DATABASE_USERNAME"),
-    private val password: String=System.getenv("PGPASSWORD") ?: ""
-): DatabaseService {
+    private val host: String = System.getenv("DATABASE_HOST"),
+    private val port: String = System.getenv("DATABASE_PORT"),
+    private val database: String = System.getenv("DATABASE_NAME"),
+    private val user: String = System.getenv("DATABASE_USERNAME"),
+    private val password: String = System.getenv("PGPASSWORD") ?: ""
+) : DatabaseService {
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
@@ -69,7 +74,7 @@ class DatabaseServiceImpl(
             }
     }
 
-     fun updateUser(user: User) {
+    fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password)
@@ -123,16 +128,29 @@ class DatabaseServiceImpl(
         }
     }
 
-    fun insertTeam(team: Team) {
+    override fun insertTeam(team: Team) {
         databaseInstance.insertOrUpdate(LocationTable) {
             set(it.mestka_cast, team.location.mestkaCast)
             set(it.okres, team.location.okres)
-            set(it.mesto, team.location.mesto)
+            set(it.obec, team.location.obec)
+            onConflict { doNothing() }
         }
+
+        val locationId: Int = databaseInstance
+            .from(LocationTable)
+            .select()
+            .where(
+                (LocationTable.mestka_cast eq team.location.mestkaCast)
+                        and (LocationTable.obec eq team.location.obec)
+                        and (LocationTable.okres eq team.location.okres)
+            )
+            .map { it.getInt("id") }.first()
+
         databaseInstance.insertOrUpdate(TeamTable) {
             set(it.organization_name, team.organizationName)
-            set(it.location_id, team.location.id)
+            set(it.location_id, locationId)
             set(it.name, team.name)
+            onConflict { doNothing() }
         }
     }
 
@@ -144,16 +162,78 @@ class DatabaseServiceImpl(
         databaseInstance.delete(TeamTable) { it.name eq name }
     }
 
-    override fun getObec(gpsCoordinates: String): String {
-
-        val obec = databaseInstance.useConnection { conn ->
-            val sql = "SELECT nazev_lau2 FROM sph_obec WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, sph_obec.wkb_geometry)"
+    fun postgisLocation(table: String, gpsCoordinates: String, column: String): String {
+        val names = databaseInstance.useConnection { conn ->
+            val sql =
+                "SELECT $column FROM $table WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, $table.wkb_geometry)"
 
             conn.prepareStatement(sql).use { statement ->
                 statement.executeQuery().asIterable().map { it.getString(1) }
             }
         }
 
-        return obec.first()
+        return names.firstOrNull() ?: ""
+    }
+
+    override fun getObec(gpsCoordinates: String): String {
+        return postgisLocation("sph_obec", gpsCoordinates, "nazev_lau2")
+    }
+
+    override fun getMC(gpsCoordinates: String): String {
+        return postgisLocation("sph_mc", gpsCoordinates, "nazev_mc")
+    }
+
+    override fun getOkres(gpsCoordinates: String): String {
+        return postgisLocation("sph_okres", gpsCoordinates, "nazev_lau1")
+    }
+
+    fun selectLocation(gpsCoordinates: String): Location {
+        fun query(condition: ColumnDeclaring<Boolean>): Location? {
+            return databaseInstance.from(LocationTable)
+                .select()
+                .where { condition }
+                .map { row ->
+                    Location(
+                        id = row.getInt("id"),
+                        okres = row.getString("okres")!!,
+                        obec = row.getString("obec")!!,
+                        mestkaCast = row.getString("mestka_cast")!!
+                    )
+                }
+                .firstOrNull()
+        }
+
+        val obec = getObec(gpsCoordinates)
+        val mc = getMC(gpsCoordinates)
+        val okres = getOkres(gpsCoordinates)
+
+        return (query((LocationTable.mestka_cast eq mc) and (LocationTable.obec eq obec) and (LocationTable.okres eq okres))
+            ?: run { query((LocationTable.obec eq obec) and (LocationTable.okres eq okres)) }
+            ?: run { query(LocationTable.okres eq okres) })!!
+    }
+
+    override fun resolveNearestTeam(gpsCoordinates: String): Team {
+        val location = selectLocation(gpsCoordinates)
+
+        return databaseInstance
+            .from(TeamTable)
+            .select()
+            .where { TeamTable.location_id eq location.id }
+            .map { row ->
+                Team(
+                    name=row.getString("name")!!,
+                    location=location,
+                    organizationName=row.getString("organization_name")!!,
+                )
+            }
+            .first()
+    }
+
+    override fun cleanLocation(): Int {
+        return databaseInstance.deleteAll(LocationTable)
+    }
+
+    override fun cleanTeams(): Int {
+        return databaseInstance.deleteAll(TeamTable)
     }
 }
