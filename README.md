@@ -15,7 +15,7 @@ https://geoportal.cuzk.cz/zakazky/SPH/SPH_SHP_WGS84.zip
 
 ```shell
 unzip SPH_SHP_WGS84.zip
-cd SPH_SHP_WGS84
+cd WGS84
 
 ogr2ogr -f "PostgreSQL" PG:"host=localhost user=<USER> password=<PASSWORD> dbname=<DBNAME>" SPH_OBEC.shp
 ogr2ogr -f "PostgreSQL" PG:"host=localhost user=<USER> password=<PASSWORD> dbname=<DBNAME>" SPH_MC.shp

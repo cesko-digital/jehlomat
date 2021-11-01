@@ -1,7 +1,5 @@
 package api
 
-import api.SyringeTable.primaryKey
-import model.Location
 import org.ktorm.schema.*
 
 object DemolisherTable: Table<Nothing>("demolisher") {
@@ -29,7 +27,7 @@ object UserTable: Table<Nothing>("users") {
 object LocationTable: Table<Nothing>("locations") {
     val id = int("id").primaryKey()
     val okres = varchar("okres")
-    val mesto = varchar("mesto")
+    val obec = varchar("obec")
     val mestka_cast = varchar("mestka_cast")
 }
 
@@ -41,7 +39,7 @@ object OrganizationTable: Table<Nothing>("organizations") {
 object TeamTable: Table<Nothing>("teams") {
     val name = varchar("name").primaryKey()
     val organization_name = varchar("organization_name")
-    val location_id = varchar("location_id")
+    val location_id = int("location_id")
 }
 
 object AdminOrganizationTable: Table<Nothing>("admin_organization") {
