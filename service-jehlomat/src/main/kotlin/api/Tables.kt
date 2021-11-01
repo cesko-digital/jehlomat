@@ -22,7 +22,7 @@ object UserTable: Table<Nothing>("users") {
     val email = varchar("email").primaryKey()
     val password = varchar("password")
     val verified = boolean("verified")
-    val team = varchar("team")
+    val teamName = varchar("team_name")
 }
 
 object LocationTable: Table<Nothing>("locations") {

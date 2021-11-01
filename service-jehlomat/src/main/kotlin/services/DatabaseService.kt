@@ -79,6 +79,7 @@ class DatabaseServiceImpl(
             set(it.email, user.email)
             set(it.password, user.password)
             set(it.verified, user.verified)
+            set(it.teamName, user.teamName)
         }
     }
 
@@ -116,6 +117,7 @@ class DatabaseServiceImpl(
             set(it.email, user.email)
             set(it.password, user.password)
             set(it.verified, user.verified)
+            set(it.teamName, user.teamName)
         }
     }
 
