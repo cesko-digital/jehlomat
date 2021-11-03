@@ -54,8 +54,16 @@ class OrganizationTest {
     }
 
     @Test
+    fun testGetAllOrganizations() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/")) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
     fun testGetOrganizationNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/administrator@example.org")) {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org")) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }

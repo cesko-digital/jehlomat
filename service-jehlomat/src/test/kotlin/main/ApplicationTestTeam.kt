@@ -20,7 +20,7 @@ val TEAM = Team(
     name="ceska jehlova",
     location = Location(0,"Tyn nad Vltavou", "Bukovina", ""),
     usernames = listOf(),
-    organization = Organization("org1", UserInfo("email", true), true)
+    organization = "org1"
 )
 
 
@@ -42,18 +42,11 @@ class TeamTest {
   "location" : {
     "id" : 0,
     "okres" : "Tyn nad Vltavou",
-    "mesto" : "Bukovina",
+    "obec" : "Bukovina",
     "mestkaCast" : ""
   },
   "usernames" : [ ],
-  "organization" : {
-    "name" : "org1",
-    "administrator" : {
-      "email" : "email",
-      "verified" : true
-    },
-    "verified" : true
-  }
+  "organization" : "org1"
 }""",
                 response.content
             )
