@@ -8,12 +8,12 @@ import ZobrazitStav from './Components/ZobrazitStav';
 
 interface ITrackovaniNalezu {}
 
-enum STEPS {
+export enum STEPS {
     ZadatKod,
     ZobraitStav,
 }
 
-type syringeStateType = 'destroyed' | 'reserved' | 'announced' | 'notfound';
+export type syringeStateType = 'destroyed' | 'reserved' | 'announced' | 'notfound';
 
 export interface ISyringeState {
     hasCheckMark: boolean;
@@ -57,11 +57,19 @@ const TrackovaniNalezu: FC<ITrackovaniNalezu> = ({}) => {
         history.goBack();
     };
 
+    const handleStepChange = (newStep: STEPS) => {
+        setCurrentStep(newStep);
+    };
+
+    const handleNewSyringeState = (syringeState: syringeStateType) => {
+        setSyringeState(syringeState);
+    };
+
     switch (currentStep) {
         case STEPS.ZobraitStav:
             return <ZobrazitStav syringeState={syringeStates[syringeState]!} />;
         default:
-            return <ZadatKod onClickBack={handleOnClickBack} />;
+            return <ZadatKod onClickBack={handleOnClickBack} handleStepChange={handleStepChange} handleNewSyringeState={handleNewSyringeState} />;
     }
 };
 

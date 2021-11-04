@@ -14,7 +14,7 @@ interface IZobrazitStav {
 
 const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState }) => {
     return (
-        <Container sx={{ height: '100vh', backgroundColor: primary }}>
+        <Box sx={{ height: '100vh', backgroundColor: primary }}>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <TitleBar></TitleBar>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
@@ -37,7 +37,7 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState }) => {
                     )}
                 </Grid>
             </Grid>
-        </Container>
+        </Box>
     );
 };
 
