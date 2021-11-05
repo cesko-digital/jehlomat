@@ -38,7 +38,7 @@ fun Route.organizationApi(mailer: MailerService): Route {
 
             when {
                 organizations.any { it.name == organization.name } -> {
-                    call.respond(HttpStatusCode.Conflict, "Organization email already exists")
+                    call.respond(HttpStatusCode.Conflict, "Organization name already exists")
                 }
                 else -> {
                     organizations.add(organization)
