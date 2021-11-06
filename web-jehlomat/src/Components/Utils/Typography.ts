@@ -68,3 +68,13 @@ export const FormHeading = styled.p`
         width: 340px;
     }
 `;
+
+export const FormItemDescription = styled.p`
+    ${fontFamilyRoboto}
+    width: 80%;
+    color: black;
+    font-size: 16px;
+    @media (min-width: 700px) {
+        width: 340px;
+    }
+`;
