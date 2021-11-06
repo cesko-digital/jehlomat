@@ -22,6 +22,7 @@ object UserTable: Table<Nothing>("users") {
     val email = varchar("email").primaryKey()
     val password = varchar("password")
     val verified = boolean("verified")
+    val teamName = varchar("team_name")
 }
 
 object LocationTable: Table<Nothing>("locations") {
@@ -33,6 +34,8 @@ object LocationTable: Table<Nothing>("locations") {
 
 object OrganizationTable: Table<Nothing>("organizations") {
     val name = varchar("name").primaryKey()
+    val email = varchar("email")
+    val password = varchar("password")
     val verified = boolean("verified")
 }
 
@@ -40,16 +43,4 @@ object TeamTable: Table<Nothing>("teams") {
     val name = varchar("name").primaryKey()
     val organization_name = varchar("organization_name")
     val location_id = int("location_id")
-}
-
-object AdminOrganizationTable: Table<Nothing>("admin_organization") {
-    val id = int("id").primaryKey()
-    val admin_email = varchar("admin_email")
-    val organization_name = varchar("organization_name")
-}
-
-object UserTeamTable: Table<Nothing>("user_team") {
-    val id = int("id").primaryKey()
-    val user_email = varchar("user_email")
-    val team_name = varchar("team_name")
 }

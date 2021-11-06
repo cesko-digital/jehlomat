@@ -10,24 +10,32 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import model.User
-import model.UserInfo
+import model.*
 import org.junit.Test
 import org.ktorm.database.Database
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 
-const val API_PATH = "/api/v1/jehlomat/users"
+const val API_PATH = "/api/v1/jehlomat/user"
+
+
+val team = Team(
+    "name",
+    Location(0,"a", "b", "c"),
+    "org1",
+)
 
 val USER = User(
     "email@example.org",
     "passwordhash",
-    false
+    false,
+    "team1"
 )
 
 val USER_INFO = UserInfo(
     "email@example.org",
+    "team1",
     false
 )
 
@@ -47,6 +55,7 @@ class ApplicationTest {
             assertEquals(
                 """{
   "email" : "email@example.org",
+  "teamName" : "team1",
   "verified" : false
 }""",
                 response.content
@@ -71,18 +80,6 @@ class ApplicationTest {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(USER.copy(password = "new password"), users[0])
-        }
-    }
-
-    @Test
-    fun testPutChangingNotVerifiedUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER)
-            addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER))
-        }) {
-            assertEquals(HttpStatusCode.PreconditionFailed, response.status())
-            assertEquals("User is not verified yet", response.content)
         }
     }
 

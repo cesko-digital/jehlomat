@@ -1,0 +1,392 @@
+swagger: '2.0'
+info:
+  description: >-
+    Jehlomat REST api
+  version: 0.0.1
+  title: Jehlomat
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: radekludacka@gmail.com
+host: localhost:8082
+basePath: /api/v1/jehlomat
+schemes:
+  - http
+paths:
+  /organization/{organizationName}:
+    get:
+      summary: Find organization by name
+      description: Returns a single organization
+      produces:
+        - application/json
+      parameters:
+        - name: organizationName
+          in: path
+          description: Name of organization to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Organization'
+        '404':
+          description: Organization not found
+  /organization/:
+    get:
+      summary: Get all organizations
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Organization'
+    post:
+      summary: Add a new organization
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Organization object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing organization
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Organization object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Organization not found
+  /syringe/all:
+    get:
+      summary: Get all syringes by parameters
+      description: Returns a single organization
+      produces:
+        - application/json
+      parameters:
+        - name: from
+          in: query
+          description: Lower bound for timestamp
+          type: integer
+        - name: to
+          in: query
+          description: Upper bound for timestamp
+          type: integer
+        - name: email
+          in: query
+          description: User email
+          type: string
+        - name: demolisher
+          in: query
+          description: Who demolisher syringe
+          items:
+            type: string
+            enum:
+              - USER
+              - NO
+              - CITY_POLICE
+            default: NO
+        - name: gpsCoordinates
+          in: query
+          type: string
+        - name: demolished
+          in: query
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Syringe'
+        '404':
+          description: Syringe not found
+  /syringe/:
+    post:
+      summary: Add a new syringe
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Found syringe object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Syringe'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing syringe
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Syringe object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/Syringe'
+      responses:
+        '200':
+          description: Success
+  /syringe/{id}:
+    get:
+      summary: Find syringe by ID
+      description: Returns a single syringe
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Syringe'
+        '404':
+          description: Syringe not found
+    delete:
+      summary: Delete syringe by ID
+      description: Delete a single syringe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+  /team/{teamName}:
+    get:
+      summary: Find team by name
+      description: Returns a single team
+      produces:
+        - application/json
+      parameters:
+        - name: teamName
+          in: path
+          description: Name of team to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Team'
+        '404':
+          description: Team not found
+  /team/:
+    post:
+      summary: Add a new team
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Team object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Team'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing team
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Team object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/Team'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Team not found
+  /user/{email}:
+    get:
+      summary: Find user by email
+      description: Returns a single email
+      produces:
+        - application/json
+      parameters:
+        - name: email
+          in: path
+          description: Email of user to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        '404':
+          description: User not found
+  /user/:
+    post:
+      summary: Add a new user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+    put:
+      summary: Update an existing user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: User not found
+  /verification/{organizationName}:
+    get:
+      summary: Verifies organization
+      parameters:
+        - name: organizationName
+          in: path
+          description: organizationName to verify
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Organization not found
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+definitions:
+  UserInfo:
+    type: object
+    properties:
+      email:
+        type: string
+      teamName:
+        type: string
+      verified:
+        type: boolean
+        default: false
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      teamName:
+        type: string
+      verified:
+        type: boolean
+        default: false
+  Organization:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      verified:
+        type: boolean
+  AllOrganizations:
+    type: array
+    items:
+      $ref: '#/definitions/Organization'
+  Syringe:
+    type: object
+    properties:
+      id:
+        type: integer
+      timestamp:
+        type: integer
+      email:
+        type: string
+      photo:
+        type: string
+      count:
+        type: integer
+      note:
+        type: string
+      demolisher:
+        type: string
+        enum:
+          - USER
+          - NO
+          - CITY_POLICE
+        default: NO
+      gps_coordinates:
+        type: string
+      demolished:
+        type: boolean
+  Location:
+    id:
+      type: integer
+    okres:
+      type: Location
+    mesto:
+      type: string
+    mestkaCast:
+      type: string
+  Team:
+    type: object
+    properties:
+      name:
+        type: string
+      location:
+        type: object
+        properties:
+          id:
+            type: integer
+          okres:
+            type: string
+          mesto:
+            type: string
+          mestkaCast:
+            type: string
+      organizationName:
+        type: string

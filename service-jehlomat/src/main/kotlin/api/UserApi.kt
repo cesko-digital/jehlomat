@@ -57,9 +57,6 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
                 userToChange.isEmpty() -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                userToChange[0].verified.not() -> {
-                    call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
-                }
                 (!userToChange[0].email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }

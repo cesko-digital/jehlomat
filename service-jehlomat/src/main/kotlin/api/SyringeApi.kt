@@ -5,20 +5,16 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.Demolisher
-import model.Organization
-import model.Syringe
+import model.*
 import service.DatabaseService
 
-import model.UserInfo
-import services.Mailer
+import services.MailerService
 
 val syringes = mutableListOf<Syringe>()
 
 
-fun Route.syringeApi(database: DatabaseService): Route {
+fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
-    val mailer = Mailer()
     return route("/") {
         get("all") {
             val parameters = call.request.queryParameters
@@ -55,13 +51,23 @@ fun Route.syringeApi(database: DatabaseService): Route {
         post {
             val dummyOrganization  = Organization(
                 "TestOrg",
-                UserInfo("bares.jakub@gmail.com", false),
+                "example@example.org",
+                "password",
                 verified = true
             )
-            val dummyUser = UserInfo("bares.jakub@gmail.com", false)
+
+            val dummyUser = UserInfo("example@example.org", "team1", false)
+            syringes.add(call.receive())
             mailer.sendSyringeFindingConfirmation(dummyUser)
             mailer.sendSyringeFinding(dummyOrganization)
             call.respond(HttpStatusCode.Created)
+        }
+
+        put {
+            val newSyringe = call.receive<Syringe>()
+            syringes.removeIf { it.id == newSyringe.id }
+            syringes.add(newSyringe)
+            call.respond(HttpStatusCode.OK)
         }
 
         route("/{id}") {
@@ -73,13 +79,6 @@ fun Route.syringeApi(database: DatabaseService): Route {
                 } catch (ex: IndexOutOfBoundsException) {
                     call.respond(HttpStatusCode.NotFound)
                 }
-            }
-
-            put {
-                val id = call.parameters["id"]?.toLong()
-                syringes.removeIf { it.id == id }
-                syringes.add(call.receive())
-                call.respond(HttpStatusCode.OK)
             }
 
             delete {

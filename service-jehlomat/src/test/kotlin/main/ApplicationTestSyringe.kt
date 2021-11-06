@@ -141,7 +141,7 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPutSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/0") {
+        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)))
         }) {
@@ -159,8 +159,7 @@ class ApplicationTestSyringe {
     }
 
     @Test
-    @Ignore("Need to solve how to pass jetmail api key to application")
-    fun testPostSyringe() = withTestApplication(Application::module) {
+    fun testPostSyringe() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(SYRINGE))

@@ -51,11 +51,10 @@ class DatabaseServiceImplTest {
     @Test
     fun testResolveNearestTeam() {
         val exactTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 3")
-        val users = listOf<UserInfo>()
-        val exactTeam = Team("teamA", exactTeamLocation, users, "orgName")
+        val exactTeam = Team("teamA", exactTeamLocation, "orgName")
 
         val obecTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 9-Malesice")
-        val obecTeam = Team("teamA", obecTeamLocation, users, "orgName")
+        val obecTeam = Team("teamA", obecTeamLocation, "orgName")
 
         database.insertTeam(exactTeam)
         database.insertTeam(obecTeam)

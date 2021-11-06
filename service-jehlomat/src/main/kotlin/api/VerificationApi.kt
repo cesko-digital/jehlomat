@@ -11,11 +11,11 @@ import services.Mailer
 
 fun Route.verificationApi(): Route {
     return route("/") {
-        get {
+        get("/{organizationName}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            val organizationName = call.receiveParameters().get("orgName")
+            val organizationName = call.parameters["organizationName"]
 
             val currentOrganizations = organizations.filter { it.name == organizationName }
 

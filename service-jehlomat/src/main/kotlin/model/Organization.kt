@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Organization(
     val name: String,
-    val administrator: UserInfo,
+    val email: String,
+    val password: String,
     var verified: Boolean
 )

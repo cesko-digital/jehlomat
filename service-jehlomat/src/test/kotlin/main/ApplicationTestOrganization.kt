@@ -10,19 +10,17 @@ import model.Organization
 import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 
-val ADMINISTRATOR = UserInfo(
-    email = "administrator@example.org",
-    verified = true
-)
-
 val ORGANIZATION = Organization(
     name="ceska jehlova",
-    administrator=ADMINISTRATOR,
+    email="email@example.org",
+    password="password",
     verified = false
 )
 
@@ -35,17 +33,15 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org") {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/ceska jehlova") {
             organizations.add(ORGANIZATION)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
   "name" : "ceska jehlova",
-  "administrator" : {
-    "email" : "administrator@example.org",
-    "verified" : true
-  },
+  "email" : "email@example.org",
+  "password" : "password",
   "verified" : false
 }""",
                 response.content
@@ -65,14 +61,13 @@ class OrganizationTest {
     fun testGetOrganizationNotFound() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org")) {
             assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals(null, response.content)
+            assertEquals("Organization not found", response.content)
         }
     }
 
     @ExperimentalSerializationApi
     @Test
-    @Ignore("Need to solve how to pass jetmail api key to application")
-    fun testPostOrganization() = withTestApplication(Application::module) {
+    fun testPostOrganization() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(ORGANIZATION))
@@ -108,7 +103,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutOrganization() = withTestApplication(Application::module) {
-        val newOrganization = ORGANIZATION.copy(name="different name")
+        val newOrganization = ORGANIZATION.copy(email="different email")
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
             organizations.add(ORGANIZATION)
