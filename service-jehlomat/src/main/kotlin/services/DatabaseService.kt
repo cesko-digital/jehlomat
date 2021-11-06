@@ -8,6 +8,7 @@ import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
 import org.ktorm.support.postgresql.bulkInsert
 import org.ktorm.support.postgresql.insertOrUpdate
+import utils.hashPassword
 
 
 interface DatabaseService {
@@ -19,6 +20,7 @@ interface DatabaseService {
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
     fun resolveNearestTeam(gpsCoordinates: String): Team
+    fun updateUser(user: User)
     fun cleanLocation(): Int
     fun cleanTeams(): Int
     fun cleanUsers(): Int
@@ -85,10 +87,10 @@ class DatabaseServiceImpl(
             }
     }
 
-    fun updateUser(user: User) {
+    override fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
             set(it.email, user.email)
-            set(it.password, user.password)
+            set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
             set(it.teamName, user.teamName)
         }
@@ -126,7 +128,7 @@ class DatabaseServiceImpl(
     override fun insertUser(user: User) {
         databaseInstance.insert(UserTable) {
             set(it.email, user.email)
-            set(it.password, user.password)
+            set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
             set(it.teamName, user.teamName)
         }

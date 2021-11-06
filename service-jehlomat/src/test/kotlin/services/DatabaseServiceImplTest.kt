@@ -1,12 +1,17 @@
 package services
 
-import model.*
+import model.Location
+import model.Team
+import model.User
+import model.UserInfo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.mindrot.jbcrypt.BCrypt
 import service.DatabaseService
 import service.DatabaseServiceImpl
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -53,16 +58,35 @@ class DatabaseServiceImplTest {
     }
 
     @Test
-    fun testSelectUSerByEmail() {
+    fun testSelectUserByEmail() {
         assertNull(database.selectUserByEmail("not-existent-user"))
 
-        database.insertUser(User("email", "password", false))
+        database.insertUser(User("email", "password", false, ""))
 
         val user = database.selectUserByEmail("email")
         assertNotNull(user)
         assertEquals("email", user.email)
-        assertEquals("password", user.password)
+        assertNotNull(user.password)
         assertEquals(false, user.verified)
+    }
+
+    @Test
+    fun testHashingUserPassword() {
+        val originalPassword = "original-password"
+        database.insertUser(User("email", originalPassword, false, ""))
+
+        val user = database.selectUserByEmail("email")
+        assertNotNull(user)
+        assertNotEquals(originalPassword, user.password)
+        assert(BCrypt.checkpw(originalPassword, user.password))
+
+        val newPassword = "new-password"
+        database.updateUser(User("email", newPassword, false, ""))
+
+        val updatedUser = database.selectUserByEmail("email")
+        assertNotNull(updatedUser)
+        assertNotEquals(originalPassword, updatedUser.password)
+        assert(BCrypt.checkpw(newPassword, updatedUser.password))
     }
 
     @Test

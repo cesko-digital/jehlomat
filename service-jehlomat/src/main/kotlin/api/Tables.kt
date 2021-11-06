@@ -30,6 +30,7 @@ object UserTable: BaseTable<User>("users") {
         email = row[email] ?: "",
         password = row[password] ?: "",
         verified = row[verified] ?: false,
+        teamName = row[teamName] ?: ""
     )
 }
 

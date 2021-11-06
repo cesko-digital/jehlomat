@@ -1,20 +1,18 @@
 package main
 
-import api.users
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.*
 import org.junit.Test
-import org.ktorm.database.Database
+import org.mindrot.jbcrypt.BCrypt
+import service.DatabaseService
+import service.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 
 const val API_PATH = "/api/v1/jehlomat/user"
@@ -28,7 +26,7 @@ val team = Team(
 
 val USER = User(
     "email@example.org",
-    "passwordhash",
+    "aaAA11aa",
     false,
     "team1"
 )
@@ -41,15 +39,17 @@ val USER_INFO = UserInfo(
 
 class ApplicationTest {
 
+    var database: DatabaseService = DatabaseServiceImpl()
+
     @BeforeTest
     fun beforeEach() {
-        users.clear()
+        database.cleanUsers()
     }
 
     @Test
     fun testGetUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$API_PATH/email@example.org") {
-            users.add(USER)
+            database.insertUser(USER)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -74,12 +74,16 @@ class ApplicationTest {
     @Test
     fun testPutUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            users.add(USER.copy(verified = true))
+            database.insertUser(USER.copy(verified = true))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER.copy(password = "new password")))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(USER.copy(password = "new password"), users[0])
+            val user = database.selectUserByEmail(USER.email);
+            assertNotNull(user)
+            assertEquals(USER.email, user.email)
+            assert(BCrypt.checkpw("new password", user.password))
+            assertEquals(USER.verified, user.verified)
         }
     }
 
@@ -96,7 +100,7 @@ class ApplicationTest {
     @Test
     fun testPostAlreadyExistingUser() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
-            users.add(USER)
+            database.insertUser(USER)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER))
         }) {
