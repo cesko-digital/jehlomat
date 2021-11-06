@@ -1,5 +1,7 @@
 package api
 
+import model.User
+import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
 
 object DemolisherTable: Table<Nothing>("demolisher") {
@@ -18,11 +20,17 @@ object SyringeTable: Table<Nothing>("syringes") {
     val gpsCoordinates = varchar("gps_coordinates")
 }
 
-object UserTable: Table<Nothing>("users") {
+object UserTable: BaseTable<User>("users") {
     val email = varchar("email").primaryKey()
     val password = varchar("password")
     val verified = boolean("verified")
     val teamName = varchar("team_name")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = User(
+        email = row[email] ?: "",
+        password = row[password] ?: "",
+        verified = row[verified] ?: false,
+    )
 }
 
 object LocationTable: Table<Nothing>("locations") {

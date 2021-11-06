@@ -14,12 +14,14 @@ interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
     fun insertUser(user: User)
     fun insertTeam(team: Team)
+    fun selectUserByEmail(email: String): User?
     fun getObec(gpsCoordinates: String): String
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
     fun resolveNearestTeam(gpsCoordinates: String): Team
     fun cleanLocation(): Int
     fun cleanTeams(): Int
+    fun cleanUsers(): Int
 }
 
 
@@ -49,6 +51,15 @@ class DatabaseServiceImpl(
             .select()
             .orderBy(SyringeTable.id.asc())
             .map { row -> SyringeTable.createEntity(row) }
+    }
+
+    override fun selectUserByEmail(email: String): User? {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { UserTable.email eq email }
+            .map { row -> UserTable.createEntity(row) }
+            .firstOrNull()
     }
 
     fun selectTeams(): List<Team> {
@@ -237,5 +248,9 @@ class DatabaseServiceImpl(
 
     override fun cleanTeams(): Int {
         return databaseInstance.deleteAll(TeamTable)
+    }
+
+    override fun cleanUsers(): Int {
+        return databaseInstance.deleteAll(UserTable)
     }
 }

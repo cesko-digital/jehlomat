@@ -7,6 +7,8 @@ import org.junit.Test
 import service.DatabaseService
 import service.DatabaseServiceImpl
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class DatabaseServiceImplTest {
 
@@ -16,12 +18,14 @@ class DatabaseServiceImplTest {
     fun beforeEach() {
         database.cleanLocation()
         database.cleanTeams()
+        database.cleanUsers()
     }
 
     @After
     fun afterEach() {
         database.cleanLocation()
         database.cleanTeams()
+        database.cleanUsers()
     }
 
     @Test
@@ -46,6 +50,19 @@ class DatabaseServiceImplTest {
     fun testGetNone() {
         val actualObec = database.getObec("00.0000000 00.0000000")
         assertEquals("", actualObec)
+    }
+
+    @Test
+    fun testSelectUSerByEmail() {
+        assertNull(database.selectUserByEmail("not-existent-user"))
+
+        database.insertUser(User("email", "password", false))
+
+        val user = database.selectUserByEmail("email")
+        assertNotNull(user)
+        assertEquals("email", user.email)
+        assertEquals("password", user.password)
+        assertEquals(false, user.verified)
     }
 
     @Test
