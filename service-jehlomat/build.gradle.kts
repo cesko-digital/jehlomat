@@ -53,6 +53,9 @@ dependencies {
 
     //Swager API
     implementation("com.github.papsign:Ktor-OpenAPI-Generator:-SNAPSHOT")
+
+    //Hash and encryption
+    implementation("org.mindrot:jbcrypt:0.4")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

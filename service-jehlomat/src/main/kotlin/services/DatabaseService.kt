@@ -8,18 +8,22 @@ import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
 import org.ktorm.support.postgresql.bulkInsert
 import org.ktorm.support.postgresql.insertOrUpdate
+import utils.hashPassword
 
 
 interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
     fun insertUser(user: User)
     fun insertTeam(team: Team)
+    fun selectUserByEmail(email: String): User?
     fun getObec(gpsCoordinates: String): String
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
     fun resolveNearestTeam(gpsCoordinates: String): Team
+    fun updateUser(user: User)
     fun cleanLocation(): Int
     fun cleanTeams(): Int
+    fun cleanUsers(): Int
 }
 
 
@@ -51,6 +55,15 @@ class DatabaseServiceImpl(
             .map { row -> SyringeTable.createEntity(row) }
     }
 
+    override fun selectUserByEmail(email: String): User? {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { UserTable.email eq email }
+            .map { row -> UserTable.createEntity(row) }
+            .firstOrNull()
+    }
+
     fun selectTeams(): List<Team> {
         return databaseInstance
             .from(TeamTable)
@@ -74,10 +87,10 @@ class DatabaseServiceImpl(
             }
     }
 
-    fun updateUser(user: User) {
+    override fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
             set(it.email, user.email)
-            set(it.password, user.password)
+            set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
             set(it.teamName, user.teamName)
         }
@@ -115,7 +128,7 @@ class DatabaseServiceImpl(
     override fun insertUser(user: User) {
         databaseInstance.insert(UserTable) {
             set(it.email, user.email)
-            set(it.password, user.password)
+            set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
             set(it.teamName, user.teamName)
         }
@@ -237,5 +250,9 @@ class DatabaseServiceImpl(
 
     override fun cleanTeams(): Int {
         return databaseInstance.deleteAll(TeamTable)
+    }
+
+    override fun cleanUsers(): Int {
+        return databaseInstance.deleteAll(UserTable)
     }
 }

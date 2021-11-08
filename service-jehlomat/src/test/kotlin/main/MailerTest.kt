@@ -1,20 +1,15 @@
 package main
 
-import api.users
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import model.Organization
-import model.User
 import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
+import service.DatabaseService
+import service.DatabaseServiceImpl
 import services.Mailer
-
+import kotlin.test.BeforeTest
 
 
 val user = Organization(
@@ -25,9 +20,11 @@ val user = Organization(
 )
 
 class MailerTest {
+    var database: DatabaseService = DatabaseServiceImpl()
+
     @BeforeTest
     fun beforeEach() {
-        users.clear()
+        database.cleanUsers()
     }
 
     @Test
