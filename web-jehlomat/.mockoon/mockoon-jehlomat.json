@@ -112,6 +112,36 @@
                         "enabled": true,
                         "randomResponse": false,
                         "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "d6fdfa6b-8d57-4de3-8930-abe52fa490d4",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "syringe-state",
+                        "responses": [
+                            {
+                                "uuid": "9b91eb74-f16a-4352-80b9-862d04326af3",
+                                "body": "{\n  \"syringeState\":\"{{ oneOf (array \"destroyed\" \"reserved\" \"announced\" \"notfound\")}}\"\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
                     }
                 ],
                 "proxyMode": false,
