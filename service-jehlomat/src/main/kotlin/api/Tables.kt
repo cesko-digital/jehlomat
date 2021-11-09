@@ -1,5 +1,6 @@
 package api
 
+import model.Organization
 import model.User
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
@@ -41,11 +42,18 @@ object LocationTable: Table<Nothing>("locations") {
     val mestka_cast = varchar("mestka_cast")
 }
 
-object OrganizationTable: Table<Nothing>("organizations") {
+object OrganizationTable: BaseTable<Organization>("organizations") {
     val name = varchar("name").primaryKey()
     val email = varchar("email")
     val password = varchar("password")
     val verified = boolean("verified")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Organization(
+        name = row[name]!!,
+        email = row[email]!!,
+        password = row[password]!!,
+        verified = row[verified]!!
+    )
 }
 
 object TeamTable: Table<Nothing>("teams") {

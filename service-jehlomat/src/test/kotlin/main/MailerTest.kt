@@ -3,11 +3,10 @@ package main
 import io.ktor.application.*
 import io.ktor.server.testing.*
 import model.Organization
-import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
-import service.DatabaseService
-import service.DatabaseServiceImpl
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import services.Mailer
 import kotlin.test.BeforeTest
 

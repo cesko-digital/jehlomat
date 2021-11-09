@@ -8,8 +8,8 @@ import kotlinx.serialization.json.*
 import model.*
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
-import service.DatabaseService
-import service.DatabaseServiceImpl
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
