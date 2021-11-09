@@ -23,4 +23,4 @@ CREATE TABLE public.organizations(
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     verified BOOLEAN NOT NULL
-)
+);
