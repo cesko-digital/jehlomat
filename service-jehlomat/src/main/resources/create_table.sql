@@ -16,7 +16,7 @@ CREATE TABLE public.teams(
     name TEXT PRIMARY KEY,
     organization_name TEXT NOT NULL,
     location_id INT NOT NULL
-)
+);
 
 CREATE TABLE public.organizations(
     name TEXT PRIMARY KEY,
