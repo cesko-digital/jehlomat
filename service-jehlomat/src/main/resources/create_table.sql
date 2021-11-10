@@ -1,7 +1,7 @@
 CREATE TABLE public.users(
     email TEXT NOT NULL,
     password TEXT NOT NULL,
-    verified boolean NOT NULL,
+    verified BOOLEAN NOT NULL,
     team_name TEXT NOT NULL
 );
 
@@ -16,4 +16,11 @@ CREATE TABLE public.teams(
     name TEXT PRIMARY KEY,
     organization_name TEXT NOT NULL,
     location_id INT NOT NULL
-)
+);
+
+CREATE TABLE public.organizations(
+    name TEXT PRIMARY KEY,
+    email TEXT NOT NULL,
+    password TEXT NOT NULL,
+    verified BOOLEAN NOT NULL
+);

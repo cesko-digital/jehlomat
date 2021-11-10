@@ -1,4 +1,4 @@
-package service
+package services
 
 import api.*
 import model.*
@@ -6,7 +6,6 @@ import org.ktorm.database.Database
 import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
-import org.ktorm.support.postgresql.bulkInsert
 import org.ktorm.support.postgresql.insertOrUpdate
 import utils.hashPassword
 
@@ -21,9 +20,17 @@ interface DatabaseService {
     fun getOkres(gpsCoordinates: String): String
     fun resolveNearestTeam(gpsCoordinates: String): Team
     fun updateUser(user: User)
+
+    fun selectOrganizationByName(name: String): Organization?
+    fun selectOrganizations(): List<Organization>
+    fun updateOrganization(organization: Organization)
+    fun insertOrganization(organization: Organization)
+    fun deleteOrganization(organization: Organization)
+
     fun cleanLocation(): Int
     fun cleanTeams(): Int
     fun cleanUsers(): Int
+    fun cleanOrganizations(): Int
 }
 
 
@@ -72,19 +79,12 @@ class DatabaseServiceImpl(
             .map { row -> TeamTable.createEntity(row) }
     }
 
-    fun selectOrganizations(): List<Organization> {
+    override fun selectOrganizations(): List<Organization> {
         return databaseInstance
             .from(OrganizationTable)
             .select()
             .orderBy(OrganizationTable.name.asc())
-            .map { row ->
-                Organization(
-                    row[OrganizationTable.name]!!,
-                    row[OrganizationTable.email]!!,
-                    row[OrganizationTable.password]!!,
-                    row[OrganizationTable.verified]!!
-                )
-            }
+            .map { row -> OrganizationTable.createEntity(row) }
     }
 
     override fun updateUser(user: User) {
@@ -96,11 +96,20 @@ class DatabaseServiceImpl(
         }
     }
 
-    fun updateOrganization(organization: Organization) {
+    override fun selectOrganizationByName(name: String): Organization? {
+        return databaseInstance
+            .from(OrganizationTable)
+            .select()
+            .where { OrganizationTable.name eq name }
+            .map { row -> OrganizationTable.createEntity(row) }
+            .firstOrNull()
+    }
+
+    override fun updateOrganization(organization: Organization) {
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
             set(it.email, organization.email)
-            set(it.password, organization.password)
+            set(it.password, organization.password.hashPassword())
             set(it.verified, organization.verified)
         }
     }
@@ -134,13 +143,17 @@ class DatabaseServiceImpl(
         }
     }
 
-    fun insertOrganization(organization: Organization) {
-        databaseInstance.insertOrUpdate(OrganizationTable) {
+    override fun insertOrganization(organization: Organization) {
+        databaseInstance.insert(OrganizationTable) {
             set(it.name, organization.name)
             set(it.email, organization.email)
-            set(it.password, organization.password)
+            set(it.password, organization.password.hashPassword())
             set(it.verified, organization.verified)
         }
+    }
+
+    override fun deleteOrganization(organization: Organization) {
+        databaseInstance.delete(OrganizationTable) { it.name eq organization.name }
     }
 
     override fun insertTeam(team: Team) {
@@ -254,5 +267,9 @@ class DatabaseServiceImpl(
 
     override fun cleanUsers(): Int {
         return databaseInstance.deleteAll(UserTable)
+    }
+
+    override fun cleanOrganizations(): Int {
+        return databaseInstance.deleteAll(OrganizationTable)
     }
 }

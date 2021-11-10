@@ -7,7 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.User
 import model.toUserInfo
-import service.DatabaseService
+import services.DatabaseService
 import utils.isValidMail
 import utils.isValidPassword
 

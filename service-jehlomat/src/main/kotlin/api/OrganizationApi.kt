@@ -6,27 +6,27 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
+import services.DatabaseService
 import services.MailerService
 
-val organizations = mutableListOf<Organization>()
 
-
-fun Route.organizationApi(mailer: MailerService): Route {
+fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
     return route("/") {
         get {
-            call.respond(HttpStatusCode.OK, organizations)
+            call.respond(HttpStatusCode.OK, database.selectOrganizations().map {
+                it.copy(password = "")
+            })
         }
 
         get("/{name}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            try {
-                val filteredOrganization = organizations.filter {
-                    it.name == call.parameters["name"]
-                }[0]
-                call.respond(HttpStatusCode.OK, filteredOrganization)
-            } catch (ex: IndexOutOfBoundsException) {
+            val organization = database.selectOrganizationByName(call.parameters["name"]!!)
+
+            if (organization != null) {
+                call.respond(HttpStatusCode.OK, organization.copy(password = ""))
+            } else {
                 call.respond(HttpStatusCode.NotFound, "Organization not found")
             }
         }
@@ -36,15 +36,14 @@ fun Route.organizationApi(mailer: MailerService): Route {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            when {
-                organizations.any { it.name == organization.name } -> {
-                    call.respond(HttpStatusCode.Conflict, "Organization name already exists")
-                }
-                else -> {
-                    organizations.add(organization)
-                    mailer.sendRegistrationConfirmationEmail(organization)
-                    call.respond(HttpStatusCode.Created)
-                }
+            val organizationInDB = database.selectOrganizationByName(organization.name)
+
+            if (organizationInDB != null) {
+                call.respond(HttpStatusCode.Conflict, "Organization name already exists")
+            } else {
+                database.insertOrganization(organization)
+                mailer.sendRegistrationConfirmationEmail(organization)
+                call.respond(HttpStatusCode.Created)
             }
         }
 
@@ -54,20 +53,14 @@ fun Route.organizationApi(mailer: MailerService): Route {
 
             val newOrganization = call.receive<Organization>()
 
-            val currentOrganizations = organizations.filter {
-                it.name == newOrganization.name
-            }
+            val organizationInDB = database.selectOrganizationByName(newOrganization.name)
 
-            if (currentOrganizations.isEmpty()) {
+            if (organizationInDB == null) {
                 call.respond(HttpStatusCode.NotFound, "Organization not found")
             } else {
-                val currentOrganization = currentOrganizations[0]
-                organizations.removeIf { it.name == currentOrganization.name }
-                organizations.add(newOrganization)
+                database.updateOrganization(newOrganization)
                 call.respond(HttpStatusCode.OK)
             }
-
-
         }
     }
 }

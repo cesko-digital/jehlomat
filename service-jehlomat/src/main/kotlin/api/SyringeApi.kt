@@ -6,7 +6,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
-import service.DatabaseService
+import services.DatabaseService
 
 import services.MailerService
 

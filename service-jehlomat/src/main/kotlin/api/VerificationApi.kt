@@ -6,28 +6,27 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
+import services.DatabaseService
 import services.Mailer
 
 
-fun Route.verificationApi(): Route {
+fun Route.verificationApi(database: DatabaseService): Route {
     return route("/") {
         get("/{organizationName}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            val organizationName = call.parameters["organizationName"]
+            val organizationName = call.parameters["organizationName"]!!
 
-            val currentOrganizations = organizations.filter { it.name == organizationName }
+            val currentOrganization = database.selectOrganizationByName(organizationName)
 
-            if (currentOrganizations.isEmpty()) {
+            if (currentOrganization == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
-                val currentOrganization = currentOrganizations[0]
                 currentOrganization.verified = true
+                database.updateOrganization(currentOrganization)
                 call.respond(HttpStatusCode.OK)
             }
-
-
         }
     }
 }

@@ -3,13 +3,10 @@ package services
 import model.Location
 import model.Team
 import model.User
-import model.UserInfo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
-import service.DatabaseService
-import service.DatabaseServiceImpl
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull

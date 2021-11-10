@@ -14,8 +14,8 @@ import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
-import service.DatabaseService
-import service.DatabaseServiceImpl
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import services.FakeMailer
 import services.Mailer
 import services.MailerService
@@ -109,10 +109,10 @@ fun Application.module(testing: Boolean = false) {
             userApi(service)
         }
         route("/api/v1/jehlomat/organization") {
-            organizationApi(mailer)
+            organizationApi(service, mailer)
         }
         route("/api/v1/jehlomat/verification") {
-            verificationApi()
+            verificationApi(service)
         }
         route("/api/v1/jehlomat/team") {
             teamApi()

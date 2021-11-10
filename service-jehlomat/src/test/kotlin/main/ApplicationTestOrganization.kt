@@ -1,19 +1,18 @@
 package main
 
-import api.organizations
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.Organization
-import model.UserInfo
-import org.junit.Ignore
 import org.junit.Test
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
+import org.mindrot.jbcrypt.BCrypt
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 
@@ -26,22 +25,25 @@ val ORGANIZATION = Organization(
 
 
 class OrganizationTest {
+
+    var database: DatabaseService = DatabaseServiceImpl()
+
     @BeforeTest
     fun beforeEach() {
-        organizations.clear()
+        database.cleanOrganizations()
     }
 
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/ceska jehlova") {
-            organizations.add(ORGANIZATION)
+            database.insertOrganization(ORGANIZATION)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
   "name" : "ceska jehlova",
   "email" : "email@example.org",
-  "password" : "password",
+  "password" : "",
   "verified" : false
 }""",
                 response.content
@@ -54,6 +56,23 @@ class OrganizationTest {
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals("[ ]", response.content)
+        }
+    }
+
+    @Test
+    fun testGetAllOrganizationsNotEmpty() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/") {
+            database.insertOrganization(ORGANIZATION)
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("""
+                [ {
+                  "name" : "ceska jehlova",
+                  "email" : "email@example.org",
+                  "password" : "",
+                  "verified" : false
+                } ]
+            """.trimIndent(), response.content)
         }
     }
 
@@ -73,7 +92,11 @@ class OrganizationTest {
             setBody(Json.encodeToString(ORGANIZATION))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals(ORGANIZATION, organizations[0])
+            val actualOrganization = database.selectOrganizationByName(ORGANIZATION.name)
+            assertNotNull(actualOrganization)
+            assertEquals(ORGANIZATION.email, actualOrganization.email)
+            assert(BCrypt.checkpw(ORGANIZATION.password, actualOrganization.password))
+            assertEquals(ORGANIZATION.verified, actualOrganization.verified)
         }
     }
 
@@ -81,7 +104,7 @@ class OrganizationTest {
     @Test
     fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
-            organizations.add(ORGANIZATION)
+            database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(ORGANIZATION))
         }) {
@@ -106,12 +129,16 @@ class OrganizationTest {
         val newOrganization = ORGANIZATION.copy(email="different email")
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
-            organizations.add(ORGANIZATION)
+            database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(newOrganization))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(listOf(newOrganization), organizations)
+            val organization = database.selectOrganizationByName(ORGANIZATION.name);
+            assertNotNull(organization)
+            assertEquals(newOrganization.email, organization.email)
+            assert(BCrypt.checkpw(newOrganization.password, organization.password))
+            assertEquals(ORGANIZATION.verified, organization.verified)
         }
     }
 }
