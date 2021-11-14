@@ -12,6 +12,7 @@ import utils.hashPassword
 
 interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
+
     fun selectSyringeById(id: Int): Syringe?
     fun deleteSyringe(id: Int)
     fun updateSyringe(syringe: Syringe)
@@ -25,14 +26,18 @@ interface DatabaseService {
         demolished: Boolean,
     ): List<Syringe>
 
-    fun insertUser(user: User)
     fun insertTeam(team: Team)
-    fun selectUserByEmail(email: String): User?
+    fun updateTeam(team: Team)
+    fun selectTeams(): List<Team>
+    fun selectTeamByName(name: String): Team?
+    fun resolveNearestTeam(gpsCoordinates: String): Team
     fun getObec(gpsCoordinates: String): String
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
-    fun resolveNearestTeam(gpsCoordinates: String): Team
+
+    fun insertUser(user: User)
     fun updateUser(user: User)
+    fun selectUserByEmail(email: String): User?
 
     fun selectOrganizationByName(name: String): Organization?
     fun selectOrganizations(): List<Organization>
@@ -111,12 +116,41 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
-    fun selectTeams(): List<Team> {
+    override fun selectTeams(): List<Team> {
         return databaseInstance
             .from(TeamTable)
+            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
             .select()
             .orderBy(TeamTable.name.asc())
-            .map { row -> TeamTable.createEntity(row) }
+            .map { row -> Team(
+                name = row[TeamTable.name]!!,
+                location = Location(
+                    id = row[LocationTable.id]!!,
+                    obec = row[LocationTable.obec]!!,
+                    okres = row[LocationTable.okres]!!,
+                    mestkaCast = row[LocationTable.mestka_cast]!!,
+                ),
+                organizationName = row[TeamTable.organization_name]!!
+            ) }
+    }
+
+    override fun selectTeamByName(name: String): Team? {
+        return databaseInstance
+            .from(TeamTable)
+            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
+            .select()
+            .where { TeamTable.name eq name }
+            .map { row -> Team(
+                name = row[TeamTable.name]!!,
+                location = Location(
+                    id = row[LocationTable.id]!!,
+                    obec = row[LocationTable.obec]!!,
+                    okres = row[LocationTable.okres]!!,
+                    mestkaCast = row[LocationTable.mestka_cast]!!,
+                ),
+                organizationName = row[TeamTable.organization_name]!!
+            ) }
+            .firstOrNull()
     }
 
     override fun selectOrganizations(): List<Organization> {
@@ -154,10 +188,10 @@ class DatabaseServiceImpl(
         }
     }
 
-    fun updateTeam(team: Team) {
+    override fun updateTeam(team: Team) {
         databaseInstance.update(TeamTable) {
             set(it.name, team.name)
-            set(it.location_id, team.location.id)
+            set(it.location_id, getLocationId(team))
             set(it.organization_name, team.organizationName)
         }
     }
@@ -212,6 +246,14 @@ class DatabaseServiceImpl(
     }
 
     override fun insertTeam(team: Team) {
+        databaseInstance.insert(TeamTable) {
+            set(it.organization_name, team.organizationName)
+            set(it.location_id, getLocationId(team))
+            set(it.name, team.name)
+        }
+    }
+
+    private fun getLocationId(team: Team): Int {
         databaseInstance.insertOrUpdate(LocationTable) {
             set(it.mestka_cast, team.location.mestkaCast)
             set(it.okres, team.location.okres)
@@ -219,7 +261,7 @@ class DatabaseServiceImpl(
             onConflict { doNothing() }
         }
 
-        val locationId: Int = databaseInstance
+        return databaseInstance
             .from(LocationTable)
             .select()
             .where(
@@ -228,13 +270,6 @@ class DatabaseServiceImpl(
                         and (LocationTable.okres eq team.location.okres)
             )
             .map { it.getInt("id") }.first()
-
-        databaseInstance.insertOrUpdate(TeamTable) {
-            set(it.organization_name, team.organizationName)
-            set(it.location_id, locationId)
-            set(it.name, team.name)
-            onConflict { doNothing() }
-        }
     }
 
     override fun deleteSyringe(id: Int) {

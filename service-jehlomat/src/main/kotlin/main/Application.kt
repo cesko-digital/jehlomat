@@ -115,7 +115,7 @@ fun Application.module(testing: Boolean = false) {
             verificationApi(service)
         }
         route("/api/v1/jehlomat/team") {
-            teamApi()
+            teamApi(service)
         }
         static("/static") {
             resources("files")
