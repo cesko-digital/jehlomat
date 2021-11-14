@@ -13,6 +13,19 @@ import utils.hashPassword
 interface DatabaseService {
     fun insertSyringe(syringe: Syringe)
 
+    fun selectSyringeById(id: Int): Syringe?
+    fun deleteSyringe(id: Int)
+    fun updateSyringe(syringe: Syringe)
+    fun selectSyringes(): List<Syringe>
+    fun selectSyringes(
+        from: Long,
+        to: Long,
+        email: String,
+        demolisher: Demolisher,
+        gpsCoordinates: String,
+        demolished: Boolean,
+    ): List<Syringe>
+
     fun insertTeam(team: Team)
     fun updateTeam(team: Team)
     fun selectTeams(): List<Team>
@@ -36,6 +49,7 @@ interface DatabaseService {
     fun cleanTeams(): Int
     fun cleanUsers(): Int
     fun cleanOrganizations(): Int
+    fun cleanSyringes(): Int
 }
 
 
@@ -50,19 +64,45 @@ class DatabaseServiceImpl(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
 
-    fun selectSyringeById(id: Int): Syringe {
+    override fun selectSyringeById(id: Int): Syringe? {
         return databaseInstance
             .from(SyringeTable)
             .select()
             .where { SyringeTable.id eq id }
             .map { row -> SyringeTable.createEntity(row) }
-            .first<Syringe>()
+            .firstOrNull()
     }
 
-    fun selectSyringes(): List<Syringe> {
+    override fun selectSyringes(): List<Syringe> {
         return databaseInstance
             .from(SyringeTable)
             .select()
+            .orderBy(SyringeTable.id.asc())
+            .map { row -> SyringeTable.createEntity(row) }
+    }
+
+    override fun selectSyringes(
+        from: Long,
+        to: Long,
+        email: String,
+        demolisher: Demolisher,
+        gpsCoordinates: String,
+        demolished: Boolean,
+    ): List<Syringe> {
+
+        val filter = (
+                (SyringeTable.timestamp greaterEq from)
+                and (SyringeTable.timestamp lessEq to)
+                and (SyringeTable.demolisherType eq demolisher.name)
+                and (email.isBlank() or (SyringeTable.email eq email))
+                and (gpsCoordinates.isBlank() or (SyringeTable.gpsCoordinates eq gpsCoordinates))
+                and (SyringeTable.demolished eq demolished)
+                )
+
+        return databaseInstance
+            .from(SyringeTable)
+            .select()
+            .where { filter }
             .orderBy(SyringeTable.id.asc())
             .map { row -> SyringeTable.createEntity(row) }
     }
@@ -163,8 +203,23 @@ class DatabaseServiceImpl(
             set(it.photo, syringe.photo)
             set(it.count, syringe.count)
             set(it.note, syringe.note)
-            set(it.demolisherType, syringe.demolisher)
+            set(it.demolisherType, syringe.demolisher.name)
             set(it.gpsCoordinates, syringe.gps_coordinates)
+            set(it.demolished, syringe.demolished)
+        }
+    }
+
+    override fun updateSyringe(syringe: Syringe) {
+        databaseInstance.update(SyringeTable) {
+            set(it.id, syringe.id)
+            set(it.timestamp, syringe.timestamp)
+            set(it.email, syringe.email)
+            set(it.photo, syringe.photo)
+            set(it.count, syringe.count)
+            set(it.note, syringe.note)
+            set(it.demolisherType, syringe.demolisher.name)
+            set(it.gpsCoordinates, syringe.gps_coordinates)
+            set(it.demolished, syringe.demolished)
         }
     }
 
@@ -217,7 +272,7 @@ class DatabaseServiceImpl(
             .map { it.getInt("id") }.first()
     }
 
-    fun deleteSyringe(id: Int) {
+    override fun deleteSyringe(id: Int) {
         databaseInstance.delete(SyringeTable) { it.id eq id }
     }
 
@@ -306,5 +361,9 @@ class DatabaseServiceImpl(
 
     override fun cleanOrganizations(): Int {
         return databaseInstance.deleteAll(OrganizationTable)
+    }
+
+    override fun cleanSyringes(): Int {
+        return databaseInstance.deleteAll(SyringeTable)
     }
 }
