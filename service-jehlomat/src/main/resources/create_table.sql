@@ -24,3 +24,15 @@ CREATE TABLE public.organizations(
     password TEXT NOT NULL,
     verified BOOLEAN NOT NULL
 );
+
+CREATE TABLE public.syringes(
+    id SERIAL PRIMARY KEY,
+    timestamp_ BIGINT,
+    email TEXT NOT NULL,  -- will be replaced by user id
+    photo TEXT,
+    count_ INT NOT NULL,
+    note TEXT,
+    demolisher_type TEXT NOT NULL,
+    gps_coordinates TEXT NOT NULL,
+    demolished BOOLEAN NOT NULL
+);

@@ -1,6 +1,8 @@
 package api
 
+import model.Demolisher
 import model.Organization
+import model.Syringe
 import model.User
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
@@ -10,15 +12,28 @@ object DemolisherTable: Table<Nothing>("demolisher") {
 }
 
 
-object SyringeTable: Table<Nothing>("syringes") {
+object SyringeTable: BaseTable<Syringe>("syringes") {
     val id = int("id").primaryKey()
-    val timestamp = long("timestamp")
+    val timestamp = long("timestamp_")
     val email = varchar("email")
     val photo = varchar("photo")
-    val count = int("count")
+    val count = int("count_")
     val note = varchar("note")
     val demolisherType = varchar("demolisher_type")
     val gpsCoordinates = varchar("gps_coordinates")
+    val demolished = boolean("demolished")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Syringe(
+        id = row[id]!!,
+        timestamp = row[timestamp]!!,
+        email = row[email]!!,
+        photo = row[photo]!!,
+        count = row[count]!!,
+        note = row[note] ?: "",
+        demolisher = Demolisher.valueOf(row[demolisherType]!!),
+        gps_coordinates = row[gpsCoordinates]!!,
+        demolished = row[demolished]!!,
+    )
 }
 
 object UserTable: BaseTable<User>("users") {

@@ -7,9 +7,7 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.Location
-import model.Organization
 import model.Team
-import model.UserInfo
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
