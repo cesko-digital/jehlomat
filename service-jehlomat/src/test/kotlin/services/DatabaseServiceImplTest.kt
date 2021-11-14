@@ -92,7 +92,7 @@ class DatabaseServiceImplTest {
         val exactTeam = Team("teamA", exactTeamLocation, "orgName")
 
         val obecTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 9-Malesice")
-        val obecTeam = Team("teamA", obecTeamLocation, "orgName")
+        val obecTeam = Team("teamB", obecTeamLocation, "orgName")
 
         database.insertTeam(exactTeam)
         database.insertTeam(obecTeam)
