@@ -16,13 +16,11 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
             call.respond(HttpStatusCode.OK, database.selectOrganizations())
         }
 
-        get("/{name}") {
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
 
-            val organization = database.selectOrganizationByName(call.parameters["name"]!!)
-
-            if (organization != null) {
+            if (organization != null ) {
                 call.respond(HttpStatusCode.OK, organization)
             } else {
                 call.respond(HttpStatusCode.NotFound, "Organization not found")

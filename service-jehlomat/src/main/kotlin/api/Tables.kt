@@ -15,7 +15,7 @@ object DemolisherTable: Table<Nothing>("demolisher") {
 object SyringeTable: BaseTable<Syringe>("syringes") {
     val id = int("id").primaryKey()
     val timestamp = long("timestamp_")
-    val teamId = int("team_id")
+    val userId = int("user_id")
     val photo = varchar("photo")
     val count = int("count_")
     val note = varchar("note")
@@ -26,7 +26,7 @@ object SyringeTable: BaseTable<Syringe>("syringes") {
     override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Syringe(
         id = row[id]!!,
         timestamp = row[timestamp]!!,
-        teamId = row[teamId]!!,
+        userId = row[userId]!!,
         photo = row[photo]!!,
         count = row[count]!!,
         note = row[note] ?: "",
@@ -66,10 +66,12 @@ object LocationTable: Table<Nothing>("locations") {
 object OrganizationTable: BaseTable<Organization>("organizations") {
     val organizationId = int("organization_id").primaryKey()
     val name = varchar("name")
+    val verified = boolean("verified")
 
     override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Organization(
         id = row[organizationId]!!,
-        name = row[name]!!
+        name = row[name]!!,
+        verified = row[verified]!!
     )
 }
 

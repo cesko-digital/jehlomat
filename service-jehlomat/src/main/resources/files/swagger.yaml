@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: >-
     Jehlomat REST api
-  version: 0.0.1
+  version: 0.0.2
   title: Jehlomat
   termsOfService: http://swagger.io/terms/
   contact:
@@ -12,18 +12,18 @@ basePath: /api/v1/jehlomat
 schemes:
   - http
 paths:
-  /organization/{organizationName}:
+  /organization/{id}:
     get:
-      summary: Find organization by name
+      summary: Find organization by id
       description: Returns a single organization
       produces:
         - application/json
       parameters:
-        - name: organizationName
+        - name: id
           in: path
-          description: Name of organization to return
+          description: Id of organization to return
           required: true
-          type: string
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -178,18 +178,18 @@ paths:
       responses:
         '200':
           description: successful operation
-  /team/{teamName}:
+  /team/{id}:
     get:
-      summary: Find team by name
+      summary: Find team by id
       description: Returns a single team
       produces:
         - application/json
       parameters:
-        - name: teamName
+        - name: id
           in: path
-          description: Name of team to return
+          description: Id of team to return
           required: true
-          type: string
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -230,18 +230,18 @@ paths:
           description: Success
         '404':
           description: Team not found
-  /user/{email}:
+  /user/{id}:
     get:
-      summary: Find user by email
-      description: Returns a single email
+      summary: Find user by id
+      description: Returns a single user
       produces:
         - application/json
       parameters:
-        - name: email
+        - name: id
           in: path
-          description: Email of user to return
+          description: Id of user to return
           required: true
-          type: string
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -282,15 +282,15 @@ paths:
           description: Success
         '404':
           description: User not found
-  /verification/{organizationName}:
+  /verification/{id}:
     get:
       summary: Verifies organization
       parameters:
-        - name: organizationName
+        - name: id
           in: path
-          description: organizationName to verify
+          description: organization id to verify
           required: true
-          type: string
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -303,33 +303,43 @@ definitions:
   UserInfo:
     type: object
     properties:
+      id:
+        type: integer
       email:
-        type: string
-      teamName:
         type: string
       verified:
         type: boolean
         default: false
+      organizationId:
+        type: integer
+      teamId:
+        type: integer
+      isAdmin:
+        type: boolean
   User:
     type: object
     properties:
+      id:
+        type: integer
       email:
         type: string
       password:
         type: string
-      teamName:
-        type: string
+      organizationId:
+        type: integer
+      teamId:
+        type: integer
+      isAdmin:
+        type: boolean
       verified:
         type: boolean
         default: false
   Organization:
     type: object
     properties:
+      id:
+        type: integer
       name:
-        type: string
-      email:
-        type: string
-      password:
         type: string
       verified:
         type: boolean
@@ -344,8 +354,8 @@ definitions:
         type: integer
       timestamp:
         type: integer
-      email:
-        type: string
+      userId:
+        type: integer
       photo:
         type: string
       count:
@@ -375,6 +385,8 @@ definitions:
   Team:
     type: object
     properties:
+      id:
+        type: integer
       name:
         type: string
       location:
@@ -388,5 +400,5 @@ definitions:
             type: string
           mestkaCast:
             type: string
-      organizationName:
-        type: string
+      organizationId:
+        type: integer

@@ -28,6 +28,7 @@ interface DatabaseService {
     fun insertTeam(team: Team): Int
     fun updateTeam(team: Team)
     fun selectTeams(): List<Team>
+    fun selectTeamById(id: Int): Team?
     fun selectTeamByName(name: String): Team?
     fun resolveNearestTeam(gpsCoordinates: String): Team
     fun getObec(gpsCoordinates: String): String
@@ -36,8 +37,10 @@ interface DatabaseService {
 
     fun insertUser(user: User): Int
     fun updateUser(user: User)
+    fun selectUserById(id: Int): User?
     fun selectUserByEmail(email: String): User?
 
+    fun selectOrganizationById(id: Int): Organization?
     fun selectOrganizationByName(name: String): Organization?
     fun selectOrganizations(): List<Organization>
     fun updateOrganization(organization: Organization)
@@ -83,7 +86,7 @@ class DatabaseServiceImpl(
     override fun selectSyringes(
         from: Long,
         to: Long,
-        teamId: Int?,
+        userId: Int?,
         demolisher: Demolisher,
         gpsCoordinates: String,
         demolished: Boolean,
@@ -97,8 +100,8 @@ class DatabaseServiceImpl(
                 and (SyringeTable.demolished eq demolished)
                 )
 
-        if (teamId != null) {
-            filter = filter and(SyringeTable.teamId eq teamId)
+        if (userId != null) {
+            filter = filter and(SyringeTable.userId eq userId)
         }
 
         return databaseInstance
@@ -107,6 +110,15 @@ class DatabaseServiceImpl(
             .where { filter }
             .orderBy(SyringeTable.id.asc())
             .map { row -> SyringeTable.createEntity(row) }
+    }
+
+    override fun selectUserById(id: Int): User? {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { UserTable.userId eq id }
+            .map { row -> UserTable.createEntity(row) }
+            .firstOrNull()
     }
 
     override fun selectUserByEmail(email: String): User? {
@@ -118,23 +130,37 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
+    private val mapTeamRow: (row: QueryRowSet) -> Team = { row ->
+        Team(
+            id = row[TeamTable.teamId]!!,
+            name = row[TeamTable.name]!!,
+            location = Location(
+                id = row[LocationTable.id]!!,
+                obec = row[LocationTable.obec]!!,
+                okres = row[LocationTable.okres]!!,
+                mestkaCast = row[LocationTable.mestka_cast]!!,
+            ),
+            organizationId = row[TeamTable.organization_id]!!
+        )
+    }
+
     override fun selectTeams(): List<Team> {
         return databaseInstance
             .from(TeamTable)
             .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
             .select()
             .orderBy(TeamTable.name.asc())
-            .map { row -> Team(
-                id = row[TeamTable.teamId]!!,
-                name = row[TeamTable.name]!!,
-                location = Location(
-                    id = row[LocationTable.id]!!,
-                    obec = row[LocationTable.obec]!!,
-                    okres = row[LocationTable.okres]!!,
-                    mestkaCast = row[LocationTable.mestka_cast]!!,
-                ),
-                organizationId = row[TeamTable.organization_id]!!
-            ) }
+            .map(mapTeamRow)
+    }
+
+    override fun selectTeamById(id: Int): Team? {
+        return databaseInstance
+            .from(TeamTable)
+            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
+            .select()
+            .where { TeamTable.teamId eq id }
+            .map(mapTeamRow)
+            .firstOrNull()
     }
 
     override fun selectTeamByName(name: String): Team? {
@@ -143,17 +169,7 @@ class DatabaseServiceImpl(
             .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
             .select()
             .where { TeamTable.name eq name }
-            .map { row -> Team(
-                id = row[TeamTable.teamId]!!,
-                name = row[TeamTable.name]!!,
-                location = Location(
-                    id = row[LocationTable.id]!!,
-                    obec = row[LocationTable.obec]!!,
-                    okres = row[LocationTable.okres]!!,
-                    mestkaCast = row[LocationTable.mestka_cast]!!,
-                ),
-                organizationId = row[TeamTable.organization_id]!!
-            ) }
+            .map(mapTeamRow)
             .firstOrNull()
     }
 
@@ -176,6 +192,15 @@ class DatabaseServiceImpl(
         }
     }
 
+    override fun selectOrganizationById(id: Int): Organization? {
+        return databaseInstance
+            .from(OrganizationTable)
+            .select()
+            .where { OrganizationTable.organizationId eq id }
+            .map { row -> OrganizationTable.createEntity(row) }
+            .firstOrNull()
+    }
+
     override fun selectOrganizationByName(name: String): Organization? {
         return databaseInstance
             .from(OrganizationTable)
@@ -188,6 +213,7 @@ class DatabaseServiceImpl(
     override fun updateOrganization(organization: Organization) {
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
+            set(it.verified, organization.verified)
         }
     }
 
@@ -202,7 +228,7 @@ class DatabaseServiceImpl(
     override fun insertSyringe(syringe: Syringe): Int {
         return databaseInstance.insertAndGenerateKey(SyringeTable) {
             set(it.timestamp, syringe.timestamp)
-            set(it.teamId, syringe.teamId)
+            set(it.userId, syringe.userId)
             set(it.photo, syringe.photo)
             set(it.count, syringe.count)
             set(it.note, syringe.note)
@@ -216,7 +242,7 @@ class DatabaseServiceImpl(
         databaseInstance.update(SyringeTable) {
             set(it.id, syringe.id)
             set(it.timestamp, syringe.timestamp)
-            set(it.teamId, syringe.teamId)
+            set(it.userId, syringe.userId)
             set(it.photo, syringe.photo)
             set(it.count, syringe.count)
             set(it.note, syringe.note)
@@ -240,6 +266,7 @@ class DatabaseServiceImpl(
     override fun insertOrganization(organization: Organization): Int {
         return databaseInstance.insertAndGenerateKey(OrganizationTable) {
             set(it.name, organization.name)
+            set(it.verified, organization.verified)
         } as Int
     }
 

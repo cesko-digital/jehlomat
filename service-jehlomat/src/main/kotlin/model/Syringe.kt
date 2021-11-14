@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Syringe(
     val id: Int,
     val timestamp: Long,
-    val teamId: Int,
+    val userId: Int,
     val photo: String,
     val count: Int,
     val note: String,

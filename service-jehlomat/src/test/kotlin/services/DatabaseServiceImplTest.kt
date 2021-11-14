@@ -24,7 +24,7 @@ class DatabaseServiceImplTest {
         database.cleanUsers()
         database.cleanOrganizations()
         database.cleanLocation()
-        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName"))
+        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
     }
 
     @After

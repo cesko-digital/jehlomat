@@ -19,7 +19,8 @@ const val ORGANIZATION_API_PATH = "/api/v1/jehlomat/organization"
 
 val ORGANIZATION = Organization(
     1,
-    name="ceska jehlova"
+    name="ceska jehlova",
+    true
 )
 
 
@@ -34,15 +35,15 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
-        var orgId = 0
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/ceska jehlova") {
-            orgId = database.insertOrganization(ORGANIZATION)
+        val orgId = database.insertOrganization(ORGANIZATION)
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
   "id" : """ + orgId + """,
-  "name" : "ceska jehlova"
+  "name" : "ceska jehlova",
+  "verified" : true
 }""",
                 response.content
             )
@@ -67,7 +68,8 @@ class OrganizationTest {
             assertEquals(
                 """[ {
   "id" : """.trimIndent() + orgId + """,
-  "name" : "ceska jehlova"
+  "name" : "ceska jehlova",
+  "verified" : true
 } ]""",
                 response.content)
         }

@@ -26,7 +26,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             val filteredSyringes = database.selectSyringes(
                 parameters["from"]?.toLong() ?: 0L,
                 parameters["to"]?.toLong() ?: System.currentTimeMillis(),
-                parameters["teamId"]?.toInt(), demolisher,
+                parameters["userId"]?.toInt(), demolisher,
                 parameters["gps_coordinates"] ?: "",
                 parameters["demolished"]?.toBoolean() ?: false
             )
@@ -43,7 +43,8 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
         post {
             val dummyOrganization  = Organization(
                 1,
-                "TestOrg"
+                "TestOrg",
+                true
             )
 
             val dummyUser = UserInfo(3, "example@example.org", false, 1, 2, false)
@@ -60,7 +61,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
         route("/{id}") {
             get {
-                val id = call.parameters["id"]?.toInt()
+                val id = call.parameters["id"]?.toIntOrNull()
                 val result = id?.let { it1 -> database.selectSyringeById(it1) }
                 if (result != null) {
                     call.respond(HttpStatusCode.OK, result)
@@ -70,7 +71,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             }
 
             delete {
-                val id = call.parameters["id"]?.toInt()
+                val id = call.parameters["id"]?.toIntOrNull()
 
                 if (id != null) {
                     database.deleteSyringe(id)

@@ -9,10 +9,10 @@ import model.Location
 import model.Organization
 import model.Team
 import org.junit.Test
-import org.testng.annotations.AfterTest
 import services.DatabaseService
 import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
+import kotlin.test.AfterTest
 import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
@@ -33,7 +33,7 @@ class TeamTest {
     fun beforeEach() {
         database.cleanTeams()
         database.cleanOrganizations()
-        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName"))
+        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
     }
 
     @AfterTest
@@ -44,9 +44,8 @@ class TeamTest {
     
     @Test
     fun testGetTeam() = withTestApplication(Application::module) {
-        var newTeamId = 0;
-        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/ceska jehlova") {
-            newTeamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        var newTeamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$newTeamId") {
         }) {
             val locationId = database.selectTeams()[0].location.id
             assertEquals(HttpStatusCode.OK, response.status())
@@ -115,19 +114,20 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeam() = withTestApplication(Application::module) {
-        val newOrgId = database.insertOrganization(Organization(0, "new organization"))
+        val newOrgId = database.insertOrganization(Organization(0, "new organization", true))
         val newTeam = TEAM.copy(organizationId = newOrgId)
+        var teamId = 0
 
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
-            database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+            teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(newTeam))
+            setBody(Json.encodeToString(newTeam.copy(id = teamId)))
         }) {
             val actualTeams = database.selectTeams()
             val actualLocationId = actualTeams[0].location.id
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(1, actualTeams.size)
-            assertEquals(listOf(newTeam.copy(id = actualTeams[0].id,location = newTeam.location.copy(id=actualLocationId))), actualTeams)
+            assertEquals(listOf(newTeam.copy(id = teamId,location = newTeam.location.copy(id=actualLocationId))), actualTeams)
         }
     }
 
@@ -139,7 +139,7 @@ class TeamTest {
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
             teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(newTeam))
+            setBody(Json.encodeToString(newTeam.copy(id = teamId)))
         }) {
             val actualTeams = database.selectTeams()
             val actualLocationId = actualTeams[0].location.id

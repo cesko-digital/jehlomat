@@ -1,10 +1,15 @@
+DROP TABLE IF EXISTS public.syringes CASCADE;
+DROP TABLE IF EXISTS public.users CASCADE;
+DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.organizations CASCADE;
+DROP TABLE IF EXISTS public.locations CASCADE;
+
 CREATE TABLE public.organizations(
     organization_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    verified BOOLEAN NOT NULL
 );
 
-DROP TABLE IF EXISTS public.locations CASCADE;
 CREATE TABLE public.locations(
     location_id SERIAL PRIMARY KEY,
     okres TEXT NOT NULL,
@@ -12,7 +17,7 @@ CREATE TABLE public.locations(
     mestka_cast TEXT NOT NULL
 );
 
-DROP TABLE IF EXISTS public.teams CASCADE;
+
 CREATE TABLE public.teams(
     team_id SERIAL PRIMARY KEY,
     name TEXT not null,
@@ -25,7 +30,6 @@ CREATE TABLE public.teams(
         REFERENCES locations(location_id)
 );
 
-DROP TABLE IF EXISTS public.users CASCADE;
 CREATE TABLE public.users(
     user_id SERIAL PRIMARY KEY,
     email TEXT NOT NULL,
@@ -41,11 +45,10 @@ CREATE TABLE public.users(
         REFERENCES teams(team_id)
 );
 
-DROP TABLE IF EXISTS public.syringes CASCADE;
 CREATE TABLE public.syringes(
     id SERIAL PRIMARY KEY,
     timestamp_ BIGINT,
-    team_id INT NOT NULL,
+    user_id INT NOT NULL,
     photo TEXT,
     count_ INT NOT NULL,
     note TEXT,
@@ -53,6 +56,6 @@ CREATE TABLE public.syringes(
     gps_coordinates TEXT NOT NULL,
     demolished BOOLEAN NOT NULL,
 
-    CONSTRAINT fk_team FOREIGN KEY(team_id)
-        REFERENCES teams(team_id)
+    CONSTRAINT fk_user FOREIGN KEY(user_id)
+        REFERENCES users(user_id)
 );

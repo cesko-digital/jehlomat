@@ -56,7 +56,7 @@ class ApplicationTest {
         database.cleanUsers()
         database.cleanTeams()
         database.cleanOrganizations()
-        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName"))
+        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
         defaultTeamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
     }
 
@@ -69,9 +69,8 @@ class ApplicationTest {
 
     @Test
     fun testGetUser() = withTestApplication(Application::module) {
-        var userId = 0
-        with(handleRequest(HttpMethod.Get, "$API_PATH/email@example.org") {
-            userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        with(handleRequest(HttpMethod.Get, "$API_PATH/$userId") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -98,10 +97,11 @@ class ApplicationTest {
 
     @Test
     fun testPutUser() = withTestApplication(Application::module) {
+        var userId = 0
         with(handleRequest(HttpMethod.Put, "$API_PATH/") {
-            database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
+            userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER.copy(password = "new password", organizationId = defaultOrgId, teamId = defaultTeamId)))
+            setBody(Json.encodeToString(USER.copy(password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             val user = database.selectUserByEmail(USER.email);

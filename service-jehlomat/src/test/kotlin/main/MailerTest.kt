@@ -13,7 +13,8 @@ import kotlin.test.BeforeTest
 
 val organization = Organization(
     1,
-    "TestOrg"
+    "TestOrg",
+    true
 )
 
 class MailerTest {
