@@ -23,7 +23,6 @@ fun Route.verificationApi(database: DatabaseService): Route {
             if (currentOrganization == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
-                currentOrganization.verified = true
                 database.updateOrganization(currentOrganization)
                 call.respond(HttpStatusCode.OK)
             }

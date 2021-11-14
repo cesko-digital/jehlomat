@@ -13,9 +13,7 @@ import services.MailerService
 fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
     return route("/") {
         get {
-            call.respond(HttpStatusCode.OK, database.selectOrganizations().map {
-                it.copy(password = "")
-            })
+            call.respond(HttpStatusCode.OK, database.selectOrganizations())
         }
 
         get("/{name}") {
@@ -25,7 +23,7 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
             val organization = database.selectOrganizationByName(call.parameters["name"]!!)
 
             if (organization != null) {
-                call.respond(HttpStatusCode.OK, organization.copy(password = ""))
+                call.respond(HttpStatusCode.OK, organization)
             } else {
                 call.respond(HttpStatusCode.NotFound, "Organization not found")
             }

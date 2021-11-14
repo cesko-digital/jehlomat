@@ -26,7 +26,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             val filteredSyringes = database.selectSyringes(
                 parameters["from"]?.toLong() ?: 0L,
                 parameters["to"]?.toLong() ?: System.currentTimeMillis(),
-                parameters["email"] ?: "", demolisher,
+                parameters["teamId"]?.toInt(), demolisher,
                 parameters["gps_coordinates"] ?: "",
                 parameters["demolished"]?.toBoolean() ?: false
             )
@@ -42,13 +42,11 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
         post {
             val dummyOrganization  = Organization(
-                "TestOrg",
-                "example@example.org",
-                "password",
-                verified = true
+                1,
+                "TestOrg"
             )
 
-            val dummyUser = UserInfo("example@example.org", "team1", false)
+            val dummyUser = UserInfo(3, "example@example.org", false, 1, 2, false)
             database.insertSyringe(call.receive())
             mailer.sendSyringeFindingConfirmation(dummyUser)
             mailer.sendSyringeFinding(dummyOrganization)

@@ -11,8 +11,7 @@ import utils.hashPassword
 
 
 interface DatabaseService {
-    fun insertSyringe(syringe: Syringe)
-
+    fun insertSyringe(syringe: Syringe): Int
     fun selectSyringeById(id: Int): Syringe?
     fun deleteSyringe(id: Int)
     fun updateSyringe(syringe: Syringe)
@@ -20,13 +19,13 @@ interface DatabaseService {
     fun selectSyringes(
         from: Long,
         to: Long,
-        email: String,
+        teamId: Int?,
         demolisher: Demolisher,
         gpsCoordinates: String,
         demolished: Boolean,
     ): List<Syringe>
 
-    fun insertTeam(team: Team)
+    fun insertTeam(team: Team): Int
     fun updateTeam(team: Team)
     fun selectTeams(): List<Team>
     fun selectTeamByName(name: String): Team?
@@ -35,14 +34,14 @@ interface DatabaseService {
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
 
-    fun insertUser(user: User)
+    fun insertUser(user: User): Int
     fun updateUser(user: User)
     fun selectUserByEmail(email: String): User?
 
     fun selectOrganizationByName(name: String): Organization?
     fun selectOrganizations(): List<Organization>
     fun updateOrganization(organization: Organization)
-    fun insertOrganization(organization: Organization)
+    fun insertOrganization(organization: Organization): Int
     fun deleteOrganization(organization: Organization)
 
     fun cleanLocation(): Int
@@ -84,20 +83,23 @@ class DatabaseServiceImpl(
     override fun selectSyringes(
         from: Long,
         to: Long,
-        email: String,
+        teamId: Int?,
         demolisher: Demolisher,
         gpsCoordinates: String,
         demolished: Boolean,
     ): List<Syringe> {
 
-        val filter = (
+        var filter = (
                 (SyringeTable.timestamp greaterEq from)
                 and (SyringeTable.timestamp lessEq to)
                 and (SyringeTable.demolisherType eq demolisher.name)
-                and (email.isBlank() or (SyringeTable.email eq email))
                 and (gpsCoordinates.isBlank() or (SyringeTable.gpsCoordinates eq gpsCoordinates))
                 and (SyringeTable.demolished eq demolished)
                 )
+
+        if (teamId != null) {
+            filter = filter and(SyringeTable.teamId eq teamId)
+        }
 
         return databaseInstance
             .from(SyringeTable)
@@ -123,6 +125,7 @@ class DatabaseServiceImpl(
             .select()
             .orderBy(TeamTable.name.asc())
             .map { row -> Team(
+                id = row[TeamTable.teamId]!!,
                 name = row[TeamTable.name]!!,
                 location = Location(
                     id = row[LocationTable.id]!!,
@@ -130,7 +133,7 @@ class DatabaseServiceImpl(
                     okres = row[LocationTable.okres]!!,
                     mestkaCast = row[LocationTable.mestka_cast]!!,
                 ),
-                organizationName = row[TeamTable.organization_name]!!
+                organizationId = row[TeamTable.organization_id]!!
             ) }
     }
 
@@ -141,6 +144,7 @@ class DatabaseServiceImpl(
             .select()
             .where { TeamTable.name eq name }
             .map { row -> Team(
+                id = row[TeamTable.teamId]!!,
                 name = row[TeamTable.name]!!,
                 location = Location(
                     id = row[LocationTable.id]!!,
@@ -148,7 +152,7 @@ class DatabaseServiceImpl(
                     okres = row[LocationTable.okres]!!,
                     mestkaCast = row[LocationTable.mestka_cast]!!,
                 ),
-                organizationName = row[TeamTable.organization_name]!!
+                organizationId = row[TeamTable.organization_id]!!
             ) }
             .firstOrNull()
     }
@@ -166,7 +170,9 @@ class DatabaseServiceImpl(
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
-            set(it.teamName, user.teamName)
+            set(it.organizationId, user.organizationId)
+            set(it.teamId, user.teamId)
+            set(it.isAdmin, user.isAdmin)
         }
     }
 
@@ -182,9 +188,6 @@ class DatabaseServiceImpl(
     override fun updateOrganization(organization: Organization) {
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
-            set(it.email, organization.email)
-            set(it.password, organization.password.hashPassword())
-            set(it.verified, organization.verified)
         }
     }
 
@@ -192,28 +195,28 @@ class DatabaseServiceImpl(
         databaseInstance.update(TeamTable) {
             set(it.name, team.name)
             set(it.location_id, getLocationId(team))
-            set(it.organization_name, team.organizationName)
+            set(it.organization_id, team.organizationId)
         }
     }
 
-    override fun insertSyringe(syringe: Syringe) {
-        databaseInstance.insertAndGenerateKey(SyringeTable) {
+    override fun insertSyringe(syringe: Syringe): Int {
+        return databaseInstance.insertAndGenerateKey(SyringeTable) {
             set(it.timestamp, syringe.timestamp)
-            set(it.email, syringe.email)
+            set(it.teamId, syringe.teamId)
             set(it.photo, syringe.photo)
             set(it.count, syringe.count)
             set(it.note, syringe.note)
             set(it.demolisherType, syringe.demolisher.name)
             set(it.gpsCoordinates, syringe.gps_coordinates)
             set(it.demolished, syringe.demolished)
-        }
+        } as Int
     }
 
     override fun updateSyringe(syringe: Syringe) {
         databaseInstance.update(SyringeTable) {
             set(it.id, syringe.id)
             set(it.timestamp, syringe.timestamp)
-            set(it.email, syringe.email)
+            set(it.teamId, syringe.teamId)
             set(it.photo, syringe.photo)
             set(it.count, syringe.count)
             set(it.note, syringe.note)
@@ -223,34 +226,33 @@ class DatabaseServiceImpl(
         }
     }
 
-    override fun insertUser(user: User) {
-        databaseInstance.insert(UserTable) {
+    override fun insertUser(user: User): Int {
+        return databaseInstance.insertAndGenerateKey(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
             set(it.verified, user.verified)
-            set(it.teamName, user.teamName)
-        }
+            set(it.organizationId, user.organizationId)
+            set(it.teamId, user.teamId)
+            set(it.isAdmin, user.isAdmin)
+        } as Int
     }
 
-    override fun insertOrganization(organization: Organization) {
-        databaseInstance.insert(OrganizationTable) {
+    override fun insertOrganization(organization: Organization): Int {
+        return databaseInstance.insertAndGenerateKey(OrganizationTable) {
             set(it.name, organization.name)
-            set(it.email, organization.email)
-            set(it.password, organization.password.hashPassword())
-            set(it.verified, organization.verified)
-        }
+        } as Int
     }
 
     override fun deleteOrganization(organization: Organization) {
         databaseInstance.delete(OrganizationTable) { it.name eq organization.name }
     }
 
-    override fun insertTeam(team: Team) {
-        databaseInstance.insert(TeamTable) {
-            set(it.organization_name, team.organizationName)
+    override fun insertTeam(team: Team): Int {
+        return databaseInstance.insertAndGenerateKey(TeamTable) {
+            set(it.organization_id, team.organizationId)
             set(it.location_id, getLocationId(team))
             set(it.name, team.name)
-        }
+        } as Int
     }
 
     private fun getLocationId(team: Team): Int {
@@ -269,7 +271,7 @@ class DatabaseServiceImpl(
                         and (LocationTable.obec eq team.location.obec)
                         and (LocationTable.okres eq team.location.okres)
             )
-            .map { it.getInt("id") }.first()
+            .map { it.getInt("location_id") }.first()
     }
 
     override fun deleteSyringe(id: Int) {
@@ -312,7 +314,7 @@ class DatabaseServiceImpl(
                 .where { condition }
                 .map { row ->
                     Location(
-                        id = row.getInt("id"),
+                        id = row.getInt("location_id"),
                         okres = row.getString("okres")!!,
                         obec = row.getString("obec")!!,
                         mestkaCast = row.getString("mestka_cast")!!
@@ -339,9 +341,10 @@ class DatabaseServiceImpl(
             .where { TeamTable.location_id eq location.id }
             .map { row ->
                 Team(
+                    id=row.getInt("team_id"),
                     name=row.getString("name")!!,
                     location=location,
-                    organizationName=row.getString("organization_name")!!,
+                    organizationId=row.getInt("organization_id"),
                 )
             }
             .first()
