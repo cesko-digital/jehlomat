@@ -1,6 +1,5 @@
 package main
 
-import api.syringes
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -8,8 +7,9 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import model.Demolisher
 import model.Syringe
-import org.junit.Ignore
 import org.junit.Test
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
@@ -30,19 +30,21 @@ const val SYRINGE_API_PATH = "/api/v1/jehlomat/syringe"
 
 class ApplicationTestSyringe {
 
+    var database: DatabaseService = DatabaseServiceImpl()
+
     @BeforeTest
     fun beforeEach() {
-        syringes.clear()
+        database.cleanSyringes()
     }
-
     @Test
     fun testGetSyringes() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
+            val actualSyringes = database.selectSyringes()
             assertEquals(
-                Json.encodeToString(listOf(SYRINGE)),
+                Json.encodeToString(listOf(SYRINGE.copy(id=actualSyringes[0].id))),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
@@ -50,11 +52,12 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByAll() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?email=email@example.com&from=1&to=1&demolisher=NO&gps_coordinates=10.0,11.0&demolished=false"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
+            val actualSyringes = database.selectSyringes()
             assertEquals(
-                Json.encodeToString(listOf(SYRINGE)),
+                Json.encodeToString(listOf(SYRINGE.copy(id=actualSyringes[0].id))),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
@@ -62,7 +65,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByGPSCoordinates() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?gps_coordinates=11.1,11.1"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -72,7 +75,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByEmail() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?email=notfound@example.com"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -82,7 +85,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByFrom() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?from=2"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -92,7 +95,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByTo() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?to=0"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -102,7 +105,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByDemolisher() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?demolisher=CITY_POLICE"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -112,7 +115,7 @@ class ApplicationTestSyringe {
     @Test
     fun testSyringesFilterByDemolished() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?demolished=true"){
-            syringes.add(SYRINGE)
+            database.insertSyringe(SYRINGE)
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("[ ]", response.content)
@@ -121,12 +124,13 @@ class ApplicationTestSyringe {
 
     @Test
     fun testGetSyringe() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/0") {
-            syringes.add(SYRINGE)
-        }) {
+        database.insertSyringe(SYRINGE)
+        val actualSyringes = database.selectSyringes()
+
+        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/${actualSyringes[0].id}")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
-                Json.encodeToString(SYRINGE),
+                Json.encodeToString(SYRINGE.copy(id=actualSyringes[0].id)),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
@@ -143,10 +147,17 @@ class ApplicationTestSyringe {
     fun testPutSyringe() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
+            database.insertSyringe(SYRINGE)
             setBody(Json.encodeToString(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(listOf(SYRINGE.copy(demolisher = Demolisher.CITY_POLICE)), syringes)
+            val actualSyringes = database.selectSyringes()
+            assertEquals(listOf(
+                SYRINGE.copy(
+                    id=actualSyringes[0].id,
+                    demolisher = Demolisher.CITY_POLICE)),
+                database.selectSyringes()
+            )
         }
     }
 
@@ -154,7 +165,7 @@ class ApplicationTestSyringe {
     fun testDeleteSyringe() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Delete, "$SYRINGE_API_PATH/0")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(listOf<Syringe>(), syringes)
+            assertEquals(listOf(), database.selectSyringes())
         }
     }
 
@@ -165,7 +176,8 @@ class ApplicationTestSyringe {
             setBody(Json.encodeToString(SYRINGE))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals(listOf(SYRINGE), syringes)
+            val actualSyringes = database.selectSyringes()
+            assertEquals(listOf(SYRINGE.copy(id=actualSyringes[0].id)), actualSyringes)
         }
     }
 }
