@@ -1,6 +1,7 @@
 package services
 
 import model.Location
+import model.Organization
 import model.Team
 import model.User
 import org.junit.After
@@ -15,19 +16,23 @@ import kotlin.test.assertNull
 class DatabaseServiceImplTest {
 
     var database: DatabaseService = DatabaseServiceImpl()
+    var defaultOrgId: Int = 0
 
     @Before
     fun beforeEach() {
-        database.cleanLocation()
         database.cleanTeams()
         database.cleanUsers()
+        database.cleanOrganizations()
+        database.cleanLocation()
+        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
     }
 
     @After
     fun afterEach() {
-        database.cleanLocation()
         database.cleanTeams()
         database.cleanUsers()
+        database.cleanOrganizations()
+        database.cleanLocation()
     }
 
     @Test
@@ -58,7 +63,7 @@ class DatabaseServiceImplTest {
     fun testSelectUserByEmail() {
         assertNull(database.selectUserByEmail("not-existent-user"))
 
-        database.insertUser(User("email", "password", false, ""))
+        database.insertUser(User(0, "email", "password", false, defaultOrgId, null, false))
 
         val user = database.selectUserByEmail("email")
         assertNotNull(user)
@@ -70,7 +75,7 @@ class DatabaseServiceImplTest {
     @Test
     fun testHashingUserPassword() {
         val originalPassword = "original-password"
-        database.insertUser(User("email", originalPassword, false, ""))
+        database.insertUser(User(0, "email", originalPassword, false, defaultOrgId, null, false))
 
         val user = database.selectUserByEmail("email")
         assertNotNull(user)
@@ -78,7 +83,7 @@ class DatabaseServiceImplTest {
         assert(BCrypt.checkpw(originalPassword, user.password))
 
         val newPassword = "new-password"
-        database.updateUser(User("email", newPassword, false, ""))
+        database.updateUser(User(0, "email", newPassword, false, defaultOrgId, null, false))
 
         val updatedUser = database.selectUserByEmail("email")
         assertNotNull(updatedUser)
@@ -89,17 +94,17 @@ class DatabaseServiceImplTest {
     @Test
     fun testResolveNearestTeam() {
         val exactTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 3")
-        val exactTeam = Team("teamA", exactTeamLocation, "orgName")
+        val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
 
         val obecTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 9-Malesice")
-        val obecTeam = Team("teamB", obecTeamLocation, "orgName")
+        val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
 
-        database.insertTeam(exactTeam)
+        val exactTeamId = database.insertTeam(exactTeam)
         database.insertTeam(obecTeam)
 
         val actualTeam = database.resolveNearestTeam("13.3719999 49.7278823")
         // update ID because of DB auto incementation
-        val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam.location.id))
+        val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam.location.id ), id = exactTeamId)
 
         assertEquals(expectedTeam, actualTeam)
     }

@@ -54,7 +54,7 @@ class Mailer: MailerService {
                     Emailv31.Message.TO, JSONArray()
                         .put(
                             JSONObject()
-                                .put("Email", organization?.email ?: user!!.email)
+                                .put("Email", user!!.email)
                                 .put("Name", organization?.name ?: "Jméno")
                         )
                 )

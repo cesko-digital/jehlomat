@@ -11,11 +11,10 @@ import services.Mailer
 import kotlin.test.BeforeTest
 
 
-val user = Organization(
+val organization = Organization(
+    1,
     "TestOrg",
-    "bares.jakub@gmail.com",
-    "password",
-    verified = false
+    true
 )
 
 class MailerTest {
@@ -30,6 +29,6 @@ class MailerTest {
     @Ignore("Need to solve how to pass jetmail api key to application")
     fun testSend() = withTestApplication(Application::module) {
         val mailer = Mailer()
-        mailer.sendRegistrationConfirmationEmail(user)
+        mailer.sendRegistrationConfirmationEmail(organization)
     }
 }

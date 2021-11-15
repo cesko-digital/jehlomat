@@ -13,9 +13,9 @@ import services.DatabaseService
 fun Route.teamApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
-        get("/{team}") {
-            val name = call.parameters["team"]
-            val team = name?.let { it1 -> databaseInstance.selectTeamByName(it1) }
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
 
             if (team != null ) {
                 call.respond(HttpStatusCode.OK, team)
@@ -39,13 +39,19 @@ fun Route.teamApi(databaseInstance: DatabaseService): Route {
 
         put {
             val newTeam = call.receive<Team>()
-            val currentTeam = databaseInstance.selectTeamByName(newTeam.name)
+            val currentTeam = databaseInstance.selectTeamById(newTeam.id)
 
-            if (currentTeam == null) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                databaseInstance.updateTeam(newTeam)
-                call.respond(HttpStatusCode.OK)
+            when {
+                currentTeam == null -> {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+                (newTeam.name != currentTeam.name && databaseInstance.selectTeamByName(newTeam.name) != null) -> {
+                    call.respond(HttpStatusCode.Conflict)
+                }
+                else -> {
+                    databaseInstance.updateTeam(newTeam)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }

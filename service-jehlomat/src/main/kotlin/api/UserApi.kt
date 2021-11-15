@@ -14,17 +14,14 @@ import utils.isValidPassword
 fun Route.userApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
-        get("/{email}") {
-            val email = call.parameters["email"]
-            if (email == null) {
-                call.respond(HttpStatusCode.BadRequest, "Email is required")
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
+
+            if (user != null ) {
+                call.respond(HttpStatusCode.OK, user.toUserInfo())
             } else {
-                val user = databaseInstance.selectUserByEmail(email)
-                if (user != null) {
-                    call.respond(HttpStatusCode.OK, user.toUserInfo())
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
+                call.respond(HttpStatusCode.NotFound)
             }
         }
 
@@ -50,7 +47,7 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
 
         put {
             val newUser = call.receive<User>()
-            val userToChange = databaseInstance.selectUserByEmail(newUser.email)
+            val userToChange = databaseInstance.selectUserById(newUser.id)
 
             when {
                 userToChange == null -> {
@@ -64,6 +61,9 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
                 }
                 (!userToChange.password.isValidPassword()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong password format.")
+                }
+                (newUser.email != userToChange.email && databaseInstance.selectUserByEmail(newUser.email) != null) -> {
+                    call.respond(HttpStatusCode.BadRequest, "E-mail already taken")
                 }
                 else -> {
                     databaseInstance.updateUser(newUser)

@@ -12,20 +12,18 @@ import services.Mailer
 
 fun Route.verificationApi(database: DatabaseService): Route {
     return route("/") {
-        get("/{organizationName}") {
+        get("/{id}") {
             // TODO: check if values satisfy condition
             // TODO: check if adminitrator is logged user
 
-            val organizationName = call.parameters["organizationName"]!!
+            val id = call.parameters["id"]?.toIntOrNull()
+            val currentOrganization = id?.let { it1 -> database.selectOrganizationById(it1) }
 
-            val currentOrganization = database.selectOrganizationByName(organizationName)
-
-            if (currentOrganization == null) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                currentOrganization.verified = true
-                database.updateOrganization(currentOrganization)
+            if (currentOrganization != null ) {
+                database.updateOrganization(currentOrganization.copy(verified = true))
                 call.respond(HttpStatusCode.OK)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
             }
         }
     }

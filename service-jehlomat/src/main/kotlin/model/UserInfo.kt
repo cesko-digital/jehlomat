@@ -4,14 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserInfo(
+    val id: Int,
     val email: String,
-    val teamName: String,
-    val verified: Boolean
+    val verified: Boolean,
+    val organizationId: Int,
+    val teamId: Int,
+    val isAdmin: Boolean
 )
 
-fun UserInfo.toUser() = User(
-    password = "",
-    email = email,
-    teamName = teamName,
-    verified = verified
-)
