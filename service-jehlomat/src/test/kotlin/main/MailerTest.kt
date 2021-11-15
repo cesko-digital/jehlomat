@@ -29,6 +29,6 @@ class MailerTest {
     @Ignore("Need to solve how to pass jetmail api key to application")
     fun testSend() = withTestApplication(Application::module) {
         val mailer = Mailer()
-        mailer.sendRegistrationConfirmationEmail(organization)
+        mailer.sendOrganizationConfirmationEmail(organization)
     }
 }

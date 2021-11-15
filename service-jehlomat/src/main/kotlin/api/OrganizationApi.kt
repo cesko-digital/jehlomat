@@ -8,6 +8,8 @@ import io.ktor.routing.*
 import model.*
 import services.DatabaseService
 import services.MailerService
+import utils.isValidMail
+import utils.isValidPassword
 
 
 fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
@@ -28,34 +30,51 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
         }
 
         post {
-            val organization = call.receive<Organization>()
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
+            val registration = call.receive<OrganizationRegistration>()
+            when {
+                (!registration.email.isValidMail()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong e-mail format")
+                }
+                (!registration.password.isValidPassword()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong password format")
+                }
+                database.selectUserByEmail(registration.email) != null -> {
+                    call.respond(HttpStatusCode.Conflict, "E-mail already taken")
+                }
+                database.selectOrganizationByName(registration.name) != null -> {
+                    call.respond(HttpStatusCode.Conflict, "Organization name already exists")
+                }
+                else -> {
+                    database.useTransaction {
+                        val organization = Organization(0, registration.name, false)
+                        val orgId = database.insertOrganization(organization)
+                        mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId))
 
-            val organizationInDB = database.selectOrganizationByName(organization.name)
+                        val user = User(0, registration.email, registration.password, false, orgId, null, true)
+                        val userId = database.insertUser(user)
+                        mailer.sendRegistrationConfirmationEmail(user.copy(id = userId))
+                    }
 
-            if (organizationInDB != null) {
-                call.respond(HttpStatusCode.Conflict, "Organization name already exists")
-            } else {
-                database.insertOrganization(organization)
-                mailer.sendRegistrationConfirmationEmail(organization)
-                call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created)
+                }
             }
         }
 
         put {
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
-
             val newOrganization = call.receive<Organization>()
+            val currentOrganization = database.selectOrganizationById(newOrganization.id)
 
-            val organizationInDB = database.selectOrganizationByName(newOrganization.name)
-
-            if (organizationInDB == null) {
-                call.respond(HttpStatusCode.NotFound, "Organization not found")
-            } else {
-                database.updateOrganization(newOrganization)
-                call.respond(HttpStatusCode.OK)
+            when {
+                currentOrganization == null -> {
+                    call.respond(HttpStatusCode.NotFound, "Organization not found")
+                }
+                (newOrganization.name != currentOrganization.name && database.selectOrganizationByName(newOrganization.name) != null) -> {
+                    call.respond(HttpStatusCode.Conflict, "The new name is already used by a different organization")
+                }
+                else -> {
+                    database.updateOrganization(newOrganization)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }
