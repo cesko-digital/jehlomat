@@ -49,8 +49,8 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
             val dummyUser = UserInfo(3, "example@example.org", false, 1, 2, false)
             database.insertSyringe(call.receive())
-            mailer.sendSyringeFindingConfirmation(dummyUser)
-            mailer.sendSyringeFinding(dummyOrganization)
+            mailer.sendSyringeFindingConfirmation(dummyOrganization, dummyUser)
+            mailer.sendSyringeFinding(dummyOrganization, dummyUser)
             call.respond(HttpStatusCode.Created)
         }
 

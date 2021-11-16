@@ -8,7 +8,7 @@ data class UserInfo(
     val email: String,
     val verified: Boolean,
     val organizationId: Int,
-    val teamId: Int,
+    val teamId: Int?,
     val isAdmin: Boolean
 )
 
