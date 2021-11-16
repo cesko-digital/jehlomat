@@ -48,10 +48,10 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Organization object that needs to be added
+          description: Organization with administrator info that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/Organization'
+            $ref: '#/definitions/OrganizationRegistration'
       responses:
         '201':
           description: Created
@@ -343,6 +343,15 @@ definitions:
         type: string
       verified:
         type: boolean
+  OrganizationRegistration:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
   AllOrganizations:
     type: array
     items:

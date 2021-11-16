@@ -19,7 +19,7 @@ interface DatabaseService {
     fun selectSyringes(
         from: Long,
         to: Long,
-        teamId: Int?,
+        userId: Int?,
         demolisher: Demolisher,
         gpsCoordinates: String,
         demolished: Boolean,
@@ -52,6 +52,8 @@ interface DatabaseService {
     fun cleanUsers(): Int
     fun cleanOrganizations(): Int
     fun cleanSyringes(): Int
+
+    fun <T> useTransaction(func: () -> T): T
 }
 
 
@@ -395,5 +397,9 @@ class DatabaseServiceImpl(
 
     override fun cleanSyringes(): Int {
         return databaseInstance.deleteAll(SyringeTable)
+    }
+
+    override fun <T> useTransaction(func: () -> T): T {
+        databaseInstance.useTransaction { return func.invoke() }
     }
 }

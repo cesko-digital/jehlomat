@@ -94,7 +94,7 @@ class ApplicationTestSyringe {
 
     @Test
     fun testSyringesFilterByUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?userId=20"){
+        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?userId=0"){
             database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())

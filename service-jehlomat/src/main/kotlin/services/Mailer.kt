@@ -6,22 +6,28 @@ import com.mailjet.client.MailjetResponse
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
+import model.User
 import model.UserInfo
+import model.toUserInfo
 import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
 
 interface MailerService {
-    fun sendRegistrationConfirmationEmail(organization: Organization)
+    fun sendRegistrationConfirmationEmail(user: User)
+    fun sendOrganizationConfirmationEmail(organization: Organization)
     fun sendSyringeFindingConfirmation(user: UserInfo)
     fun sendSyringeFinding(organization: Organization)
 }
 
 
 class FakeMailer: MailerService {
-    override fun sendRegistrationConfirmationEmail(organization: Organization) {
+    override fun sendRegistrationConfirmationEmail(user: User) {
         println("sendRegistrationConfirmationEmail")
+    }
+    override fun sendOrganizationConfirmationEmail(organization: Organization) {
+        println("sendOrganizationConfirmationEmail")
     }
     override fun sendSyringeFindingConfirmation(user: UserInfo) {
         println("sendSyringeFindingConfirmation")
@@ -53,6 +59,7 @@ class Mailer: MailerService {
                 .put(
                     Emailv31.Message.TO, JSONArray()
                         .put(
+                            // TODO: JH-77 fix the organization confirmation email, which should be send to the superadmin email
                             JSONObject()
                                 .put("Email", user!!.email)
                                 .put("Name", organization?.name ?: "Jméno")
@@ -68,14 +75,31 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendRegistrationConfirmationEmail(organization: Organization) {
+    override fun sendOrganizationConfirmationEmail(organization: Organization) {
+        val request = MailjetRequest(Emailv31.resource)
+            .property(
+                Emailv31.MESSAGES, prepareBody(
+                    3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
+                    "Schválení organizace",
+                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgId=${organization.id}",
+                    organization
+                )
+            )
+        val response: MailjetResponse = client.post(request)
+
+        println(response.status)
+        println(response.data)
+    }
+
+    @Throws(MailjetException::class)
+    override fun sendRegistrationConfirmationEmail(user: User) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgName=${organization.name}",
-                    organization
+                    "https://jehlomat.cz/api/v1/jehlomat/verification?userId=${user.id}",
+                    user = user.toUserInfo()
                 )
             )
         val response: MailjetResponse = client.post(request)
