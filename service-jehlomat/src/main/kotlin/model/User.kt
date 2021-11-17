@@ -18,6 +18,6 @@ fun User.toUserInfo() = UserInfo(
     email = email,
     verified = verified,
     organizationId = organizationId,
-    teamId = teamId!!,
+    teamId = teamId,
     isAdmin = isAdmin
 )

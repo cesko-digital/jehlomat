@@ -48,11 +48,13 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
                     database.useTransaction {
                         val organization = Organization(0, registration.name, false)
                         val orgId = database.insertOrganization(organization)
-                        mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId))
 
                         val user = User(0, registration.email, registration.password, false, orgId, null, true)
                         val userId = database.insertUser(user)
-                        mailer.sendRegistrationConfirmationEmail(user.copy(id = userId))
+
+                        val userWithCorrectId = user.copy(id = userId).toUserInfo()
+                        mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId), userWithCorrectId)
+                        mailer.sendRegistrationConfirmationEmail(organization.copy(id = orgId), userWithCorrectId)
                     }
 
                     call.respond(HttpStatusCode.Created)
