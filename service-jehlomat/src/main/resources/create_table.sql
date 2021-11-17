@@ -14,7 +14,9 @@ CREATE TABLE public.locations(
     location_id SERIAL PRIMARY KEY,
     okres TEXT NOT NULL,
     obec TEXT NOT NULL,
-    mestka_cast TEXT NOT NULL
+    mestka_cast TEXT NOT NULL,
+
+    CONSTRAINT unique_location UNIQUE (okres, obec, mestka_cast)
 );
 
 
@@ -46,9 +48,9 @@ CREATE TABLE public.users(
 );
 
 CREATE TABLE public.syringes(
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(8) PRIMARY KEY,
     timestamp_ BIGINT,
-    user_id INT NOT NULL,
+    user_id INT,
     photo TEXT,
     count_ INT NOT NULL,
     note TEXT,

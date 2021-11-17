@@ -9,6 +9,7 @@ import model.*
 import services.DatabaseService
 
 import services.MailerService
+import utils.isValidMail
 
 
 fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
@@ -41,17 +42,29 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
         }
 
         post {
-            val dummyOrganization  = Organization(
-                1,
-                "TestOrg",
-                true
-            )
+            val syringe = call.receive<Syringe>()
+            if (syringe.userId != null) {
+                val user = database.selectUserById(syringe.userId)
+                if (user == null) {
+                    call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
+                    return@post
+                }
+            }
 
-            val dummyUser = UserInfo(3, "example@example.org", false, 1, 2, false)
-            database.insertSyringe(call.receive())
-            mailer.sendSyringeFindingConfirmation(dummyOrganization, dummyUser)
-            mailer.sendSyringeFinding(dummyOrganization, dummyUser)
-            call.respond(HttpStatusCode.Created)
+            val syringeId = database.insertSyringe(syringe)
+            if (syringeId == null) {
+                call.respond(HttpStatusCode.InternalServerError, "A syringe cannot be created, please try again later")
+                return@post
+            }
+
+            val teamsInLocation = database.resolveTeamsInLocation(syringe.gps_coordinates)
+            teamsInLocation.forEach {
+                val organization = database.selectOrganizationById(it.organizationId)
+                val admin = database.findAdmin(organization!!)
+                mailer.sendSyringeFinding(organization, admin.toUserInfo(), syringeId)
+            }
+
+            call.respond(HttpStatusCode.Created, SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty()))
         }
 
         put {
@@ -61,7 +74,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
         route("/{id}") {
             get {
-                val id = call.parameters["id"]?.toIntOrNull()
+                val id = call.parameters["id"]
                 val result = id?.let { it1 -> database.selectSyringeById(it1) }
                 if (result != null) {
                     call.respond(HttpStatusCode.OK, result)
@@ -70,8 +83,27 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
                 }
             }
 
+            post("/track") {
+                val id = call.parameters["id"]
+                val syringe = id?.let { it1 -> database.selectSyringeById(it1) }
+                val syringeTracking = call.receive<SyringeTrackingRequest>()
+
+                when {
+                    (syringe == null) -> {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                    (!syringeTracking.email.isValidMail()) -> {
+                        call.respond(HttpStatusCode.BadRequest, "The email is not valid.")
+                    }
+                    else -> {
+                        mailer.sendSyringeFindingConfirmation(syringeTracking.email, syringe.id)
+                        call.respond(HttpStatusCode.NoContent)
+                    }
+                }
+            }
+
             delete {
-                val id = call.parameters["id"]?.toIntOrNull()
+                val id = call.parameters["id"]
 
                 if (id != null) {
                     database.deleteSyringe(id)

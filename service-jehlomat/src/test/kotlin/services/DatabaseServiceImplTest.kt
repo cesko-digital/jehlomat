@@ -1,9 +1,6 @@
 package services
 
-import model.Location
-import model.Organization
-import model.Team
-import model.User
+import model.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,6 +17,7 @@ class DatabaseServiceImplTest {
 
     @Before
     fun beforeEach() {
+        database.cleanSyringes()
         database.cleanTeams()
         database.cleanUsers()
         database.cleanOrganizations()
@@ -29,6 +27,7 @@ class DatabaseServiceImplTest {
 
     @After
     fun afterEach() {
+        database.cleanSyringes()
         database.cleanTeams()
         database.cleanUsers()
         database.cleanOrganizations()
@@ -104,8 +103,19 @@ class DatabaseServiceImplTest {
 
         val actualTeam = database.resolveNearestTeam("13.3719999 49.7278823")
         // update ID because of DB auto incementation
-        val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam.location.id ), id = exactTeamId)
+        val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam!!.location.id ), id = exactTeamId)
 
         assertEquals(expectedTeam, actualTeam)
+    }
+
+    @Test
+    fun testInsertSyringe() {
+        val userId = database.insertUser(User(0, "email", "password", true, defaultOrgId, null, false))
+        val syringeToCreate = Syringe("", 0, userId, "", 1, "", Demolisher.USER, "", false)
+        val syringeId = database.insertSyringe(syringeToCreate)
+
+        assertNotNull(syringeId)
+        val createdSyringe = database.selectSyringeById(syringeId)
+        assertEquals(syringeToCreate.copy(id = syringeId), createdSyringe)
     }
 }

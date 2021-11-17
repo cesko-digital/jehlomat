@@ -6,9 +6,7 @@ import com.mailjet.client.MailjetResponse
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
-import model.User
 import model.UserInfo
-import model.toUserInfo
 import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
@@ -17,8 +15,8 @@ import utils.DefaultConfig
 interface MailerService {
     fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo)
     fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo)
-    fun sendSyringeFindingConfirmation(organization: Organization, user: UserInfo)
-    fun sendSyringeFinding(organization: Organization, user: UserInfo)
+    fun sendSyringeFindingConfirmation(email: String, syringeId: String)
+    fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String)
 }
 
 
@@ -29,10 +27,10 @@ class FakeMailer: MailerService {
     override fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo) {
         println("sendOrganizationConfirmationEmail")
     }
-    override fun sendSyringeFindingConfirmation(organization: Organization, user: UserInfo) {
+    override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
         println("sendSyringeFindingConfirmation")
     }
-    override fun sendSyringeFinding(organization: Organization, user: UserInfo) {
+    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
         println("sendSyringeFinding")
     }
 }
@@ -116,15 +114,15 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendSyringeFindingConfirmation(organization: Organization, user: UserInfo) {
+    override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222932,
                     "Potvrzení zaznamenání nálezu",
-                    "https://www.google.com",
-                    user.email,
-                    organization.name
+                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
+                    email,
+                    ""
                 )
             )
         val response: MailjetResponse = client.post(request)
@@ -134,13 +132,13 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendSyringeFinding(organization: Organization, user: UserInfo) {
+    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222921,
                     "Nález",
-                    "https://www.google.com",
+                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
                     user.email,
                     organization.name
                 )
