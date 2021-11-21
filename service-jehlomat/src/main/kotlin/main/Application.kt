@@ -29,7 +29,7 @@ val mailerModule = module {
     single<MailerService> { Mailer() }
 }
 
-val testMailerModule = module {
+var testMailerModule = module {
     single<MailerService> { FakeMailer() }
 }
 

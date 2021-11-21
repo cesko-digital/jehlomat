@@ -7,13 +7,15 @@ import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
 import org.ktorm.support.postgresql.insertOrUpdate
+import org.postgresql.util.PSQLException
+import org.postgresql.util.PSQLState
 import utils.hashPassword
 
 
 interface DatabaseService {
-    fun insertSyringe(syringe: Syringe): Int
-    fun selectSyringeById(id: Int): Syringe?
-    fun deleteSyringe(id: Int)
+    fun insertSyringe(syringe: Syringe): String?
+    fun selectSyringeById(id: String): Syringe?
+    fun deleteSyringe(id: String)
     fun updateSyringe(syringe: Syringe)
     fun selectSyringes(): List<Syringe>
     fun selectSyringes(
@@ -30,7 +32,8 @@ interface DatabaseService {
     fun selectTeams(): List<Team>
     fun selectTeamById(id: Int): Team?
     fun selectTeamByName(name: String): Team?
-    fun resolveNearestTeam(gpsCoordinates: String): Team
+    fun resolveNearestTeam(gpsCoordinates: String): Team?
+    fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team>
     fun getObec(gpsCoordinates: String): String
     fun getMC(gpsCoordinates: String): String
     fun getOkres(gpsCoordinates: String): String
@@ -39,6 +42,7 @@ interface DatabaseService {
     fun updateUser(user: User)
     fun selectUserById(id: Int): User?
     fun selectUserByEmail(email: String): User?
+    fun findAdmin(organization: Organization): User
 
     fun selectOrganizationById(id: Int): Organization?
     fun selectOrganizationByName(name: String): Organization?
@@ -56,6 +60,7 @@ interface DatabaseService {
     fun <T> useTransaction(func: () -> T): T
 }
 
+private const val NUMBER_OF_INSERT_SYRINGE_TRIES = 100
 
 class DatabaseServiceImpl(
     host: String = System.getenv("DATABASE_HOST"),
@@ -67,8 +72,9 @@ class DatabaseServiceImpl(
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
+    private val syringeIdGenerator = SyringeIdGenerator()
 
-    override fun selectSyringeById(id: Int): Syringe? {
+    override fun selectSyringeById(id: String): Syringe? {
         return databaseInstance
             .from(SyringeTable)
             .select()
@@ -130,6 +136,15 @@ class DatabaseServiceImpl(
             .where { UserTable.email eq email }
             .map { row -> UserTable.createEntity(row) }
             .firstOrNull()
+    }
+
+    override fun findAdmin(organization: Organization): User {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { (UserTable.organizationId eq organization.id) and (UserTable.isAdmin eq true) }
+            .map { row -> UserTable.createEntity(row) }
+            .first()
     }
 
     private val mapTeamRow: (row: QueryRowSet) -> Team = { row ->
@@ -227,17 +242,30 @@ class DatabaseServiceImpl(
         }
     }
 
-    override fun insertSyringe(syringe: Syringe): Int {
-        return databaseInstance.insertAndGenerateKey(SyringeTable) {
-            set(it.timestamp, syringe.timestamp)
-            set(it.userId, syringe.userId)
-            set(it.photo, syringe.photo)
-            set(it.count, syringe.count)
-            set(it.note, syringe.note)
-            set(it.demolisherType, syringe.demolisher.name)
-            set(it.gpsCoordinates, syringe.gps_coordinates)
-            set(it.demolished, syringe.demolished)
-        } as Int
+    override fun insertSyringe(syringe: Syringe): String? {
+        for (i in 1 .. NUMBER_OF_INSERT_SYRINGE_TRIES) {
+            val id = syringeIdGenerator.generateId()
+            try {
+                databaseInstance.insert(SyringeTable) {
+                    set(it.id, id)
+                    set(it.timestamp, syringe.timestamp)
+                    set(it.userId, syringe.userId)
+                    set(it.photo, syringe.photo)
+                    set(it.count, syringe.count)
+                    set(it.note, syringe.note)
+                    set(it.demolisherType, syringe.demolisher.name)
+                    set(it.gpsCoordinates, syringe.gps_coordinates)
+                    set(it.demolished, syringe.demolished)
+                }
+                return id
+            } catch (e: PSQLException) {
+                if (e.sqlState != PSQLState.UNIQUE_VIOLATION.state) {
+                    throw e
+                }
+            }
+        }
+
+        return null
     }
 
     override fun updateSyringe(syringe: Syringe) {
@@ -289,7 +317,7 @@ class DatabaseServiceImpl(
             set(it.mestka_cast, team.location.mestkaCast)
             set(it.okres, team.location.okres)
             set(it.obec, team.location.obec)
-            onConflict { doNothing() }
+            onConflict(it.mestka_cast, it.okres, it.obec) { doNothing() }
         }
 
         return databaseInstance
@@ -303,7 +331,7 @@ class DatabaseServiceImpl(
             .map { it.getInt("location_id") }.first()
     }
 
-    override fun deleteSyringe(id: Int) {
+    override fun deleteSyringe(id: String) {
         databaseInstance.delete(SyringeTable) { it.id eq id }
     }
 
@@ -336,7 +364,7 @@ class DatabaseServiceImpl(
         return postgisLocation("sph_okres", gpsCoordinates, "nazev_lau1")
     }
 
-    fun selectLocation(gpsCoordinates: String): Location {
+    fun selectLocation(gpsCoordinates: String): Location? {
         fun query(condition: ColumnDeclaring<Boolean>): Location? {
             return databaseInstance.from(LocationTable)
                 .select()
@@ -358,11 +386,15 @@ class DatabaseServiceImpl(
 
         return (query((LocationTable.mestka_cast eq mc) and (LocationTable.obec eq obec) and (LocationTable.okres eq okres))
             ?: run { query((LocationTable.obec eq obec) and (LocationTable.okres eq okres)) }
-            ?: run { query(LocationTable.okres eq okres) })!!
+            ?: run { query(LocationTable.okres eq okres) })
     }
 
-    override fun resolveNearestTeam(gpsCoordinates: String): Team {
-        val location = selectLocation(gpsCoordinates)
+    override fun resolveNearestTeam(gpsCoordinates: String): Team? {
+        return resolveTeamsInLocation(gpsCoordinates).firstOrNull()
+    }
+
+    override fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team> {
+        val location = selectLocation(gpsCoordinates) ?: return setOf()
 
         return databaseInstance
             .from(TeamTable)
@@ -376,7 +408,7 @@ class DatabaseServiceImpl(
                     organizationId=row.getInt("organization_id"),
                 )
             }
-            .first()
+            .toHashSet()
     }
 
     override fun cleanLocation(): Int {
