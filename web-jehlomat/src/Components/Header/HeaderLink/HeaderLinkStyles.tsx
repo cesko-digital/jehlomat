@@ -17,6 +17,7 @@ export const Container = styled("div")<{mobile?: boolean}>`
 
 export const Link = styled("div")<{mobile?: boolean}>`
     align-content: center;
+    cursor: pointer;
     ${props => !props.mobile && `
     text-transform: uppercase;
     text-align: right;`}
