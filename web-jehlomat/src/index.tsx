@@ -15,6 +15,7 @@ const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
+const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele'));
 const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
 
@@ -38,7 +39,7 @@ ReactDOM.render(
                         render={({ match: { url } }) => (
                             <>
                                 <Route path={`${url}`} component={SeznamUzivatelu} exact />
-                                <Route path={`${url}/novy`} component={RegistraceUzivatele} />
+                                <Route path={`${url}/novy`} component={PridatUzivatele} />
                                 <Route path={`${url}/upravit`} component={RegistraceUzivatele} />
                             </>
                         )}
