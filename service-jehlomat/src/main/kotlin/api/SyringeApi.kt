@@ -7,6 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
 import services.DatabaseService
+import services.GeneralValidator
 
 import services.MailerService
 import utils.isValidMail
@@ -68,7 +69,21 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
         }
 
         put {
-            database.updateSyringe(call.receive())
+            val newSyringe = call.receive<Syringe>()
+            val currentSyringe = database.selectSyringeById(newSyringe.id)
+
+            if (currentSyringe == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@put
+            }
+
+            val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe, newSyringe)
+            if (fieldName != null) {
+                call.respond(HttpStatusCode.BadRequest, "The field $fieldName is unchangeable by PUT request.")
+                return@put
+            }
+
+            database.updateSyringe(newSyringe)
             call.respond(HttpStatusCode.OK)
         }
 
