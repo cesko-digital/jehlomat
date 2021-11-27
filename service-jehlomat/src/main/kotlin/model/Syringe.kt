@@ -1,16 +1,17 @@
 package model
 
 import kotlinx.serialization.Serializable
+import utils.UnchangeableByPut
 
 @Serializable
 data class Syringe(
-    val id: String,
-    val timestamp: Long,
-    val userId: Int?,
-    val photo: String,
-    val count: Int,
-    val note: String,
+    @UnchangeableByPut val id: String,
+    @UnchangeableByPut val timestamp: Long,
+    @UnchangeableByPut val userId: Int?,
+    @UnchangeableByPut val photo: String,
+    @UnchangeableByPut val count: Int,
+    @UnchangeableByPut val note: String,
     val demolisher: Demolisher,
-    val gps_coordinates: String,
+    @UnchangeableByPut val gps_coordinates: String,
     val demolished: Boolean
 )

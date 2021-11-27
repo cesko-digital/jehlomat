@@ -167,20 +167,31 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPutSyringe() = withTestApplication(Application::module) {
+        val syringeId = database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
         with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-            setBody(Json.encodeToString(SYRINGE.copy(userId = defaultUserId, demolisher = Demolisher.CITY_POLICE)))
+            setBody(Json.encodeToString(SYRINGE.copy(id = syringeId!!, userId = defaultUserId, demolisher = Demolisher.CITY_POLICE)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            val actualSyringes = database.selectSyringes()
             assertEquals(listOf(
                 SYRINGE.copy(
-                    id=actualSyringes[0].id,
+                    id=syringeId!!,
                     userId = defaultUserId,
                     demolisher = Demolisher.CITY_POLICE)),
                 database.selectSyringes()
             )
+        }
+    }
+
+    @Test
+    fun testPutSyringeWrongChange() = withTestApplication(Application::module) {
+        val syringeId = database.insertSyringe(SYRINGE)
+        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(SYRINGE.copy(id = syringeId!!, count = -100)))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+            assertEquals("The field count is unchangeable by PUT request.", response.content)
         }
     }
 

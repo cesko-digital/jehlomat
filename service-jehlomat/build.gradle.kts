@@ -56,6 +56,9 @@ dependencies {
 
     //Hash and encryption
     implementation("org.mindrot:jbcrypt:0.4")
+
+    // reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$ktorVersion")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
