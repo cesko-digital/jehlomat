@@ -106,7 +106,7 @@ fun Application.module(testing: Boolean = false) {
             syringeApi(service, mailer)
         }
         route("/api/v1/jehlomat/user") {
-            userApi(service)
+            userApi(service, mailer)
         }
         route("/api/v1/jehlomat/organization") {
             organizationApi(service, mailer)
