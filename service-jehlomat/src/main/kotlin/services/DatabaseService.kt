@@ -101,15 +101,15 @@ class DatabaseServiceImpl(
     ): List<Syringe> {
 
         var filter = (
-                (SyringeTable.timestamp greaterEq from)
-                and (SyringeTable.timestamp lessEq to)
+                (SyringeTable.createdAt greaterEq from)
+                and (SyringeTable.createdAt lessEq to)
                 and (SyringeTable.demolisherType eq demolisher.name)
                 and (gpsCoordinates.isBlank() or (SyringeTable.gpsCoordinates eq gpsCoordinates))
                 and (SyringeTable.demolished eq demolished)
                 )
 
         if (userId != null) {
-            filter = filter and(SyringeTable.userId eq userId)
+            filter = filter and(SyringeTable.createdBy eq userId)
         }
 
         return databaseInstance
@@ -248,14 +248,7 @@ class DatabaseServiceImpl(
             try {
                 databaseInstance.insert(SyringeTable) {
                     set(it.id, id)
-                    set(it.timestamp, syringe.timestamp)
-                    set(it.userId, syringe.userId)
-                    set(it.photo, syringe.photo)
-                    set(it.count, syringe.count)
-                    set(it.note, syringe.note)
-                    set(it.demolisherType, syringe.demolisher.name)
-                    set(it.gpsCoordinates, syringe.gps_coordinates)
-                    set(it.demolished, syringe.demolished)
+                    updateSyringeRecord(this, it, syringe)
                 }
                 return id
             } catch (e: PSQLException) {
@@ -270,17 +263,25 @@ class DatabaseServiceImpl(
 
     override fun updateSyringe(syringe: Syringe) {
         databaseInstance.update(SyringeTable) {
-            set(it.id, syringe.id)
-            set(it.timestamp, syringe.timestamp)
-            set(it.userId, syringe.userId)
-            set(it.photo, syringe.photo)
-            set(it.count, syringe.count)
-            set(it.note, syringe.note)
-            set(it.demolisherType, syringe.demolisher.name)
-            set(it.gpsCoordinates, syringe.gps_coordinates)
-            set(it.demolished, syringe.demolished)
+            updateSyringeRecord(this, it, syringe)
         }
     }
+
+    private fun updateSyringeRecord(builder: AssignmentsBuilder, it: SyringeTable, syringe: Syringe) {
+        builder.set(it.createdAt, syringe.createdAt)
+        builder.set(it.createdBy, syringe.createdBy)
+        builder.set(it.reservedAt, syringe.reservedAt)
+        builder.set(it.reservedBy, syringe.reservedBy)
+        builder.set(it.demolishedAt, syringe.demolishedAt)
+        builder.set(it.demolishedBy, syringe.demolishedBy)
+        builder.set(it.demolisherType, syringe.demolisherType.name)
+        builder.set(it.photo, syringe.photo)
+        builder.set(it.count, syringe.count)
+        builder.set(it.note, syringe.note)
+        builder.set(it.gpsCoordinates, syringe.gps_coordinates)
+        builder.set(it.demolished, syringe.demolished)
+    }
+
 
     override fun insertUser(user: User): Int {
         return databaseInstance.insertAndGenerateKey(UserTable) {

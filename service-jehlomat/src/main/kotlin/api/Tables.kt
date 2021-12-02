@@ -14,8 +14,12 @@ object DemolisherTable: Table<Nothing>("demolisher") {
 
 object SyringeTable: BaseTable<Syringe>("syringes") {
     val id = varchar("id").primaryKey()
-    val timestamp = long("timestamp_")
-    val userId = int("user_id")
+    val createdAt = long("created_at")
+    val createdBy = int("created_by")
+    val reservedAt = long("reserved_at")
+    val reservedBy = int("reserved_by")
+    val demolishedAt = long("demolished_at")
+    val demolishedBy = int("demolished_by")
     val photo = varchar("photo")
     val count = int("count_")
     val note = varchar("note")
@@ -25,12 +29,16 @@ object SyringeTable: BaseTable<Syringe>("syringes") {
 
     override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Syringe(
         id = row[id]!!,
-        timestamp = row[timestamp]!!,
-        userId = row[userId],
+        createdAt = row[createdAt]!!,
+        createdBy = row[createdBy],
+        reservedAt = row[reservedAt],
+        reservedBy = row[reservedBy],
+        demolishedAt = row[demolishedAt],
+        demolishedBy = row[demolishedBy],
         photo = row[photo]!!,
         count = row[count]!!,
         note = row[note] ?: "",
-        demolisher = Demolisher.valueOf(row[demolisherType]!!),
+        demolisherType = Demolisher.valueOf(row[demolisherType]!!),
         gps_coordinates = row[gpsCoordinates]!!,
         demolished = row[demolished]!!,
     )

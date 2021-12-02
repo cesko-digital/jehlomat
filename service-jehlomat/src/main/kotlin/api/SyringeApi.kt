@@ -44,8 +44,8 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
         post {
             val syringe = call.receive<Syringe>()
-            if (syringe.userId != null) {
-                val user = database.selectUserById(syringe.userId)
+            if (syringe.createdBy != null) {
+                val user = database.selectUserById(syringe.createdBy)
                 if (user == null) {
                     call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
                     return@post

@@ -111,7 +111,7 @@ class DatabaseServiceImplTest {
     @Test
     fun testInsertSyringe() {
         val userId = database.insertUser(User(0, "email", "password", true, defaultOrgId, null, false))
-        val syringeToCreate = Syringe("", 0, userId, "", 1, "", Demolisher.USER, "", false)
+        val syringeToCreate = Syringe("", 0, userId, null, null, null, null,Demolisher.USER,"", 1, "", "", false)
         val syringeId = database.insertSyringe(syringeToCreate)
 
         assertNotNull(syringeId)
