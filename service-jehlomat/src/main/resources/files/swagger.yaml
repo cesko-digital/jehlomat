@@ -301,20 +301,23 @@ paths:
           description: Success
         '404':
           description: User not found
-  /verification/{id}:
+  /verification:
     get:
       summary: Verifies organization
       parameters:
-        - name: id
-          in: path
-          description: organization id to verify
-          required: true
+        - name: orgId
+          in: query
+          description: Organization id to verify
+          type: integer
+        - name: userId
+          in: query
+          description: User id to verify
           type: integer
       responses:
         '200':
           description: successful operation
         '404':
-          description: Organization not found
+          description: Organization or User not found
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io

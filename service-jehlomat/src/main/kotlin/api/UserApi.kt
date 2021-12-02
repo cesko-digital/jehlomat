@@ -8,10 +8,11 @@ import io.ktor.routing.*
 import model.User
 import model.toUserInfo
 import services.DatabaseService
+import services.MailerService
 import utils.isValidMail
 import utils.isValidPassword
 
-fun Route.userApi(databaseInstance: DatabaseService): Route {
+fun Route.userApi(databaseInstance: DatabaseService, mailer: MailerService): Route {
 
     return route("/") {
         get("/{id}") {
@@ -39,8 +40,15 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
                     call.respond(HttpStatusCode.Conflict, "E-mail already taken")
                 }
                 else -> {
-                    databaseInstance.insertUser(newUser)
-                    call.respond(HttpStatusCode.Created)
+                    val userId = databaseInstance.insertUser(newUser)
+                    val organization = databaseInstance.selectOrganizationById(newUser.organizationId)
+
+                    if (organization == null) {
+                        call.respond(HttpStatusCode.NotFound, "Organization not found")
+                    } else {
+                        mailer.sendRegistrationConfirmationEmail(organization, newUser.copy(id=userId).toUserInfo())
+                        call.respond(HttpStatusCode.Created)
+                    }
                 }
             }
         }
