@@ -6,10 +6,10 @@ import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
 import Navigation from '../../Components/Navigation/Navigation';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import { primaryDark, white } from '../../Components/Utils/Colors';
-import { STEPS } from '../NovyNalez';
+import { Steps } from '../NovyNalez';
 
 interface iInfo {
-    handleStepChange: (newStep: STEPS) => void;
+    handleStepChange: (newStep: Steps) => void;
 }
 
 const Container = styled.div`
@@ -86,7 +86,7 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                 <MutedText>Nález bude profesionálně zlikvidován</MutedText>
             </Card>
             <Card backgroundColor="#EEF8F7">
-                <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
+                <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(Steps.Mapa)} />
             </Card>
             <Navigation></Navigation>
         </Container>

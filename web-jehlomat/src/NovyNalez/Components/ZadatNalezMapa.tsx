@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from 'react';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
-import { INovaJehla, STEPS } from '../NovyNalez';
+import { INovaJehla, Steps } from '../NovyNalez';
 
 interface IZadatNalezMapa {
-    handleStepChange: (newStep: STEPS, newInfo?: Partial<INovaJehla>) => void;
+    handleStepChange: (newStep: Steps, newInfo?: Partial<INovaJehla>) => void;
     userSelectedLocation: [number | undefined, number | undefined];
 }
 
@@ -44,11 +44,11 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
      */
     useEffect(() => {
         resizeMap();
-        window.addEventListener('resize', resizeMap);
+        // window.addEventListener('resize', resizeMap);
 
-        return () => {
-            window.removeEventListener('resize', resizeMap);
-        };
+        // return () => {
+        //     window.removeEventListener('resize', resizeMap);
+        // };
     }, []);
 
     const handleAllowGeolocation = (lat: number, lng: number): void => {
