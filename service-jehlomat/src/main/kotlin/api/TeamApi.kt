@@ -6,52 +6,52 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
-
-val teams = mutableListOf<Team>()
+import services.DatabaseService
 
 
 // TODO: all operations need to be atomic
-fun Route.teamApi(): Route {
+fun Route.teamApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
-        get("/{team}") {
-            // TODO: check if adminitrator is logged user
-            val team = call.parameters["team"]
-            try {
-                val filteredOrganization = teams.filter { it.name == team }[0]
-                call.respond(HttpStatusCode.OK, filteredOrganization)
-            } catch (ex: IndexOutOfBoundsException) {
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
+
+            if (team != null ) {
+                call.respond(HttpStatusCode.OK, team)
+            } else {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
 
         post {
             val team = call.receive<Team>()
-            // TODO: check if adminitrator is logged user
             when {
-                teams.any { it.name == team.name } -> {
+                databaseInstance.selectTeamByName(team.name) != null -> {
                     call.respond(HttpStatusCode.Conflict)
                 }
                 else -> {
-                    teams.add(team)
+                    databaseInstance.insertTeam(team)
                     call.respond(HttpStatusCode.Created)
                 }
             }
         }
 
         put {
-            // TODO: check if adminitrator is logged user
             val newTeam = call.receive<Team>()
-            val currentTeams = teams.filter { it.name == newTeam.name }
+            val currentTeam = databaseInstance.selectTeamById(newTeam.id)
 
-            if (currentTeams.isEmpty()) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                val currentTeam = currentTeams[0]
-                // TODO: check if administrator exists
-                teams.removeIf { it.name == currentTeam.name }
-                teams.add(newTeam)
-                call.respond(HttpStatusCode.OK)
+            when {
+                currentTeam == null -> {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+                (newTeam.name != currentTeam.name && databaseInstance.selectTeamByName(newTeam.name) != null) -> {
+                    call.respond(HttpStatusCode.Conflict)
+                }
+                else -> {
+                    databaseInstance.updateTeam(newTeam)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }

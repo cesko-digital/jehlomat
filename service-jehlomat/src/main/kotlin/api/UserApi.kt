@@ -7,20 +7,20 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.User
 import model.toUserInfo
-import service.DatabaseService
+import services.DatabaseService
 import utils.isValidMail
-
-val users = mutableListOf<User>()
-
+import utils.isValidPassword
 
 fun Route.userApi(databaseInstance: DatabaseService): Route {
 
     return route("/") {
-        get("/{email}") {
-            try {
-                val filteredUser = users.filter { it.email == call.parameters["email"] }[0]
-                call.respond(HttpStatusCode.OK, filteredUser.toUserInfo())
-            } catch (ex: IndexOutOfBoundsException) {
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
+
+            if (user != null ) {
+                call.respond(HttpStatusCode.OK, user.toUserInfo())
+            } else {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
@@ -28,20 +28,17 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
         post {
             val newUser = call.receive<User>()
 
-            // TODO: check if values satisfy condition
-            // Throw-in question:
-            //  check values... e-mail for valid format?
-            //  what to do next here: hash password and store in DB
-
             when {
                 (!newUser.email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
-                users.any { it.email == newUser.email } -> {
-                    call.respond(HttpStatusCode.Conflict, "Email or phone number already taken")
+                (!newUser.password.isValidPassword()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong password format.")
+                }
+                databaseInstance.selectUserByEmail(newUser.email) != null -> {
+                    call.respond(HttpStatusCode.Conflict, "E-mail already taken")
                 }
                 else -> {
-                    users.add(newUser.copy(verified = false))
                     databaseInstance.insertUser(newUser)
                     call.respond(HttpStatusCode.Created)
                 }
@@ -50,22 +47,26 @@ fun Route.userApi(databaseInstance: DatabaseService): Route {
 
         put {
             val newUser = call.receive<User>()
-            val userToChange = users.filter { it.email == newUser.email }
+            val userToChange = databaseInstance.selectUserById(newUser.id)
 
-            // TODO: check if values satisfy condition about email format, etc.
             when {
-                userToChange.isEmpty() -> {
+                userToChange == null -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                userToChange[0].verified.not() -> {
+                userToChange.verified.not() -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                 }
-                (!userToChange[0].email.isValidMail()) -> {
+                (!userToChange.email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                 }
+                (!userToChange.password.isValidPassword()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong password format.")
+                }
+                (newUser.email != userToChange.email && databaseInstance.selectUserByEmail(newUser.email) != null) -> {
+                    call.respond(HttpStatusCode.BadRequest, "E-mail already taken")
+                }
                 else -> {
-                    users.removeIf { it.email == newUser.email }
-                    users.add(newUser)
+                    databaseInstance.updateUser(newUser)
                     call.respond(HttpStatusCode.OK)
                 }
             }

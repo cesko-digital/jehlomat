@@ -1,38 +1,44 @@
 package main
 
-import api.users
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import model.Organization
-import model.User
 import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
+import services.DatabaseService
+import services.DatabaseServiceImpl
 import services.Mailer
+import kotlin.test.BeforeTest
 
 
-
-val user = Organization(
+val organization = Organization(
+    1,
     "TestOrg",
-    UserInfo("bares.jakub@gmail.com", false),
-    verified = false
+    true
+)
+
+val user = UserInfo(
+    1,
+    "example@example.org",
+    true,
+    1,
+    null,
+    true
 )
 
 class MailerTest {
+    var database: DatabaseService = DatabaseServiceImpl()
+
     @BeforeTest
     fun beforeEach() {
-        users.clear()
+        database.cleanUsers()
     }
 
     @Test
     @Ignore("Need to solve how to pass jetmail api key to application")
     fun testSend() = withTestApplication(Application::module) {
         val mailer = Mailer()
-        mailer.sendRegistrationConfirmationEmail(user)
+        mailer.sendOrganizationConfirmationEmail(organization, user)
     }
 }

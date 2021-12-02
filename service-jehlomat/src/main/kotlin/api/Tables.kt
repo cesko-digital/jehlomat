@@ -1,7 +1,10 @@
 package api
 
-import api.SyringeTable.primaryKey
-import model.Location
+import model.Demolisher
+import model.Organization
+import model.Syringe
+import model.User
+import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
 
 object DemolisherTable: Table<Nothing>("demolisher") {
@@ -9,49 +12,72 @@ object DemolisherTable: Table<Nothing>("demolisher") {
 }
 
 
-object SyringeTable: Table<Nothing>("syringes") {
-    val id = int("id").primaryKey()
-    val timestamp = long("timestamp")
-    val email = varchar("email")
+object SyringeTable: BaseTable<Syringe>("syringes") {
+    val id = varchar("id").primaryKey()
+    val timestamp = long("timestamp_")
+    val userId = int("user_id")
     val photo = varchar("photo")
-    val count = int("count")
+    val count = int("count_")
     val note = varchar("note")
     val demolisherType = varchar("demolisher_type")
     val gpsCoordinates = varchar("gps_coordinates")
+    val demolished = boolean("demolished")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Syringe(
+        id = row[id]!!,
+        timestamp = row[timestamp]!!,
+        userId = row[userId],
+        photo = row[photo]!!,
+        count = row[count]!!,
+        note = row[note] ?: "",
+        demolisher = Demolisher.valueOf(row[demolisherType]!!),
+        gps_coordinates = row[gpsCoordinates]!!,
+        demolished = row[demolished]!!,
+    )
 }
 
-object UserTable: Table<Nothing>("users") {
-    val email = varchar("email").primaryKey()
+object UserTable: BaseTable<User>("users") {
+    val userId = int("user_id").primaryKey();
+    val email = varchar("email")
     val password = varchar("password")
     val verified = boolean("verified")
+    val organizationId = int("organization_id")
+    val teamId = int("team_id")
+    val isAdmin = boolean("is_admin")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = User(
+        id = row[userId]!!,
+        email = row[email]!!,
+        password = row[password]!!,
+        verified = row[verified]!!,
+        organizationId = row[organizationId]!!,
+        teamId = row[teamId],
+        isAdmin = row[isAdmin]!!
+    )
 }
 
 object LocationTable: Table<Nothing>("locations") {
-    val id = int("id").primaryKey()
+    val id = int("location_id").primaryKey()
     val okres = varchar("okres")
-    val mesto = varchar("mesto")
+    val obec = varchar("obec")
     val mestka_cast = varchar("mestka_cast")
 }
 
-object OrganizationTable: Table<Nothing>("organizations") {
-    val name = varchar("name").primaryKey()
+object OrganizationTable: BaseTable<Organization>("organizations") {
+    val organizationId = int("organization_id").primaryKey()
+    val name = varchar("name")
     val verified = boolean("verified")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Organization(
+        id = row[organizationId]!!,
+        name = row[name]!!,
+        verified = row[verified]!!
+    )
 }
 
 object TeamTable: Table<Nothing>("teams") {
-    val name = varchar("name").primaryKey()
-    val organization_name = varchar("organization_name")
-    val location_id = varchar("location_id")
-}
-
-object AdminOrganizationTable: Table<Nothing>("admin_organization") {
-    val id = int("id").primaryKey()
-    val admin_email = varchar("admin_email")
-    val organization_name = varchar("organization_name")
-}
-
-object UserTeamTable: Table<Nothing>("user_team") {
-    val id = int("id").primaryKey()
-    val user_email = varchar("user_email")
-    val team_name = varchar("team_name")
+    val teamId = int("team_id").primaryKey()
+    val name = varchar("name")
+    val organization_id = int("organization_id")
+    val location_id = int("location_id")
 }

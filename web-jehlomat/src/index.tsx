@@ -15,6 +15,11 @@ const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
+const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele'));
+const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
+const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
+const NavodLikvidace = lazy(() => import('./NavodLikvidace/NavodLikvidace'));
+
 // **********************************************************************
 
 /**
@@ -28,14 +33,14 @@ ReactDOM.render(
         <Suspense fallback={<div>Loading...</div>}>
             <HashRouter>
                 {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
-                <Navigation />
+                {/*<Navigation />*/}
                 <Switch>
                     <Route
                         path="/uzivatel"
                         render={({ match: { url } }) => (
                             <>
                                 <Route path={`${url}`} component={SeznamUzivatelu} exact />
-                                <Route path={`${url}/novy`} component={RegistraceUzivatele} />
+                                <Route path={`${url}/novy`} component={PridatUzivatele} />
                                 <Route path={`${url}/upravit`} component={RegistraceUzivatele} />
                             </>
                         )}
@@ -49,18 +54,13 @@ ReactDOM.render(
                             </>
                         )}
                     />
-                    <Route path="/profil" component={Profil}>
-                        <Profil />
-                    </Route>
-                    <Route path="/organizace" component={Organizace}>
-                        <Organizace />
-                    </Route>
-                    <Route path="/novy-nalez" component={NovyNalez}>
-                        <NovyNalez />
-                    </Route>
-                    <Route path="/nalezy" component={Nalezy}>
-                        <Nalezy />
-                    </Route>
+                    <Route path="/profil" component={Profil} />
+                    <Route path="/organizace" component={Organizace} />
+                    <Route path="/novy-nalez" component={NovyNalez} />
+                    <Route path="/nalezy" component={Nalezy} />
+                    <Route path="/error" component={ErrorPage} />
+                    <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
+                    <Route path="/navod-likvidace" component={NavodLikvidace} />
                     <Route path="/">
                         <App />
                     </Route>

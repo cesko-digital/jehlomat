@@ -6,63 +6,78 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
-import services.Mailer
+import services.DatabaseService
+import services.MailerService
+import utils.isValidMail
+import utils.isValidPassword
 
-val organizations = mutableListOf<Organization>()
 
-
-fun Route.organizationApi(): Route {
-    val mailer = Mailer()
+fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
     return route("/") {
-        get("/{email}") {
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
+        get {
+            call.respond(HttpStatusCode.OK, database.selectOrganizations())
+        }
 
-            try {
-                val filteredOrganization = organizations.filter {
-                    it.administrator.email == call.parameters["email"]
-                }[0]
-                call.respond(HttpStatusCode.OK, filteredOrganization)
-            } catch (ex: IndexOutOfBoundsException) {
-                call.respond(HttpStatusCode.NotFound)
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
+
+            if (organization != null ) {
+                call.respond(HttpStatusCode.OK, organization)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Organization not found")
             }
         }
 
         post {
-            val organization = call.receive<Organization>()
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
-
+            val registration = call.receive<OrganizationRegistration>()
             when {
-                organizations.any { it.administrator.email == organization.administrator.email } -> {
-                    call.respond(HttpStatusCode.Conflict)
+                (!registration.email.isValidMail()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong e-mail format")
+                }
+                (!registration.password.isValidPassword()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong password format")
+                }
+                database.selectUserByEmail(registration.email) != null -> {
+                    call.respond(HttpStatusCode.Conflict, "E-mail already taken")
+                }
+                database.selectOrganizationByName(registration.name) != null -> {
+                    call.respond(HttpStatusCode.Conflict, "Organization name already exists")
                 }
                 else -> {
-                    organizations.add(organization)
-                    mailer.sendRegistrationConfirmationEmail(organization)
+                    database.useTransaction {
+                        val organization = Organization(0, registration.name, false)
+                        val orgId = database.insertOrganization(organization)
+
+                        val user = User(0, registration.email, registration.password, false, orgId, null, true)
+                        val userId = database.insertUser(user)
+
+                        val userWithCorrectId = user.copy(id = userId).toUserInfo()
+                        mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId), userWithCorrectId)
+                        mailer.sendRegistrationConfirmationEmail(organization.copy(id = orgId), userWithCorrectId)
+                    }
+
                     call.respond(HttpStatusCode.Created)
                 }
             }
         }
 
         put {
-            // TODO: check if values satisfy condition
-            // TODO: check if adminitrator is logged user
-
             val newOrganization = call.receive<Organization>()
+            val currentOrganization = database.selectOrganizationById(newOrganization.id)
 
-            val currentOrganizations = organizations.filter { it.administrator.email == newOrganization.administrator.email }
-
-            if (currentOrganizations.isEmpty()) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                val currentOrganization = currentOrganizations[0]
-                organizations.removeIf { it.name == currentOrganization.name }
-                organizations.add(newOrganization)
-                call.respond(HttpStatusCode.OK)
+            when {
+                currentOrganization == null -> {
+                    call.respond(HttpStatusCode.NotFound, "Organization not found")
+                }
+                (newOrganization.name != currentOrganization.name && database.selectOrganizationByName(newOrganization.name) != null) -> {
+                    call.respond(HttpStatusCode.Conflict, "The new name is already used by a different organization")
+                }
+                else -> {
+                    database.updateOrganization(newOrganization)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
-
-
         }
     }
 }

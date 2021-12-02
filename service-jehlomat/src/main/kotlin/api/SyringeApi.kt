@@ -5,43 +5,33 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.Demolisher
-import model.Organization
-import model.Syringe
-import service.DatabaseService
+import model.*
+import services.DatabaseService
+import services.GeneralValidator
 
-import model.UserInfo
-import services.Mailer
-
-val syringes = mutableListOf<Syringe>()
+import services.MailerService
+import utils.isValidMail
 
 
-fun Route.syringeApi(database: DatabaseService): Route {
+fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
-    val mailer = Mailer()
     return route("/") {
         get("all") {
             val parameters = call.request.queryParameters
 
-            val from = parameters["from"]?.toLong() ?: 0L
-            val to = parameters["to"]?.toLong() ?: System.currentTimeMillis()
-            val email = parameters["email"] ?: ""
             val demolisher = try {
                 parameters["demolisher"]?.let { Demolisher.valueOf(it) } ?: run { Demolisher.NO }
             } catch (ex: IllegalArgumentException) {
                 Demolisher.NO
             }
-            val gpsCoordinates = parameters["gps_coordinates"] ?: ""
-            val demolished = parameters["demolished"]?.toBoolean() ?: false
 
-            val filteredSyringes = syringes.filter{
-                it.timestamp in from..to
-                        && it.demolisher == demolisher
-                        && (email.isBlank() || it.email == email )
-                        // todo: use postgis in future
-                        && (gpsCoordinates.isBlank() || it.gps_coordinates == gpsCoordinates )
-                        && demolished == it.demolished
-            }
+            val filteredSyringes = database.selectSyringes(
+                parameters["from"]?.toLong() ?: 0L,
+                parameters["to"]?.toLong() ?: System.currentTimeMillis(),
+                parameters["userId"]?.toInt(), demolisher,
+                parameters["gps_coordinates"] ?: "",
+                parameters["demolished"]?.toBoolean() ?: false
+            )
 
             val responseCode = if (filteredSyringes.isEmpty()) {
                 HttpStatusCode.NotFound
@@ -53,39 +43,90 @@ fun Route.syringeApi(database: DatabaseService): Route {
         }
 
         post {
-            val dummyOrganization  = Organization(
-                "TestOrg",
-                UserInfo("bares.jakub@gmail.com", false),
-                verified = true
-            )
-            val dummyUser = UserInfo("bares.jakub@gmail.com", false)
-            mailer.sendSyringeFindingConfirmation(dummyUser)
-            mailer.sendSyringeFinding(dummyOrganization)
-            call.respond(HttpStatusCode.Created)
+            val syringe = call.receive<Syringe>()
+            if (syringe.userId != null) {
+                val user = database.selectUserById(syringe.userId)
+                if (user == null) {
+                    call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
+                    return@post
+                }
+            }
+
+            val syringeId = database.insertSyringe(syringe)
+            if (syringeId == null) {
+                call.respond(HttpStatusCode.InternalServerError, "A syringe cannot be created, please try again later")
+                return@post
+            }
+
+            val teamsInLocation = database.resolveTeamsInLocation(syringe.gps_coordinates)
+            teamsInLocation.forEach {
+                val organization = database.selectOrganizationById(it.organizationId)
+                val admin = database.findAdmin(organization!!)
+                mailer.sendSyringeFinding(organization, admin.toUserInfo(), syringeId)
+            }
+
+            call.respond(HttpStatusCode.Created, SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty()))
+        }
+
+        put {
+            val newSyringe = call.receive<Syringe>()
+            val currentSyringe = database.selectSyringeById(newSyringe.id)
+
+            if (currentSyringe == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@put
+            }
+
+            val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe, newSyringe)
+            if (fieldName != null) {
+                call.respond(HttpStatusCode.BadRequest, "The field $fieldName is unchangeable by PUT request.")
+                return@put
+            }
+
+            database.updateSyringe(newSyringe)
+            call.respond(HttpStatusCode.OK)
         }
 
         route("/{id}") {
             get {
-                val id = call.parameters["id"]?.toLong()
-                try {
-                    val filteredSyringe = syringes.filter { it.id == id }[0]
-                    call.respond(HttpStatusCode.OK, filteredSyringe)
-                } catch (ex: IndexOutOfBoundsException) {
+                val id = call.parameters["id"]
+                val result = id?.let { it1 -> database.selectSyringeById(it1) }
+                if (result != null) {
+                    call.respond(HttpStatusCode.OK, result)
+                } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
             }
 
-            put {
-                val id = call.parameters["id"]?.toLong()
-                syringes.removeIf { it.id == id }
-                syringes.add(call.receive())
-                call.respond(HttpStatusCode.OK)
+            post("/track") {
+                val id = call.parameters["id"]
+                val syringe = id?.let { it1 -> database.selectSyringeById(it1) }
+                val syringeTracking = call.receive<SyringeTrackingRequest>()
+
+                when {
+                    (syringe == null) -> {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                    (!syringeTracking.email.isValidMail()) -> {
+                        call.respond(HttpStatusCode.BadRequest, "The email is not valid.")
+                    }
+                    else -> {
+                        mailer.sendSyringeFindingConfirmation(syringeTracking.email, syringe.id)
+                        call.respond(HttpStatusCode.NoContent)
+                    }
+                }
             }
 
             delete {
-                val id = call.parameters["id"]?.toLong()
-                syringes.removeIf { it.id == id }
-                call.respond(HttpStatusCode.OK)
+                val id = call.parameters["id"]
+
+                if (id != null) {
+                    database.deleteSyringe(id)
+                    call.respond(HttpStatusCode.OK)
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+
             }
         }
     }

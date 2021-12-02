@@ -13,6 +13,7 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://kotlin.bintray.com/ktor") }
         maven { setUrl("http://dl.bintray.com/kotlin/kotlinx.html") }
         maven { setUrl("http://dl.bintray.com/kotlin/kotlin-js-wrappers") }

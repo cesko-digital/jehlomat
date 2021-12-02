@@ -11,7 +11,32 @@ import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
-class Mailer {
+
+interface MailerService {
+    fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo)
+    fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo)
+    fun sendSyringeFindingConfirmation(email: String, syringeId: String)
+    fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String)
+}
+
+
+class FakeMailer: MailerService {
+    override fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo) {
+        println("sendRegistrationConfirmationEmail")
+    }
+    override fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo) {
+        println("sendOrganizationConfirmationEmail")
+    }
+    override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
+        println("sendSyringeFindingConfirmation")
+    }
+    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
+        println("sendSyringeFinding")
+    }
+}
+
+
+class Mailer: MailerService {
     private val appConfig = DefaultConfig().get()
     private val client = MailjetClient(
         ClientOptions.builder()
@@ -19,8 +44,13 @@ class Mailer {
             .apiSecretKey(appConfig.getString("mailjet.privateKey"))
             .build())
 
-    private fun prepareBody(templateId: Int, subject: String, link: String,
-                            organization: Organization? = null, user: UserInfo? = null): JSONArray {
+    private fun prepareBody(
+        templateId: Int,
+        subject: String,
+        link: String,
+        toEmail: String,
+        organizationName: String
+    ): JSONArray {
         return JSONArray()
         .put(
             JSONObject()
@@ -32,9 +62,10 @@ class Mailer {
                 .put(
                     Emailv31.Message.TO, JSONArray()
                         .put(
+                            // TODO: JH-77 fix the organization confirmation email, which should be send to the superadmin email
                             JSONObject()
-                                .put("Email", organization?.administrator?.email ?: user!!.email)
-                                .put("Name", organization?.name ?: "Jméno")
+                                .put("Email", toEmail)
+                                .put("Name", organizationName)
                         )
                 )
                 .put(Emailv31.Message.TEMPLATEID, templateId)
@@ -47,14 +78,33 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendRegistrationConfirmationEmail(organization: Organization) {
+    override fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo) {
+        val request = MailjetRequest(Emailv31.resource)
+            .property(
+                Emailv31.MESSAGES, prepareBody(
+                    3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
+                    "Schválení organizace",
+                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgId=${organization.id}",
+                    user.email,
+                    organization.name,
+                )
+            )
+        val response: MailjetResponse = client.post(request)
+
+        println(response.status)
+        println(response.data)
+    }
+
+    @Throws(MailjetException::class)
+    override fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgName=${organization.name}",
-                    organization
+                    "https://jehlomat.cz/api/v1/jehlomat/verification?userId=${user.id}",
+                    user.email,
+                    organization.name
                 )
             )
         val response: MailjetResponse = client.post(request)
@@ -64,14 +114,15 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendSyringeFindingConfirmation(user: UserInfo) {
+    override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222932,
                     "Potvrzení zaznamenání nálezu",
-                    "https://www.google.com",
-                    user=user
+                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
+                    email,
+                    ""
                 )
             )
         val response: MailjetResponse = client.post(request)
@@ -81,14 +132,15 @@ class Mailer {
     }
 
     @Throws(MailjetException::class)
-    fun sendSyringeFinding(organization: Organization) {
+    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222921,
                     "Nález",
-                    "https://www.google.com",
-                    organization
+                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
+                    user.email,
+                    organization.name
                 )
             )
         val response: MailjetResponse = client.post(request)
