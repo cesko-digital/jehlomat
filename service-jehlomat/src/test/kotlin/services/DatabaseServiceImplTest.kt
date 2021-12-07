@@ -1,5 +1,6 @@
 package services
 
+import main.team
 import model.*
 import org.junit.After
 import org.junit.Before
@@ -110,8 +111,13 @@ class DatabaseServiceImplTest {
 
     @Test
     fun testInsertSyringe() {
-        val userId = database.insertUser(User(0, "email", "password", true, defaultOrgId, null, false))
-        val syringeToCreate = Syringe("", 0, userId, null, null, null, null,Demolisher.USER,"", 1, "", "", false)
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", true, defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
         val syringeId = database.insertSyringe(syringeToCreate)
 
         assertNotNull(syringeId)

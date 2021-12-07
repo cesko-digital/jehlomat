@@ -51,7 +51,7 @@ CREATE TABLE public.syringes(
     id VARCHAR(8) PRIMARY KEY,
     created_at BIGINT NOT NULL,
     created_by INT,
-    reserved_at BIGINT,
+    reserved_till BIGINT,
     reserved_by INT,
     demolished_at BIGINT,
     demolished_by INT,
@@ -61,11 +61,14 @@ CREATE TABLE public.syringes(
     note TEXT,
     gps_coordinates TEXT NOT NULL,
     demolished BOOLEAN NOT NULL,
+    location_id INT NOT NULL,
 
     CONSTRAINT fk_created_by_user FOREIGN KEY(created_by)
         REFERENCES users(user_id),
     CONSTRAINT fk_reserved_by_user FOREIGN KEY(reserved_by)
         REFERENCES users(user_id),
     CONSTRAINT fk_demolished_by_user FOREIGN KEY(demolished_by)
-        REFERENCES users(user_id)
+        REFERENCES users(user_id),
+    CONSTRAINT fk_location FOREIGN KEY(location_id)
+        REFERENCES locations(location_id)
 );

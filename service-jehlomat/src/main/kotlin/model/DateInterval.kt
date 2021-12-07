@@ -3,6 +3,7 @@ package model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SyringeTrackingRequest (
-    val email: String
+data class DateInterval (
+    val from: Long?,
+    val to: Long?
 )
