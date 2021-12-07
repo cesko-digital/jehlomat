@@ -4,7 +4,7 @@ info:
     Jehlomat REST api
   version: 0.0.2
   title: Jehlomat
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://swagger.io/terms/
   contact:
     email: radekludacka@gmail.com
 host: localhost:8082
@@ -74,48 +74,23 @@ paths:
           description: Success
         '404':
           description: Organization not found
-  /syringe/all:
-    get:
-      summary: Get all syringes by parameters
-      description: Returns a single organization
+  /syringe/search:
+    post:
+      summary: Search syringes by parameters
+      description: Returns a list of syringes
       produces:
         - application/json
       parameters:
-        - name: from
-          in: query
-          description: Lower bound for timestamp
-          type: integer
-        - name: to
-          in: query
-          description: Upper bound for timestamp
-          type: integer
-        - name: email
-          in: query
-          description: User email
-          type: string
-        - name: demolisher
-          in: query
-          description: Who demolisher syringe
-          items:
-            type: string
-            enum:
-              - USER
-              - NO
-              - CITY_POLICE
-            default: NO
-        - name: gpsCoordinates
-          in: query
-          type: string
-        - name: demolished
-          in: query
-          type: boolean
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeSearchRequest'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Syringe'
-        '404':
-          description: Syringe not found
+            $ref: '#/definitions/SyringeSearchResponse'
   /syringe/:
     post:
       summary: Add a new syringe
@@ -187,11 +162,18 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: formData
-          name: email
-          type: string
-          description: Email to which the code should be sent
+        - name: id
+          in: path
+          description: Id of team to return
           required: true
+          type: integer
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
       responses:
         '204':
           description: Email succesfully sent
@@ -320,7 +302,7 @@ paths:
           description: Organization or User not found
 externalDocs:
   description: Find out more about Swagger
-  url: http://swagger.io
+  url: https://swagger.io
 definitions:
   UserInfo:
     type: object
@@ -390,18 +372,118 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Organization'
+  SyringeSearchRequest:
+    type: object
+    properties:
+      filter:
+        type: object
+        properties:
+          locationIds:
+            type: array
+            items:
+              type: number
+          createdAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          createdBy:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              type:
+                type: string
+                enum:
+                  - USER
+                  - TEAM
+                  - ORGANIZATION
+                  - ANONYMOUS
+          demolishedAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          status:
+            type: string
+            enum:
+              - WAITING
+              - RESERVED
+              - DEMOLISHED
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            column:
+              type: string
+              enum:
+                - TOWN
+                - CREATED_AT
+                - CREATED_BY
+                - DEMOLISHED_AT
+            direction:
+              type: string
+              enum:
+                - ASC
+                - DESC
+  SyringeSearchResponse:
+    type: object
+    properties:
+      syringeList:
+        type: array
+        items:
+          $ref: '#/definitions/Syringe'
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+          hasMore:
+            type: boolean
   Syringe:
     type: object
     properties:
       id:
         type: string
         example: "R4YFD1AC"
-      timestamp:
+      createdAt:
         type: integer
         example: 1637092279
-      userId:
+      createdBy:
+        $ref: '#/definitions/UserInfo'
+      reservedTill:
         type: integer
-        example: 0
+        example: 1637092279
+      reservedBy:
+        $ref: '#/definitions/UserInfo'
+      demolishedAt:
+        type: integer
+        example: 1637092279
+      demolishedBy:
+        $ref: '#/definitions/UserInfo'
       photo:
         type: string
         example: "nothing"
@@ -424,6 +506,8 @@ definitions:
       demolished:
         type: boolean
         example: false
+      location:
+        $ref: '#/definitions/Location'
   SyringeCreate:
     type: object
     properties:

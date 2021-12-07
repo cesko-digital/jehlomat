@@ -5,10 +5,15 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.*
+import model.Syringe
+import model.pagination.OrderByDefinition
+import model.pagination.OrderByDirection
+import model.pagination.PageInfoResult
+import model.pagination.ensureValidity
+import model.syringe.*
+import model.toUserInfo
 import services.DatabaseService
 import services.GeneralValidator
-
 import services.MailerService
 import utils.isValidMail
 
@@ -16,43 +21,32 @@ import utils.isValidMail
 fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
 
     return route("/") {
-        get("all") {
-            val parameters = call.request.queryParameters
+        post("search") {
+            val request = call.receive<SyringeFilterRequest>()
 
-            val demolisher = try {
-                parameters["demolisher"]?.let { Demolisher.valueOf(it) } ?: run { Demolisher.NO }
-            } catch (ex: IllegalArgumentException) {
-                Demolisher.NO
-            }
+            val requestedPageInfo = request.pageInfo.ensureValidity()
+            val requestedOrdering = request.ordering.ensureValidity(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
 
-            val filteredSyringes = database.selectSyringes(
-                parameters["from"]?.toLong() ?: 0L,
-                parameters["to"]?.toLong() ?: System.currentTimeMillis(),
-                parameters["userId"]?.toInt(), demolisher,
-                parameters["gps_coordinates"] ?: "",
-                parameters["demolished"]?.toBoolean() ?: false
-            )
+            val filteredSyringes = database.selectSyringes(request.filter, requestedPageInfo, requestedOrdering)
 
-            val responseCode = if (filteredSyringes.isEmpty()) {
-                HttpStatusCode.NotFound
-            } else {
-                HttpStatusCode.OK
-            }
-
-            call.respond(responseCode, filteredSyringes)
+            val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
+            val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
+            call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
         }
 
         post {
             val syringe = call.receive<Syringe>()
-            if (syringe.userId != null) {
-                val user = database.selectUserById(syringe.userId)
+            if (syringe.createdBy != null) {
+                val user = database.selectUserById(syringe.createdBy.id)
                 if (user == null) {
                     call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
                     return@post
                 }
             }
 
-            val syringeId = database.insertSyringe(syringe)
+            val location = database.selectOrInsertLocation(syringe.gps_coordinates)
+
+            val syringeId = database.insertSyringe(syringe.copy(location = location))
             if (syringeId == null) {
                 call.respond(HttpStatusCode.InternalServerError, "A syringe cannot be created, please try again later")
                 return@post
