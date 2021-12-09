@@ -154,6 +154,18 @@ class OrganizationTest {
 
     @ExperimentalSerializationApi
     @Test
+    fun testPostWrongName() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(OrganizationRegistration("", "email", "aaAA11aa")))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+            assertEquals("Wrong e-mail format", response.content)
+        }
+    }
+
+    @ExperimentalSerializationApi
+    @Test
     fun testPostWrongPassword() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
             database.insertOrganization(ORGANIZATION)

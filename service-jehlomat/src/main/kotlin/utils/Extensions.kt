@@ -45,5 +45,5 @@ fun String.hashPassword(): String {
 }
 
 fun String.isValidUsername(): Boolean {
-    return "^[A-Za-z0-9][A-Za-z\\s0-9\\-\\.]{2,}".toRegex().matches(this)
+    return "^[A-Ža-ž0-9][A-Ža-ž\\s0-9\\-\\.]{2,}".toRegex().matches(this)
 }

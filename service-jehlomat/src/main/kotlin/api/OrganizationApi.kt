@@ -10,6 +10,7 @@ import services.DatabaseService
 import services.MailerService
 import utils.isValidMail
 import utils.isValidPassword
+import utils.isValidUsername
 
 
 fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
@@ -37,6 +38,9 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
                 }
                 (!registration.password.isValidPassword()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong password format")
+                }
+                (!registration.name.isValidUsername()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong name format")
                 }
                 database.selectUserByEmail(registration.email) != null -> {
                     call.respond(HttpStatusCode.Conflict, "E-mail already taken")

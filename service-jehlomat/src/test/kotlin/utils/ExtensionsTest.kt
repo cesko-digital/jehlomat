@@ -26,6 +26,7 @@ class ExtensionsTest {
         assert("aaa0".isValidUsername())
         assert("aaa9".isValidUsername())
         assert("Franta Pepa 1".isValidUsername())
+        assert("Franta Pepa 1 řřř".isValidUsername())
 
         assertFalse("aa".isValidUsername())
         assertFalse(".aaa".isValidUsername())
