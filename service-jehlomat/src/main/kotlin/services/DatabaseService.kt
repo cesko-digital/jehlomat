@@ -264,6 +264,7 @@ class DatabaseServiceImpl(
         databaseInstance.update(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
+            set(it.username, user.username)
             set(it.verified, user.verified)
             set(it.organizationId, user.organizationId)
             set(it.teamId, user.teamId)
@@ -350,6 +351,7 @@ class DatabaseServiceImpl(
         return databaseInstance.insertAndGenerateKey(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
+            set(it.username, user.username)
             set(it.verified, user.verified)
             set(it.organizationId, user.organizationId)
             set(it.teamId, user.teamId)
