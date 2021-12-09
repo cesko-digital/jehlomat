@@ -32,6 +32,7 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
 
     val userId = int("user_id").primaryKey();
     val email = varchar("email")
+    val username = varchar("username")
     val password = varchar("password")
     val verified = boolean("verified")
     val organizationId = int("organization_id")

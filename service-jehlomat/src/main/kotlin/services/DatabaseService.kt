@@ -121,6 +121,7 @@ class DatabaseServiceImpl(
             UserInfo(
                 id = row[table.userId]!!,
                 email = row[table.email]!!,
+                username = row[table.username]!!,
                 verified = row[table.verified]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
@@ -135,6 +136,7 @@ class DatabaseServiceImpl(
        User(
             id = row[UserTable.userId]!!,
             email = row[UserTable.email]!!,
+            username = row[UserTable.username]!!,
             password = row[UserTable.password]!!,
             verified = row[UserTable.verified]!!,
             organizationId = row[UserTable.organizationId]!!,

@@ -16,4 +16,21 @@ class ExtensionsTest {
         assertFalse("BBAA11BB".isValidPassword());
         assertFalse("".isValidPassword());
     }
+
+    @Test
+    fun testUsernameValidation() {
+        assert("aaa".isValidUsername())
+        assert("AAA".isValidUsername())
+        assert("aaa.".isValidUsername())
+        assert("aaa-".isValidUsername())
+        assert("aaa0".isValidUsername())
+        assert("aaa9".isValidUsername())
+
+        assertFalse("aa".isValidUsername())
+        assertFalse(".aaa".isValidUsername())
+        assertFalse(" aaa".isValidUsername())
+        assertFalse("aaa/".isValidUsername())
+        assertFalse("aaa$".isValidUsername())
+        assertFalse("aaa*".isValidUsername())
+    }
 }
