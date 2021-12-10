@@ -30,6 +30,7 @@ val team = Team(
 val USER = User(
     3,
     "email@example.org",
+    "Franta Pepa 1",
     "aaAA11aa",
     false,
     1,
@@ -73,6 +74,7 @@ class ApplicationTest {
                 """{
   "id" : """ + userId + """,
   "email" : "email@example.org",
+  "username" : "Franta Pepa 1",
   "verified" : false,
   "organizationId" : """ + defaultOrgId + """,
   "teamId" : """ + defaultTeamId + """,

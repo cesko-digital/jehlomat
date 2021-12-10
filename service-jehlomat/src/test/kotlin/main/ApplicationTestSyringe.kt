@@ -236,7 +236,7 @@ class ApplicationTestSyringe {
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(defaultSyringe.copy(createdBy = UserInfo(
-                id = 0, "", false, 0, null, false
+                id = 0, "", "", false, 0, null, false
             )
             )))
         }) {
