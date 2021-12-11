@@ -9,7 +9,6 @@ import model.*
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import services.MailerService
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -42,7 +41,7 @@ class ApplicationTest {
 
     private var defaultOrgId: Int = 0
     private var defaultTeamId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
     lateinit var mailerMock: MailerService
 
 

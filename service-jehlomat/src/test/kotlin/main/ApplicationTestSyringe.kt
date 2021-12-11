@@ -15,7 +15,6 @@ import model.pagination.PageInfoResult
 import model.syringe.*
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import services.MailerService
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -34,7 +33,7 @@ class ApplicationTestSyringe {
     private var defaultUser: UserInfo? = null
     private lateinit var defaultSyringe: Syringe
     private lateinit var defaultLocation: Location
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
     private lateinit var mailerMock:MailerService
     private var searchFilter = SyringeFilterRequest(
         SyringeFilter(setOf(), null, null, null, SyringeStatus.WAITING),

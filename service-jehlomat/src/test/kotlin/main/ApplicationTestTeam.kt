@@ -10,7 +10,6 @@ import model.Organization
 import model.Team
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.AfterTest
 import kotlin.test.assertEquals
@@ -27,7 +26,7 @@ val TEAM = Team(
 
 class TeamTest {
     private var defaultOrgId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
 
     @BeforeTest
     fun beforeEach() {

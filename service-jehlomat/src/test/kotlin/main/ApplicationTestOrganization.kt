@@ -12,7 +12,6 @@ import model.User
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -29,7 +28,7 @@ val ORGANIZATION = Organization(
 
 class OrganizationTest {
 
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
 
     @BeforeTest
     fun beforeEach() {

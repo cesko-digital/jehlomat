@@ -7,7 +7,6 @@ import junit.framework.TestCase.assertTrue
 import model.*
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -21,7 +20,7 @@ class VerificationTest {
     private var defaultOrgId: Int = 0
     private var defaultTeamId: Int = 0
     private var defaultUserId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
 
     @BeforeTest
     fun beforeEach() {

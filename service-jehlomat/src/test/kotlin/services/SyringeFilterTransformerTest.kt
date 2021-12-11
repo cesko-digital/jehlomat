@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class SyringeFilterTransformerTest {
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database = DatabaseService()
     private val aliasedTable = UserTable.aliased("aliasName")
     private val sqlCommonPart = "select * from syringes where"
     private val emptyFilter = SyringeFilter(

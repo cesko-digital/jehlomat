@@ -15,14 +15,13 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import services.FakeMailer
 import services.Mailer
 import services.MailerService
 
 
 val databaseModule = module {
-    single<DatabaseService> { DatabaseServiceImpl() }
+    single { DatabaseService() }
 }
 
 val mailerModule = module {
@@ -113,6 +112,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/verification") {
             verificationApi(service)
+        }
+        route("/api/v1/jehlomat/location") {
+            locationApi(service)
         }
         route("/api/v1/jehlomat/team") {
             teamApi(service)
