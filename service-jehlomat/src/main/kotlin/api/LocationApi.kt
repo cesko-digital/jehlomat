@@ -14,7 +14,7 @@ fun Route.locationApi(database: DatabaseService): Route {
         if (gps == null) {
             call.respond(HttpStatusCode.BadRequest, "Bad format")
         } else {
-            call.respond(HttpStatusCode.OK, database.selectAllLocations(gps))
+            call.respond(HttpStatusCode.OK, database.getLocationCombinations(gps))
         }
 
     }

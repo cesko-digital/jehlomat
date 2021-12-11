@@ -376,7 +376,7 @@ class DatabaseService(
         return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1")
     }
 
-    fun selectAllLocations(gpsCoordinates: String): List<Location> {
+    fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
         val okres = getOkres(gpsCoordinates)

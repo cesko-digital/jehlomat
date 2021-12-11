@@ -133,7 +133,7 @@ class DatabaseServiceTest {
                 Location(id=0, okres="CZ0323", obec="554791", mestkaCast=""),
                 Location(id=0, okres="CZ0323", obec="", mestkaCast="")
             ),
-            database.selectAllLocations("13.3719999 49.7278823")
+            database.getLocationCombinations("13.3719999 49.7278823")
         )
     }
 }
