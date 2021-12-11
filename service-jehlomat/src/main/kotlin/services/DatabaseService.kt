@@ -72,6 +72,7 @@ class DatabaseService(
             UserInfo(
                 id = row[table.userId]!!,
                 email = row[table.email]!!,
+                username = row[table.username]!!,
                 verified = row[table.verified]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
@@ -86,6 +87,7 @@ class DatabaseService(
        User(
             id = row[UserTable.userId]!!,
             email = row[UserTable.email]!!,
+            username = row[UserTable.username]!!,
             password = row[UserTable.password]!!,
             verified = row[UserTable.verified]!!,
             organizationId = row[UserTable.organizationId]!!,
@@ -213,6 +215,7 @@ class DatabaseService(
         databaseInstance.update(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
+            set(it.username, user.username)
             set(it.verified, user.verified)
             set(it.organizationId, user.organizationId)
             set(it.teamId, user.teamId)
@@ -299,6 +302,7 @@ class DatabaseService(
         return databaseInstance.insertAndGenerateKey(UserTable) {
             set(it.email, user.email)
             set(it.password, user.password.hashPassword())
+            set(it.username, user.username)
             set(it.verified, user.verified)
             set(it.organizationId, user.organizationId)
             set(it.teamId, user.teamId)

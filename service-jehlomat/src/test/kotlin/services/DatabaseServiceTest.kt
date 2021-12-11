@@ -63,7 +63,7 @@ class DatabaseServiceTest {
     fun testSelectUserByEmail() {
         assertNull(database.selectUserByEmail("not-existent-user"))
 
-        database.insertUser(User(0, "email", "password", false, defaultOrgId, null, false))
+        database.insertUser(User(0, "email", "Franta Pepa 1", "password", false, defaultOrgId, null, false))
 
         val user = database.selectUserByEmail("email")
         assertNotNull(user)
@@ -75,7 +75,7 @@ class DatabaseServiceTest {
     @Test
     fun testHashingUserPassword() {
         val originalPassword = "original-password"
-        database.insertUser(User(0, "email", originalPassword, false, defaultOrgId, null, false))
+        database.insertUser(User(0, "email","Franta Pepa 1", originalPassword, false, defaultOrgId, null, false))
 
         val user = database.selectUserByEmail("email")
         assertNotNull(user)
@@ -83,7 +83,7 @@ class DatabaseServiceTest {
         assert(BCrypt.checkpw(originalPassword, user.password))
 
         val newPassword = "new-password"
-        database.updateUser(User(0, "email", newPassword, false, defaultOrgId, null, false))
+        database.updateUser(User(0, "email", "Franta Pepa 1", newPassword, false, defaultOrgId, null, false))
 
         val updatedUser = database.selectUserByEmail("email")
         assertNotNull(updatedUser)
@@ -114,7 +114,7 @@ class DatabaseServiceTest {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
         val loc = selectTeamById?.location!!
-        val user = User(0, "email", "password", true, defaultOrgId, null, false)
+        val user = User(0, "email", "password", "Franta Pepa 1", true, defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()
         val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)

@@ -11,6 +11,7 @@ import services.DatabaseService
 import services.MailerService
 import utils.isValidMail
 import utils.isValidPassword
+import utils.isValidUsername
 
 fun Route.userApi(databaseInstance: DatabaseService, mailer: MailerService): Route {
 
@@ -32,6 +33,9 @@ fun Route.userApi(databaseInstance: DatabaseService, mailer: MailerService): Rou
             when {
                 (!newUser.email.isValidMail()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
+                }
+                (!newUser.username.isValidUsername()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong username format.")
                 }
                 (!newUser.password.isValidPassword()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong password format.")

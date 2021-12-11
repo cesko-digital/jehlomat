@@ -10,6 +10,7 @@ import services.DatabaseService
 import services.MailerService
 import utils.isValidMail
 import utils.isValidPassword
+import utils.isValidUsername
 
 
 fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
@@ -38,6 +39,9 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
                 (!registration.password.isValidPassword()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong password format")
                 }
+                (!registration.name.isValidUsername()) -> {
+                    call.respond(HttpStatusCode.BadRequest, "Wrong name format")
+                }
                 database.selectUserByEmail(registration.email) != null -> {
                     call.respond(HttpStatusCode.Conflict, "E-mail already taken")
                 }
@@ -49,7 +53,8 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
                         val organization = Organization(0, registration.name, false)
                         val orgId = database.insertOrganization(organization)
 
-                        val user = User(0, registration.email, registration.password, false, orgId, null, true)
+                        //todo: check if username should be filled in for organization different than organization name
+                        val user = User(0, registration.email, registration.name, registration.password,false, orgId, null, true)
                         val userId = database.insertUser(user)
 
                         val userWithCorrectId = user.copy(id = userId).toUserInfo()

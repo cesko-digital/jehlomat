@@ -35,11 +35,14 @@ CREATE TABLE public.teams(
 CREATE TABLE public.users(
     user_id SERIAL PRIMARY KEY,
     email TEXT NOT NULL,
+    username TEXT NOT NULL,
     password TEXT NOT NULL,
     verified BOOLEAN NOT NULL,
     organization_id INT NOT null,
     team_id INT,
     is_admin BOOLEAN,
+
+    UNIQUE (username),
 
     CONSTRAINT fk_organization FOREIGN KEY(organization_id)
         REFERENCES organizations(organization_id),

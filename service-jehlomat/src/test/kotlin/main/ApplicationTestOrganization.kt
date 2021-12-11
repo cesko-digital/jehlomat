@@ -129,7 +129,7 @@ class OrganizationTest {
     fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
             val orgId = database.insertOrganization(ORGANIZATION)
-            database.insertUser(User(0, "email@email.cz", "aaAA11aa", false, orgId, null, false))
+            database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",false, orgId, null, false))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email@email.cz", "aaAA11aa")))
         }) {
@@ -145,6 +145,18 @@ class OrganizationTest {
             database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email", "aaAA11aa")))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+            assertEquals("Wrong e-mail format", response.content)
+        }
+    }
+
+    @ExperimentalSerializationApi
+    @Test
+    fun testPostWrongName() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(OrganizationRegistration("", "email", "aaAA11aa")))
         }) {
             assertEquals(HttpStatusCode.BadRequest, response.status())
             assertEquals("Wrong e-mail format", response.content)
