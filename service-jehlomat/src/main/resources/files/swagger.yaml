@@ -11,7 +11,38 @@ host: localhost:8082
 basePath: /api/v1/jehlomat
 schemes:
   - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
+  /login/:
+    post:
+      summary: Log in the application
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              password:
+                type: string
+      responses:
+        '200':
+          description: Created
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+        '401':
+          description: Name or password is wrong
   /organization/{id}:
     get:
       summary: Find organization by id
@@ -62,6 +93,8 @@ paths:
       description: ''
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -203,6 +236,8 @@ paths:
       summary: Add a new team
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -219,6 +254,8 @@ paths:
       summary: Update an existing team
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -271,6 +308,8 @@ paths:
       summary: Update an existing user
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -286,6 +325,8 @@ paths:
   /verification:
     get:
       summary: Verifies organization
+      security:
+        - Bearer: []
       parameters:
         - name: orgId
           in: query

@@ -59,6 +59,10 @@ dependencies {
 
     // reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:$ktorVersion")
+
+    //authentication
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

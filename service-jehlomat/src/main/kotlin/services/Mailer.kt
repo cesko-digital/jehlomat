@@ -84,7 +84,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
                     "Schválení organizace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification?orgId=${organization.id}",
+                    "https://jehlomat.cz/api/v1/jehlomat/verification/organization?orgId=${organization.id}",
                     user.email,
                     organization.name,
                 )
@@ -102,7 +102,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification?userId=${user.id}",
+                    "https://jehlomat.cz/api/v1/jehlomat/verification/user?userId=${user.id}",
                     user.email,
                     organization.name
                 )
