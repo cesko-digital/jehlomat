@@ -19,6 +19,7 @@ const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele
 const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
 const NavodLikvidace = lazy(() => import('./NavodLikvidace/NavodLikvidace'));
+const DetailNalezu = lazy(() => import('./DetailNalezu/DetailNalezu'));
 
 // **********************************************************************
 
@@ -61,6 +62,7 @@ ReactDOM.render(
                     <Route path="/error" component={ErrorPage} />
                     <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
                     <Route path="/navod-likvidace" component={NavodLikvidace} />
+                    <Route path="/detail-nalezu" component={DetailNalezu} />
                     <Route path="/">
                         <App />
                     </Route>

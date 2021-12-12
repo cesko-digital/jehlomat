@@ -5,25 +5,25 @@ import { default as MInput } from '@mui/material/TextField';
 
 interface TextInput extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
-    error?: string|undefined;
+    error?: string | undefined;
 }
 
 const Label = styled.label`
-{
-    color: ${grey};
-    display:block;
-    padding-bottom: 5px;
-    font-weight: bold;
-    font-family: 'Roboto';
-    font-size:10pt; 
-}
-`
-
-const Input = styled.div`
-    margin: 1em;
+     {
+        color: ${grey};
+        display: block;
+        padding-bottom: 5px;
+        font-weight: bold;
+        font-family: 'Roboto';
+        font-size: 10pt;
+    }
 `;
 
-const TextInput: FC<TextInput> = (props) => {
+const Input = styled.div`
+    width: 100%;
+`;
+
+const TextInput: FC<TextInput> = props => {
     return (
         <Input>
             <Label htmlFor={props.name}>{props.label}</Label>
@@ -39,9 +39,11 @@ const TextInput: FC<TextInput> = (props) => {
                 onBlur={props.onBlur}
                 error={Boolean(props.error)}
                 helperText={props.error}
+                size="small"
+                fullWidth
             />
         </Input>
-    )
+    );
 };
 
 export default TextInput;
