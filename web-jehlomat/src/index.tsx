@@ -17,6 +17,7 @@ const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceU
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
 const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
+const LandingPage = lazy(() => import('./LandingPage'));
 
 // **********************************************************************
 
@@ -57,6 +58,7 @@ ReactDOM.render(
                     <Route path="/novy-nalez" component={NovyNalez} />
                     <Route path="/nalezy" component={Nalezy} />
                     <Route path="/error" component={ErrorPage} />
+                    <Route path="/landing-page" component={LandingPage} />
                     <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
                     <Route path="/">
                         <App />
