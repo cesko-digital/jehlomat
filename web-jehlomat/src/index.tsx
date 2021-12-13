@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App/App';
 import Navigation from './Components/Navigation/Navigation';
+import { HeaderMobile } from './Components/Header/HeaderMobile';
 
 /**
  * Lazy loading routes
@@ -15,9 +16,11 @@ const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
 const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
+const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele'));
 const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
 const LandingPage = lazy(() => import('./LandingPage'));
+const NavodLikvidace = lazy(() => import('./NavodLikvidace/NavodLikvidace'));
 
 // **********************************************************************
 
@@ -34,12 +37,15 @@ ReactDOM.render(
                 {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
                 {/*<Navigation />*/}
                 <Switch>
+                    <Route path="/mobile">
+                        <HeaderMobile />
+                    </Route>
                     <Route
                         path="/uzivatel"
                         render={({ match: { url } }) => (
                             <>
                                 <Route path={`${url}`} component={SeznamUzivatelu} exact />
-                                <Route path={`${url}/novy`} component={RegistraceUzivatele} />
+                                <Route path={`${url}/novy`} component={PridatUzivatele} />
                                 <Route path={`${url}/upravit`} component={RegistraceUzivatele} />
                             </>
                         )}
@@ -60,6 +66,7 @@ ReactDOM.render(
                     <Route path="/error" component={ErrorPage} />
                     <Route path="/landing-page" component={LandingPage} />
                     <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
+                    <Route path="/navod-likvidace" component={NavodLikvidace} />
                     <Route path="/">
                         <App />
                     </Route>

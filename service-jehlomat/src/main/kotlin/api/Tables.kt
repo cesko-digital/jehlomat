@@ -1,9 +1,6 @@
 package api
 
-import model.Demolisher
-import model.Organization
-import model.Syringe
-import model.User
+import model.*
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
 
@@ -12,48 +9,35 @@ object DemolisherTable: Table<Nothing>("demolisher") {
 }
 
 
-object SyringeTable: BaseTable<Syringe>("syringes") {
-    val id = int("id").primaryKey()
-    val timestamp = long("timestamp_")
-    val userId = int("user_id")
+object SyringeTable: Table<Nothing>("syringes") {
+    val id = varchar("id").primaryKey()
+    val createdAt = long("created_at")
+    val createdBy = int("created_by")
+    val reservedTill = long("reserved_till")
+    val reservedBy = int("reserved_by")
+    val demolishedAt = long("demolished_at")
+    val demolishedBy = int("demolished_by")
     val photo = varchar("photo")
     val count = int("count_")
     val note = varchar("note")
     val demolisherType = varchar("demolisher_type")
     val gpsCoordinates = varchar("gps_coordinates")
+    val locationId = int("location_id")
     val demolished = boolean("demolished")
-
-    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = Syringe(
-        id = row[id]!!,
-        timestamp = row[timestamp]!!,
-        userId = row[userId]!!,
-        photo = row[photo]!!,
-        count = row[count]!!,
-        note = row[note] ?: "",
-        demolisher = Demolisher.valueOf(row[demolisherType]!!),
-        gps_coordinates = row[gpsCoordinates]!!,
-        demolished = row[demolished]!!,
-    )
 }
 
-object UserTable: BaseTable<User>("users") {
+open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
+    companion object : UserTable(null)
+    override fun aliased(alias: String) = UserTable(alias)
+
     val userId = int("user_id").primaryKey();
     val email = varchar("email")
+    val username = varchar("username")
     val password = varchar("password")
     val verified = boolean("verified")
     val organizationId = int("organization_id")
     val teamId = int("team_id")
     val isAdmin = boolean("is_admin")
-
-    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = User(
-        id = row[userId]!!,
-        email = row[email]!!,
-        password = row[password]!!,
-        verified = row[verified]!!,
-        organizationId = row[organizationId]!!,
-        teamId = row[teamId],
-        isAdmin = row[isAdmin]!!
-    )
 }
 
 object LocationTable: Table<Nothing>("locations") {

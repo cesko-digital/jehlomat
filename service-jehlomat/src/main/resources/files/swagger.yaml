@@ -4,7 +4,7 @@ info:
     Jehlomat REST api
   version: 0.0.2
   title: Jehlomat
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://swagger.io/terms/
   contact:
     email: radekludacka@gmail.com
 host: localhost:8082
@@ -74,48 +74,23 @@ paths:
           description: Success
         '404':
           description: Organization not found
-  /syringe/all:
-    get:
-      summary: Get all syringes by parameters
-      description: Returns a single organization
+  /syringe/search:
+    post:
+      summary: Search syringes by parameters
+      description: Returns a list of syringes
       produces:
         - application/json
       parameters:
-        - name: from
-          in: query
-          description: Lower bound for timestamp
-          type: integer
-        - name: to
-          in: query
-          description: Upper bound for timestamp
-          type: integer
-        - name: email
-          in: query
-          description: User email
-          type: string
-        - name: demolisher
-          in: query
-          description: Who demolisher syringe
-          items:
-            type: string
-            enum:
-              - USER
-              - NO
-              - CITY_POLICE
-            default: NO
-        - name: gpsCoordinates
-          in: query
-          type: string
-        - name: demolished
-          in: query
-          type: boolean
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeSearchRequest'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Syringe'
-        '404':
-          description: Syringe not found
+            $ref: '#/definitions/SyringeSearchResponse'
   /syringe/:
     post:
       summary: Add a new syringe
@@ -132,6 +107,8 @@ paths:
       responses:
         '201':
           description: Created
+          schema:
+            $ref: '#/definitions/SyringeCreate'
         '409':
           description: Conflict
     put:
@@ -178,6 +155,30 @@ paths:
       responses:
         '200':
           description: successful operation
+  /syringe/{id}/track:
+    post:
+      summary: Request a syringe track code to be send to an email
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of team to return
+          required: true
+          type: integer
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        '204':
+          description: Email succesfully sent
+        '404':
+          description: Syringe does not exist
   /team/{id}:
     get:
       summary: Find team by id
@@ -282,23 +283,26 @@ paths:
           description: Success
         '404':
           description: User not found
-  /verification/{id}:
+  /verification:
     get:
       summary: Verifies organization
       parameters:
-        - name: id
-          in: path
-          description: organization id to verify
-          required: true
+        - name: orgId
+          in: query
+          description: Organization id to verify
+          type: integer
+        - name: userId
+          in: query
+          description: User id to verify
           type: integer
       responses:
         '200':
           description: successful operation
         '404':
-          description: Organization not found
+          description: Organization or User not found
 externalDocs:
   description: Find out more about Swagger
-  url: http://swagger.io
+  url: https://swagger.io
 definitions:
   UserInfo:
     type: object
@@ -306,6 +310,8 @@ definitions:
       id:
         type: integer
       email:
+        type: string
+      username:
         type: string
       verified:
         type: boolean
@@ -325,6 +331,9 @@ definitions:
       email:
         type: string
         example: example@example-user.org
+      username:
+        type: string
+        example: FrantaPepa1
       password:
         type: string
         example: Abcde123.
@@ -368,18 +377,118 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Organization'
+  SyringeSearchRequest:
+    type: object
+    properties:
+      filter:
+        type: object
+        properties:
+          locationIds:
+            type: array
+            items:
+              type: number
+          createdAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          createdBy:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              type:
+                type: string
+                enum:
+                  - USER
+                  - TEAM
+                  - ORGANIZATION
+                  - ANONYMOUS
+          demolishedAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          status:
+            type: string
+            enum:
+              - WAITING
+              - RESERVED
+              - DEMOLISHED
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            column:
+              type: string
+              enum:
+                - TOWN
+                - CREATED_AT
+                - CREATED_BY
+                - DEMOLISHED_AT
+            direction:
+              type: string
+              enum:
+                - ASC
+                - DESC
+  SyringeSearchResponse:
+    type: object
+    properties:
+      syringeList:
+        type: array
+        items:
+          $ref: '#/definitions/Syringe'
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+          hasMore:
+            type: boolean
   Syringe:
     type: object
     properties:
       id:
-        type: integer
-        example: 0
-      timestamp:
+        type: string
+        example: "R4YFD1AC"
+      createdAt:
         type: integer
         example: 1637092279
-      userId:
+      createdBy:
+        $ref: '#/definitions/UserInfo'
+      reservedTill:
         type: integer
-        example: 0
+        example: 1637092279
+      reservedBy:
+        $ref: '#/definitions/UserInfo'
+      demolishedAt:
+        type: integer
+        example: 1637092279
+      demolishedBy:
+        $ref: '#/definitions/UserInfo'
       photo:
         type: string
         example: "nothing"
@@ -402,25 +511,37 @@ definitions:
       demolished:
         type: boolean
         example: false
+      location:
+        $ref: '#/definitions/Location'
+  SyringeCreate:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "R4YFD1AC"
+      teamAvailable:
+        type: boolean
   Location:
-    id:
-      type: integer
-      example: 0
-    okres:
-      type: string
-      examle: Plzeň-město
-    obec:
-      type: string
-      examle: Plzeň
-    mestkaCast:
-      type: string
-      examle: Plzeň 3
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 0
+      okres:
+        type: string
+        example: Plzeň-město
+      obec:
+        type: string
+        example: Plzeň
+      mestkaCast:
+        type: string
+        example: Plzeň 3
   Team:
     type: object
     properties:
       id:
         type: integer
-        examle: 0
+        example: 0
       name:
         type: string
         example: Super team

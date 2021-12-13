@@ -21,6 +21,7 @@ val organization = Organization(
 val user = UserInfo(
     1,
     "example@example.org",
+    "Franta Pepa 1",
     true,
     1,
     null,
