@@ -35,4 +35,13 @@ class ExtensionsTest {
         assertFalse("aaa$".isValidUsername())
         assertFalse("aaa*".isValidUsername())
     }
+
+    @Test
+    fun testCoordinatesValidation() {
+        assert("13.3719999 49.7278823".isValidCoordinates())
+
+        assertFalse("null".isValidCoordinates())
+        assertFalse("13.371 49.7278823".isValidCoordinates())
+        assertFalse("13.3719999 49.727".isValidCoordinates())
+    }
 }

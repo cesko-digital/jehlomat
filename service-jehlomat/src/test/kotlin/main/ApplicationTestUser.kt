@@ -9,7 +9,6 @@ import model.*
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import services.MailerService
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -23,7 +22,7 @@ const val API_PATH = "/api/v1/jehlomat/user"
 val team = Team(
     2,
     "name",
-    Location(0,"Plzeň-město", "Plzeň", "Plzeň 3"),
+    Location(0,okres="CZ0323", obec="554791", mestkaCast="546003"),
     1,
 )
 
@@ -43,7 +42,7 @@ class ApplicationTest {
 
     private var defaultOrgId: Int = 0
     private var defaultTeamId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
     lateinit var mailerMock: MailerService
 
 

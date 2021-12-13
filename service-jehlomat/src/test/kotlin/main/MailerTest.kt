@@ -7,7 +7,6 @@ import model.UserInfo
 import org.junit.Ignore
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import services.Mailer
 import kotlin.test.BeforeTest
 
@@ -29,7 +28,7 @@ val user = UserInfo(
 )
 
 class MailerTest {
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database = DatabaseService()
 
     @BeforeTest
     fun beforeEach() {

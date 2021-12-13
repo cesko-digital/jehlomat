@@ -10,7 +10,6 @@ import model.Organization
 import model.Team
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
 import kotlin.test.BeforeTest
 import kotlin.test.AfterTest
 import kotlin.test.assertEquals
@@ -27,7 +26,7 @@ val TEAM = Team(
 
 class TeamTest {
     private var defaultOrgId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
 
     @BeforeTest
     fun beforeEach() {
@@ -134,7 +133,7 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeamNewLocation() = withTestApplication(Application::module) {
-        val newTeam = TEAM.copy(organizationId = defaultOrgId,location = Location(0, "Plzeň-město", "Plzeň", "Plzeň 3"))
+        val newTeam = TEAM.copy(organizationId = defaultOrgId,location = Location(0, okres="CZ0323", obec="554791", mestkaCast="546003"))
         var teamId = 0
         with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
             teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))

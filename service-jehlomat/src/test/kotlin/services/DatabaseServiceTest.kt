@@ -11,9 +11,9 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class DatabaseServiceImplTest {
+class DatabaseServiceTest {
 
-    var database: DatabaseService = DatabaseServiceImpl()
+    var database: DatabaseService = DatabaseService()
     var defaultOrgId: Int = 0
 
     @Before
@@ -38,19 +38,19 @@ class DatabaseServiceImplTest {
     @Test
     fun testGetObec() {
         val actualObec = database.getObec("17.2825351 49.6602072")
-        assertEquals("Bohuňovice", actualObec)
+        assertEquals("500852", actualObec)
     }
 
     @Test
     fun testGetMC() {
         val actualObec = database.getMC("13.3719999 49.7278823")
-        assertEquals("Plzeň 3", actualObec)
+        assertEquals("546003", actualObec)
     }
 
     @Test
     fun testGetOkres() {
         val actualObec = database.getOkres("13.3719999 49.7278823")
-        assertEquals("Plzeň-město", actualObec)
+        assertEquals("CZ0323", actualObec)
     }
 
     @Test
@@ -93,10 +93,10 @@ class DatabaseServiceImplTest {
 
     @Test
     fun testResolveNearestTeam() {
-        val exactTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 3")
+        val exactTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="546003")
         val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
 
-        val obecTeamLocation = Location(0, "Plzeň-město", "Plzeň", "Plzeň 9-Malesice")
+        val obecTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="559199")
         val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
 
         val exactTeamId = database.insertTeam(exactTeam)
@@ -123,5 +123,17 @@ class DatabaseServiceImplTest {
         assertNotNull(syringeId)
         val createdSyringe = database.selectSyringeById(syringeId)
         assertEquals(syringeToCreate.copy(id = syringeId), createdSyringe)
+    }
+
+    @Test
+    fun testSelectAllLocations() {
+        assertEquals(
+            listOf(
+                Location(id=0, okres="CZ0323", obec="554791", mestkaCast="546003"),
+                Location(id=0, okres="CZ0323", obec="554791", mestkaCast=""),
+                Location(id=0, okres="CZ0323", obec="", mestkaCast="")
+            ),
+            database.getLocationCombinations("13.3719999 49.7278823")
+        )
     }
 }

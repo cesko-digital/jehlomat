@@ -300,6 +300,26 @@ paths:
           description: successful operation
         '404':
           description: Organization or User not found
+  /location:
+    get:
+      summary: Get combination of locations for gps coordinates
+      parameters:
+        - name: gps
+          in: query
+          description: GPS coordinates
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              locationList:
+                type: array
+                items:
+                  $ref: '#/definitions/Location'
+        '400':
+          description: Not supported format of GPS coordinates
 externalDocs:
   description: Find out more about Swagger
   url: https://swagger.io
@@ -529,13 +549,13 @@ definitions:
         example: 0
       okres:
         type: string
-        example: Plzeň-město
+        example: CZ0323
       obec:
         type: string
-        example: Plzeň
+        example: 554791
       mestkaCast:
         type: string
-        example: Plzeň 3
+        example: 546003
   Team:
     type: object
     properties:
@@ -553,13 +573,13 @@ definitions:
             example: 0
           okres:
             type: string
-            example: Plzeň-město
+            example: CZ0323
           obec:
             type: string
-            example: Plzeň
+            example: 554791
           mestkaCast:
             type: string
-            example: Plzeň 3
+            example: 546003
       organizationId:
         type: integer
         example: 0
