@@ -20,10 +20,8 @@ fun Route.locationApi(database: DatabaseService): Route {
             }
         }
 
-        route("all") {
-            get {
-                call.respond(HttpStatusCode.OK, database.getLocations())
-            }
+        get("all") {
+            call.respond(HttpStatusCode.OK, database.getLocations())
         }
     }
 }
