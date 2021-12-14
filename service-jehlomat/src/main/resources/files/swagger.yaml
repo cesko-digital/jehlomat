@@ -300,7 +300,7 @@ paths:
           description: successful operation
         '404':
           description: Organization or User not found
-  /location:
+  /location/point:
     get:
       summary: Get combination of locations for gps coordinates
       parameters:
@@ -320,6 +320,19 @@ paths:
                   $ref: '#/definitions/Location'
         '400':
           description: Not supported format of GPS coordinates
+  /location/all:
+    get:
+      summary: Get available locations from database
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              locationList:
+                type: array
+                items:
+                  $ref: '#/definitions/LocationTriple'
 externalDocs:
   description: Find out more about Swagger
   url: https://swagger.io
@@ -583,3 +596,15 @@ definitions:
       organizationId:
         type: integer
         example: 0
+  LocationTriple:
+    type: object
+    properties:
+      id:
+        type: string
+        example: CZ0323
+      name:
+        type: string
+        example: Praha
+      type:
+        type: string
+        example: obec
