@@ -1,19 +1,20 @@
 package api
 
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
-import services.DatabaseService
-import services.MailerService
+import services.*
+import services.RequestValidationWrapper.Companion.validatePutObject
 import utils.isValidMail
 import utils.isValidPassword
 import utils.isValidUsername
 
 
-fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Route {
+fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
     return route("/") {
         get {
             call.respond(HttpStatusCode.OK, database.selectOrganizations())
@@ -67,20 +68,31 @@ fun Route.organizationApi(database: DatabaseService, mailer: MailerService): Rou
             }
         }
 
-        put {
-            val newOrganization = call.receive<Organization>()
-            val currentOrganization = database.selectOrganizationById(newOrganization.id)
+        authenticate(JWT_CONFIG_NAME) {
+            put {
+                val newOrganization = call.receive<Organization>()
+                val currentOrganization = database.selectOrganizationById(newOrganization.id)
 
-            when {
-                currentOrganization == null -> {
-                    call.respond(HttpStatusCode.NotFound, "Organization not found")
-                }
-                (newOrganization.name != currentOrganization.name && database.selectOrganizationByName(newOrganization.name) != null) -> {
-                    call.respond(HttpStatusCode.Conflict, "The new name is already used by a different organization")
-                }
-                else -> {
-                    database.updateOrganization(newOrganization)
-                    call.respond(HttpStatusCode.OK)
+                when {
+                    currentOrganization == null -> {
+                        call.respond(HttpStatusCode.NotFound, "Organization not found")
+                    }
+                    (newOrganization.name != currentOrganization.name && database.selectOrganizationByName(
+                        newOrganization.name
+                    ) != null) -> {
+                        call.respond(
+                            HttpStatusCode.Conflict,
+                            "The new name is already used by a different organization"
+                        )
+                    }
+                    else -> {
+                        if (!validatePutObject(call, jwtManager, database, currentOrganization, newOrganization)){
+                            return@put
+                        }
+
+                        database.updateOrganization(newOrganization)
+                        call.respond(HttpStatusCode.OK)
+                    }
                 }
             }
         }

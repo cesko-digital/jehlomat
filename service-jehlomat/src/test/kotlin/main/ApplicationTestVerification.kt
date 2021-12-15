@@ -1,5 +1,6 @@
 package main
 
+import TestUtils.Companion.loginUser
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -41,7 +42,7 @@ class VerificationTest {
 
     @Test
     fun testVerifyUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH?userId=$defaultUserId") {
+        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH/user?userId=$defaultUserId") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertTrue(database.selectUserById(defaultUserId)!!.verified)
@@ -49,8 +50,29 @@ class VerificationTest {
     }
 
     @Test
-    fun testVerifyOrganization() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH?orgId=$defaultOrgId") {
+    fun testVerifyOrganizationNotAuth() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH/organization?orgId=$defaultOrgId") {
+        }) {
+            assertEquals(HttpStatusCode.Unauthorized, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrganizationNotSuperAdmin() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH/organization?orgId=$defaultOrgId") {
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.Forbidden, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrganizationAsSuperAdmin() = withTestApplication(Application::module) {
+        database.insertUser(SUPER_ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(SUPER_ADMIN.email, SUPER_ADMIN.password)
+        with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH/organization?orgId=$defaultOrgId") {
+            addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertTrue(database.selectOrganizationById(defaultOrgId)!!.verified)
