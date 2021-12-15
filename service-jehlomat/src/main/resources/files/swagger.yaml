@@ -607,4 +607,7 @@ definitions:
         example: 554791
       type:
         type: string
-        example: 546003
+        enum:
+          - obec
+          - okres
+          - mc
