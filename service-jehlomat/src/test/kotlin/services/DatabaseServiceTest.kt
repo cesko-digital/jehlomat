@@ -136,4 +136,29 @@ class DatabaseServiceTest {
             database.getLocationCombinations("13.3719999 49.7278823")
         )
     }
+
+    @Test
+    fun testGetLocations() {
+        assertEquals(
+            listOf(
+                mapOf("id" to "CZ0323", "name" to "Plzeň-město", "type" to "okres"),
+                mapOf("id" to "CZ0324", "name" to "Plzeň-jih", "type" to "okres"),
+                mapOf("id" to "CZ0325", "name" to "Plzeň-sever", "type" to "okres"),
+                mapOf("id" to "500852", "name" to "Bohuňovice", "type" to "obec"),
+                mapOf("id" to "591939", "name" to "Výčapy", "type" to "obec"),
+                mapOf("id" to "591319", "name" to "Opatov", "type" to "obec"),
+                mapOf("id" to "550001", "name" to "Vrcovice", "type" to "obec"),
+                mapOf("id" to "554791", "name" to "Plzeň", "type" to "obec"),
+                mapOf("id" to "545970", "name" to "Plzeň 1", "type" to "mc"),
+                mapOf("id" to "545988", "name" to "Plzeň 2-Slovany", "type" to "mc"),
+                mapOf("id" to "546003", "name" to "Plzeň 3", "type" to "mc"),
+                mapOf("id" to "546208", "name" to "Plzeň 4", "type" to "mc"),
+                mapOf("id" to "559199", "name" to "Plzeň 9-Malesice", "type" to "mc"),
+                mapOf("id" to "554731", "name" to "Plzeň 5-Křimice", "type" to "mc"),
+                mapOf("id" to "554758", "name" to "Plzeň 6-Litice", "type" to "mc"),
+                mapOf("id" to "554766", "name" to "Plzeň 7-Radčice", "type" to "mc")
+            ),
+            database.getLocations()
+        )
+    }
 }

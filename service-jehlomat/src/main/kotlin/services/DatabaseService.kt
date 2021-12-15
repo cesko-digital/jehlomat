@@ -376,6 +376,28 @@ class DatabaseService(
         return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1")
     }
 
+    fun getLocations(): List<Map<String, String>> {
+        val okres = getLocations("kod_lau1", "nazev_lau1", "sph_okres", "okres")
+        val obce = getLocations("kod_lau2", "nazev_lau2", "sph_obec", "obec")
+        val mc = getLocations("kod_mc", "nazev_mc", "sph_mc", "mc")
+        return okres + obce + mc
+    }
+
+    private fun getLocations(idColumn: String, nameColumn: String, table: String, type: String): List<Map<String, String>> {
+        return databaseInstance.useConnection { conn ->
+            val sql = "SELECT $idColumn, $nameColumn FROM $table"
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map {
+                    mapOf(
+                        "id" to it.getString(1),
+                        "name" to it.getString(2),
+                        "type" to type
+                    )
+                }
+            }
+        }
+    }
+
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
