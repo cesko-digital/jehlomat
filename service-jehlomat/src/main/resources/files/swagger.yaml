@@ -604,7 +604,7 @@ definitions:
         example: CZ0323
       name:
         type: string
-        example: Praha
+        example: 554791
       type:
         type: string
-        example: obec
+        example: 546003
