@@ -1,14 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import PrimaryButton from "../Components/Buttons/PrimaryButton/PrimaryButton";
-import StoryBook from "../Components/StoryBook";
 import { Header } from '../Components/Header/Header';
 import { Footer } from '../Components/Footer/Footer';
 import { HeaderMobile } from '../Components/Header/HeaderMobile';
-import { ValidationMap } from 'prop-types';
 import { MaxMobileWidth } from '../Components/Utils/Constants';
+import LandingPage from '../LandingPage';
+import { Box } from '@mui/material';
 
 class HelloJehlomat extends React.Component {
-
     constructor(props: any) {
         super(props);
         this.state = {
@@ -31,24 +29,21 @@ class HelloJehlomat extends React.Component {
     renderPage() {
         const isMobile = window.innerWidth <= MaxMobileWidth;
         if (isMobile) {
-            return (
-                <HeaderMobile />
-            )
+            return <HeaderMobile />;
         } else {
-            return (<>
-                <Header />
-                <h3>Hello Jehlomat</h3>
-                <StoryBook/>
-                <Footer />
-                </>
-            )
+            return (
+                <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                    <Header />
+                    <LandingPage />
+                    <Footer />
+                </Box>
+            );
         }
     }
 
-    render(){
+    render() {
         return this.renderPage();
     }
-
 }
 
 export default HelloJehlomat;

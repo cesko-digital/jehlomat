@@ -19,6 +19,7 @@ const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
 const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele'));
 const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
+const LandingPage = lazy(() => import('./LandingPage'));
 const NavodLikvidace = lazy(() => import('./NavodLikvidace/NavodLikvidace'));
 
 // **********************************************************************
@@ -38,7 +39,7 @@ ReactDOM.render(
                 <Switch>
                     <Route path="/mobile">
                         <HeaderMobile />
-                        </Route>
+                    </Route>
                     <Route
                         path="/uzivatel"
                         render={({ match: { url } }) => (
@@ -63,6 +64,7 @@ ReactDOM.render(
                     <Route path="/novy-nalez" component={NovyNalez} />
                     <Route path="/nalezy" component={Nalezy} />
                     <Route path="/error" component={ErrorPage} />
+                    <Route path="/landing-page" component={LandingPage} />
                     <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
                     <Route path="/navod-likvidace" component={NavodLikvidace} />
                     <Route path="/">
