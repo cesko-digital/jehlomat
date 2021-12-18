@@ -3,7 +3,7 @@ package main
 import io.ktor.application.*
 import io.ktor.server.testing.*
 import model.Organization
-import model.UserInfo
+import model.user.UserInfo
 import org.junit.Ignore
 import org.junit.Test
 import services.DatabaseService
@@ -19,12 +19,9 @@ val organization = Organization(
 
 val user = UserInfo(
     1,
-    "example@example.org",
     "Franta Pepa 1",
-    true,
     1,
-    null,
-    true
+    null
 )
 
 class MailerTest {
@@ -39,6 +36,6 @@ class MailerTest {
     @Ignore("Need to solve how to pass jetmail api key to application")
     fun testSend() = withTestApplication(Application::module) {
         val mailer = Mailer()
-        mailer.sendOrganizationConfirmationEmail(organization, user)
+        mailer.sendOrganizationConfirmationEmail(organization, "email")
     }
 }

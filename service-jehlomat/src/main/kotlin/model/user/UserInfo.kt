@@ -1,15 +1,12 @@
-package model
+package model.user
 
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserInfo(
     val id: Int,
-    val email: String,
     val username: String,
-    val verified: Boolean,
     val organizationId: Int,
-    val teamId: Int?,
-    val isAdmin: Boolean
+    val teamId: Int?
 )
 

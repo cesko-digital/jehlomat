@@ -1,6 +1,7 @@
 package model
 
 import kotlinx.serialization.Serializable
+import model.user.UserInfo
 import utils.UnchangeableByPut
 
 @Serializable

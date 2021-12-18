@@ -6,12 +6,12 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.User
-import model.toUserInfo
+import model.user.User
+import model.user.UserRegistrationRequest
+import model.user.toUserInfo
 import services.*
 import utils.isValidMail
 import utils.isValidPassword
-import utils.isValidUsername
 
 fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
@@ -27,30 +27,42 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
             }
         }
 
-        post {
-            val newUser = call.receive<User>()
+        authenticate(JWT_CONFIG_NAME) {
+            post {
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                if (!loggedInUser.isAdmin) {
+                    call.respond(HttpStatusCode.Forbidden, "Users can be created only by organization admins.")
+                }
 
-            when {
-                (!newUser.email.isValidMail()) -> {
-                    call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
-                }
-                (!newUser.username.isValidUsername()) -> {
-                    call.respond(HttpStatusCode.BadRequest, "Wrong username format.")
-                }
-                (!newUser.password.isValidPassword()) -> {
-                    call.respond(HttpStatusCode.BadRequest, "Wrong password format.")
-                }
-                databaseInstance.selectUserByEmail(newUser.email) != null -> {
-                    call.respond(HttpStatusCode.Conflict, "E-mail already taken")
-                }
-                else -> {
-                    val userId = databaseInstance.insertUser(newUser)
-                    val organization = databaseInstance.selectOrganizationById(newUser.organizationId)
+                val request = call.receive<UserRegistrationRequest>()
+                when {
+                    (!request.email.isValidMail()) -> {
+                        call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
+                    }
+                    databaseInstance.selectUserByEmail(request.email) != null -> {
+                        call.respond(HttpStatusCode.Conflict, "E-mail already taken")
+                    }
+                    else -> {
+                        val verificationCode = RandomIdGenerator.generateRegistrationCode()
+                        val newUser = User(
+                            id = 0,
+                            email = request.email,
+                            username = "",
+                            password = "",
+                            verified = false,
+                            verificationCode = verificationCode,
+                            organizationId = loggedInUser.organizationId,
+                            teamId = null,
+                            isAdmin = false
+                        )
+                        databaseInstance.insertUser(newUser)
+                        val organization = databaseInstance.selectOrganizationById(loggedInUser.organizationId)
 
-                    if (organization == null) {
-                        call.respond(HttpStatusCode.NotFound, "Organization not found")
-                    } else {
-                        mailer.sendRegistrationConfirmationEmail(organization, newUser.copy(id=userId).toUserInfo())
+                        mailer.sendRegistrationConfirmationEmail(
+                            organization!!,
+                            request.email,
+                            verificationCode
+                        )
                         call.respond(HttpStatusCode.Created)
                     }
                 }

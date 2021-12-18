@@ -1,6 +1,7 @@
 package services
 
 import model.*
+import model.user.User
 import utils.AuthRole
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties

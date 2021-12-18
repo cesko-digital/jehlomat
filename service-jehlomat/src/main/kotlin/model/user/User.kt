@@ -1,6 +1,8 @@
-package model
+package model.user
 
 import kotlinx.serialization.Serializable
+import model.FieldComparisonType
+import model.Role
 import utils.AuthRole
 import utils.UnchangeableByPut
 
@@ -11,6 +13,7 @@ data class User(
     @AuthRole(Role.UserOwner) val username: String,
     @AuthRole(Role.UserOwner, FieldComparisonType.PASSWORD) val password: String,
     @UnchangeableByPut val verified: Boolean,
+    @UnchangeableByPut val verificationCode: String,
     @UnchangeableByPut val organizationId: Int,
     @AuthRole(Role.OrgAdmin) val teamId: Int?,
     @AuthRole(Role.OrgAdmin) val isAdmin: Boolean
@@ -18,10 +21,7 @@ data class User(
 
 fun User.toUserInfo() = UserInfo(
     id = id,
-    email = email,
     username = username,
-    verified = verified,
     organizationId = organizationId,
     teamId = teamId,
-    isAdmin = isAdmin
 )
