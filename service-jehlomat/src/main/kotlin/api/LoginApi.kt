@@ -23,6 +23,11 @@ fun Route.loginApi(database: DatabaseService, jwtManager: JwtManager): Route {
                 return@post
             }
 
+            if (!user.verified) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@post
+            }
+
             if (!BCrypt.checkpw(credentials.password, user.password)) {
                 call.respond(HttpStatusCode.Unauthorized)
                 return@post

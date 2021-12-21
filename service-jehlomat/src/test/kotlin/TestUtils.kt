@@ -19,7 +19,7 @@ class TestUtils {
             testMailerModule = org.koin.dsl.module {
                 single<MailerService> { mailer }
             };
-            every { mailer.sendRegistrationConfirmationEmail(any(), any()) } returns Unit
+            every { mailer.sendRegistrationConfirmationEmail(any(), any(), any()) } returns Unit
             every { mailer.sendOrganizationConfirmationEmail(any(), any()) } returns Unit
             every { mailer.sendSyringeFindingConfirmation(any(), any()) } returns Unit
             every { mailer.sendSyringeFinding(any(), any(), any()) } returns Unit

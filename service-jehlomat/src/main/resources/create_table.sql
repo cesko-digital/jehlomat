@@ -38,6 +38,7 @@ CREATE TABLE public.users(
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     verified BOOLEAN NOT NULL,
+    verification_code TEXT NOT NULL,
     organization_id INT NOT null,
     team_id INT,
     is_admin BOOLEAN,

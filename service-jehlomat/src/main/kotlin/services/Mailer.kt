@@ -6,31 +6,34 @@ import com.mailjet.client.MailjetResponse
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
-import model.UserInfo
 import org.json.JSONArray
 import org.json.JSONObject
 import utils.DefaultConfig
 
 
 interface MailerService {
-    fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo)
-    fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo)
+    fun sendRegistrationConfirmationEmail(organization: Organization, userEmail: String, verificationCode: String)
+    fun sendOrganizationConfirmationEmail(organization: Organization, email: String)
     fun sendSyringeFindingConfirmation(email: String, syringeId: String)
-    fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String)
+    fun sendSyringeFinding(organization: Organization, email: String, syringeId: String)
 }
 
 
 class FakeMailer: MailerService {
-    override fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo) {
+    override fun sendRegistrationConfirmationEmail(
+        organization: Organization,
+        userEmail: String,
+        verificationCode: String
+    ) {
         println("sendRegistrationConfirmationEmail")
     }
-    override fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo) {
+    override fun sendOrganizationConfirmationEmail(organization: Organization, email: String) {
         println("sendOrganizationConfirmationEmail")
     }
     override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
         println("sendSyringeFindingConfirmation")
     }
-    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
+    override fun sendSyringeFinding(organization: Organization, email: String, syringeId: String) {
         println("sendSyringeFinding")
     }
 }
@@ -78,14 +81,14 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendOrganizationConfirmationEmail(organization: Organization, user: UserInfo) {
+    override fun sendOrganizationConfirmationEmail(organization: Organization, email: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
                     "Schválení organizace",
                     "https://jehlomat.cz/api/v1/jehlomat/verification/organization?orgId=${organization.id}",
-                    user.email,
+                    email,
                     organization.name,
                 )
             )
@@ -96,14 +99,18 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendRegistrationConfirmationEmail(organization: Organization, user: UserInfo) {
+    override fun sendRegistrationConfirmationEmail(
+        organization: Organization,
+        userEmail: String,
+        verificationCode: String
+    ) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification/user?userId=${user.id}",
-                    user.email,
+                    "https://jehlomat.cz/uzivatel/registrace/?email=${userEmail}&code=${verificationCode}",
+                    userEmail,
                     organization.name
                 )
             )
@@ -132,14 +139,14 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendSyringeFinding(organization: Organization, user: UserInfo, syringeId: String) {
+    override fun sendSyringeFinding(organization: Organization, email: String, syringeId: String) {
         val request = MailjetRequest(Emailv31.resource)
             .property(
                 Emailv31.MESSAGES, prepareBody(
                     3222921,
                     "Nález",
                     "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
-                    user.email,
+                    email,
                     organization.name
                 )
             )

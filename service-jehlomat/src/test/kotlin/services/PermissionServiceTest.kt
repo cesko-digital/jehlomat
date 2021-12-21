@@ -7,7 +7,7 @@ import main.USER
 import model.FieldComparisonType
 import model.PermissionViolation
 import model.Role
-import model.User
+import model.user.User
 import org.junit.Test
 import utils.AuthRole
 import utils.hashPassword
@@ -23,6 +23,7 @@ class PermissionServiceTest {
         "org admin",
         "aaAA11aa",
         false,
+        "",
         USER.organizationId,
         2,
         true

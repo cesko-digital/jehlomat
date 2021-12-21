@@ -292,13 +292,18 @@ paths:
       summary: Add a new user
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
-          description: User object that needs to be added
+          description: User email that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/User'
+            type: object
+            properties:
+              email:
+                type: string
       responses:
         '201':
           description: Created
@@ -322,7 +327,7 @@ paths:
           description: Success
         '404':
           description: User not found
-  /verification:
+  /verification/organization:
     get:
       summary: Verifies organization
       security:
@@ -332,15 +337,44 @@ paths:
           in: query
           description: Organization id to verify
           type: integer
-        - name: userId
-          in: query
-          description: User id to verify
-          type: integer
       responses:
         '200':
           description: successful operation
         '404':
-          description: Organization or User not found
+          description: Organization not found
+  /verification/user:
+    post:
+      summary: Verify and finish user registration
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                description: a registration code
+                example: "df5dg3agh8h"
+              email:
+                type: string
+                description: user's email to verify
+                example: "jan@novak.cz"
+              username:
+                type: string
+                description: a civil name for the user
+                example: "Jan Novak"
+              password:
+                type: string
+                description: password to log in the application
+                example: "e5RT1a2fge"
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: User not found
+        '405':
+          description: Parameters violate requirements
   /location/point:
     get:
       summary: Get combination of locations for gps coordinates

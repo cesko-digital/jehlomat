@@ -7,6 +7,8 @@ import model.pagination.PageInfo
 import model.pagination.toDsl
 import model.syringe.SyringeFilter
 import model.syringe.OrderBySyringeColumn
+import model.user.User
+import model.user.UserInfo
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
@@ -32,7 +34,6 @@ class DatabaseService(
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
-    private val syringeIdGenerator = SyringeIdGenerator()
 
     private val syringeCreatedByAlias = UserTable.aliased("uCreatedBy")
     private val syringeReservedByAlias = UserTable.aliased("uReservedBy")
@@ -71,12 +72,9 @@ class DatabaseService(
         if (row[table.userId] != null) {
             UserInfo(
                 id = row[table.userId]!!,
-                email = row[table.email]!!,
                 username = row[table.username]!!,
-                verified = row[table.verified]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
-                isAdmin = row[table.isAdmin]!!
             )
         } else {
             null
@@ -90,6 +88,7 @@ class DatabaseService(
             username = row[UserTable.username]!!,
             password = row[UserTable.password]!!,
             verified = row[UserTable.verified]!!,
+            verificationCode = row[UserTable.verificationCode]!!,
             organizationId = row[UserTable.organizationId]!!,
             teamId = row[UserTable.teamId],
             isAdmin = row[UserTable.isAdmin]!!
@@ -143,6 +142,15 @@ class DatabaseService(
             .from(UserTable)
             .select()
             .where { UserTable.email eq email }
+            .map(mapUserRow)
+            .firstOrNull()
+    }
+
+    fun selectUserByUsername(username: String): User? {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { UserTable.username eq username }
             .map(mapUserRow)
             .firstOrNull()
     }
@@ -213,14 +221,19 @@ class DatabaseService(
 
     fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
-            set(it.email, user.email)
-            set(it.password, user.password.hashPassword())
-            set(it.username, user.username)
-            set(it.verified, user.verified)
-            set(it.organizationId, user.organizationId)
-            set(it.teamId, user.teamId)
-            set(it.isAdmin, user.isAdmin)
+            updateUserRecord(this, it, user)
         }
+    }
+
+    private fun updateUserRecord(builder: AssignmentsBuilder, it: UserTable, user: User) {
+        builder.set(it.email, user.email)
+        builder.set(it.password, user.password.hashPassword())
+        builder.set(it.username, user.username)
+        builder.set(it.verified, user.verified)
+        builder.set(it.verificationCode, user.verificationCode)
+        builder.set(it.organizationId, user.organizationId)
+        builder.set(it.teamId, user.teamId)
+        builder.set(it.isAdmin, user.isAdmin)
     }
 
     fun selectOrganizationById(id: Int): Organization? {
@@ -258,7 +271,7 @@ class DatabaseService(
 
     fun insertSyringe(syringe: Syringe): String? {
         for (i in 1 .. NUMBER_OF_INSERT_SYRINGE_TRIES) {
-            val id = syringeIdGenerator.generateId()
+            val id = RandomIdGenerator.generateSyringeId()
             try {
                 databaseInstance.insert(SyringeTable) {
                     set(it.id, id)
@@ -300,13 +313,7 @@ class DatabaseService(
 
     fun insertUser(user: User): Int {
         return databaseInstance.insertAndGenerateKey(UserTable) {
-            set(it.email, user.email)
-            set(it.password, user.password.hashPassword())
-            set(it.username, user.username)
-            set(it.verified, user.verified)
-            set(it.organizationId, user.organizationId)
-            set(it.teamId, user.teamId)
-            set(it.isAdmin, user.isAdmin)
+            updateUserRecord(this, it, user)
         } as Int
     }
 

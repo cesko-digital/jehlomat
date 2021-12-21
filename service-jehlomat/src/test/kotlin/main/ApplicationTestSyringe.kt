@@ -13,6 +13,8 @@ import model.pagination.OrderByDirection
 import model.pagination.PageInfo
 import model.pagination.PageInfoResult
 import model.syringe.*
+import model.user.UserInfo
+import model.user.toUserInfo
 import org.junit.Test
 import services.DatabaseService
 import services.MailerService
@@ -226,7 +228,7 @@ class ApplicationTestSyringe {
 
             val org = database.selectOrganizationById(defaultOrgId)
             val user = database.selectUserById(defaultUserId)
-            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, user?.toUserInfo()!!, actualSyringes[0].id) }
+            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, user?.email!!, actualSyringes[0].id) }
         }
     }
 
@@ -235,7 +237,7 @@ class ApplicationTestSyringe {
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(defaultSyringe.copy(createdBy = UserInfo(
-                id = 0, "", "", false, 0, null, false
+                id = 0, "", 0, null
             )
             )))
         }) {

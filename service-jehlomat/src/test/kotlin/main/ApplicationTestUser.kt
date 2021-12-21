@@ -7,7 +7,11 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import model.*
+import model.Location
+import model.Organization
+import model.Team
+import model.user.User
+import model.user.UserRegistrationRequest
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
@@ -33,7 +37,8 @@ val USER = User(
     "email@example.org",
     "Franta Pepa 1",
     "aaAA11aa",
-    false,
+    true,
+    "verificationCode",
     1,
     2,
     false
@@ -44,7 +49,8 @@ val SUPER_ADMIN = User(
     "super@admin.cz",
     "Super Admin",
     "aaAA11aa",
-    false,
+    true,
+    "",
     1,
     2,
     false
@@ -85,12 +91,9 @@ class ApplicationTest {
             assertEquals(
                 """{
   "id" : """ + userId + """,
-  "email" : "email@example.org",
   "username" : "Franta Pepa 1",
-  "verified" : false,
   "organizationId" : """ + defaultOrgId + """,
-  "teamId" : """ + defaultTeamId + """,
-  "isAdmin" : false
+  "teamId" : """ + defaultTeamId + """
 }""",
                 response.content
             )
@@ -178,16 +181,25 @@ class ApplicationTest {
 
     @Test
     fun testPostUser() = withTestApplication({ module(testing = true) }) {
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
+        val token = loginUser("org@admin.cz", USER.password)
+
+        val emailToTest = "email@email.email"
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId)))
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(UserRegistrationRequest(emailToTest)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            val actualUser = database.selectUserByEmail(USER.email)
+            val createdUser = database.selectUserByEmail(emailToTest)!!
+            assertEquals(defaultOrgId, createdUser.organizationId)
+            assertEquals(emailToTest, createdUser.email)
+
             io.mockk.verify(exactly = 1) {
                 mailerMock.sendRegistrationConfirmationEmail(
                     organization.copy(id=defaultOrgId, name="defaultOrgName"),
-                    actualUser!!.toUserInfo().copy(id=actualUser.id)
+                    emailToTest,
+                    createdUser.verificationCode
                 )
             }
         }
@@ -195,10 +207,14 @@ class ApplicationTest {
 
     @Test
     fun testPostAlreadyExistingUser() = withTestApplication(Application::module) {
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
+        val token = loginUser("org@admin.cz", USER.password)
+
         with(handleRequest(HttpMethod.Post, "$API_PATH/") {
             database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+            addHeader("Authorization", "Bearer $token")
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(USER))
+            setBody(Json.encodeToString(UserRegistrationRequest(USER.email)))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
         }

@@ -9,7 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.Organization
 import model.OrganizationRegistration
-import model.User
+import model.user.User
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
@@ -130,7 +130,7 @@ class OrganizationTest {
     fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH/") {
             val orgId = database.insertOrganization(ORGANIZATION)
-            database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",false, orgId, null, false))
+            database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",false, "", orgId, null, false))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email@email.cz", "aaAA11aa")))
         }) {

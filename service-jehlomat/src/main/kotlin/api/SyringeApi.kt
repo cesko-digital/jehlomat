@@ -11,7 +11,7 @@ import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
 import model.pagination.ensureValidity
 import model.syringe.*
-import model.toUserInfo
+import model.user.toUserInfo
 import services.DatabaseService
 import services.GeneralValidator
 import services.MailerService
@@ -56,7 +56,7 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             teamsInLocation.forEach {
                 val organization = database.selectOrganizationById(it.organizationId)
                 val admin = database.findAdmin(organization!!)
-                mailer.sendSyringeFinding(organization, admin.toUserInfo(), syringeId)
+                mailer.sendSyringeFinding(organization, admin.email, syringeId)
             }
 
             call.respond(HttpStatusCode.Created, SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty()))
