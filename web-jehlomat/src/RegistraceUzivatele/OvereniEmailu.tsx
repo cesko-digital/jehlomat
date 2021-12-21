@@ -53,7 +53,7 @@ export default function OvereniEmailu() {
         <SecondaryIcon icon={faEnvelope} size="3x" />
         <InfoText>Zaslali jsme vám ověřovací email na adresu TBD. 
           Pro dokončení registrace klikněte na link v e-mailu.</InfoText>
-        <Link to="/">
+        <Link to="/uzivatel/novy">
           <SecondaryButton text="Zpět na přihlášení" />
         </Link>
       </Body>
