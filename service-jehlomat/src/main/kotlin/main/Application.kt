@@ -12,6 +12,8 @@ import io.ktor.features.*
 import io.ktor.http.content.*
 import io.ktor.jackson.*
 import io.ktor.response.*
+import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -41,6 +43,13 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused", "UNUSED_PARAMETER") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+
+    install(CORS){
+        header(HttpHeaders.ContentType)
+        header("key")
+        anyHost()
+    }
+
 
     install(ContentNegotiation) {
         jackson {
