@@ -32,6 +32,10 @@ export DATABASE_PORT=5432
 export DATABASE_USERNAME=jehlomat
 export PGPASSWORD=<YOUR POSTGRES PASSWORD>
 export DATABASE_NAME=jehlomat
+export JWT_ISSUER=jehlomat_local
+export JWT_AUDIENCE=jehlomat_local_audience
+export JWT_REALM=jehlomat_local_realm
+
 ```
 6) Run application
 ```shell
