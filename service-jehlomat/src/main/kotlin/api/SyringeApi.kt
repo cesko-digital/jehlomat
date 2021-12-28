@@ -1,24 +1,24 @@
 package api
 
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import model.CSVExportSchema
+import model.Role
 import model.Syringe
 import model.pagination.OrderByDefinition
 import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
 import model.pagination.ensureValidity
 import model.syringe.*
-import model.user.toUserInfo
-import services.DatabaseService
-import services.GeneralValidator
-import services.MailerService
+import services.*
 import utils.isValidMail
 
 
-fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
+fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
     return route("/") {
         post("search") {
@@ -32,6 +32,42 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
             val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
             call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
+        }
+
+        authenticate(JWT_CONFIG_NAME) {
+
+            post("export") {
+                val loggedInUser = jwtManager.getLoggedInUser(call, database)
+                val user = database.selectUserById(loggedInUser.id)
+                val organization = user?.let { it1 -> database.selectOrganizationById(it1.organizationId) }
+                val roles = PermissionService.determineRoles(loggedInUser, organization)
+                if (!roles.contains(Role.OrgAdmin) && !roles.contains(Role.SuperAdmin)) {
+                    call.respond(HttpStatusCode.Forbidden, "Only admin or superadmin can export database")
+                    return@post
+                }
+
+                val request = call.receive<SyringeFilter>()
+
+                val organizationId = if (roles.contains(Role.SuperAdmin)) {
+                    null
+                } else {
+                    database.selectUserById(loggedInUser.id)?.organizationId
+                }
+
+                val output = database.selectSyringes(request, organizationId).map {it.toString()}.joinToString ("\n")
+
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, "export.csv")
+                        .toString()
+                )
+
+                call.respondText(
+                    text = CSVExportSchema.header() + "\n" + output,
+                    contentType = ContentType.Text.CSV,
+                    status = HttpStatusCode.OK,
+                )
+            }
         }
 
         post {

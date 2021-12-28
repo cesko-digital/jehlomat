@@ -38,6 +38,7 @@ class DatabaseService(
     private val syringeCreatedByAlias = UserTable.aliased("uCreatedBy")
     private val syringeReservedByAlias = UserTable.aliased("uReservedBy")
     private val syringeDemolishedByAlias = UserTable.aliased("uDemolishedBy")
+    private val teamTableAlias = TeamTable.aliased("teamAlias")
 
     private val syringeSelectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
 
@@ -126,6 +127,48 @@ class DatabaseService(
                 it.toDsl(mapOf(Pair(OrderBySyringeColumn.CREATED_BY, syringeCreatedByAlias)))
             }.toList())
             .map(mapSyringeRow)
+    }
+
+    fun selectSyringes(filter: SyringeFilter, organizationId: Int?): List<CSVExportSchema> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias, organizationId)
+
+        val selectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
+        selectColumns.addAll(SyringeTable.columns)
+        selectColumns.addAll(LocationTable.columns)
+        selectColumns.addAll(syringeCreatedByAlias.columns)
+        selectColumns.addAll(syringeDemolishedByAlias.columns)
+        selectColumns.addAll(OrganizationTable.columns)
+        selectColumns.addAll(teamTableAlias.columns)
+
+        return databaseInstance.from(SyringeTable)
+            .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
+            .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
+            .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
+            .leftJoin(OrganizationTable, syringeCreatedByAlias.organizationId eq OrganizationTable.organizationId)
+            .leftJoin(teamTableAlias, teamTableAlias.teamId eq syringeCreatedByAlias.teamId)
+            .select(selectColumns)
+            .where { filterDsl }
+            .orderBy(SyringeTable.id.asc())
+            .map { row ->
+                CSVExportSchema(
+                    id = row[SyringeTable.id]!!,
+                    createdTimestamp = row[SyringeTable.createdAt]!!,
+                    createdByEmail = row[syringeCreatedByAlias.email]!!,
+                    createdByUsername = row[syringeCreatedByAlias.username]!!,
+                    destroyedByEmail = row[syringeDemolishedByAlias.email],
+                    destroyedByUsername = row[syringeDemolishedByAlias.username],
+                    destroyedTimestamp = row[SyringeTable.demolishedAt],
+                    demolishingType = Demolisher.valueOf(row[SyringeTable.demolisherType]!!).czechName(),
+                    count = row[SyringeTable.count],
+                    gpsCoordinates = row[SyringeTable.gpsCoordinates],
+                    okres = getLocationName(row[LocationTable.okres]!!, "sph_okres"),
+                    mc = getLocationName(row[LocationTable.mestka_cast]!!, "sph_mc"),
+                    obec = getLocationName(row[LocationTable.obec]!!, "sph_obec"),
+                    destroyed = if(row[SyringeTable.demolished]!!) "ANO" else "NE",
+                    teamName = row[teamTableAlias.name],
+                    organizationName =row[OrganizationTable.name]!!
+                )
+            }
     }
 
     fun selectUserById(id: Int): User? {
@@ -403,6 +446,29 @@ class DatabaseService(
                 }
             }
         }
+    }
+
+    private fun getLocationName(locationId: String, table: String): String {
+        val mapTableToColumnName = mapOf(
+            "sph_okres" to "nazev_lau1",
+            "sph_obec" to "nazev_lau2",
+            "sph_mc" to "nazev_mc"
+        )
+
+        val mapTableToId = mapOf(
+            "sph_okres" to "kod_lau1",
+            "sph_obec" to "kod_lau2",
+            "sph_mc" to "kod_mc"
+        )
+
+        return databaseInstance.useConnection { conn ->
+            val sql = "SELECT ${mapTableToColumnName[table]} FROM $table WHERE ${mapTableToId[table]} = '$locationId'"
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map {
+                    it.getString(1)
+                }
+            }
+        }.first()
     }
 
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {

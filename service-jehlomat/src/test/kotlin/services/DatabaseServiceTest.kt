@@ -1,8 +1,11 @@
 package services
 
 import main.team
-import main.user
 import model.*
+import model.syringe.SyringeFilter
+import model.syringe.SyringeFinder
+import model.syringe.SyringeFinderType
+import model.syringe.SyringeStatus
 import model.user.User
 import model.user.toUserInfo
 import org.junit.After
@@ -110,6 +113,89 @@ class DatabaseServiceTest {
         val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam!!.location.id ), id = exactTeamId)
 
         assertEquals(expectedTeam, actualTeam)
+    }
+
+    @Test
+    fun testSelectSyringes() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        val syringeId = database.insertSyringe(syringeToCreate)
+
+        val syringeFilter = SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(0, 1),
+            createdBy = null,
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        )
+
+        val selectedSyringes = database.selectSyringes(syringeFilter, defaultOrgId)
+        assertEquals(
+            listOf(
+                CSVExportSchema(
+                    syringeId!!,
+                    0,
+                    user.email,
+                    user.username,
+                    null,
+                    null,
+                    null,
+                    "nálezce",
+                    syringeToCreate.count,
+                    syringeToCreate.gps_coordinates,
+                    "Plzeň-město",
+                    "Plzeň 3",
+                    "Plzeň",
+                    "NE",
+                    null,
+                    "defaultOrgName"
+                )
+            ), selectedSyringes)
+    }
+
+    @Test
+    fun testSelectSyringesBySuperAdminButDateNotMatches() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        database.insertSyringe(syringeToCreate)
+
+        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(1, 2),
+            createdBy = null,
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        ), null))
+    }
+
+    @Test
+    fun testSelectSyringesBySuperAdminButCreatedAtNotMatches() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        database.insertSyringe(syringeToCreate)
+
+        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(0, 1),
+            createdBy = SyringeFinder(0, SyringeFinderType.USER),
+            demolishedAt = null,
+            status = SyringeStatus.WAITING
+        ), null))
     }
 
     @Test

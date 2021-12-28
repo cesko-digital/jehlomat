@@ -30,7 +30,7 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
     companion object : UserTable(null)
     override fun aliased(alias: String) = UserTable(alias)
 
-    val userId = int("user_id").primaryKey();
+    val userId = int("user_id").primaryKey()
     val email = varchar("email")
     val username = varchar("username")
     val password = varchar("password")
@@ -60,7 +60,10 @@ object OrganizationTable: BaseTable<Organization>("organizations") {
     )
 }
 
-object TeamTable: Table<Nothing>("teams") {
+open class TeamTable(alias: String?) : Table<Nothing>("teams", alias) {
+    companion object : TeamTable(null)
+    override fun aliased(alias: String) = TeamTable(alias)
+
     val teamId = int("team_id").primaryKey()
     val name = varchar("name")
     val organization_id = int("organization_id")
