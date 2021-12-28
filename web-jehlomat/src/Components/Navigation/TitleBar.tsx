@@ -1,11 +1,10 @@
-import {FC, MouseEventHandler} from "react";
-import * as s from "./TitleBarStyles"
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {NavigationTitle} from "../Utils/Typography";
+import { FC, MouseEventHandler } from "react";
+import * as s from "./TitleBarStyles";
+import { NavigationTitle } from "../Utils/Typography";
+import { IconButton } from "@mui/material";
 
 interface ITitleBar {
-    icon?: IconDefinition | undefined
+    icon?: any | undefined
     onIconClick?: MouseEventHandler | undefined
 }
 
@@ -21,13 +20,15 @@ With just title
 
  */
 
-const TitleBar: FC<ITitleBar> = ({icon, children, onIconClick}) => {
+const TitleBar: FC<ITitleBar> = ({ icon, children, onIconClick }) => {
     return <s.Container>
-        <s.GlobalBody/>
+        <s.GlobalBody />
         {icon &&
-        <s.NavIcon onClick={onIconClick}>
-            <FontAwesomeIcon icon={icon} inverse/>
-        </s.NavIcon>
+            <s.NavIcon onClick={onIconClick}>
+                <IconButton aria-label="Zpět">
+                    {icon}
+                </IconButton>
+            </s.NavIcon>
         }
         <s.Content isCentered={!icon}>
             <NavigationTitle>{children}</NavigationTitle>
