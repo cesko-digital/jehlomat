@@ -44,13 +44,13 @@ class DatabaseServiceTest {
     @Test
     fun testGetObec() {
         val actualObec = database.getObec("17.2825351 49.6602072")
-        assertEquals("500852", actualObec)
+        assertEquals(500852, actualObec)
     }
 
     @Test
     fun testGetMC() {
         val actualObec = database.getMC("13.3719999 49.7278823")
-        assertEquals("546003", actualObec)
+        assertEquals(546003, actualObec)
     }
 
     @Test
@@ -62,7 +62,7 @@ class DatabaseServiceTest {
     @Test
     fun testGetNone() {
         val actualObec = database.getObec("00.0000000 00.0000000")
-        assertEquals("", actualObec)
+        assertEquals(-1, actualObec)
     }
 
     @Test
@@ -99,10 +99,10 @@ class DatabaseServiceTest {
 
     @Test
     fun testResolveNearestTeam() {
-        val exactTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="546003")
+        val exactTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=546003)
         val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
 
-        val obecTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="559199")
+        val obecTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=559199)
         val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
 
         val exactTeamId = database.insertTeam(exactTeam)
@@ -218,9 +218,9 @@ class DatabaseServiceTest {
     fun testSelectAllLocations() {
         assertEquals(
             listOf(
-                Location(id=0, okres="CZ0323", obec="554791", mestkaCast="546003"),
-                Location(id=0, okres="CZ0323", obec="554791", mestkaCast=""),
-                Location(id=0, okres="CZ0323", obec="", mestkaCast="")
+                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=546003),
+                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=-1),
+                Location(id=0, okres="CZ0323", obec=-1, mestkaCast=-1)
             ),
             database.getLocationCombinations("13.3719999 49.7278823")
         )

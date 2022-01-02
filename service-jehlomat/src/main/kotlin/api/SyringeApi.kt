@@ -38,9 +38,7 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
 
             post("export") {
                 val loggedInUser = jwtManager.getLoggedInUser(call, database)
-                val user = database.selectUserById(loggedInUser.id)
-                val organization = user?.let { it1 -> database.selectOrganizationById(it1.organizationId) }
-                val roles = PermissionService.determineRoles(loggedInUser, organization)
+                val roles = PermissionService.determineRoles(loggedInUser, loggedInUser)
                 if (!roles.contains(Role.OrgAdmin) && !roles.contains(Role.SuperAdmin)) {
                     call.respond(HttpStatusCode.Forbidden, "Only admin or superadmin can export database")
                     return@post
@@ -51,10 +49,10 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 val organizationId = if (roles.contains(Role.SuperAdmin)) {
                     null
                 } else {
-                    database.selectUserById(loggedInUser.id)?.organizationId
+                    loggedInUser.organizationId
                 }
 
-                val output = database.selectSyringes(request, organizationId).map {it.toString()}.joinToString ("\n")
+                val output = database.selectSyringes(request, organizationId).joinToString("\n") { it.toString() }
 
                 call.response.header(
                     HttpHeaders.ContentDisposition,

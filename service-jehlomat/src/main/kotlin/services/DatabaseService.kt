@@ -19,6 +19,7 @@ import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
+import java.util.stream.Stream
 import kotlin.streams.toList
 
 
@@ -139,9 +140,15 @@ class DatabaseService(
         selectColumns.addAll(syringeDemolishedByAlias.columns)
         selectColumns.addAll(OrganizationTable.columns)
         selectColumns.addAll(teamTableAlias.columns)
+        selectColumns.addAll(OkresTable.columns)
+        selectColumns.addAll(ObecTable.columns)
+        selectColumns.addAll(MCTable.columns)
 
         return databaseInstance.from(SyringeTable)
             .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
+            .innerJoin(OkresTable, OkresTable.kod_lau1 eq LocationTable.okres)
+            .innerJoin(ObecTable, ObecTable.kod_lau2 eq LocationTable.obec)
+            .innerJoin(MCTable, MCTable.kod_mc eq LocationTable.mestka_cast)
             .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
             .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
             .leftJoin(OrganizationTable, syringeCreatedByAlias.organizationId eq OrganizationTable.organizationId)
@@ -161,9 +168,9 @@ class DatabaseService(
                     demolishingType = Demolisher.valueOf(row[SyringeTable.demolisherType]!!).czechName(),
                     count = row[SyringeTable.count],
                     gpsCoordinates = row[SyringeTable.gpsCoordinates],
-                    okres = getLocationName(row[LocationTable.okres]!!, "sph_okres"),
-                    mc = getLocationName(row[LocationTable.mestka_cast]!!, "sph_mc"),
-                    obec = getLocationName(row[LocationTable.obec]!!, "sph_obec"),
+                    okres = row[OkresTable.nazev_lau1]!!,
+                    mc = row[MCTable.nazev_mc]!!,
+                    obec = row[ObecTable.nazev_lau2]!!,
                     destroyed = if(row[SyringeTable.demolished]!!) "ANO" else "NE",
                     teamName = row[teamTableAlias.name],
                     organizationName =row[OrganizationTable.name]!!
@@ -411,15 +418,15 @@ class DatabaseService(
             }
         }
 
-        return names.firstOrNull() ?: ""
+        return names.firstOrNull() ?: if (table == "sph_okres") "" else "-1"
     }
 
-    fun getObec(gpsCoordinates: String): String {
-        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2")
+    fun getObec(gpsCoordinates: String): Int {
+        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2").toInt()
     }
 
-    fun getMC(gpsCoordinates: String): String {
-        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc")
+    fun getMC(gpsCoordinates: String): Int {
+        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc").toInt()
     }
 
     fun getOkres(gpsCoordinates: String): String {
@@ -478,12 +485,12 @@ class DatabaseService(
 
         return listOfNotNull(
             Location(0, okres, obec, mc),
-            Location(0, okres, obec, ""),
-            Location(0, okres, "", ""),
+            Location(0, okres, obec, -1),
+            Location(0, okres, -1, -1),
         )
     }
 
-    fun insertLocation(district: String, locality: String, town:String): Location {
+    fun insertLocation(district: String, locality: Int, town: Int): Location {
         val id = databaseInstance.insertOrUpdateReturning(LocationTable, LocationTable.id) {
             set(it.mestka_cast, locality)
             set(it.okres, district)
@@ -506,7 +513,7 @@ class DatabaseService(
         return selectLocation(district, locality, town)
     }
 
-    private fun selectLocation(district: String, locality: String, town: String): Location? {
+    private fun selectLocation(district: String, locality: Int, town: Int): Location? {
         return (selectLocationInner((LocationTable.mestka_cast eq locality) and (LocationTable.obec eq town) and (LocationTable.okres eq district))
             ?: run { selectLocationInner((LocationTable.obec eq town) and (LocationTable.okres eq district)) }
             ?: run { selectLocationInner(LocationTable.okres eq district) })

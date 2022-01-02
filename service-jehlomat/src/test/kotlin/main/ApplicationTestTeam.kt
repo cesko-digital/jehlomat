@@ -20,7 +20,7 @@ const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 val TEAM = Team(
     0,
     name ="ceska jehlova",
-    location = Location(0,"Tyn nad Vltavou", "Bukovina", ""),
+    location = Location(0,"Tyn nad Vltavou", 10, 11),
     organizationId = 1
 )
 
@@ -59,8 +59,8 @@ class TeamTest {
   "location" : {
     "id" : ${locationId},
     "okres" : "Tyn nad Vltavou",
-    "obec" : "Bukovina",
-    "mestkaCast" : ""
+    "obec" : 10,
+    "mestkaCast" : 11
   },
   "organizationId" : """ + defaultOrgId + """
 }""",
@@ -174,7 +174,7 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeamNewLocation() = withTestApplication(Application::module) {
-        val newTeam = TEAM.copy(organizationId = defaultOrgId,location = Location(0, okres="CZ0323", obec="554791", mestkaCast="546003"))
+        val newTeam = TEAM.copy(organizationId = defaultOrgId,location = Location(0, okres="CZ0323", obec=554791, mestkaCast=546003))
         var teamId = 0
         val token = loginUser(USER.email, USER.password)
 
