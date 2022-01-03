@@ -3,40 +3,55 @@ import { Formik, Form, FormikHelpers } from 'formik';
 import TextInput from '../Components/Inputs/TextInput/TextInput';
 import PrimaryButton from '../Components/Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import API from '../config/baseURL';
 import { AxiosResponse } from 'axios';
 
 interface IRegistraceOrganizace { }
 
-interface Values {
+interface IValues {
     organizace: string;
     email: string;
     heslo: string;
     hesloConfirm: string;
 }
 
+interface IOrganization {
+    name: string;
+    email: string;
+    password: string;
+}
+
 const validationSchema = yup.object({
     organizace: yup.string().required('Název organizace je povinné pole'),
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
     heslo: yup.string()
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/,
+            "Heslo musí obsahovat číslo, velké a malé písmeno"
+        )
         .min(8, 'Heslo musí být 8 znaků dlouhé')
         .required('Heslo je povinné pole'),
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná')
 });
 
-const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
+const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({ }) => {
     let history = useHistory();
     return (
         <>
             <Formik
                 initialValues={{ organizace: '', email: '', heslo: '', hesloConfirm: '' }}
                 validationSchema={validationSchema}
-                onSubmit={async (values: Values, { setErrors}) => {
+                onSubmit={async (values: IValues, { setErrors }) => {
                     try {
-                        const response:AxiosResponse<any> = await API.post("/api/v1/jehlomat/organization", values);
+                        const organizace:IOrganization = {
+                            name: values.organizace,
+                            email: values.email,
+                            password: values.heslo,
+                        }
+                        const response: AxiosResponse<any> = await API.post("/api/v1/jehlomat/organization/", organizace);
                         const status = response.status;
-                        
+
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
                                 //for all success response;
@@ -46,7 +61,7 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
                             case status === 409: {
                                 //for validation error; 
                                 const fieldName = response.data.fieldName
-                                setErrors({[fieldName]: response.data.status})
+                                setErrors({ [fieldName]: response.data.status })
                                 break;
                             }
                             default: {
@@ -54,14 +69,14 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
                                 break;
                             }
                         }
-                    } catch(error: any) {
+                    } catch (error: any) {
                         //link to error page
                     }
-                    
-                    
+
+
                 }}
             >
-                {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid}) => {
+                {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => {
                     return (
                         <Form onSubmit={handleSubmit}>
                             <TextInput
@@ -109,7 +124,7 @@ const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
                                 required={true}
                                 error={touched.hesloConfirm && Boolean(errors.hesloConfirm) ? errors.hesloConfirm : undefined}
                             />
-                            <PrimaryButton id="submit" text="Zalozit" type="submit" disabled={!isValid}/>
+                            <PrimaryButton id="submit" text="Založit" type="submit" disabled={!isValid} />
                         </Form>
                     );
                 }}

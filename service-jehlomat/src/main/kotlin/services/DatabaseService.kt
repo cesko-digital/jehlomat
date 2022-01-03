@@ -2,166 +2,187 @@ package services
 
 import api.*
 import model.*
+import model.pagination.OrderByDefinition
+import model.pagination.PageInfo
+import model.pagination.toDsl
+import model.syringe.SyringeFilter
+import model.syringe.OrderBySyringeColumn
+import model.user.User
+import model.user.UserInfo
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
+import org.ktorm.expression.SqlFormatter
 import org.ktorm.schema.ColumnDeclaring
-import org.ktorm.support.postgresql.insertOrUpdate
+import org.ktorm.support.postgresql.PostgreSqlFormatter
+import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
+import kotlin.streams.toList
 
-
-interface DatabaseService {
-    fun insertSyringe(syringe: Syringe): String?
-    fun selectSyringeById(id: String): Syringe?
-    fun deleteSyringe(id: String)
-    fun updateSyringe(syringe: Syringe)
-    fun selectSyringes(): List<Syringe>
-    fun selectSyringes(
-        from: Long,
-        to: Long,
-        userId: Int?,
-        demolisher: Demolisher,
-        gpsCoordinates: String,
-        demolished: Boolean,
-    ): List<Syringe>
-
-    fun insertTeam(team: Team): Int
-    fun updateTeam(team: Team)
-    fun selectTeams(): List<Team>
-    fun selectTeamById(id: Int): Team?
-    fun selectTeamByName(name: String): Team?
-    fun resolveNearestTeam(gpsCoordinates: String): Team?
-    fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team>
-    fun getObec(gpsCoordinates: String): String
-    fun getMC(gpsCoordinates: String): String
-    fun getOkres(gpsCoordinates: String): String
-
-    fun insertUser(user: User): Int
-    fun updateUser(user: User)
-    fun selectUserById(id: Int): User?
-    fun selectUserByEmail(email: String): User?
-    fun findAdmin(organization: Organization): User
-
-    fun selectOrganizationById(id: Int): Organization?
-    fun selectOrganizationByName(name: String): Organization?
-    fun selectOrganizations(): List<Organization>
-    fun updateOrganization(organization: Organization)
-    fun insertOrganization(organization: Organization): Int
-    fun deleteOrganization(organization: Organization)
-
-    fun cleanLocation(): Int
-    fun cleanTeams(): Int
-    fun cleanUsers(): Int
-    fun cleanOrganizations(): Int
-    fun cleanSyringes(): Int
-
-    fun <T> useTransaction(func: () -> T): T
-}
 
 private const val NUMBER_OF_INSERT_SYRINGE_TRIES = 100
 
-class DatabaseServiceImpl(
+class DatabaseService(
     host: String = System.getenv("DATABASE_HOST"),
     port: String = System.getenv("DATABASE_PORT"),
     database: String = System.getenv("DATABASE_NAME"),
     user: String = System.getenv("DATABASE_USERNAME"),
     password: String = System.getenv("PGPASSWORD") ?: ""
-) : DatabaseService {
+) {
     private val databaseInstance = Database.connect(
         "jdbc:postgresql://$host:$port/$database", user = user, password = password
     )
-    private val syringeIdGenerator = SyringeIdGenerator()
 
-    override fun selectSyringeById(id: String): Syringe? {
-        return databaseInstance
-            .from(SyringeTable)
-            .select()
+    private val syringeCreatedByAlias = UserTable.aliased("uCreatedBy")
+    private val syringeReservedByAlias = UserTable.aliased("uReservedBy")
+    private val syringeDemolishedByAlias = UserTable.aliased("uDemolishedBy")
+
+    private val syringeSelectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
+
+    init {
+        syringeSelectColumns.addAll(SyringeTable.columns)
+        syringeSelectColumns.addAll(LocationTable.columns)
+        syringeSelectColumns.addAll(syringeCreatedByAlias.columns)
+        syringeSelectColumns.addAll(syringeReservedByAlias.columns)
+        syringeSelectColumns.addAll(syringeDemolishedByAlias.columns)
+    }
+
+    private val mapSyringeRow: (row: QueryRowSet) -> Syringe = { row ->
+        Syringe(
+            id = row[SyringeTable.id]!!,
+            createdAt = row[SyringeTable.createdAt]!!,
+            createdBy = mapUserInfoRow(row, syringeCreatedByAlias),
+            reservedTill = row[SyringeTable.reservedTill],
+            reservedBy = mapUserInfoRow(row, syringeReservedByAlias),
+            demolishedAt = row[SyringeTable.demolishedAt],
+            demolishedBy = mapUserInfoRow(row, syringeDemolishedByAlias),
+            photo = row[SyringeTable.photo]!!,
+            count = row[SyringeTable.count]!!,
+            note = row[SyringeTable.note] ?: "",
+            demolisherType = Demolisher.valueOf(row[SyringeTable.demolisherType]!!),
+            gps_coordinates = row[SyringeTable.gpsCoordinates]!!,
+            demolished = row[SyringeTable.demolished]!!,
+            location = mapLocationRow(row),
+        )
+    }
+
+    private val mapUserInfoRow: (row: QueryRowSet, table: UserTable) -> UserInfo? = { row, table ->
+        if (row[table.userId] != null) {
+            UserInfo(
+                id = row[table.userId]!!,
+                username = row[table.username]!!,
+                organizationId = row[table.organizationId]!!,
+                teamId = row[table.teamId],
+            )
+        } else {
+            null
+        }
+    }
+
+    private val mapUserRow: (row: QueryRowSet) -> User = { row ->
+       User(
+            id = row[UserTable.userId]!!,
+            email = row[UserTable.email]!!,
+            username = row[UserTable.username]!!,
+            password = row[UserTable.password]!!,
+            verified = row[UserTable.verified]!!,
+            verificationCode = row[UserTable.verificationCode]!!,
+            organizationId = row[UserTable.organizationId]!!,
+            teamId = row[UserTable.teamId],
+            isAdmin = row[UserTable.isAdmin]!!
+        )
+    }
+
+    private val syringeSelectCommonQuery = databaseInstance
+        .from(SyringeTable)
+        .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
+        .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
+        .leftJoin(syringeReservedByAlias, syringeReservedByAlias.userId eq SyringeTable.reservedBy)
+        .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
+        .select(syringeSelectColumns)
+
+    fun selectSyringeById(id: String): Syringe? {
+        return syringeSelectCommonQuery
             .where { SyringeTable.id eq id }
-            .map { row -> SyringeTable.createEntity(row) }
+            .map(mapSyringeRow)
             .firstOrNull()
     }
 
-    override fun selectSyringes(): List<Syringe> {
-        return databaseInstance
-            .from(SyringeTable)
-            .select()
+    fun selectSyringes(): List<Syringe> {
+        return syringeSelectCommonQuery
             .orderBy(SyringeTable.id.asc())
-            .map { row -> SyringeTable.createEntity(row) }
+            .map(mapSyringeRow)
     }
 
-    override fun selectSyringes(
-        from: Long,
-        to: Long,
-        userId: Int?,
-        demolisher: Demolisher,
-        gpsCoordinates: String,
-        demolished: Boolean,
-    ): List<Syringe> {
+    fun selectSyringes(filter: SyringeFilter, pageInfo: PageInfo, orderByList: List<OrderByDefinition<OrderBySyringeColumn>>): List<Syringe> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias)
 
-        var filter = (
-                (SyringeTable.timestamp greaterEq from)
-                and (SyringeTable.timestamp lessEq to)
-                and (SyringeTable.demolisherType eq demolisher.name)
-                and (gpsCoordinates.isBlank() or (SyringeTable.gpsCoordinates eq gpsCoordinates))
-                and (SyringeTable.demolished eq demolished)
-                )
-
-        if (userId != null) {
-            filter = filter and(SyringeTable.userId eq userId)
-        }
-
-        return databaseInstance
-            .from(SyringeTable)
-            .select()
-            .where { filter }
-            .orderBy(SyringeTable.id.asc())
-            .map { row -> SyringeTable.createEntity(row) }
+        return syringeSelectCommonQuery
+            .where { filterDsl }
+            .limit(pageInfo.index, pageInfo.size + 1)
+            .orderBy(orderByList.stream().map{
+                it.toDsl(mapOf(Pair(OrderBySyringeColumn.CREATED_BY, syringeCreatedByAlias)))
+            }.toList())
+            .map(mapSyringeRow)
     }
 
-    override fun selectUserById(id: Int): User? {
+    fun selectUserById(id: Int): User? {
         return databaseInstance
             .from(UserTable)
             .select()
             .where { UserTable.userId eq id }
-            .map { row -> UserTable.createEntity(row) }
+            .map(mapUserRow)
             .firstOrNull()
     }
 
-    override fun selectUserByEmail(email: String): User? {
+    fun selectUserByEmail(email: String): User? {
         return databaseInstance
             .from(UserTable)
             .select()
             .where { UserTable.email eq email }
-            .map { row -> UserTable.createEntity(row) }
+            .map(mapUserRow)
             .firstOrNull()
     }
 
-    override fun findAdmin(organization: Organization): User {
+    fun selectUserByUsername(username: String): User? {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { UserTable.username eq username }
+            .map(mapUserRow)
+            .firstOrNull()
+    }
+
+    fun findAdmin(organization: Organization): User {
         return databaseInstance
             .from(UserTable)
             .select()
             .where { (UserTable.organizationId eq organization.id) and (UserTable.isAdmin eq true) }
-            .map { row -> UserTable.createEntity(row) }
+            .map(mapUserRow)
             .first()
+    }
+
+    private val mapLocationRow: (row: QueryRowSet) -> Location = { row ->
+        Location(
+            id = row[LocationTable.id]!!,
+            obec = row[LocationTable.obec]!!,
+            okres = row[LocationTable.okres]!!,
+            mestkaCast = row[LocationTable.mestka_cast]!!,
+        )
     }
 
     private val mapTeamRow: (row: QueryRowSet) -> Team = { row ->
         Team(
             id = row[TeamTable.teamId]!!,
             name = row[TeamTable.name]!!,
-            location = Location(
-                id = row[LocationTable.id]!!,
-                obec = row[LocationTable.obec]!!,
-                okres = row[LocationTable.okres]!!,
-                mestkaCast = row[LocationTable.mestka_cast]!!,
-            ),
+            location = mapLocationRow(row),
             organizationId = row[TeamTable.organization_id]!!
         )
     }
 
-    override fun selectTeams(): List<Team> {
+    fun selectTeams(): List<Team> {
         return databaseInstance
             .from(TeamTable)
             .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
@@ -170,7 +191,7 @@ class DatabaseServiceImpl(
             .map(mapTeamRow)
     }
 
-    override fun selectTeamById(id: Int): Team? {
+    fun selectTeamById(id: Int): Team? {
         return databaseInstance
             .from(TeamTable)
             .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
@@ -180,7 +201,7 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
-    override fun selectTeamByName(name: String): Team? {
+    fun selectTeamByName(name: String): Team? {
         return databaseInstance
             .from(TeamTable)
             .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
@@ -190,7 +211,7 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
-    override fun selectOrganizations(): List<Organization> {
+    fun selectOrganizations(): List<Organization> {
         return databaseInstance
             .from(OrganizationTable)
             .select()
@@ -198,18 +219,24 @@ class DatabaseServiceImpl(
             .map { row -> OrganizationTable.createEntity(row) }
     }
 
-    override fun updateUser(user: User) {
+    fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
-            set(it.email, user.email)
-            set(it.password, user.password.hashPassword())
-            set(it.verified, user.verified)
-            set(it.organizationId, user.organizationId)
-            set(it.teamId, user.teamId)
-            set(it.isAdmin, user.isAdmin)
+            updateUserRecord(this, it, user)
         }
     }
 
-    override fun selectOrganizationById(id: Int): Organization? {
+    private fun updateUserRecord(builder: AssignmentsBuilder, it: UserTable, user: User) {
+        builder.set(it.email, user.email)
+        builder.set(it.password, user.password.hashPassword())
+        builder.set(it.username, user.username)
+        builder.set(it.verified, user.verified)
+        builder.set(it.verificationCode, user.verificationCode)
+        builder.set(it.organizationId, user.organizationId)
+        builder.set(it.teamId, user.teamId)
+        builder.set(it.isAdmin, user.isAdmin)
+    }
+
+    fun selectOrganizationById(id: Int): Organization? {
         return databaseInstance
             .from(OrganizationTable)
             .select()
@@ -218,7 +245,7 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
-    override fun selectOrganizationByName(name: String): Organization? {
+    fun selectOrganizationByName(name: String): Organization? {
         return databaseInstance
             .from(OrganizationTable)
             .select()
@@ -227,14 +254,14 @@ class DatabaseServiceImpl(
             .firstOrNull()
     }
 
-    override fun updateOrganization(organization: Organization) {
+    fun updateOrganization(organization: Organization) {
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
             set(it.verified, organization.verified)
         }
     }
 
-    override fun updateTeam(team: Team) {
+    fun updateTeam(team: Team) {
         databaseInstance.update(TeamTable) {
             set(it.name, team.name)
             set(it.location_id, getLocationId(team))
@@ -242,20 +269,13 @@ class DatabaseServiceImpl(
         }
     }
 
-    override fun insertSyringe(syringe: Syringe): String? {
+    fun insertSyringe(syringe: Syringe): String? {
         for (i in 1 .. NUMBER_OF_INSERT_SYRINGE_TRIES) {
-            val id = syringeIdGenerator.generateId()
+            val id = RandomIdGenerator.generateSyringeId()
             try {
                 databaseInstance.insert(SyringeTable) {
                     set(it.id, id)
-                    set(it.timestamp, syringe.timestamp)
-                    set(it.userId, syringe.userId)
-                    set(it.photo, syringe.photo)
-                    set(it.count, syringe.count)
-                    set(it.note, syringe.note)
-                    set(it.demolisherType, syringe.demolisher.name)
-                    set(it.gpsCoordinates, syringe.gps_coordinates)
-                    set(it.demolished, syringe.demolished)
+                    updateSyringeRecord(this, it, syringe)
                 }
                 return id
             } catch (e: PSQLException) {
@@ -268,43 +288,47 @@ class DatabaseServiceImpl(
         return null
     }
 
-    override fun updateSyringe(syringe: Syringe) {
+    fun updateSyringe(syringe: Syringe) {
         databaseInstance.update(SyringeTable) {
-            set(it.id, syringe.id)
-            set(it.timestamp, syringe.timestamp)
-            set(it.userId, syringe.userId)
-            set(it.photo, syringe.photo)
-            set(it.count, syringe.count)
-            set(it.note, syringe.note)
-            set(it.demolisherType, syringe.demolisher.name)
-            set(it.gpsCoordinates, syringe.gps_coordinates)
-            set(it.demolished, syringe.demolished)
+            updateSyringeRecord(this, it, syringe)
         }
     }
 
-    override fun insertUser(user: User): Int {
+    private fun updateSyringeRecord(builder: AssignmentsBuilder, it: SyringeTable, syringe: Syringe) {
+        builder.set(it.createdAt, syringe.createdAt)
+        builder.set(it.createdBy, syringe.createdBy?.id)
+        builder.set(it.reservedTill, syringe.reservedTill)
+        builder.set(it.reservedBy, syringe.reservedBy?.id)
+        builder.set(it.demolishedAt, syringe.demolishedAt)
+        builder.set(it.demolishedBy, syringe.demolishedBy?.id)
+        builder.set(it.demolisherType, syringe.demolisherType.name)
+        builder.set(it.photo, syringe.photo)
+        builder.set(it.count, syringe.count)
+        builder.set(it.note, syringe.note)
+        builder.set(it.gpsCoordinates, syringe.gps_coordinates)
+        builder.set(it.demolished, syringe.demolished)
+        builder.set(it.locationId, syringe.location.id)
+    }
+
+
+    fun insertUser(user: User): Int {
         return databaseInstance.insertAndGenerateKey(UserTable) {
-            set(it.email, user.email)
-            set(it.password, user.password.hashPassword())
-            set(it.verified, user.verified)
-            set(it.organizationId, user.organizationId)
-            set(it.teamId, user.teamId)
-            set(it.isAdmin, user.isAdmin)
+            updateUserRecord(this, it, user)
         } as Int
     }
 
-    override fun insertOrganization(organization: Organization): Int {
+    fun insertOrganization(organization: Organization): Int {
         return databaseInstance.insertAndGenerateKey(OrganizationTable) {
             set(it.name, organization.name)
             set(it.verified, organization.verified)
         } as Int
     }
 
-    override fun deleteOrganization(organization: Organization) {
+    fun deleteOrganization(organization: Organization) {
         databaseInstance.delete(OrganizationTable) { it.name eq organization.name }
     }
 
-    override fun insertTeam(team: Team): Int {
+    fun insertTeam(team: Team): Int {
         return databaseInstance.insertAndGenerateKey(TeamTable) {
             set(it.organization_id, team.organizationId)
             set(it.location_id, getLocationId(team))
@@ -313,12 +337,7 @@ class DatabaseServiceImpl(
     }
 
     private fun getLocationId(team: Team): Int {
-        databaseInstance.insertOrUpdate(LocationTable) {
-            set(it.mestka_cast, team.location.mestkaCast)
-            set(it.okres, team.location.okres)
-            set(it.obec, team.location.obec)
-            onConflict(it.mestka_cast, it.okres, it.obec) { doNothing() }
-        }
+        insertLocation(team.location.okres, team.location.mestkaCast, team.location.obec)
 
         return databaseInstance
             .from(LocationTable)
@@ -331,7 +350,7 @@ class DatabaseServiceImpl(
             .map { it.getInt("location_id") }.first()
     }
 
-    override fun deleteSyringe(id: String) {
+    fun deleteSyringe(id: String) {
         databaseInstance.delete(SyringeTable) { it.id eq id }
     }
 
@@ -352,48 +371,102 @@ class DatabaseServiceImpl(
         return names.firstOrNull() ?: ""
     }
 
-    override fun getObec(gpsCoordinates: String): String {
-        return postgisLocation("sph_obec", gpsCoordinates, "nazev_lau2")
+    fun getObec(gpsCoordinates: String): String {
+        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2")
     }
 
-    override fun getMC(gpsCoordinates: String): String {
-        return postgisLocation("sph_mc", gpsCoordinates, "nazev_mc")
+    fun getMC(gpsCoordinates: String): String {
+        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc")
     }
 
-    override fun getOkres(gpsCoordinates: String): String {
-        return postgisLocation("sph_okres", gpsCoordinates, "nazev_lau1")
+    fun getOkres(gpsCoordinates: String): String {
+        return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1")
     }
 
-    fun selectLocation(gpsCoordinates: String): Location? {
-        fun query(condition: ColumnDeclaring<Boolean>): Location? {
-            return databaseInstance.from(LocationTable)
-                .select()
-                .where { condition }
-                .map { row ->
-                    Location(
-                        id = row.getInt("location_id"),
-                        okres = row.getString("okres")!!,
-                        obec = row.getString("obec")!!,
-                        mestkaCast = row.getString("mestka_cast")!!
+    fun getLocations(): List<Map<String, String>> {
+        val okres = getLocations("kod_lau1", "nazev_lau1", "sph_okres", "okres")
+        val obce = getLocations("kod_lau2", "nazev_lau2", "sph_obec", "obec")
+        val mc = getLocations("kod_mc", "nazev_mc", "sph_mc", "mc")
+        return okres + obce + mc
+    }
+
+    private fun getLocations(idColumn: String, nameColumn: String, table: String, type: String): List<Map<String, String>> {
+        return databaseInstance.useConnection { conn ->
+            val sql = "SELECT $idColumn, $nameColumn FROM $table"
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map {
+                    mapOf(
+                        "id" to it.getString(1),
+                        "name" to it.getString(2),
+                        "type" to type
                     )
                 }
-                .firstOrNull()
+            }
         }
+    }
 
+    fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
         val okres = getOkres(gpsCoordinates)
 
-        return (query((LocationTable.mestka_cast eq mc) and (LocationTable.obec eq obec) and (LocationTable.okres eq okres))
-            ?: run { query((LocationTable.obec eq obec) and (LocationTable.okres eq okres)) }
-            ?: run { query(LocationTable.okres eq okres) })
+        return listOfNotNull(
+            Location(0, okres, obec, mc),
+            Location(0, okres, obec, ""),
+            Location(0, okres, "", ""),
+        )
     }
 
-    override fun resolveNearestTeam(gpsCoordinates: String): Team? {
+    fun insertLocation(district: String, locality: String, town:String): Location {
+        val id = databaseInstance.insertOrUpdateReturning(LocationTable, LocationTable.id) {
+            set(it.mestka_cast, locality)
+            set(it.okres, district)
+            set(it.obec, town)
+            onConflict(it.mestka_cast, it.okres, it.obec) { doNothing() }
+        }
+
+        return if (id != null) {
+            selectLocationInner(LocationTable.id eq id)!!
+        } else {
+            selectLocation(district, locality, town)!!
+        }
+    }
+
+    private fun selectLocation(gpsCoordinates: String): Location? {
+        val town = getObec(gpsCoordinates)
+        val locality = getMC(gpsCoordinates)
+        val district = getOkres(gpsCoordinates)
+
+        return selectLocation(district, locality, town)
+    }
+
+    private fun selectLocation(district: String, locality: String, town: String): Location? {
+        return (selectLocationInner((LocationTable.mestka_cast eq locality) and (LocationTable.obec eq town) and (LocationTable.okres eq district))
+            ?: run { selectLocationInner((LocationTable.obec eq town) and (LocationTable.okres eq district)) }
+            ?: run { selectLocationInner(LocationTable.okres eq district) })
+    }
+
+    private fun selectLocationInner(condition: ColumnDeclaring<Boolean>): Location? {
+        return databaseInstance.from(LocationTable)
+            .select()
+            .where { condition }
+            .map { row -> mapLocationRow(row) }
+            .firstOrNull()
+    }
+
+    fun selectOrInsertLocation(gpsCoordinates: String): Location {
+        val town = getObec(gpsCoordinates)
+        val locality = getMC(gpsCoordinates)
+        val district = getOkres(gpsCoordinates)
+
+        return selectLocation(district, locality, town) ?: insertLocation(district, locality, town)
+    }
+
+    fun resolveNearestTeam(gpsCoordinates: String): Team? {
         return resolveTeamsInLocation(gpsCoordinates).firstOrNull()
     }
 
-    override fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team> {
+    fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team> {
         val location = selectLocation(gpsCoordinates) ?: return setOf()
 
         return databaseInstance
@@ -411,27 +484,31 @@ class DatabaseServiceImpl(
             .toHashSet()
     }
 
-    override fun cleanLocation(): Int {
+    fun cleanLocation(): Int {
         return databaseInstance.deleteAll(LocationTable)
     }
 
-    override fun cleanTeams(): Int {
+    fun cleanTeams(): Int {
         return databaseInstance.deleteAll(TeamTable)
     }
 
-    override fun cleanUsers(): Int {
+    fun cleanUsers(): Int {
         return databaseInstance.deleteAll(UserTable)
     }
 
-    override fun cleanOrganizations(): Int {
+    fun cleanOrganizations(): Int {
         return databaseInstance.deleteAll(OrganizationTable)
     }
 
-    override fun cleanSyringes(): Int {
+    fun cleanSyringes(): Int {
         return databaseInstance.deleteAll(SyringeTable)
     }
 
-    override fun <T> useTransaction(func: () -> T): T {
+    fun <T> useTransaction(func: () -> T): T {
         databaseInstance.useTransaction { return func.invoke() }
+    }
+
+    fun createSqlFormatter(): SqlFormatter {
+        return  PostgreSqlFormatter(databaseInstance, false, 0)
     }
 }

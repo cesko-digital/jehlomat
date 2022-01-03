@@ -4,14 +4,45 @@ info:
     Jehlomat REST api
   version: 0.0.2
   title: Jehlomat
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://swagger.io/terms/
   contact:
     email: radekludacka@gmail.com
 host: localhost:8082
 basePath: /api/v1/jehlomat
 schemes:
   - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
+  /login/:
+    post:
+      summary: Log in the application
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              password:
+                type: string
+      responses:
+        '200':
+          description: Created
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+        '401':
+          description: Name or password is wrong
   /organization/{id}:
     get:
       summary: Find organization by id
@@ -62,6 +93,8 @@ paths:
       description: ''
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -74,48 +107,23 @@ paths:
           description: Success
         '404':
           description: Organization not found
-  /syringe/all:
-    get:
-      summary: Get all syringes by parameters
-      description: Returns a single organization
+  /syringe/search:
+    post:
+      summary: Search syringes by parameters
+      description: Returns a list of syringes
       produces:
         - application/json
       parameters:
-        - name: from
-          in: query
-          description: Lower bound for timestamp
-          type: integer
-        - name: to
-          in: query
-          description: Upper bound for timestamp
-          type: integer
-        - name: email
-          in: query
-          description: User email
-          type: string
-        - name: demolisher
-          in: query
-          description: Who demolisher syringe
-          items:
-            type: string
-            enum:
-              - USER
-              - NO
-              - CITY_POLICE
-            default: NO
-        - name: gpsCoordinates
-          in: query
-          type: string
-        - name: demolished
-          in: query
-          type: boolean
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeSearchRequest'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Syringe'
-        '404':
-          description: Syringe not found
+            $ref: '#/definitions/SyringeSearchResponse'
   /syringe/:
     post:
       summary: Add a new syringe
@@ -187,11 +195,18 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: formData
-          name: email
-          type: string
-          description: Email to which the code should be sent
+        - name: id
+          in: path
+          description: Id of team to return
           required: true
+          type: integer
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
       responses:
         '204':
           description: Email succesfully sent
@@ -221,6 +236,8 @@ paths:
       summary: Add a new team
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -237,6 +254,8 @@ paths:
       summary: Update an existing team
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -273,13 +292,18 @@ paths:
       summary: Add a new user
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
-          description: User object that needs to be added
+          description: User email that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/User'
+            type: object
+            properties:
+              email:
+                type: string
       responses:
         '201':
           description: Created
@@ -289,6 +313,8 @@ paths:
       summary: Update an existing user
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -301,23 +327,90 @@ paths:
           description: Success
         '404':
           description: User not found
-  /verification/{id}:
+  /verification/organization:
     get:
       summary: Verifies organization
+      security:
+        - Bearer: []
       parameters:
-        - name: id
-          in: path
-          description: organization id to verify
-          required: true
+        - name: orgId
+          in: query
+          description: Organization id to verify
           type: integer
       responses:
         '200':
           description: successful operation
         '404':
           description: Organization not found
+  /verification/user:
+    post:
+      summary: Verify and finish user registration
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                description: a registration code
+                example: "df5dg3agh8h"
+              email:
+                type: string
+                description: user's email to verify
+                example: "jan@novak.cz"
+              username:
+                type: string
+                description: a civil name for the user
+                example: "Jan Novak"
+              password:
+                type: string
+                description: password to log in the application
+                example: "e5RT1a2fge"
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: User not found
+        '405':
+          description: Parameters violate requirements
+  /location/point:
+    get:
+      summary: Get combination of locations for gps coordinates
+      parameters:
+        - name: gps
+          in: query
+          description: GPS coordinates
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              locationList:
+                type: array
+                items:
+                  $ref: '#/definitions/Location'
+        '400':
+          description: Not supported format of GPS coordinates
+  /location/all:
+    get:
+      summary: Get available locations from database
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              locationList:
+                type: array
+                items:
+                  $ref: '#/definitions/LocationTriple'
 externalDocs:
   description: Find out more about Swagger
-  url: http://swagger.io
+  url: https://swagger.io
 definitions:
   UserInfo:
     type: object
@@ -325,6 +418,8 @@ definitions:
       id:
         type: integer
       email:
+        type: string
+      username:
         type: string
       verified:
         type: boolean
@@ -344,6 +439,9 @@ definitions:
       email:
         type: string
         example: example@example-user.org
+      username:
+        type: string
+        example: FrantaPepa1
       password:
         type: string
         example: Abcde123.
@@ -387,18 +485,118 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Organization'
+  SyringeSearchRequest:
+    type: object
+    properties:
+      filter:
+        type: object
+        properties:
+          locationIds:
+            type: array
+            items:
+              type: number
+          createdAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          createdBy:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              type:
+                type: string
+                enum:
+                  - USER
+                  - TEAM
+                  - ORGANIZATION
+                  - ANONYMOUS
+          demolishedAt:
+            type: object
+            properties:
+              from:
+                type: integer
+                example: 1637092279
+              to:
+                type: integer
+                example: 1637092279
+          status:
+            type: string
+            enum:
+              - WAITING
+              - RESERVED
+              - DEMOLISHED
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            column:
+              type: string
+              enum:
+                - TOWN
+                - CREATED_AT
+                - CREATED_BY
+                - DEMOLISHED_AT
+            direction:
+              type: string
+              enum:
+                - ASC
+                - DESC
+  SyringeSearchResponse:
+    type: object
+    properties:
+      syringeList:
+        type: array
+        items:
+          $ref: '#/definitions/Syringe'
+      pageInfo:
+        type: object
+        properties:
+          index:
+            type: integer
+            example: 0
+          size:
+            type: integer
+            example: 20
+          hasMore:
+            type: boolean
   Syringe:
     type: object
     properties:
       id:
         type: string
         example: "R4YFD1AC"
-      timestamp:
+      createdAt:
         type: integer
         example: 1637092279
-      userId:
+      createdBy:
+        $ref: '#/definitions/UserInfo'
+      reservedTill:
         type: integer
-        example: 0
+        example: 1637092279
+      reservedBy:
+        $ref: '#/definitions/UserInfo'
+      demolishedAt:
+        type: integer
+        example: 1637092279
+      demolishedBy:
+        $ref: '#/definitions/UserInfo'
       photo:
         type: string
         example: "nothing"
@@ -421,6 +619,8 @@ definitions:
       demolished:
         type: boolean
         example: false
+      location:
+        $ref: '#/definitions/Location'
   SyringeCreate:
     type: object
     properties:
@@ -437,13 +637,13 @@ definitions:
         example: 0
       okres:
         type: string
-        example: Plzeň-město
+        example: CZ0323
       obec:
         type: string
-        example: Plzeň
+        example: 554791
       mestkaCast:
         type: string
-        example: Plzeň 3
+        example: 546003
   Team:
     type: object
     properties:
@@ -461,13 +661,28 @@ definitions:
             example: 0
           okres:
             type: string
-            example: Plzeň-město
+            example: CZ0323
           obec:
             type: string
-            example: Plzeň
+            example: 554791
           mestkaCast:
             type: string
-            example: Plzeň 3
+            example: 546003
       organizationId:
         type: integer
         example: 0
+  LocationTriple:
+    type: object
+    properties:
+      id:
+        type: string
+        example: CZ0323
+      name:
+        type: string
+        example: 554791
+      type:
+        type: string
+        enum:
+          - obec
+          - okres
+          - mc

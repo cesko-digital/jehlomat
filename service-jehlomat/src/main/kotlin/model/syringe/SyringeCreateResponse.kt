@@ -1,4 +1,4 @@
-package model
+package model.syringe
 
 data class SyringeCreateResponse (
     val id: String,

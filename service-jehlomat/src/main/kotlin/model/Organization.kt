@@ -1,10 +1,12 @@
 package model
 
 import kotlinx.serialization.Serializable
+import utils.AuthRole
+import utils.UnchangeableByPut
 
 @Serializable
 data class Organization(
-    val id: Int,
-    val name: String,
-    val verified: Boolean
+    @UnchangeableByPut val id: Int,
+    @AuthRole(Role.OrgAdmin) val name: String,
+    @UnchangeableByPut val verified: Boolean
 )

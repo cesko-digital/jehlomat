@@ -43,3 +43,11 @@ fun String.isValidPassword(): Boolean {
 fun String.hashPassword(): String {
     return BCrypt.hashpw(this, BCrypt.gensalt())
 }
+
+fun String.isValidUsername(): Boolean {
+    return "^[A-Ža-ž0-9][A-Ža-ž\\s0-9\\-\\.]{2,}".toRegex().matches(this)
+}
+
+fun String.isValidCoordinates(): Boolean {
+    return "[0-9]{1,2}\\.[0-9]{5,7}\\s[0-9]{1,2}\\.[0-9]{5,7}".toRegex().matches(this)
+}

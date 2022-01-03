@@ -1,31 +1,28 @@
 package main
 
+import TestUtils
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import io.mockk.verify
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import model.*
+import model.pagination.OrderByDefinition
+import model.pagination.OrderByDirection
+import model.pagination.PageInfo
+import model.pagination.PageInfoResult
+import model.syringe.*
+import model.user.UserInfo
+import model.user.toUserInfo
 import org.junit.Test
 import services.DatabaseService
-import services.DatabaseServiceImpl
-import kotlin.test.BeforeTest
-import kotlin.test.AfterTest
-import kotlin.test.assertEquals
-import io.mockk.verify
 import services.MailerService
-
-val SYRINGE = Syringe(
-    "0",
-    1,
-    null,
-    photo = "",
-    count = 10,
-    "note",
-    Demolisher.NO,
-    "13.3719999 49.7278823",
-    demolished = false
-)
+import java.time.LocalDate
+import java.time.ZoneOffset
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 
 const val SYRINGE_API_PATH = "/api/v1/jehlomat/syringe"
 
@@ -35,8 +32,16 @@ class ApplicationTestSyringe {
     private var defaultOrgId: Int = 0
     private var defaultTeamId: Int = 0
     private var defaultUserId: Int = 0
-    var database: DatabaseService = DatabaseServiceImpl()
-    lateinit var mailerMock:MailerService
+    private var defaultUser: UserInfo? = null
+    private lateinit var defaultSyringe: Syringe
+    private lateinit var defaultLocation: Location
+    var database: DatabaseService = DatabaseService()
+    private lateinit var mailerMock:MailerService
+    private var searchFilter = SyringeFilterRequest(
+        SyringeFilter(setOf(), null, null, null, SyringeStatus.WAITING),
+        PageInfo(0, 10),
+        listOf(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
+    )
 
     @BeforeTest
     fun beforeEach() {
@@ -46,8 +51,29 @@ class ApplicationTestSyringe {
         database.cleanOrganizations()
         defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
         defaultTeamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
-        defaultUserId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = true))
+        defaultLocation = database.selectTeamById(defaultTeamId)?.location!!
+
+        val user1 = USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = true)
+        defaultUserId = database.insertUser(user1)
+        defaultUser = user1.copy(id = defaultUserId).toUserInfo()
         mailerMock = TestUtils.mockMailer()
+
+        defaultSyringe = Syringe(
+            "0",
+            1,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Demolisher.NO,
+            photo = "",
+            count = 10,
+            "note",
+            "13.3719999 49.7278823",
+            demolished = false,
+            location = defaultLocation
+        )
     }
 
     @AfterTest
@@ -59,100 +85,82 @@ class ApplicationTestSyringe {
     }
 
     @Test
-    fun testGetSyringes() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
+    fun testSearchSyringes() = withTestApplication(Application::module) {
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/search"){
+            database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(searchFilter))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             val actualSyringes = database.selectSyringes()
             assertEquals(
-                Json.encodeToString(listOf(SYRINGE.copy(id=actualSyringes[0].id, userId = defaultUserId, gps_coordinates = actualSyringes[0].gps_coordinates.replace(" ", "")))),
+                Json.encodeToString(SyringeFilterResponse(
+                    listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser)),
+                    PageInfoResult(0, 10, false)
+                )).replace(" ", ""),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
     @Test
     fun testSyringesFilterByAll() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?email=email@example.com&from=1&to=1&demolisher=NO&gps_coordinates=13.3719999 49.7278823&demolished=false"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
+        val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/search"){
+            database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, demolishedBy = defaultUser, demolishedAt = localSec))
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    searchFilter.copy(
+                        filter = SyringeFilter(
+                            locationIds = setOf(defaultLocation.id),
+                            createdAt = DateInterval(
+                                from = 0,
+                                to = Long.MAX_VALUE
+                            ),
+                            createdBy = SyringeFinder(
+                                id = defaultUser?.id!!,
+                                type = SyringeFinderType.USER
+                            ),
+                            demolishedAt = DateInterval(
+                                from = 0,
+                                to = Long.MAX_VALUE
+                            ),
+                            SyringeStatus.DEMOLISHED
+                        ),
+                        ordering = listOf(
+                            OrderByDefinition(OrderBySyringeColumn.TOWN, OrderByDirection.ASC),
+                            OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC),
+                            OrderByDefinition(OrderBySyringeColumn.CREATED_BY, OrderByDirection.ASC),
+                        )
+                    )
+                )
+            )
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             val actualSyringes = database.selectSyringes()
+
             assertEquals(
-                Json.encodeToString(listOf(SYRINGE.copy(id=actualSyringes[0].id, userId = defaultUserId, gps_coordinates = actualSyringes[0].gps_coordinates.replace(" ", "")))),
+                Json.encodeToString(SyringeFilterResponse(
+                    listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser, demolishedAt = localSec, demolishedBy = defaultUser)),
+                    PageInfoResult(0, 10, false)
+                )).replace(" ", ""),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
     @Test
-    fun testSyringesFilterByGPSCoordinates() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?gps_coordinates=11.1,11.1"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByUser() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?userId=0"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByFrom() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?from=2"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByTo() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?to=0"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByDemolisher() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?demolisher=CITY_POLICE"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
-    fun testSyringesFilterByDemolished() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/all?demolished=true"){
-            database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
-        }) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
     fun testGetSyringe() = withTestApplication(Application::module) {
-        database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
+        database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         val actualSyringes = database.selectSyringes()
 
         with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/${actualSyringes[0].id}")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
-                Json.encodeToString(SYRINGE.copy(id=actualSyringes[0].id, userId = defaultUserId, gps_coordinates = actualSyringes[0].gps_coordinates.replace(" ", ""))),
+                Json.encodeToString(defaultSyringe.copy(
+                    id=actualSyringes[0].id,
+                    createdBy = defaultUser
+                )).replace(" ", ""),
                 response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
@@ -167,17 +175,17 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPutSyringe() = withTestApplication(Application::module) {
-        val syringeId = database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE.copy(id = syringeId!!, userId = defaultUserId, demolisher = Demolisher.CITY_POLICE)))
+            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, createdBy = defaultUser, demolisherType = Demolisher.CITY_POLICE)))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(listOf(
-                SYRINGE.copy(
+                defaultSyringe.copy(
                     id=syringeId!!,
-                    userId = defaultUserId,
-                    demolisher = Demolisher.CITY_POLICE)),
+                    createdBy = defaultUser,
+                    demolisherType = Demolisher.CITY_POLICE)),
                 database.selectSyringes()
             )
         }
@@ -185,10 +193,10 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPutSyringeWrongChange() = withTestApplication(Application::module) {
-        val syringeId = database.insertSyringe(SYRINGE)
+        val syringeId = database.insertSyringe(defaultSyringe)
         with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE.copy(id = syringeId!!, count = -100)))
+            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, count = -100)))
         }) {
             assertEquals(HttpStatusCode.BadRequest, response.status())
             assertEquals("The field count is unchangeable by PUT request.", response.content)
@@ -207,7 +215,7 @@ class ApplicationTestSyringe {
     fun testPostSyringe() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE.copy(userId = defaultUserId)))
+            setBody(Json.encodeToString(defaultSyringe.copy(createdBy = defaultUser)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualSyringes = database.selectSyringes()
@@ -216,11 +224,11 @@ class ApplicationTestSyringe {
   "id" : """" + actualSyringes[0].id + """",
   "teamAvailable" : true
 }""", response.content)
-            assertEquals(listOf(SYRINGE.copy(id=actualSyringes[0].id, userId = defaultUserId)), actualSyringes)
+            assertEquals(listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser)), actualSyringes)
 
             val org = database.selectOrganizationById(defaultOrgId)
             val user = database.selectUserById(defaultUserId)
-            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, user?.toUserInfo()!!, actualSyringes[0].id) }
+            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, user?.email!!, actualSyringes[0].id) }
         }
     }
 
@@ -228,7 +236,10 @@ class ApplicationTestSyringe {
     fun testPostSyringeWithWrongUser() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(SYRINGE.copy(userId = 0)))
+            setBody(Json.encodeToString(defaultSyringe.copy(createdBy = UserInfo(
+                id = 0, "", 0, null
+            )
+            )))
         }) {
             assertEquals(HttpStatusCode.BadRequest, response.status())
         }
@@ -236,7 +247,7 @@ class ApplicationTestSyringe {
 
     @Test
     fun testTrackSyringe() = withTestApplication({ module(testing = true) }) {
-        val syrId = database.insertSyringe(SYRINGE.copy(userId = defaultUserId))
+        val syrId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syrId/track") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(SyringeTrackingRequest(email="email@email.cz")))
