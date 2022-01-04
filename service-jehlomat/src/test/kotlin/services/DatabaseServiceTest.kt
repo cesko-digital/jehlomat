@@ -1,8 +1,11 @@
 package services
 
 import main.team
-import main.user
 import model.*
+import model.syringe.SyringeFilter
+import model.syringe.SyringeFinder
+import model.syringe.SyringeFinderType
+import model.syringe.SyringeStatus
 import model.user.User
 import model.user.toUserInfo
 import org.junit.After
@@ -41,13 +44,13 @@ class DatabaseServiceTest {
     @Test
     fun testGetObec() {
         val actualObec = database.getObec("17.2825351 49.6602072")
-        assertEquals("500852", actualObec)
+        assertEquals(500852, actualObec)
     }
 
     @Test
     fun testGetMC() {
         val actualObec = database.getMC("13.3719999 49.7278823")
-        assertEquals("546003", actualObec)
+        assertEquals(546003, actualObec)
     }
 
     @Test
@@ -59,7 +62,7 @@ class DatabaseServiceTest {
     @Test
     fun testGetNone() {
         val actualObec = database.getObec("00.0000000 00.0000000")
-        assertEquals("", actualObec)
+        assertEquals(-1, actualObec)
     }
 
     @Test
@@ -96,10 +99,10 @@ class DatabaseServiceTest {
 
     @Test
     fun testResolveNearestTeam() {
-        val exactTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="546003")
+        val exactTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=546003)
         val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
 
-        val obecTeamLocation = Location(0, okres="CZ0323", obec="554791", mestkaCast="559199")
+        val obecTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=559199)
         val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
 
         val exactTeamId = database.insertTeam(exactTeam)
@@ -110,6 +113,89 @@ class DatabaseServiceTest {
         val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam!!.location.id ), id = exactTeamId)
 
         assertEquals(expectedTeam, actualTeam)
+    }
+
+    @Test
+    fun testSelectSyringes() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        val syringeId = database.insertSyringe(syringeToCreate)
+
+        val syringeFilter = SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(0, 1),
+            createdBy = null,
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        )
+
+        val selectedSyringes = database.selectSyringes(syringeFilter, defaultOrgId)
+        assertEquals(
+            listOf(
+                CSVExportSchema(
+                    syringeId!!,
+                    0,
+                    user.email,
+                    user.username,
+                    null,
+                    null,
+                    null,
+                    "nálezce",
+                    syringeToCreate.count,
+                    syringeToCreate.gps_coordinates,
+                    "Plzeň-město",
+                    "Plzeň 3",
+                    "Plzeň",
+                    "NE",
+                    null,
+                    "defaultOrgName"
+                )
+            ), selectedSyringes)
+    }
+
+    @Test
+    fun testSelectSyringesBySuperAdminButDateNotMatches() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        database.insertSyringe(syringeToCreate)
+
+        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(1, 2),
+            createdBy = null,
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        ), null))
+    }
+
+    @Test
+    fun testSelectSyringesBySuperAdminButCreatedAtNotMatches() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.location!!
+        val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        database.insertSyringe(syringeToCreate)
+
+        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
+            locationIds = setOf(loc.id),
+            createdAt = DateInterval(0, 1),
+            createdBy = SyringeFinder(0, SyringeFinderType.USER),
+            demolishedAt = null,
+            status = SyringeStatus.WAITING
+        ), null))
     }
 
     @Test
@@ -132,9 +218,9 @@ class DatabaseServiceTest {
     fun testSelectAllLocations() {
         assertEquals(
             listOf(
-                Location(id=0, okres="CZ0323", obec="554791", mestkaCast="546003"),
-                Location(id=0, okres="CZ0323", obec="554791", mestkaCast=""),
-                Location(id=0, okres="CZ0323", obec="", mestkaCast="")
+                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=546003),
+                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=-1),
+                Location(id=0, okres="CZ0323", obec=-1, mestkaCast=-1)
             ),
             database.getLocationCombinations("13.3719999 49.7278823")
         )

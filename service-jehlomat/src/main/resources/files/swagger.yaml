@@ -124,6 +124,25 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/SyringeSearchResponse'
+  /syringe/export:
+    post:
+      summary: Search syringes by parameters and returns CSV table
+      description: Returns a list of syringes in CSV format
+      produces:
+        - text/csv
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeSearch'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
   /syringe/:
     post:
       summary: Add a new syringe
@@ -485,53 +504,55 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Organization'
+  SyringeSearch:
+    type: object
+    properties:
+      locationIds:
+        type: array
+        items:
+          type: number
+      createdAt:
+        type: object
+        properties:
+          from:
+            type: integer
+            example: 1637092279
+          to:
+            type: integer
+            example: 1637092279
+      createdBy:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          type:
+            type: string
+            enum:
+              - USER
+              - TEAM
+              - ORGANIZATION
+              - ANONYMOUS
+      demolishedAt:
+        type: object
+        properties:
+          from:
+            type: integer
+            example: 1637092279
+          to:
+            type: integer
+            example: 1637092279
+      status:
+        type: string
+        enum:
+          - WAITING
+          - RESERVED
+          - DEMOLISHED
   SyringeSearchRequest:
     type: object
     properties:
       filter:
-        type: object
-        properties:
-          locationIds:
-            type: array
-            items:
-              type: number
-          createdAt:
-            type: object
-            properties:
-              from:
-                type: integer
-                example: 1637092279
-              to:
-                type: integer
-                example: 1637092279
-          createdBy:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              type:
-                type: string
-                enum:
-                  - USER
-                  - TEAM
-                  - ORGANIZATION
-                  - ANONYMOUS
-          demolishedAt:
-            type: object
-            properties:
-              from:
-                type: integer
-                example: 1637092279
-              to:
-                type: integer
-                example: 1637092279
-          status:
-            type: string
-            enum:
-              - WAITING
-              - RESERVED
-              - DEMOLISHED
+        $ref: '#/definitions/SyringeSearch'
       pageInfo:
         type: object
         properties:

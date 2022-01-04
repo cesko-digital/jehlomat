@@ -1,5 +1,7 @@
 package api
 
+import api.MCTable.primaryKey
+import api.ObecTable.primaryKey
 import model.*
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
@@ -30,7 +32,7 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
     companion object : UserTable(null)
     override fun aliased(alias: String) = UserTable(alias)
 
-    val userId = int("user_id").primaryKey();
+    val userId = int("user_id").primaryKey()
     val email = varchar("email")
     val username = varchar("username")
     val password = varchar("password")
@@ -44,8 +46,8 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
 object LocationTable: Table<Nothing>("locations") {
     val id = int("location_id").primaryKey()
     val okres = varchar("okres")
-    val obec = varchar("obec")
-    val mestka_cast = varchar("mestka_cast")
+    val obec = int("obec")
+    val mestka_cast = int("mestka_cast")
 }
 
 object OrganizationTable: BaseTable<Organization>("organizations") {
@@ -60,9 +62,44 @@ object OrganizationTable: BaseTable<Organization>("organizations") {
     )
 }
 
-object TeamTable: Table<Nothing>("teams") {
+open class TeamTable(alias: String?) : Table<Nothing>("teams", alias) {
+    companion object : TeamTable(null)
+    override fun aliased(alias: String) = TeamTable(alias)
+
     val teamId = int("team_id").primaryKey()
     val name = varchar("name")
     val organization_id = int("organization_id")
     val location_id = int("location_id")
+}
+
+
+object MCTable: Table<Nothing>("sph_mc") {
+    val ogc_fid = int("ogc_fid").primaryKey()
+    val id = float("id")
+    val kod_lau1 = varchar("kod_lau1")
+    val kod_lau2 = int("kod_lau2")
+    val kod_mc = int("kod_mc")
+    val nazev_mc = varchar("nazev_mc")
+    val kod_so = int("kod_so")
+    val wkb_geometry = bytes("wkb_geometry")
+}
+
+object ObecTable: Table<Nothing>("sph_obec") {
+    val ogc_fid = int("ogc_fid").primaryKey()
+    val id = float("id")
+    val kod_lau1 = varchar("kod_lau1")
+    val kod_lau2 = int("kod_lau2")
+    val kod_orp = int("kod_orp")
+    val kod_opu = int("kod_opu")
+    val nazev_lau2 = varchar("nazev_lau2")
+    val wkb_geometry = bytes("wkb_geometry")
+}
+
+object OkresTable: Table<Nothing>("sph_okres") {
+    val ogc_fid = int("ogc_fid").primaryKey()
+    val id = float("id")
+    val kod_nuts3 = varchar("kod_nuts3")
+    val kod_lau1 = varchar("kod_lau1")
+    val nazev_lau1 = varchar("nazev_lau1")
+    val wkb_geometry = bytes("wkb_geometry")
 }

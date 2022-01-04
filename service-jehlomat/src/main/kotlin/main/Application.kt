@@ -132,7 +132,7 @@ fun Application.module(testing: Boolean = false) {
             call.respondRedirect("/swagger-ui/index.html?url=/static/swagger.json", true)
         }
         route("/api/v1/jehlomat/syringe") {
-            syringeApi(service, mailer)
+            syringeApi(service, jwtManager, mailer)
         }
         route("/api/v1/jehlomat/user") {
             userApi(service, jwtManager, mailer)

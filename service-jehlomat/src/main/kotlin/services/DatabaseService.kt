@@ -19,6 +19,7 @@ import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
+import java.util.stream.Stream
 import kotlin.streams.toList
 
 
@@ -38,6 +39,7 @@ class DatabaseService(
     private val syringeCreatedByAlias = UserTable.aliased("uCreatedBy")
     private val syringeReservedByAlias = UserTable.aliased("uReservedBy")
     private val syringeDemolishedByAlias = UserTable.aliased("uDemolishedBy")
+    private val teamTableAlias = TeamTable.aliased("teamAlias")
 
     private val syringeSelectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
 
@@ -126,6 +128,54 @@ class DatabaseService(
                 it.toDsl(mapOf(Pair(OrderBySyringeColumn.CREATED_BY, syringeCreatedByAlias)))
             }.toList())
             .map(mapSyringeRow)
+    }
+
+    fun selectSyringes(filter: SyringeFilter, organizationId: Int?): List<CSVExportSchema> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias, organizationId)
+
+        val selectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
+        selectColumns.addAll(SyringeTable.columns)
+        selectColumns.addAll(LocationTable.columns)
+        selectColumns.addAll(syringeCreatedByAlias.columns)
+        selectColumns.addAll(syringeDemolishedByAlias.columns)
+        selectColumns.addAll(OrganizationTable.columns)
+        selectColumns.addAll(teamTableAlias.columns)
+        selectColumns.addAll(OkresTable.columns)
+        selectColumns.addAll(ObecTable.columns)
+        selectColumns.addAll(MCTable.columns)
+
+        return databaseInstance.from(SyringeTable)
+            .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
+            .innerJoin(OkresTable, OkresTable.kod_lau1 eq LocationTable.okres)
+            .innerJoin(ObecTable, ObecTable.kod_lau2 eq LocationTable.obec)
+            .innerJoin(MCTable, MCTable.kod_mc eq LocationTable.mestka_cast)
+            .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
+            .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
+            .leftJoin(OrganizationTable, syringeCreatedByAlias.organizationId eq OrganizationTable.organizationId)
+            .leftJoin(teamTableAlias, teamTableAlias.teamId eq syringeCreatedByAlias.teamId)
+            .select(selectColumns)
+            .where { filterDsl }
+            .orderBy(SyringeTable.id.asc())
+            .map { row ->
+                CSVExportSchema(
+                    id = row[SyringeTable.id]!!,
+                    createdTimestamp = row[SyringeTable.createdAt]!!,
+                    createdByEmail = row[syringeCreatedByAlias.email]!!,
+                    createdByUsername = row[syringeCreatedByAlias.username]!!,
+                    destroyedByEmail = row[syringeDemolishedByAlias.email],
+                    destroyedByUsername = row[syringeDemolishedByAlias.username],
+                    destroyedTimestamp = row[SyringeTable.demolishedAt],
+                    demolishingType = Demolisher.valueOf(row[SyringeTable.demolisherType]!!).czechName(),
+                    count = row[SyringeTable.count],
+                    gpsCoordinates = row[SyringeTable.gpsCoordinates],
+                    okres = row[OkresTable.nazev_lau1]!!,
+                    mc = row[MCTable.nazev_mc]!!,
+                    obec = row[ObecTable.nazev_lau2]!!,
+                    destroyed = if(row[SyringeTable.demolished]!!) "ANO" else "NE",
+                    teamName = row[teamTableAlias.name],
+                    organizationName =row[OrganizationTable.name]!!
+                )
+            }
     }
 
     fun selectUserById(id: Int): User? {
@@ -368,15 +418,15 @@ class DatabaseService(
             }
         }
 
-        return names.firstOrNull() ?: ""
+        return names.firstOrNull() ?: if (table == "sph_okres") "" else "-1"
     }
 
-    fun getObec(gpsCoordinates: String): String {
-        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2")
+    fun getObec(gpsCoordinates: String): Int {
+        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2").toInt()
     }
 
-    fun getMC(gpsCoordinates: String): String {
-        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc")
+    fun getMC(gpsCoordinates: String): Int {
+        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc").toInt()
     }
 
     fun getOkres(gpsCoordinates: String): String {
@@ -405,6 +455,29 @@ class DatabaseService(
         }
     }
 
+    private fun getLocationName(locationId: String, table: String): String {
+        val mapTableToColumnName = mapOf(
+            "sph_okres" to "nazev_lau1",
+            "sph_obec" to "nazev_lau2",
+            "sph_mc" to "nazev_mc"
+        )
+
+        val mapTableToId = mapOf(
+            "sph_okres" to "kod_lau1",
+            "sph_obec" to "kod_lau2",
+            "sph_mc" to "kod_mc"
+        )
+
+        return databaseInstance.useConnection { conn ->
+            val sql = "SELECT ${mapTableToColumnName[table]} FROM $table WHERE ${mapTableToId[table]} = '$locationId'"
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map {
+                    it.getString(1)
+                }
+            }
+        }.first()
+    }
+
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
@@ -412,12 +485,12 @@ class DatabaseService(
 
         return listOfNotNull(
             Location(0, okres, obec, mc),
-            Location(0, okres, obec, ""),
-            Location(0, okres, "", ""),
+            Location(0, okres, obec, -1),
+            Location(0, okres, -1, -1),
         )
     }
 
-    fun insertLocation(district: String, locality: String, town:String): Location {
+    fun insertLocation(district: String, locality: Int, town: Int): Location {
         val id = databaseInstance.insertOrUpdateReturning(LocationTable, LocationTable.id) {
             set(it.mestka_cast, locality)
             set(it.okres, district)
@@ -440,7 +513,7 @@ class DatabaseService(
         return selectLocation(district, locality, town)
     }
 
-    private fun selectLocation(district: String, locality: String, town: String): Location? {
+    private fun selectLocation(district: String, locality: Int, town: Int): Location? {
         return (selectLocationInner((LocationTable.mestka_cast eq locality) and (LocationTable.obec eq town) and (LocationTable.okres eq district))
             ?: run { selectLocationInner((LocationTable.obec eq town) and (LocationTable.okres eq district)) }
             ?: run { selectLocationInner(LocationTable.okres eq district) })

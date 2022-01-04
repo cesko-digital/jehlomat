@@ -24,18 +24,18 @@ class LocationTest {
                 """[ {
   "id" : 0,
   "okres" : "CZ0323",
-  "obec" : "554791",
-  "mestkaCast" : "546003"
+  "obec" : 554791,
+  "mestkaCast" : 546003
 }, {
   "id" : 0,
   "okres" : "CZ0323",
-  "obec" : "554791",
-  "mestkaCast" : ""
+  "obec" : 554791,
+  "mestkaCast" : -1
 }, {
   "id" : 0,
   "okres" : "CZ0323",
-  "obec" : "",
-  "mestkaCast" : ""
+  "obec" : -1,
+  "mestkaCast" : -1
 } ]""",
                 response.content
             )

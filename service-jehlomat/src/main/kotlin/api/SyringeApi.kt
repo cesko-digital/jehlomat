@@ -1,24 +1,26 @@
 package api
 
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import model.CSVExportSchema
+import model.DateInterval
+import model.Role
 import model.Syringe
 import model.pagination.OrderByDefinition
 import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
 import model.pagination.ensureValidity
 import model.syringe.*
-import model.user.toUserInfo
-import services.DatabaseService
-import services.GeneralValidator
-import services.MailerService
+import services.*
 import utils.isValidMail
+import java.time.Instant
 
 
-fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
+fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
     return route("/") {
         post("search") {
@@ -32,6 +34,51 @@ fun Route.syringeApi(database: DatabaseService, mailer: MailerService): Route {
             val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
             val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
             call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
+        }
+
+        authenticate(JWT_CONFIG_NAME) {
+
+            post("export") {
+                val loggedInUser = jwtManager.getLoggedInUser(call, database)
+                val roles = PermissionService.determineRoles(loggedInUser, loggedInUser)
+                if (!roles.contains(Role.OrgAdmin) && !roles.contains(Role.SuperAdmin)) {
+                    call.respond(HttpStatusCode.Forbidden, "Only admin or superadmin can export database")
+                    return@post
+                }
+
+                val request = call.receive<SyringeFilter>()
+
+                val now = Instant.now().epochSecond
+                val createdAt = request.createdAt ?: DateInterval(0, now)
+                val from = createdAt.from ?: 0
+                val to = createdAt.to ?: now
+
+                val halfYear = 60 * 60 * 24 * 30 * 6
+                if ((to - from) >  halfYear) {
+                    call.respond(HttpStatusCode.BadRequest, "Selected time range is to wide $from - $to")
+                    return@post
+                }
+
+                val organizationId = if (roles.contains(Role.SuperAdmin)) {
+                    null
+                } else {
+                    loggedInUser.organizationId
+                }
+
+                val output = database.selectSyringes(request, organizationId).joinToString("\n") { it.toString() }
+
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, "export.csv")
+                        .toString()
+                )
+
+                call.respondText(
+                    text = CSVExportSchema.header() + "\n" + output,
+                    contentType = ContentType.Text.CSV,
+                    status = HttpStatusCode.OK,
+                )
+            }
         }
 
         post {

@@ -1,5 +1,6 @@
 package services
 
+import api.OrganizationTable
 import api.SyringeTable
 import api.UserTable
 import model.*
@@ -18,13 +19,14 @@ private val ALWAYS_TRUE: ColumnDeclaring<Boolean> = SyringeTable.id.isNotNull()
 class SyringeFilterTransformer {
 
     companion object {
-        fun filterToDsl(filter: SyringeFilter, createdByUserAlias: UserTable): ColumnDeclaring<Boolean>{
+        fun filterToDsl(filter: SyringeFilter, createdByUserAlias: UserTable, organizationId: Int?=null): ColumnDeclaring<Boolean>{
             var result = ALWAYS_TRUE
             result = transformLocationIds(result, filter.locationIds)
             result = transformDateInterval(result, SyringeTable.createdAt, filter.createdAt)
             result = transformCreatedBy(result, filter.createdBy, createdByUserAlias)
             result = transformDateInterval(result, SyringeTable.demolishedAt, filter.demolishedAt)
             result = transformStatus(result, filter.status)
+            result = transformOrganizationIds(result, organizationId)
 
             return result
         }
@@ -104,6 +106,16 @@ class SyringeFilterTransformer {
             }
 
             return result
+        }
+
+        private fun transformOrganizationIds(
+            filter: ColumnDeclaring<Boolean>,
+            organizationId: Int?
+        ): ColumnDeclaring<Boolean> {
+            if (organizationId == null) {
+                return filter
+            }
+            return filter and (OrganizationTable.organizationId eq organizationId)
         }
 
 
