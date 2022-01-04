@@ -7,6 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.CSVExportSchema
+import model.DateInterval
 import model.Role
 import model.Syringe
 import model.pagination.OrderByDefinition
@@ -16,6 +17,7 @@ import model.pagination.ensureValidity
 import model.syringe.*
 import services.*
 import utils.isValidMail
+import java.time.Instant
 
 
 fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
@@ -45,6 +47,17 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 }
 
                 val request = call.receive<SyringeFilter>()
+
+                val now = Instant.now().epochSecond
+                val createdAt = request.createdAt ?: DateInterval(0, now)
+                val from = createdAt.from ?: 0
+                val to = createdAt.to ?: now
+
+                val halfYear = 60 * 60 * 24 * 30 * 6
+                if ((to - from) >  halfYear) {
+                    call.respond(HttpStatusCode.BadRequest, "Selected time range is to wide $from - $to")
+                    return@post
+                }
 
                 val organizationId = if (roles.contains(Role.SuperAdmin)) {
                     null

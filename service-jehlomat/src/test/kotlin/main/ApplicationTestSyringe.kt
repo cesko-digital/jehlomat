@@ -155,16 +155,14 @@ class ApplicationTestSyringe {
     @Test
     fun testExportSyringes() = withTestApplication(Application::module) {
         val token = loginUser(ADMIN.email, ADMIN.password)
-        val id = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
+        database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
 
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/export"){
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(syringeFilter))
         }) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals("id,čas nalezení,email nálezce,jméno nálezce,email sběrače,jmeno sběrače,cas sběru,typ zničení,počet,gps,okres,městská část,obec,zneškodněno,tým,organizace\n" +
-                    "$id,1,email@example.org,Franta Pepa 1,null,null,null,nezlikvidováno,10,13.3719999 49.7278823,Plzeň-město,Plzeň 3,Plzeň,NE,name,defaultOrgName", response.content)
+            assertEquals(HttpStatusCode.BadRequest, response.status())
         }
     }
 
@@ -181,7 +179,7 @@ class ApplicationTestSyringe {
                 locationIds = setOf(defaultLocation.id),
                 createdAt = DateInterval(
                     from = 0,
-                    to = Long.MAX_VALUE
+                    to = 2
                 ),
                 createdBy = SyringeFinder(
                     id = defaultUser?.id!!,
