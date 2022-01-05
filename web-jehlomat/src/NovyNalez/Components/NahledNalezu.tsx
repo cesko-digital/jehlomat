@@ -1,14 +1,12 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { white, primary } from '../../Components/Utils/Colors';
-import TextInput from '../../Components/Inputs/TextInput/TextInput';
-import { FormItemLabel } from '../../Components/Utils/Typography';
-import { FormWrapper, FormItem } from '../../Components/Form/Form';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton';
-import TitleBar from '../../Components/Navigation/TitleBar';
 import TextButton from '../../Components/Buttons/TextButton/TextButton';
-import { INovaJehla } from '../NovyNalez';
+import { FormItem, FormWrapper } from '../../Components/Form/Form';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
+import { white } from '../../Components/Utils/Colors';
+import { FormItemLabel } from '../../Components/Utils/Typography';
+import { INovaJehla } from '../NovyNalezContainer';
 
 const Container = styled.div`
     display: flex;
@@ -38,9 +36,6 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
     const { lat, lng, datetime, info, count } = syringeInfo;
     return (
         <Container>
-            <TitleBar>
-                <p>Kontrola zadaných údajů o nálezu</p>
-            </TitleBar>
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet jehel</FormItemLabel>

@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from 'react';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
-import { INovaJehla, Steps } from '../NovyNalez';
+import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
 
 interface IZadatNalezMapa {
-    handleStepChange: (newStep: Steps, newInfo?: Partial<INovaJehla>) => void;
+    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
     userSelectedLocation: [number | undefined, number | undefined];
 }
 
@@ -31,9 +31,9 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
      * Získá aktuální velikost containeru.
      */
     const resizeMap = () => {
-        const map = document.getElementById('map-container');
-        if (map) {
-            setMapSize({ width: map.clientWidth, height: map.clientHeight });
+        const contentContainer = document.getElementById('content-container');
+        if (contentContainer) {
+            setMapSize({ width: contentContainer.clientWidth, height: contentContainer.clientHeight * 0.95 });
         }
     };
 
@@ -60,7 +60,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
     };
 
     return (
-        <div id="map-container" style={{ width: 'calc(100vw - 12px)', height: 'calc(100vh - 106px)', margin: 'auto', paddingTop: '8px' }}>
+        <div id="map-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
             <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} />
             {mapSize && mapSize.width != 0 && mapSize.height != 0 && <Mapa userPosition={userPosition} handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} />}
         </div>

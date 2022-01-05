@@ -11,7 +11,7 @@ import Potvrzeni from './NovyNalez/Components/Potvrzeni';
  */
 const Organizace = lazy(() => import('./Organizace/Organizace'));
 const Profil = lazy(() => import('./Profil/Profil'));
-const NovyNalez = lazy(() => import('./NovyNalez/NovyNalez'));
+const NovyNalez = lazy(() => import('./NovyNalez/NovyNalezContainer'));
 const Nalezy = lazy(() => import('./Nalezy/Nalezy'));
 const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));

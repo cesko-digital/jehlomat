@@ -18,7 +18,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import styled from 'styled-components';
-import { INovaJehla, Steps } from '../NovyNalez';
+import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -29,7 +29,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 interface IMapa {
     userPosition: LatLngExpression | null;
-    handleStepChange: (newStep: Steps, newInfo?: Partial<INovaJehla>) => void;
+    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
     width: number;
     height: number;
 }
@@ -89,7 +89,7 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height }) => {
                     {markerPosition && <Marker position={markerPosition} />}
                 </MapContainer>
                 <FloatinButtonContainer>
-                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(Steps.Info, convertPositionToInfo())} />
+                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
                 </FloatinButtonContainer>
             </Fragment>
         );
@@ -112,7 +112,7 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height }) => {
                     {markerPosition && <Marker position={markerPosition} />}
                 </MapContainer>
                 <FloatinButtonContainer>
-                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(Steps.Info, convertPositionToInfo())} />
+                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
                 </FloatinButtonContainer>
             </Fragment>
         );

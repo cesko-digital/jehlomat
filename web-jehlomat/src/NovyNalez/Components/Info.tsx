@@ -3,13 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import styled from 'styled-components';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import Navigation from '../../Components/Navigation/Navigation';
-import TitleBar from '../../Components/Navigation/TitleBar';
 import { primaryDark, white } from '../../Components/Utils/Colors';
-import { Steps } from '../NovyNalez';
+import { StepsEnum } from '../NovyNalezContainer';
 
 interface iInfo {
-    handleStepChange: (newStep: Steps) => void;
+    handleStepChange: (newStep: StepsEnum) => void;
 }
 
 const Container = styled.div`
@@ -63,7 +61,6 @@ const MutedText = styled.p`
 const Info: FC<iInfo> = ({ handleStepChange }) => {
     return (
         <Container>
-            <TitleBar>Zadávaní nálezu</TitleBar>
             <Card backgroundColor="#BFE3E0">
                 <Icon>
                     <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
@@ -86,9 +83,8 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                 <MutedText>Nález bude profesionálně zlikvidován</MutedText>
             </Card>
             <Card backgroundColor="#EEF8F7">
-                <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(Steps.Mapa)} />
+                <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(StepsEnum.Mapa)} />
             </Card>
-            <Navigation></Navigation>
         </Container>
     );
 };
