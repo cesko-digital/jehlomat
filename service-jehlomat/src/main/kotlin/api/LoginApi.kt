@@ -17,7 +17,7 @@ fun Route.loginApi(database: DatabaseService, jwtManager: JwtManager): Route {
         post {
             val credentials = call.receive<LoginRequest>()
 
-            val user = database.selectUserByEmail(credentials.name)
+            val user = database.selectUserByEmail(credentials.email)
             if (user == null) {
                 call.respond(HttpStatusCode.Unauthorized)
                 return@post
