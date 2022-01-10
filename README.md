@@ -14,7 +14,12 @@ Please change it in example by your postgres configuration.
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/create_table.sql
 ```
-4) Update email api keys
+
+4) Create the Magdalena organization and super admin with email `super@admin.cz` and password `SuperAdmin1`. Use this script only for testing purposes.
+```shell
+  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/insert_super_admin.sql
+```
+5) Update email api keys
 
 ```
 mailjet {
@@ -25,19 +30,19 @@ mailjet {
 
 in `service-jehlomat/src/main/resources/application.conf`
 
-5) Set environment variables
+6) Set environment variables
 ```shell
 export DATABASE_HOST=localhost
 export DATABASE_PORT=5432
 export DATABASE_USERNAME=jehlomat
 export PGPASSWORD=<YOUR POSTGRES PASSWORD>
 export DATABASE_NAME=jehlomat
-export JWT_ISSUER=jehlomat_local
-export JWT_AUDIENCE=jehlomat_local_audience
+export JWT_ISSUER=http://localhost:8082/
+export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
-
+export SUPER_ADMIN_EMAIL=super@admin.cz
 ```
-6) Run application
+7) Run application
 ```shell
 ./gradlew run --parallel
 ```
