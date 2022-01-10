@@ -55,16 +55,24 @@ fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Ro
                 (!request.password.isValidPassword()) -> {
                     call.respond(HttpStatusCode.BadRequest, "Wrong password format.")
                 }
-                (database.selectUserByUsername(request.username) != null) -> {
-                    call.respond(HttpStatusCode.BadRequest, "User name is already taken")
-                }
                 else -> {
-                    database.updateUser(user.copy(
-                        verified = true,
-                        username = request.username,
-                        password = request.password
-                    ))
-                    call.respond(HttpStatusCode.OK)
+                    var isUserNameUnique = false
+                    synchronized(this) {
+                        if (database.selectUserByUsername(request.username) == null) {
+                            database.updateUser(user.copy(
+                                verified = true,
+                                username = request.username,
+                                password = request.password
+                            ))
+                            isUserNameUnique = true
+                        }
+                    }
+
+                    if (isUserNameUnique) {
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest, "User name is already taken")
+                    }
                 }
             }
         }

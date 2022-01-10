@@ -19,7 +19,6 @@ import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
-import java.util.stream.Stream
 import kotlin.streams.toList
 
 
@@ -272,6 +271,9 @@ class DatabaseService(
     fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
             updateUserRecord(this, it, user)
+            where {
+                it.userId eq user.id
+            }
         }
     }
 
@@ -308,6 +310,9 @@ class DatabaseService(
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
             set(it.verified, organization.verified)
+            where {
+                it.organizationId eq organization.id
+            }
         }
     }
 
@@ -316,6 +321,9 @@ class DatabaseService(
             set(it.name, team.name)
             set(it.location_id, getLocationId(team))
             set(it.organization_id, team.organizationId)
+            where {
+                it.teamId eq team.id
+            }
         }
     }
 
@@ -341,6 +349,9 @@ class DatabaseService(
     fun updateSyringe(syringe: Syringe) {
         databaseInstance.update(SyringeTable) {
             updateSyringeRecord(this, it, syringe)
+            where {
+                it.id eq syringe.id
+            }
         }
     }
 
