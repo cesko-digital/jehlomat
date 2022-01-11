@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import {FC } from 'react';
 
 import { Formik, Form, FormikHelpers } from 'formik';
 import TextInput from '../Components/Inputs/TextInput/TextInput';
 import { FormHeading, FormItemLabel, H1, H4 } from '../Components/Utils/Typography';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import PrimaryButton from '../Components/Buttons/PrimaryButton/PrimaryButton';
 import TitleBar from '../Components/Navigation/TitleBar';
@@ -11,6 +11,8 @@ import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
 
 import API from '../config/baseURL';
+import React from 'react';
+import { queryByTitle } from '@testing-library/dom';
 
 
 interface IRegistraceUzivatele { }
@@ -23,13 +25,10 @@ interface IValues {
 }
 
 interface IUserRequest {
-    email: string;
+    email: string|null;
     username: string;
     password: string;
-    organizationId?: number;
-    teamId?: number;
-    isAdmin: boolean;
-    verified: boolean;
+    code: string|null;
 }
 
 const validationSchema = yup.object({
@@ -45,26 +44,32 @@ const validationSchema = yup.object({
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná')
 });
 
+function useQuery() {
+    const { search } = useLocation();
+
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 const RegistraceUzivatele: FC<IRegistraceUzivatele> = ({ }) => {
     let history = useHistory();
+    let query = useQuery();
+    let email:string = query && query.get('email')?query.get('email')!:"";
     return (
         <>
             <TitleBar>Nový uživatel</TitleBar>
             <FormHeading>Pracovnik Organizace </FormHeading>
             <Formik
-                initialValues={{ email: '', heslo: '', hesloConfirm: '', jmeno: '' }}
+                initialValues={{ email: email, heslo: '', hesloConfirm: '', jmeno: '' }}
                 validationSchema={validationSchema}
                 onSubmit={async (values: IValues, { setErrors }: FormikHelpers<IValues>) => {
                     try {
                         const user: IUserRequest = {
-                            organizationId: 1,
-                            email: values.email,
+                            email: query.get('email'),
                             password: values.heslo,
                             username: values.jmeno,
-                            isAdmin: false,
-                            verified: true,
+                            code: query.get('code')
                         }
-                        const response: AxiosResponse<any> = await API.post("/api/v1/jehlomat/user/", user);
+                        const response: AxiosResponse<any> = await API.post("/api/v1/jehlomat/verification/user", user);
                         const status = response.status;
 
                         switch (true) {
@@ -96,6 +101,7 @@ const RegistraceUzivatele: FC<IRegistraceUzivatele> = ({ }) => {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.email}
+                                disabled={true}
                                 type="text"
                                 name="email"
                                 placeholder="Email"

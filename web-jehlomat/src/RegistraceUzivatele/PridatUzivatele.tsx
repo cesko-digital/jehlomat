@@ -31,18 +31,17 @@ const PridatUzivatele: FC<IPridatUzivatele> = ({ }) => {
                 validationSchema={validationSchema}
                 onSubmit={async (values: Values, { setErrors }) => {
                     try {
-                        const response: AxiosResponse<any> = await API.post("/api/v1/jehlomat/welcome", values);
+                        const response: AxiosResponse<any> = await API.post("/api/v1/jehlomat/user/", values);
                         const status = response.status;
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
-                                history.push("/organizace/dekujeme")
+                                history.push("/uzivatel/dekujeme")
                                 break;
                             }
                             case status === 409: {
                                 //for validation error;
-                                const fieldName = response.data.fieldName
-                                setErrors({ [fieldName]: response.data.status })
+                                setErrors({ email: response.data })
                                 break;
                             }
                             default: {

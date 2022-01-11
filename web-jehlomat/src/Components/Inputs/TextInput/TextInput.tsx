@@ -39,6 +39,7 @@ const TextInput: FC<TextInput> = (props) => {
                 onBlur={props.onBlur}
                 error={Boolean(props.error)}
                 helperText={props.error}
+                disabled={props.disabled}
             />
         </Input>
     )
