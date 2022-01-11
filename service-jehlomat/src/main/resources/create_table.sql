@@ -43,7 +43,7 @@ CREATE TABLE public.users(
     team_id INT,
     is_admin BOOLEAN,
 
-    UNIQUE (username),
+    UNIQUE (email),
 
     CONSTRAINT fk_organization FOREIGN KEY(organization_id)
         REFERENCES organizations(organization_id),

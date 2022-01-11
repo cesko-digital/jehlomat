@@ -89,7 +89,7 @@ class DatabaseServiceTest {
         assert(BCrypt.checkpw(originalPassword, user.password))
 
         val newPassword = "new-password"
-        database.updateUser(User(0, "email", "Franta Pepa 1", newPassword, false, "", defaultOrgId, null, false))
+        database.updateUser(User(user.id, "email", "Franta Pepa 1", newPassword, false, "", defaultOrgId, null, false))
 
         val updatedUser = database.selectUserByEmail("email")
         assertNotNull(updatedUser)
@@ -199,19 +199,28 @@ class DatabaseServiceTest {
     }
 
     @Test
-    fun testInsertSyringe() {
+    fun testInsertAndUpdateSyringe() {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
         val loc = selectTeamById?.location!!
         val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()
-        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
-        val syringeId = database.insertSyringe(syringeToCreate)
 
-        assertNotNull(syringeId)
-        val createdSyringe = database.selectSyringeById(syringeId)
-        assertEquals(syringeToCreate.copy(id = syringeId), createdSyringe)
+        val syringeToCreate1 = Syringe("", 0, userInfo, null, null, null, null, Demolisher.USER,"", 1, "first", "", loc, false)
+        val syringeId1 = database.insertSyringe(syringeToCreate1)
+
+        assertNotNull(syringeId1)
+        val createdSyringe = database.selectSyringeById(syringeId1)
+        assertEquals(syringeToCreate1.copy(id = syringeId1), createdSyringe)
+
+        var syringeToCreate2 = Syringe("", 0, userInfo, null, null, null, null, Demolisher.USER,"", 2, "second", "", loc, false)
+        val syringeId2 = database.insertSyringe(syringeToCreate2)
+        syringeToCreate2 = syringeToCreate2.copy(id = syringeId2!!, count = 5)
+        database.updateSyringe(syringeToCreate2)
+
+        assertEquals(1, database.selectSyringeById(syringeId1)?.count)
+        assertEquals(5, database.selectSyringeById(syringeId2)?.count)
     }
 
     @Test
