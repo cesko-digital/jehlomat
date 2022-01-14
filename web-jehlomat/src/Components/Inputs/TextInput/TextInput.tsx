@@ -1,29 +1,29 @@
 import { FC, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import { primaryDark, grey, primary } from '../../Utils/Colors';
+import { primaryDark, grey, primary } from '../../../utils/colors';
 import { default as MInput } from '@mui/material/TextField';
 
 interface TextInput extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
-    error?: string|undefined;
+    error?: string | undefined;
 }
 
 const Label = styled.label`
-{
-    color: ${grey};
-    display:block;
-    padding-bottom: 5px;
-    font-weight: bold;
-    font-family: 'Roboto';
-    font-size:10pt; 
-}
-`
+     {
+        color: ${grey};
+        display: block;
+        padding-bottom: 5px;
+        font-weight: bold;
+        font-family: 'Roboto';
+        font-size: 10pt;
+    }
+`;
 
 const Input = styled.div`
     margin: 1em;
 `;
 
-const TextInput: FC<TextInput> = (props) => {
+const TextInput: FC<TextInput> = props => {
     return (
         <Input>
             <Label htmlFor={props.name}>{props.label}</Label>
@@ -42,7 +42,7 @@ const TextInput: FC<TextInput> = (props) => {
                 disabled={props.disabled}
             />
         </Input>
-    )
+    );
 };
 
 export default TextInput;

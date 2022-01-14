@@ -1,8 +1,9 @@
-import styled, { createGlobalStyle } from 'styled-components';
-import { primaryDark } from '../Utils/Colors';
-import { fontFamilyRoboto } from '../Utils/Typography';
+import styled from 'styled-components';
+import { primaryDark } from '../../utils/colors';
+import { media } from '../../utils/media';
+import { fontFamilyRoboto } from '../../utils/typography';
 
-export const Container = styled.div`
+export const SContainer = styled.div`
     background-color: ${primaryDark};
     ${fontFamilyRoboto};
     display: flex;
@@ -11,9 +12,13 @@ export const Container = styled.div`
     width: 100%;
     height: auto;
     padding: 1em 0;
+
+    @media ${media.lte('mobile')} {
+        display: none;
+    }
 `;
 
-export const LinkContainer = styled.div`
+export const SLinkContainer = styled.div`
     display: flex;
     flex-direction: row;
 `;

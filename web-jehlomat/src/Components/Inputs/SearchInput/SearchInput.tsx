@@ -1,6 +1,6 @@
 import { FC, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import { primaryDark, primaryLight } from '../../Utils/Colors';
+import { primaryDark, primaryLight } from '../../../utils/colors';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

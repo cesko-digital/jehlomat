@@ -22,7 +22,12 @@
   "scripts": {
     "start": "webpack-dev-server --mode=development --open --hot --history-api-fallback",
     "build": "webpack --mode=production",
-    "test": "jest --env=jsdom"
+    "test": "jest --env=jsdom",
+    "fix": "run-p -lsc 'fix:*'",
+    "fix:prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "lint": "run-p -lsc 'lint:*'",
+    "lint:ts": "tsc --noEmit -p tsconfig.json",
+    "lint:prettier": "prettier -l \"src/**/*.{ts,tsx,json}\""
   },
   "author": "",
   "license": "ISC",
@@ -70,6 +75,8 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.2",
     "jest": "^27.2.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.5.1",
     "react-test-renderer": "^17.0.2",
     "style-loader": "^3.3.0",
     "ts-jest": "^27.0.5",

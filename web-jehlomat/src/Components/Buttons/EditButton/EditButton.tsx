@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from 'styled-components';
-import { primary, primaryDark, white } from '../../Utils/Colors';
+import { primary, primaryDark, white } from '../../../utils/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -53,8 +53,7 @@ const Plus = styled.div`
         margin: auto 8px;
         height: 4px;
     }
-`;<Edit>
-</Edit>
+`;
 
 const EditButton: FC<EditButton> = ({ ...props }) => {
     return (

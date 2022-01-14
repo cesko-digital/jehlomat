@@ -18,9 +18,9 @@ const Layout = styled.div`
 const StoryBook: FC<StoryBook> = ({}) => {
     return (
         <Layout>
-            <PrimaryButton onClick={e => alert('PrimaryButton')} text="Primary" />
-            <SecondaryButton onClick={e => alert('SecondaryButton')} text="Secondary" />
-            <AddButton onClick={e => alert('AddButton')} />
+            <PrimaryButton onClick={_ => alert('PrimaryButton')} text="Primary" />
+            <SecondaryButton onClick={_ => alert('SecondaryButton')} text="Secondary" />
+            <AddButton onClick={_ => alert('AddButton')} />
             <TextInput onChange={e => console.log(e.target.value)} />
             <SearchInput onChange={e => console.log(e.target.value)} />
             <PasswordInput />

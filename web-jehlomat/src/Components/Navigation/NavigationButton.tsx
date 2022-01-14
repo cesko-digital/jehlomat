@@ -1,10 +1,10 @@
-import {FC} from "react";
-import {AddSyringeIcon} from "../../assets/AddSyringeIcon";
-import {ProfileIcon} from "../../assets/ProfileIcon";
-import {UsersIcon} from "../../assets/UsersIcon";
-import {ListIcon} from "../../assets/ListIcon"
-import * as s from "./NavigationStyles"
-import {useHistory} from "react-router-dom";
+import { FC } from 'react';
+import { AddSyringeIcon } from '../../assets/AddSyringeIcon';
+import { ProfileIcon } from '../../assets/ProfileIcon';
+import { UsersIcon } from '../../assets/UsersIcon';
+import { ListIcon } from '../../assets/ListIcon';
+import * as s from './NavigationStyles';
+import { useHistory } from 'react-router-dom';
 
 export enum NavigationButtonType {
     Profile,
@@ -13,48 +13,46 @@ export enum NavigationButtonType {
 }
 
 interface ISecondaryNavigationButton {
-    type: NavigationButtonType
-    selected: boolean
-    route: string
+    type: NavigationButtonType;
+    selected: boolean;
+    route: string;
 }
 
-export const SecondaryNavigationButton: FC<ISecondaryNavigationButton> = ({type, selected, route}) => {
-    let history = useHistory()
+export const SecondaryNavigationButton: FC<ISecondaryNavigationButton> = ({ type, selected, route }) => {
+    let history = useHistory();
 
-    return <s.SecondaryNavigationButtonContainer onClick={ () => history.push(route) }>
-        <s.SecondaryNavigationButtonIcon selected={selected}>
-            {iconForType(type)}
-        </s.SecondaryNavigationButtonIcon>
-        <s.SecondaryNavigationButtonTitle selected={selected}>{titleForType(type)}</s.SecondaryNavigationButtonTitle>
-    </s.SecondaryNavigationButtonContainer>
-}
+    return (
+        <s.SecondaryNavigationButtonContainer onClick={() => history.push(route)}>
+            <s.SecondaryNavigationButtonIcon selected={selected}>{iconForType(type)}</s.SecondaryNavigationButtonIcon>
+            <s.SecondaryNavigationButtonTitle selected={selected}>{titleForType(type)}</s.SecondaryNavigationButtonTitle>
+        </s.SecondaryNavigationButtonContainer>
+    );
+};
 
-interface IPrimaryNavigationButton {
-
-}
+interface IPrimaryNavigationButton {}
 
 export const PrimaryNavigationButton: FC<IPrimaryNavigationButton> = ({}) => {
-    return <AddSyringeIcon />
-}
+    return <AddSyringeIcon />;
+};
 
 function iconForType(type: NavigationButtonType) {
     switch (type) {
         case NavigationButtonType.Profile:
-            return <ProfileIcon/>;
+            return <ProfileIcon />;
         case NavigationButtonType.Users:
-            return <UsersIcon/>;
+            return <UsersIcon />;
         case NavigationButtonType.SyringeList:
-            return <ListIcon/>;
+            return <ListIcon />;
     }
 }
 
 function titleForType(type: NavigationButtonType): string {
     switch (type) {
         case NavigationButtonType.Profile:
-            return "Profil";
+            return 'Profil';
         case NavigationButtonType.Users:
-            return "Uživatelé";
+            return 'Uživatelé';
         case NavigationButtonType.SyringeList:
-            return "List nálezů";
+            return 'List nálezů';
     }
 }

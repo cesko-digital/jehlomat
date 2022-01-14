@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from 'styled-components';
-import { grey, greyLight, primaryDark, white } from '../../Utils/Colors';
-import { fontFamilyRoboto, fontWeightBold, H4 } from '../../Utils/Typography';
+import { grey, greyLight, primaryDark, white } from '../../../utils/colors';
+import { fontFamilyRoboto, fontWeightBold, H4 } from '../../../utils/typography';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router';
