@@ -8,7 +8,7 @@ import Potvrzeni from './Components/Potvrzeni';
 import ZadatNalezMapa from './Components/ZadatNalezMapa';
 import ZadavaniNalezu from './Components/ZadavaniNalezu';
 import Container from '@mui/material/Container';
-import Stepper from './Components/Stepper';
+// import Stepper from './Components/Stepper';
 
 export interface INovaJehla {
     lat: number | undefined;
@@ -63,7 +63,7 @@ const NovyNalezContainer: FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <Header />
             {/* If desktop show stepper */}
-            {currentStep != 0 && <Stepper currentStep={currentStep} />}
+            {/* {currentStep != 0 && <Stepper currentStep={currentStep} />} */}
             <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
                 <NovyNalez
                     currentStep={currentStep}
