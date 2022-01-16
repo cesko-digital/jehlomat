@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
+import * as React from "react"
+import { shallow } from "enzyme"
 
-import Navigation from './Navigation';
+import Navigation from "./Navigation"
 
-it('Render navigation', () => {
-    const result = shallow(<Navigation />);
-    expect(result).toBeTruthy();
-});
+it("Render navigation", () => {
+  const result = shallow(<Navigation />)
+  expect(result).toBeTruthy()
+})

@@ -1,31 +1,34 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import AddButton from './Buttons/AddButton/AddButton';
-import PrimaryButton from './Buttons/PrimaryButton/PrimaryButton';
-import SecondaryButton from './Buttons/SecondaryButton/SecondaryButton';
-import PasswordInput from './Inputs/PasswordInput/PasswordInput';
-import SearchInput from './Inputs/SearchInput/SearchInput';
-import TextInput from './Inputs/TextInput/TextInput';
+import { FC } from "react"
+import styled from "@emotion/styled"
+import AddButton from "./Buttons/AddButton/AddButton"
+import PrimaryButton from "./Buttons/PrimaryButton/PrimaryButton"
+import SecondaryButton from "./Buttons/SecondaryButton/SecondaryButton"
+import PasswordInput from "./Inputs/PasswordInput/PasswordInput"
+import SearchInput from "./Inputs/SearchInput/SearchInput"
+import TextInput from "./Inputs/TextInput/TextInput"
 
 interface StoryBook {}
 
 const Layout = styled.div`
-    display: inline-flex;
-    flex-direction: column;
-    gap: 20px;
-`;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 20px;
+`
 
 const StoryBook: FC<StoryBook> = ({}) => {
-    return (
-        <Layout>
-            <PrimaryButton onClick={_ => alert('PrimaryButton')} text="Primary" />
-            <SecondaryButton onClick={_ => alert('SecondaryButton')} text="Secondary" />
-            <AddButton onClick={_ => alert('AddButton')} />
-            <TextInput onChange={e => console.log(e.target.value)} />
-            <SearchInput onChange={e => console.log(e.target.value)} />
-            <PasswordInput />
-        </Layout>
-    );
-};
+  return (
+    <Layout>
+      <PrimaryButton onClick={() => alert("PrimaryButton")} text="Primary" />
+      <SecondaryButton
+        onClick={() => alert("SecondaryButton")}
+        text="Secondary"
+      />
+      <AddButton onClick={() => alert("AddButton")} />
+      <TextInput onChange={(e) => console.log(e.target.value)} />
+      <SearchInput onChange={(e) => console.log(e.target.value)} />
+      <PasswordInput />
+    </Layout>
+  )
+}
 
-export default StoryBook;
+export default StoryBook

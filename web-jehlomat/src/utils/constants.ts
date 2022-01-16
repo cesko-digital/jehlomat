@@ -1,2 +1,2 @@
 //mobile
-export const MaxMobileWidth = 500;
+export const MaxMobileWidth = 500
