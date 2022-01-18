@@ -1,47 +1,47 @@
-import { FC, InputHTMLAttributes, useState } from "react"
-import styled from "@emotion/styled"
-import { primaryDark, white } from "utils/colors"
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FC, InputHTMLAttributes, useState } from 'react';
+import styled from 'styled-components';
+import { primaryDark, primaryLight, white } from '../../../utils/colors';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface PasswordInput extends InputHTMLAttributes<HTMLInputElement> {}
 
-const Container = styled.div``
+const Container = styled.div``;
 
 const Input = styled.input`
-  height: 64px;
-  width: 100%;
-  max-width: 340px;
-  padding: 0px 15px;
+    height: 64px;
+    width: 100%;
+    max-width: 340px;
+    padding: 0px 15px;
 
-  border: 1px solid ${primaryDark};
-  box-sizing: border-box;
-  border-radius: 5px;
+    border: 1px solid ${primaryDark};
+    box-sizing: border-box;
+    border-radius: 5px;
 
-  :focus {
-    outline: none;
-  }
-`
+    :focus {
+        outline: none;
+    }
+`;
 
 const IconWrapper = styled.button`
-  flex: 0 0;
-  background-color: ${white};
-  border: none;
-  position: absolute;
-  top: 38%;
-  right: 16%;
-`
+    flex: 0 0;
+    background-color: ${white};
+    border: none;
+    position: absolute;
+    top: 38%;
+    right: 16%;
+`;
 
-const PasswordInput: FC<PasswordInput> = (props) => {
-  const [show, setShow] = useState<boolean>(false)
-  return (
-    <Container>
-      <Input type={show ? "text" : "password"} {...props} />
-      <IconWrapper onClick={() => setShow(!show)}>
-        <FontAwesomeIcon icon={show ? faEye : faEyeSlash} />
-      </IconWrapper>
-    </Container>
-  )
-}
+const PasswordInput: FC<PasswordInput> = props => {
+    const [show, setShow] = useState<boolean>(false);
+    return (
+        <Container>
+            <Input type={show ? 'text' : 'password'} {...props} />
+            <IconWrapper onClick={() => setShow(!show)}>
+                <FontAwesomeIcon icon={show ? faEye : faEyeSlash} />
+            </IconWrapper>
+        </Container>
+    );
+};
 
-export default PasswordInput
+export default PasswordInput;

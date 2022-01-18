@@ -1,15 +1,16 @@
-import { FC } from "react"
-import { Container } from "./HeaderLogoStyles"
-import { LogoJehlomat } from "assets/logo/LogoJehlomat"
+import React, { FC } from 'react';
+import * as s from './HeaderLogoStyles';
+import logo from './../../../assets/logo/logo-jehlomat.svg';
+import { HeaderLinkType } from '../HeaderLink/HeaderLink';
 
 export interface IHeaderLogo {
-  mobile?: boolean
+    mobile?: boolean;
 }
 
 export const HeaderLogo: FC<IHeaderLogo> = ({ mobile }) => {
-  return (
-    <Container mobile={mobile}>
-      <LogoJehlomat width={290} color={"#fff"} />
-    </Container>
-  )
-}
+    return (
+        <s.Container mobile={mobile}>
+            <s.Logo mobile={mobile} src={logo} />
+        </s.Container>
+    );
+};

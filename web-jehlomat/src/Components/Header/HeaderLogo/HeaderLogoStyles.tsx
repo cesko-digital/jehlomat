@@ -1,28 +1,30 @@
-import styled from "@emotion/styled"
-import { primary } from "utils/colors"
+import styled, { createGlobalStyle } from 'styled-components';
+import { primary } from '../../../utils/colors';
 
-export const Container = styled.div<{ mobile?: boolean }>`
-  background-color: ${primary};
+export const Logo = styled('img')<{ mobile?: boolean }>`
+    ${props =>
+        props.mobile &&
+        `
+    width: 80vw;
+`}
+`;
 
-  > svg {
-    width: ${({ mobile }) => (mobile ? "290px" : "100%")};
-    height: 100%;
-  }
-
-  ${(props) =>
-    !props.mobile &&
-    `
+export const Container = styled('div')<{ mobile?: boolean }>`
+    background-color: ${primary};
+    ${props =>
+        !props.mobile &&
+        `
     float: left;
     max-height: 40px;
     max-width: 300px;
     padding: 1.5em 2em;
     `}
-  ${(props) =>
-    props.mobile &&
-    `
+    ${props =>
+        props.mobile &&
+        `
     width: 100vw;
     max-height: 100%;
     padding: 0;
     float: none;
 `}
-`
+`;

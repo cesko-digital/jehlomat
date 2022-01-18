@@ -1,11 +1,11 @@
-import { FC } from "react"
-import { Container } from "./FooterLogoStyles"
-import logo from "assets/logo/logo-magdalena.svg"
+import React, { FC } from 'react';
+import * as s from './FooterLogoStyles';
+import logo from './../../../assets/logo/logo-magdalena.svg';
 
 export const FooterLogo: FC = ({}) => {
-  return (
-    <Container>
-      <img src={logo} />
-    </Container>
-  )
-}
+    return (
+        <s.Container>
+            <s.Logo src={logo} />
+        </s.Container>
+    );
+};
