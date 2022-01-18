@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { media } from '../../utils/media';
 import { size } from '../../utils/spacing';
 import { fontFamilyRoboto } from '../../utils/typography';

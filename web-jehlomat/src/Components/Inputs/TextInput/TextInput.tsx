@@ -1,5 +1,5 @@
 import { FC, InputHTMLAttributes } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { primaryDark, grey, primary } from '../../../utils/colors';
 import { default as MInput } from '@mui/material/TextField';
 

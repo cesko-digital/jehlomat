@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { default as MIconButton } from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import { primary, white } from '../../../utils/colors';

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import SecondaryButton from '../../../components/Buttons/SecondaryButton/SecondaryButton';
 import { primary, white } from '../../../utils/colors';
 

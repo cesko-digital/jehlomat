@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { primary, primaryDark, white } from '../../../utils/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';

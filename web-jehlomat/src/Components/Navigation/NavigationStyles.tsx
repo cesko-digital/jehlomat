@@ -1,11 +1,5 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from '@emotion/styled';
 import { primary, white } from '../../utils/colors';
-
-export const GlobalBody = createGlobalStyle`
-  body {
-    padding-bottom: 86px;
-  }
-`;
 
 export const Container = styled.div`
     position: fixed;

@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import SearchInput from '../../components/Inputs/SearchInput/SearchInput';
 import AddButton from '../../components/Buttons/AddButton/AddButton';
 import { usersMock } from './usersMock';

@@ -1,7 +1,7 @@
 import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
 import Navigation from '../../../components/Navigation/Navigation';
 import TitleBar from '../../../components/Navigation/TitleBar';

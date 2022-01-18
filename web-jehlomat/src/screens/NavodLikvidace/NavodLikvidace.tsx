@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Card from './components/Card';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { secondary } from '../../utils/colors';
 import PrimaryButton from '../../components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../components/Buttons/TextButton/TextButton';

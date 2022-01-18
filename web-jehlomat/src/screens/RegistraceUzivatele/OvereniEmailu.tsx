@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import { primary as bgColor, white as tickColor, white as textColor } from '../../utils/colors';
 import SecondaryButton from '../../components/Buttons/SecondaryButton/SecondaryButton';

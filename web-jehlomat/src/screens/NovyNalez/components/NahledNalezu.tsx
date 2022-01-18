@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../../components/Buttons/TextButton/TextButton';
 import { FormItem, FormWrapper } from '../../../components/Form/Form';

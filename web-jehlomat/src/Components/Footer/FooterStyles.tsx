@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { primaryDark } from '../../utils/colors';
 import { media } from '../../utils/media';
 import { fontFamilyRoboto } from '../../utils/typography';

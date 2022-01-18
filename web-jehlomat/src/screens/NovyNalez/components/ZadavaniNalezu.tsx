@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { INovaJehla } from '../NovyNalez';
 import { white } from '../../../utils/colors';
 import { FormItem, FormWrapper } from '../../../components/Form/Form';

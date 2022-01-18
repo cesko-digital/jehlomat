@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from '@emotion/styled';
 import { white } from '../../../utils/colors';
 
 export const Container = styled.div`

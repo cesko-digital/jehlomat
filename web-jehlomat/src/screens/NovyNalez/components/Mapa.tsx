@@ -9,7 +9,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 // @ts-ignore
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { INovaJehla, STEPS } from '../NovyNalez';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
 
