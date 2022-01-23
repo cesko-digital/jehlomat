@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box } from '@mui/material';
-import T from './components/t';
+import T from './t';
 // import { Footer } from './components/Footer/Footer';
 
 const App: FC = ({ children }) => {
