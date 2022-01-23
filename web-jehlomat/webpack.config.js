@@ -5,7 +5,7 @@ const Dotenv = require('dotenv-webpack');
 const environment = process.env.NODE_ENV || 'development';
 
 module.exports = {
-    entry: './src/index.tsx',
+    entry: path.resolve(__dirname, 'src', 'index.tsx'),
     output: { path: path.join(__dirname, 'dist'), filename: 'index.bundle.js' },
     mode: process.env.NODE_ENV || 'development',
     resolve: {
