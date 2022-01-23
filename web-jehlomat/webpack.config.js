@@ -4,8 +4,6 @@ const Dotenv = require('dotenv-webpack');
 
 const environment = process.env.NODE_ENV || 'development';
 
-console.log(path.resolve(__dirname, 'src', 'index.tsx'));
-
 module.exports = {
     entry: path.resolve(__dirname, 'src', 'index.tsx'),
     output: { path: path.join(__dirname, 'dist'), filename: 'index.bundle.js' },
@@ -20,6 +18,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 include: path.resolve(__dirname, 'src'),
+                include: path.resolve(__dirname, 'src', 'screens'),
                 use: ['babel-loader'],
             },
             {
