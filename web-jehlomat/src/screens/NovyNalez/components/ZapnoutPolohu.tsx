@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../../components/Buttons/TextButton/TextButton';
-import { ModalBody, ModalContainer } from '../../../components/Modal/ModalStyles';
+import { ModalBody, ModalContainer } from './../../../components/Modal/ModalStyles';
 
 interface Props {
     visible: boolean;
