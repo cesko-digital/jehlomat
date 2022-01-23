@@ -1,12 +1,10 @@
+import reportWebVitals from './reportWebVitals';
 import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import { LINKS } from './utils/links';
 
-/**
- * Lazy loading routes
- */
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
@@ -23,14 +21,6 @@ const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
 const LandingPage = lazy(() => import('./screens/LandingPage'));
 const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
-
-// **********************************************************************
-
-/**
- *
- * TO-DO: Wrap whole application with AppContainer to simulate local state with logged user.
- * For future requests etc.
- */
 
 ReactDOM.render(
     <React.StrictMode>
@@ -77,3 +67,8 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root'),
 );
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

@@ -1,6 +1,4 @@
-import { FC } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CheckCircle from '@mui/icons-material/CheckCircle';
@@ -12,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { primary, white, secondary } from '../../utils/colors';
 import TitleBar from '../../components/Navigation/TitleBar';
 
-const dekujeme: FC = () => {
+const Dekujeme = () => {
     let history = useHistory();
 
     const theme = useTheme();
@@ -47,4 +45,5 @@ const dekujeme: FC = () => {
         </Container>
     );
 };
-export default dekujeme;
+
+export default Dekujeme;
