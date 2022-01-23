@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
 import { primary as bgColor, white as textColor } from '../../utils/colors';
-import SecondaryButton from '../../components/Buttons/SecondaryButton/SecondaryButton';
+import SecondaryButton from './../../components/Buttons/SecondaryButton/SecondaryButton';
 
 const Container = styled.div`
     display: flex;
