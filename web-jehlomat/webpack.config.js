@@ -9,7 +9,7 @@ module.exports = {
     output: { path: path.join(__dirname, 'dist'), filename: 'index.bundle.js' },
     mode: process.env.NODE_ENV || 'development',
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.js', '.jsx'],
     },
     //devServer: { contentBase: path.join(__dirname, "src") },
     module: {
