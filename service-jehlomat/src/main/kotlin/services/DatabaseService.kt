@@ -204,6 +204,16 @@ class DatabaseService(
             .firstOrNull()
     }
 
+    fun selectUsersByOrganization(organizationId: Int): List<User> {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { (UserTable.organizationId eq organizationId) and (UserTable.verified eq true) }
+            .orderBy(UserTable.username.asc())
+            .map(mapUserRow)
+            .toList()
+    }
+
     fun findAdmin(organization: Organization): User {
         return databaseInstance
             .from(UserTable)

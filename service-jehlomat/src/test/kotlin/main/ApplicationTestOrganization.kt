@@ -87,6 +87,66 @@ class OrganizationTest {
         }
     }
 
+    @Test
+    fun testGetUsersOk() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
+
+        val userId1 = database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(email = "email3",verified = true, organizationId = differentOrgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            assertEquals(
+                """[ {
+  "id" : """ + userId1 + """,
+  "username" : "Franta Pepa 1",
+  "organizationId" : """ + orgId + """,
+  "teamId" : null
+}, {
+  "id" : """ + userId2 + """,
+  "username" : "Tomas Novak",
+  "organizationId" : """ + orgId + """,
+  "teamId" : null
+} ]""",
+                response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersOrgNotFound() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/differentOrg/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("Organization not found", response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersNotAllowed() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/${differentOrgId}/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.Forbidden, response.status())
+        }
+    }
+
     @ExperimentalSerializationApi
     @Test
     fun testPostOrganization(): Unit = withTestApplication({ module(testing = true) }) {
