@@ -6,6 +6,8 @@ import App from './App';
 import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
 
+const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
+
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
@@ -29,6 +31,9 @@ ReactDOM.render(
             <HashRouter>
                 <App>
                     <Switch>
+                        <Route path={LINKS.login}>
+                            <Prihlaseni />
+                        </Route>
                         <Route
                             path={LINKS.user}
                             render={() => (
