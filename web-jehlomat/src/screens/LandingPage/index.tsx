@@ -1,10 +1,10 @@
 import { Typography, Grid, Container, useMediaQuery } from '@mui/material';
 import jehlomatLogo from '../../assets/logo/logo-jehlomat-green.svg';
 import map from '../../assets/images/map.png';
-import { HeaderMobile } from '../../components/Header/HeaderMobile';
-import { Header } from '../../components/Header/Header';
+import { HeaderMobile } from '../../Components/Header/HeaderMobile';
+import { Header } from '../../Components/Header/Header';
 import { darkGrey, primaryDark } from '../../utils/colors';
-import PrimaryButton from '../../components/Buttons/PrimaryButton/PrimaryButton';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
 
 const LandingPage = () => {

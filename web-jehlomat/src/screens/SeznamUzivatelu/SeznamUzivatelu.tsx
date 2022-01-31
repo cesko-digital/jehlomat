@@ -1,12 +1,12 @@
 import { FC, useState } from 'react';
 import styled from '@emotion/styled';
-import SearchInput from '../../components/Inputs/SearchInput/SearchInput';
-import AddButton from '../../components/Buttons/AddButton/AddButton';
+import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
+import AddButton from '../../Components/Buttons/AddButton/AddButton';
 import { usersMock } from './usersMock';
 import { grey } from '../../utils/colors';
-import ListItem from '../../components/List/ListItem/ListItem';
+import ListItem from '../../Components/List/ListItem/ListItem';
 import { useHistory } from 'react-router';
-import { Header } from '../../components/Header/Header';
+import { Header } from '../../Components/Header/Header';
 
 interface Props {}
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
-import SecondaryButton from '../../components/Buttons/SecondaryButton/SecondaryButton';
+import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton';
 import { primary, secondary, white } from '../../utils/colors';
 
 const Container = styled.div`

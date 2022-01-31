@@ -1,14 +1,14 @@
 import { FC } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
-import TextInput from '../../components/Inputs/TextInput/TextInput';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import { FormHeading } from '../../utils/typography';
 import { useHistory } from 'react-router-dom';
-import PrimaryButton from '../../components/Buttons/PrimaryButton/PrimaryButton';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
 import API from '../../config/baseURL';
 import React from 'react';
-import { Header } from '../../components/Header/Header';
+import { Header } from '../../Components/Header/Header';
 import { useQuery } from '../../utils/location';
 
 interface Props {}

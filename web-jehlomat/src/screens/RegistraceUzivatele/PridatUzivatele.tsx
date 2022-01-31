@@ -1,15 +1,15 @@
 import { FC } from 'react';
 import { Formik, Form } from 'formik';
-import TextInput from '../../components/Inputs/TextInput/TextInput';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import { FormItemLabel, FormItemDescription } from '../../utils/typography';
-import { FormItem } from '../../components/Form/Form';
-import PrimaryButton from '../../components/Buttons/PrimaryButton/PrimaryButton';
-import TitleBar from '../../components/Navigation/TitleBar';
+import { FormItem } from '../../Components/Form/Form';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
+import TitleBar from '../../Components/Navigation/TitleBar';
 import { useHistory } from 'react-router-dom';
 import API from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
-import { Header } from '../../components/Header/Header';
+import { Header } from '../../Components/Header/Header';
 
 interface Props {}
 

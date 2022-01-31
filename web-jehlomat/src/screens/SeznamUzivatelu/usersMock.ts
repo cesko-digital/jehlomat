@@ -1,4 +1,4 @@
-import { IListItem } from '../../components/List/ListItem/ListItem';
+import { IListItem } from '../../Components/List/ListItem/ListItem';
 
 export const usersMock: IListItem[] = [
     {

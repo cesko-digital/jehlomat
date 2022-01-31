@@ -5,7 +5,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import { primary as bgColor, white as tickColor, white as textColor } from '../../utils/colors';
-import SecondaryButton from '../../components/Buttons/SecondaryButton/SecondaryButton';
+import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton';
 
 const Container = styled.div`
     display: flex;

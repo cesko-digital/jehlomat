@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { primary, secondary } from '../../../utils/colors';
-import TitleBar from '../../../components/Navigation/TitleBar';
+import TitleBar from '../../../Components/Navigation/TitleBar';
 import { CheckIcon } from '../../../assets/CheckIcon';
 import Box from '@mui/material/Box';
 import { ISyringeState } from '../TrackovaniNalezu';

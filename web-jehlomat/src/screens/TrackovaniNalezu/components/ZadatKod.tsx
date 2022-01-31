@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { Formik, Form } from 'formik';
-import TextInput from '../../../components/Inputs/TextInput/TextInput';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
-import TextButton from '../../../components/Buttons/TextButton/TextButton';
+import TextInput from '../../../Components/Inputs/TextInput/TextInput';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
+import TextButton from '../../../Components/Buttons/TextButton/TextButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import API from '../../../config/baseURL';
@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
-import TitleBar from '../../../components/Navigation/TitleBar';
+import TitleBar from '../../../Components/Navigation/TitleBar';
 import { syringeStateType, STEPS } from '../TrackovaniNalezu';
 
 const validationSchema = yup.object({

@@ -2,11 +2,11 @@ import { FC } from 'react';
 import styled from '@emotion/styled';
 import { INovaJehla } from '../NovyNalez';
 import { white } from '../../../utils/colors';
-import { FormItem, FormWrapper } from '../../../components/Form/Form';
+import { FormItem, FormWrapper } from '../../../Components/Form/Form';
 import { FormItemLabel } from '../../../utils/typography';
-import TextInput from '../../../components/Inputs/TextInput/TextInput';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
-import { Header } from '../../../components/Header/Header';
+import TextInput from '../../../Components/Inputs/TextInput/TextInput';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
+import { Header } from '../../../Components/Header/Header';
 
 const Container = styled.div`
     display: flex;

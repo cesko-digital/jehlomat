@@ -11,7 +11,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import styled from '@emotion/styled';
 import { INovaJehla, STEPS } from '../NovyNalez';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 
 const FloatinButtonContainer = styled.div`
     position: absolute;

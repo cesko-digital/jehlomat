@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
 import { useHistory } from 'react-router-dom';
-import SecondaryButton from '../../components/Buttons/SecondaryButton/SecondaryButton';
+import SecondaryButton from '../../Components/Buttons/SecondaryButton/SecondaryButton';
 import { primary as bgColor, white as textColor } from '../../utils/colors';
 
 const Container = styled.div`

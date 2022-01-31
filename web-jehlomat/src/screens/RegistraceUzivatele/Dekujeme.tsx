@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { primary, white, secondary } from '../../utils/colors';
-import TitleBar from '../../components/Navigation/TitleBar';
+import TitleBar from '../../Components/Navigation/TitleBar';
 
 const Dekujeme = () => {
     let history = useHistory();

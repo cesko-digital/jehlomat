@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Formik, Form } from 'formik';
-import TextInput from '../../components/Inputs/TextInput/TextInput';
-import PrimaryButton from '../../components/Buttons/PrimaryButton/PrimaryButton';
+import TextInput from '../../Components/Inputs/TextInput/TextInput';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import API from '../../config/baseURL';

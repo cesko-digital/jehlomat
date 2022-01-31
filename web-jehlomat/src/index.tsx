@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import { LINKS } from './utils/links';
-import { Footer } from './components/Footer/Footer';
+import { Footer } from './Components/Footer/Footer';
 
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));

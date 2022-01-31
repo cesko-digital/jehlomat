@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton/PrimaryButton';
-import TextButton from '../../../components/Buttons/TextButton/TextButton';
-import { FormItem, FormWrapper } from '../../../components/Form/Form';
-import { Header } from '../../../components/Header/Header';
-import TextInput from '../../../components/Inputs/TextInput/TextInput';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
+import TextButton from '../../../Components/Buttons/TextButton/TextButton';
+import { FormItem, FormWrapper } from '../../../Components/Form/Form';
+import { Header } from '../../../Components/Header/Header';
+import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import { white } from '../../../utils/colors';
 import { FormItemLabel } from '../../../utils/typography';
 
