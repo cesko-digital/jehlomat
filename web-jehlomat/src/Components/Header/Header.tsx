@@ -7,9 +7,9 @@ export const Header: FC = ({}) => {
  return <s.Container>
      <HeaderLogo/>
          <s.LinkContainer>
-             <HeaderLink type={HeaderLinkType.AboutApp} route={"about"} />
-             <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={"create"} />
-             <HeaderLink type={HeaderLinkType.Login} route={"login"} />
+             <HeaderLink type={HeaderLinkType.AboutApp} route={"/"} />
+             <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={"organizace/registrace"} />
+             <HeaderLink type={HeaderLinkType.Login} route={"prihlaseni"} />
          </s.LinkContainer>
  </s.Container>
 }

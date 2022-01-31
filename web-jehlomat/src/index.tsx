@@ -5,6 +5,7 @@ import App from './App/App';
 import Navigation from './Components/Navigation/Navigation';
 import { HeaderMobile } from './Components/Header/HeaderMobile';
 import Potvrzeni from './NovyNalez/Components/Potvrzeni';
+import Prihlaseni from './Prihlaseni/Prihlaseni';
 
 /**
  * Lazy loading routes
@@ -43,6 +44,9 @@ ReactDOM.render(
                 <Switch>
                     <Route path="/mobile">
                         <HeaderMobile />
+                    </Route>
+                    <Route path="/prihlaseni">
+                        <Prihlaseni />
                     </Route>
                     <Route
                         path="/uzivatel"
