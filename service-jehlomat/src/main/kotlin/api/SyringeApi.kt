@@ -23,20 +23,19 @@ import java.time.Instant
 fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
     return route("/") {
-        post("search") {
-            val request = call.receive<SyringeFilterRequest>()
-
-            val requestedPageInfo = request.pageInfo.ensureValidity()
-            val requestedOrdering = request.ordering.ensureValidity(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
-
-            val filteredSyringes = database.selectSyringes(request.filter, requestedPageInfo, requestedOrdering)
-
-            val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
-            val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
-            call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
-        }
-
         authenticate(JWT_CONFIG_NAME) {
+            post("search") {
+                val request = call.receive<SyringeFilterRequest>()
+
+                val requestedPageInfo = request.pageInfo.ensureValidity()
+                val requestedOrdering = request.ordering.ensureValidity(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
+
+                val filteredSyringes = database.selectSyringes(request.filter, requestedPageInfo, requestedOrdering)
+
+                val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
+                val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
+                call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
+            }
 
             post("export") {
                 val loggedInUser = jwtManager.getLoggedInUser(call, database)
@@ -79,6 +78,25 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                     status = HttpStatusCode.OK,
                 )
             }
+
+            put {
+                val newSyringe = call.receive<Syringe>()
+                val currentSyringe = database.selectSyringeById(newSyringe.id)
+
+                if (currentSyringe == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@put
+                }
+
+                val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe, newSyringe)
+                if (fieldName != null) {
+                    call.respond(HttpStatusCode.BadRequest, "The field $fieldName is unchangeable by PUT request.")
+                    return@put
+                }
+
+                database.updateSyringe(newSyringe)
+                call.respond(HttpStatusCode.OK)
+            }
         }
 
         post {
@@ -109,35 +127,7 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
             call.respond(HttpStatusCode.Created, SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty()))
         }
 
-        put {
-            val newSyringe = call.receive<Syringe>()
-            val currentSyringe = database.selectSyringeById(newSyringe.id)
-
-            if (currentSyringe == null) {
-                call.respond(HttpStatusCode.NotFound)
-                return@put
-            }
-
-            val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe, newSyringe)
-            if (fieldName != null) {
-                call.respond(HttpStatusCode.BadRequest, "The field $fieldName is unchangeable by PUT request.")
-                return@put
-            }
-
-            database.updateSyringe(newSyringe)
-            call.respond(HttpStatusCode.OK)
-        }
-
         route("/{id}") {
-            get {
-                val id = call.parameters["id"]
-                val result = id?.let { it1 -> database.selectSyringeById(it1) }
-                if (result != null) {
-                    call.respond(HttpStatusCode.OK, result)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
 
             post("/track") {
                 val id = call.parameters["id"]
@@ -158,16 +148,27 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 }
             }
 
-            delete {
-                val id = call.parameters["id"]
-
-                if (id != null) {
-                    database.deleteSyringe(id)
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
+            authenticate(JWT_CONFIG_NAME) {
+                get {
+                    val id = call.parameters["id"]
+                    val result = id?.let { it1 -> database.selectSyringeById(it1) }
+                    if (result != null) {
+                        call.respond(HttpStatusCode.OK, result)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
                 }
 
+                delete {
+                    val id = call.parameters["id"]
+
+                    if (id != null) {
+                        database.deleteSyringe(id)
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
             }
         }
     }

@@ -85,7 +85,9 @@ class ApplicationTest {
     @Test
     fun testGetUser() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Get, "$API_PATH/$userId") {
+            addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -102,7 +104,11 @@ class ApplicationTest {
 
     @Test
     fun testGetUserNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/not_exists_username")) {
+        database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, "$API_PATH/not_exists_username") {
+            addHeader("Authorization", "Bearer $token")
+        }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }

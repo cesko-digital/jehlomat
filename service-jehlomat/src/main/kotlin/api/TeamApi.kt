@@ -14,18 +14,18 @@ import services.*
 fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Route {
 
     return route("/") {
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-            val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
-
-            if (team != null ) {
-                call.respond(HttpStatusCode.OK, team)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
         authenticate(JWT_CONFIG_NAME) {
+            get("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
+
+                if (team != null ) {
+                    call.respond(HttpStatusCode.OK, team)
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+
             post {
                 val team = call.receive<Team>()
                 when {
@@ -45,9 +45,7 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
                     }
                 }
             }
-        }
 
-        authenticate(JWT_CONFIG_NAME) {
             put {
                 val newTeam = call.receive<Team>()
                 val currentTeam = databaseInstance.selectTeamById(newTeam.id)

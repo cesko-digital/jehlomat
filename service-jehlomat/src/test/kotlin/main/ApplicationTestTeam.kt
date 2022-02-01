@@ -47,8 +47,10 @@ class TeamTest {
     
     @Test
     fun testGetTeam() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
         val newTeamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
         with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$newTeamId") {
+            addHeader("Authorization", "Bearer $token")
         }) {
             val locationId = database.selectTeams()[0].location.id
             assertEquals(HttpStatusCode.OK, response.status())
@@ -71,7 +73,10 @@ class TeamTest {
 
     @Test
     fun testGetTeamNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/not_existing_team")) {
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/not_existing_team"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }
