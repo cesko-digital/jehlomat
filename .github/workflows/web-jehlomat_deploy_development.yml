@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@v1
       - name: 'Build'
         run: |
-          yarn install
-          yarn build
+          npm install
+          npm run build
         working-directory: ${{ env.name }}
       - name: 'Deploy to AWS'
         run: |
