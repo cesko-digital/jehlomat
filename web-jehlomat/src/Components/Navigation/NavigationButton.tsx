@@ -31,7 +31,7 @@ export const SecondaryNavigationButton: FC<ISecondaryNavigationButton> = ({ type
 
 interface IPrimaryNavigationButton {}
 
-export const PrimaryNavigationButton: FC<IPrimaryNavigationButton> = ({}) => {
+export const PrimaryNavigationButton: FC<IPrimaryNavigationButton> = () => {
     return <AddSyringeIcon />;
 };
 
