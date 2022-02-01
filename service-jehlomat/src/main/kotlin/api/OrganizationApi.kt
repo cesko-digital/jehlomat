@@ -10,6 +10,7 @@ import model.*
 import model.user.User
 import model.user.toUserInfo
 import services.*
+import services.RequestValidationWrapper.Companion.validateOrganizationRequest
 import services.RequestValidationWrapper.Companion.validatePutObject
 import utils.isValidMail
 import utils.isValidPassword
@@ -71,23 +72,18 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
 
             get("/{id}/users") {
                 val id = call.parameters["id"]?.toIntOrNull()
-                val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
-                if (organization == null) {
-                    call.respond(HttpStatusCode.NotFound, "Organization not found")
-                    return@get
+                if (validateOrganizationRequest(call, jwtManager, database, id)) {
+                    val users = database.selectUsersByOrganization(id!!)
+                    call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
                 }
+            }
 
-                val loggedInUser = jwtManager.getLoggedInUser(call, database)
-                if (loggedInUser.organizationId != id) {
-                    call.respond(
-                        HttpStatusCode.Forbidden,
-                        "Only a member of the organization can view its members."
-                    )
-                    return@get
+            get("/{id}/teams") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (validateOrganizationRequest(call, jwtManager, database, id)){
+                    val teams = database.selectTeamsByOrganizationId(id!!)
+                    call.respond(HttpStatusCode.OK, teams)
                 }
-
-                val users = database.selectUsersByOrganization(id)
-                call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
             }
 
             put {

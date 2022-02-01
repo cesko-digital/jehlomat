@@ -17,10 +17,12 @@ import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
+val LOCATION = Location(0,"Tyn nad Vltavou", 10, 11)
+
 val TEAM = Team(
     0,
     name ="ceska jehlova",
-    location = Location(0,"Tyn nad Vltavou", 10, 11),
+    location = LOCATION,
     organizationId = 1
 )
 

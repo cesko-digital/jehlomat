@@ -270,6 +270,18 @@ class DatabaseService(
             .firstOrNull()
     }
 
+
+    fun selectTeamsByOrganizationId(organizationId: Int): List<Team> {
+        return databaseInstance
+            .from(TeamTable)
+            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
+            .select()
+            .where { TeamTable.organization_id eq organizationId }
+            .orderBy(TeamTable.name.asc())
+            .map(mapTeamRow)
+            .toList()
+    }
+
     fun selectOrganizations(): List<Organization> {
         return databaseInstance
             .from(OrganizationTable)

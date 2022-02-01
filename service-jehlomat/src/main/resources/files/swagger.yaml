@@ -87,6 +87,29 @@ paths:
               $ref: '#/definitions/UserInfo'
         '404':
           description: Organization not found
+  /organization/{id}/teams:
+    get:
+      summary: Get organization teams
+      description: Returns a list of teams in the requested organization
+      produces:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Team'
+        '404':
+          description: Organization not found
   /organization/:
     get:
       summary: Get all organizations
