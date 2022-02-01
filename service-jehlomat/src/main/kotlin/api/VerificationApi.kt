@@ -40,6 +40,7 @@ fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Ro
                 }
             }
         }
+
         post ("/user") {
             val request = call.receive<UserVerificationRequest>()
             val user = database.selectUserByEmail(request.email)

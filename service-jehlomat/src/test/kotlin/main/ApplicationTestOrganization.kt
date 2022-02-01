@@ -40,7 +40,10 @@ class OrganizationTest {
     @Test
     fun testGetOrganization() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId") {
+            addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -55,18 +58,12 @@ class OrganizationTest {
     }
 
     @Test
-    fun testGetAllOrganizations() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/")) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals("[ ]", response.content)
-        }
-    }
-
-    @Test
     fun testGetAllOrganizationsNotEmpty() = withTestApplication(Application::module) {
-        var orgId = 0
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/") {
-            orgId = database.insertOrganization(ORGANIZATION)
+            addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -81,7 +78,12 @@ class OrganizationTest {
 
     @Test
     fun testGetOrganizationNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org")) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/administrator@example.org"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals("Organization not found", response.content)
         }

@@ -49,6 +49,8 @@ paths:
       description: Returns a single organization
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -90,6 +92,8 @@ paths:
       summary: Get all organizations
       produces:
         - application/json
+      security:
+        - Bearer: []
       responses:
         '200':
           description: successful operation
@@ -136,6 +140,8 @@ paths:
       description: Returns a list of syringes
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -191,6 +197,8 @@ paths:
       description: ''
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -207,6 +215,8 @@ paths:
       description: Returns a single syringe
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -222,6 +232,8 @@ paths:
     delete:
       summary: Delete syringe by ID
       description: Delete a single syringe
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -260,6 +272,8 @@ paths:
       description: Returns a single team
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -316,6 +330,8 @@ paths:
       description: Returns a single user
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path

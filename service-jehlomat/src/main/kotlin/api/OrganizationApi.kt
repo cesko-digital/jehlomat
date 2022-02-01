@@ -18,44 +18,6 @@ import utils.isValidUsername
 
 fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
     return route("/") {
-        get {
-            call.respond(HttpStatusCode.OK, database.selectOrganizations())
-        }
-
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-            val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
-
-            if (organization != null ) {
-                call.respond(HttpStatusCode.OK, organization)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "Organization not found")
-            }
-        }
-
-        authenticate(JWT_CONFIG_NAME) {
-            get("/{id}/users") {
-                val id = call.parameters["id"]?.toIntOrNull()
-                val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
-                if (organization == null) {
-                    call.respond(HttpStatusCode.NotFound, "Organization not found")
-                    return@get
-                }
-
-                val loggedInUser = jwtManager.getLoggedInUser(call, database)
-                if (loggedInUser.organizationId != id) {
-                    call.respond(
-                        HttpStatusCode.Forbidden,
-                        "Only a member of the organization can view its members."
-                    )
-                    return@get
-                }
-
-                val users = database.selectUsersByOrganization(id)
-                call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
-            }
-        }
-
         post {
             val registration = call.receive<OrganizationRegistration>()
             when {
@@ -92,6 +54,42 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
         }
 
         authenticate(JWT_CONFIG_NAME) {
+            get {
+                call.respond(HttpStatusCode.OK, database.selectOrganizations())
+            }
+
+            get("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
+
+                if (organization != null ) {
+                    call.respond(HttpStatusCode.OK, organization)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Organization not found")
+                }
+            }
+
+            get("/{id}/users") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
+                if (organization == null) {
+                    call.respond(HttpStatusCode.NotFound, "Organization not found")
+                    return@get
+                }
+
+                val loggedInUser = jwtManager.getLoggedInUser(call, database)
+                if (loggedInUser.organizationId != id) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        "Only a member of the organization can view its members."
+                    )
+                    return@get
+                }
+
+                val users = database.selectUsersByOrganization(id)
+                call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
+            }
+
             put {
                 val newOrganization = call.receive<Organization>()
                 val currentOrganization = database.selectOrganizationById(newOrganization.id)
