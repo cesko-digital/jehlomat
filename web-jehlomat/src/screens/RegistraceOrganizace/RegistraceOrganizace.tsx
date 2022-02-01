@@ -33,7 +33,7 @@ const validationSchema = yup.object({
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná'),
 });
 
-const RegistraceOrganizace: FC<IRegistraceOrganizace> = ({}) => {
+const RegistraceOrganizace: FC<IRegistraceOrganizace> = () => {
     let history = useHistory();
     return (
         <>

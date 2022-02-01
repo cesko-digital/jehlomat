@@ -38,7 +38,7 @@ const validationSchema = yup.object({
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná'),
 });
 
-const RegistraceUzivatele: FC<Props> = ({}) => {
+const RegistraceUzivatele: FC<Props> = () => {
     const history = useHistory();
     const query = useQuery();
     const email = query && query.get('email') ? query.get('email')! : '';

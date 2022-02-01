@@ -17,13 +17,14 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
     // toto povolení vydrží a podle toho možná uložit cookie?
     // Podle cookie potom řešit, zda se má modal vůbec ukázat?
     useEffect(() => {
-        if (userSelectedLocation[0] != undefined && userSelectedLocation[1] != undefined) {
+        if (!!userSelectedLocation[0] && !!userSelectedLocation[1]) {
             setUserPosition(userSelectedLocation as LatLngExpression);
-        } else if ('geolocation' in navigator && userSelectedLocation[0] == undefined && userSelectedLocation[1] == undefined) {
+        } else if ('geolocation' in navigator && !!userSelectedLocation[0] && !!userSelectedLocation[1]) {
             setModalVisible(true);
         } else {
             setModalVisible(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleAllowGeolocation = (lat: number, lng: number): void => {

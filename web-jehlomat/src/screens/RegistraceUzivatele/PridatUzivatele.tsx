@@ -4,7 +4,6 @@ import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import { FormItemLabel, FormItemDescription } from '../../utils/typography';
 import { FormItem } from '../../Components/Form/Form';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import TitleBar from '../../Components/Navigation/TitleBar';
 import { useHistory } from 'react-router-dom';
 import API from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
@@ -21,7 +20,7 @@ const validationSchema = yup.object({
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
 });
 
-const PridatUzivatele: FC<Props> = ({}) => {
+const PridatUzivatele: FC<Props> = () => {
     let history = useHistory();
     return (
         <>

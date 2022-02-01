@@ -1,9 +1,9 @@
 import { FC, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
-import { primaryDark, grey, primary } from '../../../utils/colors';
+import { grey } from '../../../utils/colors';
 import { default as MInput } from '@mui/material/TextField';
 
-interface TextInput extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     error?: string | undefined;
 }
@@ -23,7 +23,7 @@ const Input = styled.div`
     margin: 1em;
 `;
 
-const TextInput: FC<TextInput> = props => {
+const TextInput: FC<Props> = props => {
     return (
         <Input>
             <Label htmlFor={props.name}>{props.label}</Label>

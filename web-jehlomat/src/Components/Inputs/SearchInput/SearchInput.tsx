@@ -4,7 +4,7 @@ import { primaryDark, primaryLight } from '../../../utils/colors';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface SearchInput extends InputHTMLAttributes<HTMLInputElement> {}
+interface Props extends InputHTMLAttributes<HTMLInputElement> {}
 
 const Layout = styled.div`
     position: relative;
@@ -31,7 +31,7 @@ const Input = styled.input`
     border-radius: 28px;
 `;
 
-const SearchInput: FC<SearchInput> = props => {
+const SearchInput: FC<Props> = props => {
     return (
         <Layout>
             <IconWrapper>

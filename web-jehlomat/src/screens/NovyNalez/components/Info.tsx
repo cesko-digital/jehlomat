@@ -4,7 +4,6 @@ import { FC } from 'react';
 import styled from '@emotion/styled';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import Navigation from '../../../Components/Navigation/Navigation';
-import TitleBar from '../../../Components/Navigation/TitleBar';
 import { primaryDark, white } from '../../../utils/colors';
 import { Header } from '../../../Components/Header/Header';
 import { STEPS } from '../NovyNalez';

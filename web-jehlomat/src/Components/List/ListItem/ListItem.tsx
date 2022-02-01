@@ -1,7 +1,7 @@
-import { ButtonHTMLAttributes, FC } from 'react';
+import { FC } from 'react';
 import styled from '@emotion/styled';
 import { grey, greyLight, primaryDark, white } from '../../../utils/colors';
-import { fontFamilyRoboto, fontWeightBold, H4 } from '../../../utils/typography';
+import { fontFamilyRoboto, fontWeightBold } from '../../../utils/typography';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router';
@@ -44,14 +44,6 @@ const Email = styled.div`
     font-size: 14px;
     font-weight: bold;
     line-height: 16px;
-`;
-const List = styled.ul`
-    list-style: none;
-    padding: 0px 20px;
-    background-color: ${white};
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.16);
 `;
 
 const ListIt = styled.li`

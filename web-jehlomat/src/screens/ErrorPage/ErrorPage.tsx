@@ -21,7 +21,7 @@ const InfoText = styled.div`
     text-align: center;
 `;
 
-export default () => {
+const ErrorPage = () => {
     const history = useHistory();
 
     return (
@@ -33,3 +33,5 @@ export default () => {
         </Container>
     );
 };
+
+export default ErrorPage;

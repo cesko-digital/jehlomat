@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { primary, white } from '../../utils/colors';
+import { primary } from '../../utils/colors';
 
 export const Container = styled.div`
     position: fixed;

@@ -25,7 +25,7 @@ export enum STEPS {
     Nahled,
 }
 
-const NovyNalez: FC<Props> = ({}) => {
+const NovyNalez: FC<Props> = () => {
     const queries = useQuery();
     const step = queries.get('step');
 

@@ -12,7 +12,6 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
-import TitleBar from '../../../Components/Navigation/TitleBar';
 import { syringeStateType, STEPS } from '../TrackovaniNalezu';
 
 const validationSchema = yup.object({

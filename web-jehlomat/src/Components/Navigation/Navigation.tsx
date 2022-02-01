@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { LINKS } from '../../utils/links';
 import { css, GlobalStyles } from '@mui/styled-engine';
 
-const Navigation: FC = ({}) => {
+const Navigation: FC = () => {
     const location = useLocation();
 
     return (

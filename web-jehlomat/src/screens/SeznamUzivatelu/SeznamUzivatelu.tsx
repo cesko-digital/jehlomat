@@ -47,7 +47,7 @@ const ListInfo = styled.div`
     color: ${grey};
 `;
 
-const SeznamUzivatelu: FC<Props> = ({}) => {
+const SeznamUzivatelu: FC<Props> = () => {
     const [users, setUsers] = useState(usersMock);
     const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
 

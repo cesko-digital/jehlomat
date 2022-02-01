@@ -45,7 +45,7 @@ const syringeStates: syringeStateTypes = {
     },
 };
 
-const TrackovaniNalezu: FC<Props> = ({}) => {
+const TrackovaniNalezu: FC<Props> = () => {
     const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.ZadatKod);
     const [syringeState, setSyringeState] = useState<syringeStateType>('announced');
     const history = useHistory();

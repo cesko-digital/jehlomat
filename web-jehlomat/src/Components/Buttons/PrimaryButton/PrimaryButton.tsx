@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { primaryDark, white } from '../../../utils/colors';
 import { H4 } from '../../../utils/typography';
 
-interface PrimaryButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     text: String;
 }
 
@@ -18,7 +18,7 @@ const Button = styled.button`
     padding: 0px 20px;
 `;
 
-const PrimaryButton: FC<PrimaryButton> = ({ text, ...props }) => {
+const PrimaryButton: FC<Props> = ({ text, ...props }) => {
     return (
         <Button {...props}>
             <H4>{text}</H4>
