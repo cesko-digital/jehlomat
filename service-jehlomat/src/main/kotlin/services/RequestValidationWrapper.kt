@@ -35,5 +35,29 @@ class RequestValidationWrapper {
 
             return true
         }
+
+        suspend fun validateOrganizationRequest(
+            appCall: ApplicationCall,
+            jwtManager: JwtManager,
+            database: DatabaseService,
+            id: Int?,
+        ): Boolean {
+            val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
+            if (organization == null) {
+                appCall.respond(HttpStatusCode.NotFound, "Organization not found")
+                return false
+            }
+
+            val loggedInUser = jwtManager.getLoggedInUser(appCall, database)
+            if (loggedInUser.organizationId != id) {
+                appCall.respond(
+                    HttpStatusCode.Forbidden,
+                    "Only a member of the organization can view its objects."
+                )
+                return false
+            }
+
+            return true
+        }
     }
 }

@@ -34,6 +34,7 @@ class OrganizationTest {
     @BeforeTest
     fun beforeEach() {
         database.cleanUsers()
+        database.cleanTeams()
         database.cleanOrganizations()
     }
 
@@ -143,6 +144,81 @@ class OrganizationTest {
         val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
 
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/${differentOrgId}/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.Forbidden, response.status())
+        }
+    }
+
+
+    @Test
+    fun testGetTeamsOk() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        val teamId1 = database.insertTeam(TEAM.copy(name = "team 1", organizationId = orgId))
+        val teamId2 = database.insertTeam(TEAM.copy(name = "team 2", organizationId = orgId))
+
+        val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "different org"))
+        database.insertTeam(TEAM.copy(name = "team 3", organizationId = differentOrgId))
+
+        val team1 = database.selectTeamById(teamId1)!!
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId/teams"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            assertEquals(
+                """[ {
+  "id" : """ + teamId1 + """,
+  "name" : "team 1",
+  "location" : {
+    "id" : """ + team1.location.id + """,
+    "okres" : """" + LOCATION.okres + """",
+    "obec" : """ + LOCATION.obec + """,
+    "mestkaCast" : """ + LOCATION.mestkaCast + """
+  },
+  "organizationId" : """ + orgId + """
+}, {
+  "id" : """ + teamId2 + """,
+  "name" : "team 2",
+  "location" : {
+    "id" : """ + team1.location.id + """,
+    "okres" : """" + LOCATION.okres + """",
+    "obec" : """ + LOCATION.obec + """,
+    "mestkaCast" : """ + LOCATION.mestkaCast + """
+  },
+  "organizationId" : """ + orgId + """
+} ]""",
+                response.content)
+        }
+    }
+
+    @Test
+    fun testGetTeamsOrgNotFound() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/differentOrg/teams"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("Organization not found", response.content)
+        }
+    }
+
+    @Test
+    fun testGetTeamsNotAllowed() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+
+        val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/${differentOrgId}/teams"){
             addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.Forbidden, response.status())
