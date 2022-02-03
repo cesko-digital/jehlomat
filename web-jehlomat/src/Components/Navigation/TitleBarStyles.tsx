@@ -1,24 +1,15 @@
-import styled, { createGlobalStyle } from 'styled-components';
-import { primary } from '../Utils/Colors';
-
-export const GlobalBody = createGlobalStyle`
-  body {
-    padding-top: 56px;
-  }
-`;
+import styled from '@emotion/styled';
+import { primary } from '../../utils/colors';
 
 export const Container = styled.div`
     display: flex;
     flex-direction: row;
     height: 56px;
     width: 100%;
-
     position: fixed;
     top: 0;
     left: 0;
-
     z-index: 200;
-
     background-color: ${primary};
 `;
 

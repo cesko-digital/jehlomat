@@ -1,16 +1,29 @@
-import React, { FC } from 'react';
-import * as s from './HeaderStyles';
+import React from 'react';
+import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
+import TitleBar from '../Navigation/TitleBar';
 
-export const Header: FC = ({}) => {
- return <s.Container>
-     <HeaderLogo/>
-         <s.LinkContainer>
-             <HeaderLink type={HeaderLinkType.AboutApp} route={"about"} />
-             <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={"create"} />
-             <HeaderLink type={HeaderLinkType.Login} route={"login"} />
-         </s.LinkContainer>
- </s.Container>
+interface Props {
+    mobileTitle: string;
+    backRoute?: string;
 }
 
+export const Header = (props: Props) => {
+    return (
+        <>
+            <SContainer>
+                <HeaderLogo />
+                <SLinkContainer>
+                    <HeaderLink type={HeaderLinkType.AboutApp} route={'about'} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={'create'} />
+                    <HeaderLink type={HeaderLinkType.Login} route={'login'} />
+                </SLinkContainer>
+            </SContainer>
+
+            <SMobileContainer>
+                <TitleBar>{props.mobileTitle}</TitleBar>
+            </SMobileContainer>
+        </>
+    );
+};

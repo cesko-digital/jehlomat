@@ -1,5 +1,5 @@
-import React, {FC} from 'react';
-import * as s from "./FooterLinkStyles";
+import React, { FC } from 'react';
+import * as s from './FooterLinkStyles';
 import { useHistory } from 'react-router-dom';
 
 export enum FooterLinkType {
@@ -9,23 +9,27 @@ export enum FooterLinkType {
 }
 
 export interface IFooterLink {
-    type: FooterLinkType
-    route: string
+    type: FooterLinkType;
+    route: string;
 }
 
-export const FooterLink: FC<IFooterLink> = ({type, route}) => {
-    let history = useHistory()
+export const FooterLink: FC<IFooterLink> = ({ type, route }) => {
+    let history = useHistory();
 
-    return <s.Container onClick={ () => history.push(route) }><s.Link>{titleForType(type)}</s.Link></s.Container>
-}
+    return (
+        <s.Container onClick={() => history.push(route)}>
+            <s.Link>{titleForType(type)}</s.Link>
+        </s.Container>
+    );
+};
 
 function titleForType(type: FooterLinkType): string {
     switch (type) {
         case FooterLinkType.AboutApp:
-            return "O aplikaci";
+            return 'O aplikaci';
         case FooterLinkType.AboutJehlomat:
-            return "O jehlomatu";
+            return 'O jehlomatu';
         case FooterLinkType.Contact:
-            return "Kontakt";
+            return 'Kontakt';
     }
 }

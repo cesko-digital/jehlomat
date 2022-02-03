@@ -1,84 +1,76 @@
+import reportWebVitals from './reportWebVitals';
 import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, HashRouter, Route, Switch } from 'react-router-dom';
-import App from './App/App';
-import Navigation from './Components/Navigation/Navigation';
-import { HeaderMobile } from './Components/Header/HeaderMobile';
-import Potvrzeni from './NovyNalez/Components/Potvrzeni';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import App from './App';
+import { LINKS } from './utils/links';
+import { Footer } from './Components/Footer/Footer';
 
-/**
- * Lazy loading routes
- */
-const Organizace = lazy(() => import('./Organizace/Organizace'));
-const Profil = lazy(() => import('./Profil/Profil'));
-const NovyNalez = lazy(() => import('./NovyNalez/NovyNalez'));
-const Nalezy = lazy(() => import('./Nalezy/Nalezy'));
-const Dekujeme = lazy(() => import('./RegistraceOrganizace/Dekujeme'));
-const RegistraceOrganizace = lazy(() => import('./RegistraceOrganizace/RegistraceOrganizace'));
-const RegistraceUzivatele = lazy(() => import('./RegistraceUzivatele/RegistraceUzivatele'));
-const OvereniEmailu = lazy(() => import('./RegistraceUzivatele/OvereniEmailu'));
+const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
+const Profil = lazy(() => import('./screens/Profil/Profil'));
+const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
+const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
+const Dekujeme = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
+const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
+const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));
+const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
 
-const DekujemeUzivatel = lazy(() => import('./RegistraceUzivatele/Dekujeme'));
-const SeznamUzivatelu = lazy(() => import('./SeznamUzivatelu/SeznamUzivatelu'));
-const PridatUzivatele = lazy(() => import('./RegistraceUzivatele/PridatUzivatele'));
-const ErrorPage = lazy(() => import('./ErrorPage/ErrorPage'));
-const TrackovaniNalezu = lazy(() => import('./TrackovaniNalezu/TrackovaniNalezu'));
-const LandingPage = lazy(() => import('./LandingPage'));
-const NavodLikvidace = lazy(() => import('./NavodLikvidace/NavodLikvidace'));
-
-// **********************************************************************
-
-/**
- *
- * TO-DO: Wrap whole application with AppContainer to simulate local state with logged user.
- * For future requests etc.
- */
+const DekujemeUzivatel = lazy(() => import('./screens/RegistraceUzivatele/Dekujeme'));
+const SeznamUzivatelu = lazy(() => import('./screens/SeznamUzivatelu/SeznamUzivatelu'));
+const PridatUzivatele = lazy(() => import('./screens/RegistraceUzivatele/PridatUzivatele'));
+const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
+const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
+const LandingPage = lazy(() => import('./screens/LandingPage'));
+const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
 
 ReactDOM.render(
     <React.StrictMode>
         <Suspense fallback={<div>Loading...</div>}>
             <HashRouter>
-                {/*TODO: Navigation shouldn't be here, but on specific controllers*/}
-                {/*<Navigation />*/}
-                <Switch>
-                    <Route path="/mobile">
-                        <HeaderMobile />
-                    </Route>
-                    <Route
-                        path="/uzivatel"
-                        render={({ match: { url } }) => (
-                            <>
-                                <Route path={`${url}`} component={SeznamUzivatelu} exact />
-                                <Route path={`${url}/novy`} component={PridatUzivatele} />
-                                <Route path={`${url}/validace`} component={OvereniEmailu} />
-                                <Route path={`${url}/registrace`} component={RegistraceUzivatele} />
-                                <Route path={`${url}/dekujeme`} component={DekujemeUzivatel} />
-                            </>
-                        )}
-                    />
-                    <Route
-                        path="/organizace"
-                        render={({ match: { url } }) => (
-                            <>
-                                <Route path={`${url}/registrace`} component={RegistraceOrganizace} exact />
-                                <Route path={`${url}/dekujeme`} component={Dekujeme} />
-                            </>
-                        )}
-                    />
-                    <Route path="/organizace" component={Organizace} />
-                    <Route path="/profil" component={Profil} />
-                    <Route path="/novy-nalez" component={NovyNalez} />
-                    <Route path="/nalezy" component={Nalezy} />
-                    <Route path="/error" component={ErrorPage} />
-                    <Route path="/landing-page" component={LandingPage} />
-                    <Route path="/trackovaninalezu" component={TrackovaniNalezu} />
-                    <Route path="/navod-likvidace" component={NavodLikvidace} />
-                    <Route path="/">
-                        <App />
-                    </Route>
-                </Switch>
+                <App>
+                    <Switch>
+                        <Route
+                            path={LINKS.user}
+                            render={() => (
+                                <>
+                                    <Route component={SeznamUzivatelu} exact />
+                                    <Route path={LINKS.userNew} component={PridatUzivatele} />
+                                    <Route path={LINKS.userValidation} component={OvereniEmailu} />
+                                    <Route path={LINKS.userRegistration} component={RegistraceUzivatele} />
+                                    <Route path={LINKS.userThankYou} component={DekujemeUzivatel} />
+                                </>
+                            )}
+                        />
+                        <Route
+                            path={LINKS.organization}
+                            render={() => (
+                                <>
+                                    <Route component={Organizace} />
+                                    <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} exact />
+                                    <Route path={LINKS.organizationThankYou} component={Dekujeme} />
+                                </>
+                            )}
+                        />
+
+                        <Route path={LINKS.profile} component={Profil} />
+                        <Route path={LINKS.newFind(0)} component={NovyNalez} />
+                        <Route path={LINKS.findings} component={Nalezy} />
+                        <Route path={LINKS.error} component={ErrorPage} />
+                        <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
+                        <Route path={LINKS.disposalInstructions} component={NavodLikvidace} />
+                        <Route path={LINKS.home}>
+                            <LandingPage />
+                        </Route>
+                    </Switch>
+                    <Footer />
+                </App>
             </HashRouter>
         </Suspense>
     </React.StrictMode>,
     document.getElementById('root'),
 );
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
