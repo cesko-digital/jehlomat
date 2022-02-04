@@ -17,7 +17,7 @@ securityDefinitions:
     name: Authorization
     in: header
 paths:
-  /login/:
+  /login:
     post:
       summary: Log in the application
       consumes:
@@ -110,7 +110,7 @@ paths:
               $ref: '#/definitions/Team'
         '404':
           description: Organization not found
-  /organization/:
+  /organization:
     get:
       summary: Get all organizations
       produces:
@@ -195,7 +195,7 @@ paths:
           description: successful operation
           schema:
             type: string
-  /syringe/:
+  /syringe:
     post:
       summary: Add a new syringe
       description: ''
@@ -310,7 +310,7 @@ paths:
             $ref: '#/definitions/Team'
         '404':
           description: Team not found
-  /team/:
+  /team:
     post:
       summary: Add a new team
       consumes:
@@ -368,7 +368,7 @@ paths:
             $ref: '#/definitions/User'
         '404':
           description: User not found
-  /user/:
+  /user:
     post:
       summary: Add a new user
       consumes:

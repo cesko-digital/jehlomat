@@ -88,7 +88,7 @@ class TeamTest {
     @Test
     fun testPostTeamOk() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(TEAM.copy(organizationId = defaultOrgId)))
@@ -105,7 +105,7 @@ class TeamTest {
     fun testPostTeamForbidden() = withTestApplication(Application::module) {
         val newOrg = database.insertOrganization(Organization(0, "different org", true))
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(TEAM.copy(organizationId = newOrg)))
@@ -118,7 +118,7 @@ class TeamTest {
     @Test
     fun testPostAlreadyExistingTeam() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$TEAM_API_PATH") {
             database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
@@ -132,7 +132,7 @@ class TeamTest {
     @Test
     fun testPutTeamNotExists() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(TEAM))
@@ -148,7 +148,7 @@ class TeamTest {
         val newTeam = TEAM.copy(id = teamId, name = "new name", organizationId = defaultOrgId)
         val token = loginUser(USER.email, USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(newTeam))
@@ -169,7 +169,7 @@ class TeamTest {
         val teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
         val token = loginUser(USER.email, USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(newTeam.copy(id = teamId)))
@@ -185,7 +185,7 @@ class TeamTest {
         var teamId = 0
         val token = loginUser(USER.email, USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$TEAM_API_PATH") {
             teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")

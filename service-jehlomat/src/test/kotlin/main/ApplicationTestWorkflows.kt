@@ -48,7 +48,7 @@ class ApplicationTestWorkflows {
         // register a new user
         val emailToTest = "email@email.email"
         var createdUser:User
-        with(handleRequest(HttpMethod.Post, "$COMMON_API_PATH/user/") {
+        with(handleRequest(HttpMethod.Post, "$COMMON_API_PATH/user") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(UserRegistrationRequest(emailToTest)))

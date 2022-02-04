@@ -120,7 +120,7 @@ class ApplicationTest {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(USER.email, USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(
@@ -149,7 +149,7 @@ class ApplicationTest {
     fun testPutUserNotLogged() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER.copy(password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
         }) {
@@ -163,7 +163,7 @@ class ApplicationTest {
         database.insertUser(USER.copy(email = "different@email.cz", username = "different user", organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser("different@email.cz", USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(USER.copy(verified = true, password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
@@ -176,7 +176,7 @@ class ApplicationTest {
     fun testPutUserIncorrectToken() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer asdasfasdf")
             setBody(Json.encodeToString(USER.copy(password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
@@ -192,7 +192,7 @@ class ApplicationTest {
         val token = loginUser("org@admin.cz", USER.password)
 
         val emailToTest = "email@email.email"
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(UserRegistrationRequest(emailToTest)))
@@ -217,7 +217,7 @@ class ApplicationTest {
         database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
         val token = loginUser("org@admin.cz", USER.password)
 
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$API_PATH") {
             database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
             addHeader("Authorization", "Bearer $token")
             addHeader("Content-Type", "application/json")
