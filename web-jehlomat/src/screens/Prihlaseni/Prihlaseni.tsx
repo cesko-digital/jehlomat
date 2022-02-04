@@ -1,8 +1,6 @@
-import { FC, useEffect, useState } from 'react';
+import { FC} from 'react';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import TextButton from '../../Components/Buttons/TextButton/TextButton';
 import Grid from '@mui/material/Grid';
-import { useTheme } from '@mui/material/styles';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import * as yup from 'yup';
 
@@ -11,8 +9,8 @@ import { Form, Formik } from 'formik';
 import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import API from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
-import { Container, useMediaQuery } from '@mui/material';
-import { primary, white, secondary } from '../../utils/colors';
+import { Container} from '@mui/material';
+import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 
 interface IValues {
@@ -33,9 +31,6 @@ const validationSchema = yup.object({
 const Login: FC<any> = () => {
 
     let history = useHistory();
-    const theme = useTheme();
-    const desktop = useMediaQuery(theme.breakpoints.up('sm'));
-
 
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>
@@ -59,6 +54,7 @@ const Login: FC<any> = () => {
                                         const token = response?.data?.token
                                         if(token) {
                                             localStorage.setItem("auth", token)
+                                            history.push("/welcome")
                                         };
                                         break;
                                     }

@@ -7,7 +7,7 @@ import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
-
+const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome'));  // Temp welcome
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
@@ -33,6 +33,9 @@ ReactDOM.render(
                     <Switch>
                         <Route path={LINKS.login}>
                             <Prihlaseni />
+                        </Route>
+                        <Route path="/welcome">
+                            <Welcome />
                         </Route>
                         <Route
                             path={LINKS.user}
