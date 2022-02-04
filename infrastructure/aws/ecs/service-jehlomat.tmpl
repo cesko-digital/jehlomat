@@ -22,7 +22,22 @@ ${jsonencode([
     "linuxParameters": null,
     "cpu": 0,
     "environment": [
-
+      {
+        "name": "SUPER_ADMIN_EMAIL",
+        "value": "${super-admin-email}"
+      },
+      {
+        "name": "JWT_ISSUER",
+        "value": "${jwt-issuer}"
+      },
+      {
+        "name": "JWT_AUDIENCE",
+        "value": "${jwt-audience}"
+      },
+      {
+        "name": "JWT_REALM",
+        "value": "${jwt-realm}"
+      }
     ],
     "resourceRequirements": null,
     "ulimits": null,
