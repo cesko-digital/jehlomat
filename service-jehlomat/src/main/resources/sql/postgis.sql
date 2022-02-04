@@ -6,8 +6,8 @@ CREATE EXTENSION IF NOT EXISTS postgis_raster;
 CREATE EXTENSION IF NOT EXISTS postgis_topology;
 -- Enable PostGIS Advanced 3D
 -- and other geoprocessing algorithms
--- sfcgal not available with all distributions
-CREATE EXTENSION IF NOT EXISTS postgis_sfcgal;
+-- sfcgal not available with all distributions (not in AWS)
+-- CREATE EXTENSION IF NOT EXISTS postgis_sfcgal;
 -- fuzzy matching needed for Tiger
 CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
 -- rule based standardizer
