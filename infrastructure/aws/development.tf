@@ -71,6 +71,11 @@ resource "aws_ecs_task_definition" "service-jehlomat" {
   container_definitions = templatefile("ecs/service-jehlomat.tmpl", {
     aws-region          = var.aws-region,
     aws-repository      = aws_ecr_repository.service-jehlomat.repository_url,
+    database-host       = aws_route53_record.database.fqdn,
+    database-port       = "5432",
+    database-name       = aws_db_instance.database.name,
+    database-username   = var.database-username,
+    database-password   = var.database-password,
     super-admin-email   = var.super-admin-email,
     jwt-issuer          = var.jwt-issuer,
     jwt-audience        = var.jwt-audience,

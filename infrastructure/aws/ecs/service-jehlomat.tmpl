@@ -23,6 +23,26 @@ ${jsonencode([
     "cpu": 0,
     "environment": [
       {
+        "name": "DATABASE_HOST",
+        "value": "${database-host}"
+      },
+      {
+        "name": "DATABASE_PORT",
+        "value": "${database-port}"
+      },
+      {
+        "name": "DATABASE_NAME",
+        "value": "${database-name}"
+      },
+      {
+        "name": "DATABASE_USERNAME",
+        "value": "${database-username}"
+      },
+      {
+        "name": "PGPASSWORD",
+        "value": "${database-password}"
+      },
+      {
         "name": "SUPER_ADMIN_EMAIL",
         "value": "${super-admin-email}"
       },
