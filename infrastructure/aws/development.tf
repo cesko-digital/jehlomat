@@ -69,8 +69,12 @@ resource "aws_ecs_cluster" "service-jehlomat" {
 resource "aws_ecs_task_definition" "service-jehlomat" {
   family                = "service-jehlomat"
   container_definitions = templatefile("ecs/service-jehlomat.tmpl", {
-    aws-region     = var.aws-region,
-    aws-repository = aws_ecr_repository.service-jehlomat.repository_url,
+    aws-region          = var.aws-region,
+    aws-repository      = aws_ecr_repository.service-jehlomat.repository_url,
+    super-admin-email   = var.super-admin-email,
+    jwt-issuer          = var.jwt-issuer,
+    jwt-audience        = var.jwt-audience,
+    jwt-realm           = var.jwt-realm
   })
   network_mode          = "awsvpc"
   execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn

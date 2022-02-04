@@ -13,6 +13,10 @@ env:
   TF_VAR_development-frontend-bucket-name: ${{ secrets.DEVELOPMENT_FRONTEND_BUCKET_NAME }}
   TF_VAR_database-username: ${{ secrets.DATABASE_USERNAME }}
   TF_VAR_database-password: ${{ secrets.DATABASE_PASSWORD }}
+  TF_VAR_super-admin-email: ${{ secrets.SUPER_ADMIN_EMAIL }}
+  TF_VAR_jwt-issuer: ${{ secrets.JWT_ISSUER }}
+  TF_VAR_jwt-audience: ${{ secrets.JWT_AUDIENCE }}
+  TF_VAR_jwt-realm: ${{ secrets.JWT_REALM }}
 jobs:
   terraform:
     name: 'Terraform'
