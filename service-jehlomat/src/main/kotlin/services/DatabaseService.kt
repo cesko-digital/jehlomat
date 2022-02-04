@@ -615,6 +615,10 @@ class DatabaseService(
         databaseInstance.useTransaction { return func.invoke() }
     }
 
+    fun <T> useConnection(func: (java.sql.Connection) -> T): T {
+        databaseInstance.useConnection { return func.invoke(it) }
+    }
+
     fun createSqlFormatter(): SqlFormatter {
         return  PostgreSqlFormatter(databaseInstance, false, 0)
     }
