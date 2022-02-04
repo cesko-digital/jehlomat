@@ -27,6 +27,18 @@ variable "development-public-domain" {
   type    = string
 }
 
+variable "database-host" {
+  type = string
+}
+
+variable "database-port" {
+  type = string
+}
+
+variable "database-name" {
+  type = string
+}
+
 variable "database-username" {
   type = string
 }
