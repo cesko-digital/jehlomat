@@ -498,13 +498,8 @@ definitions:
     properties:
       id:
         type: integer
-      email:
-        type: string
       username:
         type: string
-      verified:
-        type: boolean
-        default: false
       organizationId:
         type: integer
       teamId:

@@ -76,6 +76,7 @@ class DatabaseService(
                 username = row[table.username]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
+                isAdmin = row[table.isAdmin]!!
             )
         } else {
             null

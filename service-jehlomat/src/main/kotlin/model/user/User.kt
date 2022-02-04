@@ -24,4 +24,5 @@ fun User.toUserInfo() = UserInfo(
     username = username,
     organizationId = organizationId,
     teamId = teamId,
+    isAdmin = isAdmin
 )
