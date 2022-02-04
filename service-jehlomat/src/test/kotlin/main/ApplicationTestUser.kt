@@ -95,7 +95,8 @@ class ApplicationTest {
   "id" : """ + userId + """,
   "username" : "Franta Pepa 1",
   "organizationId" : """ + defaultOrgId + """,
-  "teamId" : """ + defaultTeamId + """
+  "teamId" : """ + defaultTeamId + """,
+  "isAdmin" : false
 }""",
                 response.content
             )
