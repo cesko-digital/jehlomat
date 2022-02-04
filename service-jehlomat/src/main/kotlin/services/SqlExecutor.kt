@@ -1,13 +1,9 @@
 package services
 
-import java.io.File
-import java.io.InputStream
-
 class SqlExecutor (val database: DatabaseService){
 
     fun runScript(file: String) {
-        val inputStream: InputStream = File(file).inputStream()
-        val content = inputStream.bufferedReader().use { it.readText() }
+        val content = SqlExecutor::class.java.getResource(file)?.readText()!!
 
         database.useConnection { conn ->
             content.split(";").forEach {statement ->

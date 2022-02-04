@@ -12,12 +12,12 @@ fun Route.adminApi(database: DatabaseService): Route {
         post("/initdb") {
             val sqlExecutor = SqlExecutor(database)
 
-            sqlExecutor.runScript("src/main/resources/sql/postgis.sql")
-            sqlExecutor.runScript("src/main/resources/sql/mc.sql")
-            sqlExecutor.runScript("src/main/resources/sql/obec.sql")
-            sqlExecutor.runScript("src/main/resources/sql/okres.sql")
-            sqlExecutor.runScript("src/main/resources/sql/create_table.sql")
-            sqlExecutor.runScript("src/main/resources/sql/insert_super_admin.sql")
+            sqlExecutor.runScript("/sql/postgis.sql")
+            sqlExecutor.runScript("/sql/mc.sql")
+            sqlExecutor.runScript("/sql/obec.sql")
+            sqlExecutor.runScript("/sql/okres.sql")
+            sqlExecutor.runScript("/sql/create_table.sql")
+            sqlExecutor.runScript("/sql/insert_super_admin.sql")
 
             call.respond(HttpStatusCode.Created)
         }
