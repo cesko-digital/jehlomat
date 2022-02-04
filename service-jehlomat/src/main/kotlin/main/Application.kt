@@ -152,6 +152,9 @@ fun Application.module(testing: Boolean = false) {
         route("/api/v1/jehlomat/login") {
             loginApi(service, jwtManager)
         }
+        route("/api/v1/jehlomat/admin") {
+            adminApi(service)
+        }
         get("/.well-known/jwks.json") {
             call.respond(jwtManager.generateJwk())
         }
