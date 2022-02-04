@@ -59,7 +59,8 @@ const Login: FC<any> = () => {
                                 switch (true) {
                                     case /2[0-9][0-9]/g.test(status.toString()): {
                                         const token = response?.data?.token
-                                        token?localStorage.setItem("auth", token):null;
+                                        token?localStorage.setItem("token", token):null;
+                                        history.push("/welcome")
                                         break;
                                     }
                                     case status === 401: {
