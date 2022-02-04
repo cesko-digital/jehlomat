@@ -18,7 +18,7 @@ import utils.isValidUsername
 
 
 fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
-    return route("/") {
+    return route("") {
         post {
             val registration = call.receive<OrganizationRegistration>()
             when {
