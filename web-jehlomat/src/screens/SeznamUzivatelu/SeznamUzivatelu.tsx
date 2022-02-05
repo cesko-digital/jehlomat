@@ -7,6 +7,8 @@ import { grey } from '../../utils/colors';
 import ListItem from '../../Components/List/ListItem/ListItem';
 import { useHistory } from 'react-router';
 import { Header } from '../../Components/Header/Header';
+import StyledModal from '../../Components/Modal/StyledModal';
+import PridatUzivateleModal from '../../Components/Modal/PridatUzivateleModal';
 
 interface Props {}
 
@@ -60,7 +62,10 @@ const SeznamUzivatelu: FC<Props> = () => {
             <LayoutWrapper>
                 <TopWrapper>
                     <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
-                    <AddButton style={{ marginLeft: '10px' }} onClick={e => history.push('/uzivatel/novy')} />
+                    {/* <AddButton style={{ marginLeft: '10px' }} onClick={e => history.push('/uzivatel/novy')} /> */}
+                    <StyledModal buttonText={"Přidat nového uživatele"} modalHeaderText={"Přidat uživatele"}>
+                        <PridatUzivateleModal />
+                    </StyledModal>
                 </TopWrapper>
                 <ListInfo>{listTitle}</ListInfo>
                 <ListWrapper>
