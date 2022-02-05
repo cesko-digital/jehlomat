@@ -30,7 +30,6 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState, height }) => {
                             </Typography>
                         </>
                     )}
-
                     <Typography align="center" variant="body1" color={'white'} sx={{ mb: '2rem' }}>
                         {syringeState.firstLine}
                     </Typography>
