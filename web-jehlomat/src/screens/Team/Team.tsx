@@ -78,7 +78,6 @@ const Team = () => {
         }).catch((error) => {
             console.log(error) //should redirect to Error page
         });
-
         const token = getToken();
         if (token) {
             getMember(token).then((data) => {
