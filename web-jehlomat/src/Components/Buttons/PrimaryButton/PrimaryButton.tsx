@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
 import { primaryDark, white } from '../../../utils/colors';
-import { H4 } from '../../../utils/typography';
 import { Typography } from '@mui/material';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,7 +21,6 @@ const Button = styled.button`
 const PrimaryButton: FC<Props> = ({ text, ...props }) => {
     return (
         <Button {...props}>
-            {/*<H4>{text}</H4>*/}
             <Typography variant="button" sx={{ fontSize: '20px', lineHeight: '16px', fontWeight: '400' }}>
                 {text}
             </Typography>
