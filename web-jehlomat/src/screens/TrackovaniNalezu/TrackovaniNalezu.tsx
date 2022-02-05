@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import ZadatKod from './components/ZadatKod';
 import ZobrazitStav from './components/ZobrazitStav';
 import { Header } from 'Components/Header/Header';
+import { SyringeStateType, syringeStates } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 
 interface Props {}
 
@@ -11,44 +12,9 @@ export enum STEPS {
     ZobraitStav,
 }
 
-export type syringeStateType = 'destroyed' | 'reserved' | 'announced' | 'notfound';
-
-export interface ISyringeState {
-    hasCheckMark: boolean;
-    firstLine: string;
-    secondLine: string;
-}
-
-type syringeStateTypes = {
-    [key in syringeStateType]?: ISyringeState;
-};
-
-const syringeStates: syringeStateTypes = {
-    destroyed: {
-        hasCheckMark: true,
-        firstLine: 'nález byl úspěšně',
-        secondLine: 'ZLIKVIDOVÁN',
-    },
-    reserved: {
-        hasCheckMark: false,
-        firstLine: 'pracujeme na tom, nález je',
-        secondLine: 'REZEROVAVNÝ k likvidaci',
-    },
-    announced: {
-        hasCheckMark: true,
-        firstLine: 'nález je',
-        secondLine: 'NAHLÁŠENÝ na městskou policii',
-    },
-    notfound: {
-        hasCheckMark: false,
-        firstLine: 'jehla',
-        secondLine: 'NEBYLA nalezena',
-    },
-};
-
 const TrackovaniNalezu: FC<Props> = () => {
     const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.ZadatKod);
-    const [syringeState, setSyringeState] = useState<syringeStateType>('announced');
+    const [syringeState, setSyringeState] = useState<SyringeStateType>(SyringeStateType.ANNOUNCED);
     const history = useHistory();
 
     const handleOnClickBack = () => {
@@ -59,7 +25,7 @@ const TrackovaniNalezu: FC<Props> = () => {
         setCurrentStep(newStep);
     };
 
-    const handleNewSyringeState = (syringeState: syringeStateType) => {
+    const handleNewSyringeState = (syringeState: SyringeStateType) => {
         setSyringeState(syringeState);
     };
 
@@ -74,7 +40,7 @@ const TrackovaniNalezu: FC<Props> = () => {
 
     return (
         <>
-            <Header />
+            <Header mobileTitle="" />
             {renderContent()}
         </>
     );

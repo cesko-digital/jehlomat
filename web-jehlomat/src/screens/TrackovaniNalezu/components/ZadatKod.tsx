@@ -5,7 +5,6 @@ import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButt
 import TextButton from '../../../Components/Buttons/TextButton/TextButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import API from '../../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -13,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
 import { syringeStateType, STEPS } from '../TrackovaniNalezu';
+import { authorizedAPI } from '../../../config/baseURL';
 
 const validationSchema = yup.object({
     kod: yup.string().length(8, 'Trackovaí kód musí mít přesně 8 znaků.').required('Trackovací kód je povivnný.'),
@@ -48,13 +48,18 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
-                                    const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/syringe-state', values);
+                                    const response: AxiosResponse<any> = await authorizedAPI.get(`/api/v1/jehlomat/syringe/${values.kod}`);
                                     const { status } = response;
 
                                     switch (true) {
                                         case /2[0-9][0-9]/g.test(status.toString()): {
                                             const { data } = response;
-                                            handleNewSyringeState(data.syringeState);
+                                            if(data.demolished) {
+                                                handleNewSyringeState(data.demolished);
+                                            } else {
+
+                                            }
+
                                             handleStepChange(STEPS.ZobraitStav);
                                             break;
                                         }
