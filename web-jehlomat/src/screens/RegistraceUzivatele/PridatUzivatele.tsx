@@ -24,7 +24,8 @@ const PridatUzivatele: FC<Props> = () => {
     let history = useHistory();
     return (
         <>
-            <Header mobileTitle="Přidat uživatele" />
+            <p></p>
+            {/* <Header mobileTitle="Přidat uživatele" />
 
             <Formik
                 initialValues={{ email: '' }}
@@ -76,7 +77,7 @@ const PridatUzivatele: FC<Props> = () => {
                         </Form>
                     );
                 }}
-            </Formik>
+            </Formik> */}
         </>
     );
 };

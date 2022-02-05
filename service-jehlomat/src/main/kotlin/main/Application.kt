@@ -46,8 +46,16 @@ fun Application.module(testing: Boolean = false) {
 
     install(CORS){
         header(HttpHeaders.ContentType)
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlAllowOrigin)
         header("key")
         anyHost()
+        method(HttpMethod.Options)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        allowNonSimpleContentTypes = true
+        allowCredentials = true
+        allowSameOrigin = true
     }
 
 
@@ -151,6 +159,9 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/login") {
             loginApi(service, jwtManager)
+        }
+        route("/api/v1/jehlomat/admin") {
+            adminApi(service)
         }
         get("/.well-known/jwks.json") {
             call.respond(jwtManager.generateJwk())

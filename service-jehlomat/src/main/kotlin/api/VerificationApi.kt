@@ -16,7 +16,7 @@ import utils.isValidUsername
 
 
 fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Route {
-    return route("/") {
+    return route("") {
         authenticate(JWT_CONFIG_NAME) {
             get ("/organization") {
                 val organizationId = call.parameters["orgId"]?.toIntOrNull()

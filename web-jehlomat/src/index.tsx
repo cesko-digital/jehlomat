@@ -5,7 +5,11 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
+import AboutPage from './screens/AboutPage';
+import Layout from './Components/Layout/Layout';
 
+const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
+const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
@@ -29,6 +33,13 @@ ReactDOM.render(
             <HashRouter>
                 <App>
                     <Switch>
+                        <Route path={LINKS.login}>
+                            <Prihlaseni />
+                        </Route>
+                        <Route path="/welcome">
+                            <Welcome />
+                        </Route>
+
                         <Route
                             path={LINKS.user}
                             render={() => (
@@ -46,18 +57,29 @@ ReactDOM.render(
                             render={() => (
                                 <>
                                     <Route component={Organizace} />
-                                    <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} exact />
+                                    <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} />
                                     <Route path={LINKS.organizationThankYou} component={Dekujeme} />
+                                </>
+                            )}
+                        />
+                        <Route
+                            path={LINKS.findings}
+                            render={() => (
+                                <>
+                                    <Route component={Layout} />
+                                    <Switch>
+                                        <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
+                                        <Route path={LINKS.newFind(0)} component={NovyNalez} />
+                                        <Route path={'/'} component={Nalezy} />
+                                    </Switch>
                                 </>
                             )}
                         />
 
                         <Route path={LINKS.profile} component={Profil} />
-                        <Route path={LINKS.newFind(0)} component={NovyNalez} />
-                        <Route path={LINKS.findings} component={Nalezy} />
                         <Route path={LINKS.error} component={ErrorPage} />
-                        <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
                         <Route path={LINKS.disposalInstructions} component={NavodLikvidace} />
+                        <Route path={LINKS.about} component={AboutPage} />
                         <Route path={LINKS.home}>
                             <LandingPage />
                         </Route>

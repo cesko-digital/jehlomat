@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { primary } from '../../utils/colors';
 
-export const Container = styled.div`
+export const Container = styled.div<{ mobile?: boolean }>`
     display: flex;
     flex-direction: row;
     height: 56px;
@@ -11,6 +11,13 @@ export const Container = styled.div`
     left: 0;
     z-index: 200;
     background-color: ${primary};
+
+    ${props =>
+        !props.mobile &&
+        `
+        position: static;
+        width: auto;
+    `}
 `;
 
 export const NavIcon = styled.div`

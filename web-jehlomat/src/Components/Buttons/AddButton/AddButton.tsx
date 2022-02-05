@@ -19,6 +19,7 @@ const IconButton = styled(MIconButton)`
         color: ${white};
         cursor: pointer;
         padding: 0px 20px;
+        display: flex;
     }
 `;
 

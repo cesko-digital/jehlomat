@@ -1,3 +1,5 @@
+import { assertUnreachable } from './errors';
+
 // colors
 export const primary = '#26A69A';
 export const primaryLight = '#64D8CB';
@@ -17,3 +19,19 @@ export const darkGrey = '#787878';
 export const textPrimary = black;
 export const textSecondary = black;
 export const textGold = '#FEAB0D';
+export const textSubTitles = '#0E766C';
+
+export function secondaryColorVariant(variant: 'light' | 'regular' | 'dark' | 'full') {
+    switch (variant) {
+        case 'light':
+            return '#2FA69A29';
+        case 'regular':
+            return '#2FA69A3D';
+        case 'dark':
+            return '#2FA69A52';
+        case 'full':
+            return '#2FA69A';
+        default:
+            assertUnreachable(variant);
+    }
+}

@@ -1,11 +1,17 @@
-import { FC, InputHTMLAttributes } from 'react';
-import styled from '@emotion/styled';
+import { FC, InputHTMLAttributes, useState } from 'react';
 import { grey } from '../../../utils/colors';
 import { default as MInput } from '@mui/material/TextField';
+import styled from '@emotion/styled';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconWrapper } from './TextInput.style';
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     error?: string | undefined;
+    fullWidth?: boolean;
+    className?: string;
+    width?: string;
 }
 
 const Label = styled.label`
@@ -19,20 +25,24 @@ const Label = styled.label`
     }
 `;
 
-const Input = styled.div`
-    margin: 1em;
+const Container = styled.div`
+    width: 100%;
+    position: relative;
 `;
 
 const TextInput: FC<Props> = props => {
+    const { type: propType, className } = props;
+    const [type, setType] = useState(propType || 'text');
+
     return (
-        <Input>
+        <Container className={className}>
             <Label htmlFor={props.name}>{props.label}</Label>
             <MInput
                 id={props.id}
                 variant="outlined"
                 name={props.name}
-                type={props.type}
                 required={props.required}
+                type={type}
                 placeholder={props.placeholder}
                 value={props.value}
                 onChange={props.onChange}
@@ -40,8 +50,19 @@ const TextInput: FC<Props> = props => {
                 error={Boolean(props.error)}
                 helperText={props.error}
                 disabled={props.disabled}
+                fullWidth={props.fullWidth ?? true}
+                inputProps={{
+                    style: {
+                        width: props.width
+                    }
+                }}
             />
-        </Input>
+            {propType === 'password' && (
+                <IconWrapper onClick={() => setType(type === 'text' ? 'password' : 'text')}>
+                    <FontAwesomeIcon icon={type !== 'text' ? faEye : faEyeSlash} />
+                </IconWrapper>
+            )}
+        </Container>
     );
 };
 
