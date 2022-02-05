@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Formik, Form } from 'formik';
+import { Form, Formik } from 'formik';
 import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../../Components/Buttons/TextButton/TextButton';
@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
-import { syringeStateType, STEPS } from '../TrackovaniNalezu';
+import { STEPS, SyringeStateType } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 import { authorizedAPI } from '../../../config/baseURL';
 
 const validationSchema = yup.object({
@@ -21,7 +21,7 @@ const validationSchema = yup.object({
 interface IZadatKod {
     onClickBack: (event: React.MouseEvent<HTMLButtonElement>) => void;
     handleStepChange: (newStep: STEPS) => void;
-    handleNewSyringeState: (syringeState: syringeStateType) => void;
+    handleNewSyringeState: (syringeState: SyringeStateType) => void;
 }
 
 const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyringeState }) => {
@@ -54,10 +54,11 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                                     switch (true) {
                                         case /2[0-9][0-9]/g.test(status.toString()): {
                                             const { data } = response;
-                                            if(data.demolished) {
-                                                handleNewSyringeState(data.demolished);
-                                            } else {
 
+                                            if (data.demolished) {
+                                                handleNewSyringeState(SyringeStateType.DESTROYED);
+                                            } else {
+                                                handleNewSyringeState(SyringeStateType.ANNOUNCED);
                                             }
 
                                             handleStepChange(STEPS.ZobraitStav);

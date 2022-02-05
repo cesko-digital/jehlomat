@@ -3,14 +3,10 @@ import { useHistory } from 'react-router-dom';
 import ZadatKod from './components/ZadatKod';
 import ZobrazitStav from './components/ZobrazitStav';
 import { Header } from 'Components/Header/Header';
-import { SyringeStateType, syringeStates } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
+import { SyringeStateType, syringeStates, STEPS } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 
 interface Props {}
 
-export enum STEPS {
-    ZadatKod,
-    ZobraitStav,
-}
 
 const TrackovaniNalezu: FC<Props> = () => {
     const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.ZadatKod);

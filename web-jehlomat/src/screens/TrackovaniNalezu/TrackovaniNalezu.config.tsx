@@ -1,7 +1,5 @@
 import React from 'react';
 
-interface Props {}
-
 export enum STEPS {
     ZadatKod,
     ZobraitStav,
@@ -17,7 +15,7 @@ export enum SyringeStateType {
 export interface ISyringeState {
     hasCheckMark: boolean;
     firstLine: string;
-    secondLine: string;
+    secondLine: string | React.ReactNode;
 }
 
 export type syringeStateTypes = {
@@ -33,12 +31,12 @@ export const syringeStates: syringeStateTypes = {
     [SyringeStateType.RESERVED]: {
         hasCheckMark: false,
         firstLine: 'pracujeme na tom, nález je',
-        secondLine: 'REZEROVAVNÝ k likvidaci',
+        secondLine: <>REZEROVAVNÝ<br /> k likvidaci</>,
     },
     [SyringeStateType.ANNOUNCED]: {
         hasCheckMark: true,
         firstLine: 'nález je',
-        secondLine: 'NAHLÁŠENÝ na městskou policii',
+        secondLine: <>NAHLÁŠENÝ<br /> na městskou policii</>,
     },
     [SyringeStateType.NOTFOUND]: {
         hasCheckMark: false,
@@ -46,3 +44,4 @@ export const syringeStates: syringeStateTypes = {
         secondLine: 'NEBYLA nalezena',
     },
 };
+

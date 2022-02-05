@@ -39,6 +39,7 @@ ReactDOM.render(
                         <Route path="/welcome">
                             <Welcome />
                         </Route>
+
                         <Route
                             path={LINKS.user}
                             render={() => (
@@ -56,7 +57,7 @@ ReactDOM.render(
                             render={() => (
                                 <>
                                     <Route component={Organizace} />
-                                    <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} exact />
+                                    <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} />
                                     <Route path={LINKS.organizationThankYou} component={Dekujeme} />
                                 </>
                             )}
@@ -66,9 +67,11 @@ ReactDOM.render(
                             render={() => (
                                 <>
                                     <Route component={Layout} />
-                                    <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
-                                    <Route path={LINKS.newFind(0)} component={NovyNalez} />
-                                    <Route path={'/'} component={Nalezy} />
+                                    <Switch>
+                                        <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
+                                        <Route path={LINKS.newFind(0)} component={NovyNalez} />
+                                        <Route path={'/'} component={Nalezy} />
+                                    </Switch>
                                 </>
                             )}
                         />

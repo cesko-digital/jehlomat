@@ -27,14 +27,12 @@ const fetchClient = () => {
 export default fetchClient();
 
 const authorizedAPIfnc = () => {
-   const client = fetchClient();
+    const client = fetchClient();
     const token = getToken();
 
     client.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
-    console.log(client.defaults.headers)
 
     return client;
-
 };
 
 export const authorizedAPI = authorizedAPIfnc();

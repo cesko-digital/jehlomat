@@ -13,7 +13,7 @@ export const LINKS = {
     newFind: (step?: 0 | 1 | 2 | 3 | 4) => `/novy-nalez${step ? `?step=${step}` : ''}`,
     findings: '/nalezy',
     error: '/error',
-    trackingFind: '/trackovani-nalezu',
+    trackingFind: '/nalezy/trackovani-nalezu',
     disposalInstructions: '/navod-likvidace',
     policeAssistance: '/ohlasit-nalez-policii',
     forgottenPassword: '/zapomenute-heslo',

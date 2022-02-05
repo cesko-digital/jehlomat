@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { primary, secondary } from '../../../utils/colors';
-import { CheckIcon } from '../../../assets/CheckIcon';
+import { primary, secondary } from 'utils/colors';
+import { CheckIcon } from 'assets/CheckIcon';
 import Box from '@mui/material/Box';
-import { ISyringeState } from '../TrackovaniNalezu';
+import { ISyringeState } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 
 interface IZobrazitStav {
     syringeState: ISyringeState;
