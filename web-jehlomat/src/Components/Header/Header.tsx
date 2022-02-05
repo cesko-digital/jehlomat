@@ -8,6 +8,8 @@ import { LINKS } from 'utils/links';
 import { isLoggedIn, logout } from 'utils/login';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import { white } from 'utils/colors';
+import { ChevronLeft } from '@mui/icons-material';
 
 interface Props {
     mobileTitle: string;
@@ -28,6 +30,12 @@ export const Header = (props: Props) => {
         }
     };
 
+    const onBack = () => {
+        if (props.backRoute) {
+            history.push(props.backRoute);
+        }
+    };
+
     const renderLoginLogout = () => {
         const isLogged = isLoggedIn();
         if (isLogged) {
@@ -42,14 +50,16 @@ export const Header = (props: Props) => {
             <SContainer>
                 <HeaderLogo />
                 <SLinkContainer>
-                    <HeaderLink type={HeaderLinkType.AboutApp} route={"/"} />
+                    <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
                     <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organization} />
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
 
             <SMobileContainer>
-                <TitleBar>{props.mobileTitle}</TitleBar>
+                <TitleBar icon={props.backRoute && <ChevronLeft sx={{ color: white, fontSize: 40 }} />} onIconClick={() => onBack()}>
+                    {props.mobileTitle}
+                </TitleBar>
             </SMobileContainer>
         </>
     );

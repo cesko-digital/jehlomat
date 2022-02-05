@@ -20,7 +20,7 @@ export const textPrimary = black;
 export const textSecondary = black;
 export const textSubTitles = '#0E766C';
 
-export function secondaryColorVariant(variant: 'light' | 'regular' | 'dark') {
+export function secondaryColorVariant(variant: 'light' | 'regular' | 'dark' | 'full') {
     switch (variant) {
         case 'light':
             return '#2FA69A29';
@@ -28,6 +28,8 @@ export function secondaryColorVariant(variant: 'light' | 'regular' | 'dark') {
             return '#2FA69A3D';
         case 'dark':
             return '#2FA69A52';
+        case 'full':
+            return '#2FA69A';
         default:
             assertUnreachable(variant);
     }
