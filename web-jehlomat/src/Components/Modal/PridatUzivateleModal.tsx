@@ -80,7 +80,7 @@ const PridatUzivateleModal: FC<Props> = () => {
                 validationSchema={validationSchema}
                 onSubmit={async (values: Values, { setErrors }) => {
                     try {
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user/', values);
+                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user', values);
                         const status = response.status;
 
                         switch (true) {

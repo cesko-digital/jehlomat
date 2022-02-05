@@ -64,13 +64,6 @@ const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
                         onIconClick={() => {
                             setOpenModal(false);
                         }}
-                    ></TitleBar>
-
-                    <TitleBar
-                        icon={true}
-                        onIconClick={() => {
-                            setOpenModal(false);
-                        }}
                     >
                         {modalHeaderText}
                     </TitleBar>
