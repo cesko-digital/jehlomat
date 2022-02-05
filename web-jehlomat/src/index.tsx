@@ -7,6 +7,7 @@ import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
 import AboutPage from './screens/AboutPage';
 import Layout from './Components/Layout/Layout';
+import OrganizationValidation from 'screens/OrganizationValidation/OrganizationValidation';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
@@ -58,6 +59,7 @@ ReactDOM.render(
                                 <>
                                     <Route component={Organizace} />
                                     <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} />
+                                    <Route path={LINKS.organizationValidation} component={OrganizationValidation} exact />
                                     <Route path={LINKS.organizationThankYou} component={Dekujeme} />
                                 </>
                             )}

@@ -7,6 +7,7 @@ export const LINKS = {
     userRegistration: '/uzivatel/registrace',
     userThankYou: '/uzivatel/dekujeme',
     organization: '/organizace',
+    organizationValidation: '/organizace/validace',
     organizationRegistration: '/organizace/registrace',
     organizationThankYou: '/organizace/dekujeme',
     profile: '/profil',
