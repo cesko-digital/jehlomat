@@ -8,11 +8,11 @@ Please change it in example by your postgres configuration.
 3) Add testing data
 
 ```shell
-  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/sql/resources/postgis.sql
+  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/sql/resources/sql/postgis.sql
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
-  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/sql/resources/create_table.sql
+  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/sql/resources/sql/create_table.sql
 ```
 
 4) Create the Magdalena organization and super admin with email `super@admin.cz` and password `SuperAdmin1`. Use this script only for testing purposes.
