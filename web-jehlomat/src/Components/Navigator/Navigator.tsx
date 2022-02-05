@@ -21,6 +21,7 @@ export const Navigator: React.FC<Props> = ({ to, children, modal }) => {
     const [showModal, setShowModal] = useState(false);
 
     const renderLink = () => {
+        // TODO
         return isMobile ? (
             <Link to={to}>{children}</Link>
         ) : (

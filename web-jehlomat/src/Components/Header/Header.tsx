@@ -33,9 +33,11 @@ export const Header = (props: Props) => {
 
     const renderLoginLogout = () => {
         const isLogged = isLoggedIn();
+
         if (isLogged) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
+            // TODO modal
             return <HeaderLink><Navigator to={LINKS.login} modal={loginModal}>Přihlásit</Navigator></HeaderLink>;
         }
     };
