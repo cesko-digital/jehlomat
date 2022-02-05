@@ -31,6 +31,7 @@ const authorizedAPIfnc = () => {
     const token = getToken();
 
     client.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
+    console.log(client.defaults.headers)
 
     return client;
 };
