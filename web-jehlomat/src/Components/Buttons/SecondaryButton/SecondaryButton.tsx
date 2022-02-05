@@ -16,10 +16,7 @@ const Button = styled.button`
     color: ${primaryDark};
     cursor: pointer;
     padding: 0px 20px;
-
-    span {
-    }
-
+  
     a {
         text-decoration: none;
         color: inherit;
