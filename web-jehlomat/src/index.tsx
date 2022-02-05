@@ -5,9 +5,10 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
+import AboutPage from './screens/AboutPage';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
-const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome'));  // Temp welcome
+const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
@@ -66,6 +67,7 @@ ReactDOM.render(
                         <Route path={LINKS.error} component={ErrorPage} />
                         <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
                         <Route path={LINKS.disposalInstructions} component={NavodLikvidace} />
+                        <Route path={LINKS.about} component={AboutPage} />
                         <Route path={LINKS.home}>
                             <LandingPage />
                         </Route>

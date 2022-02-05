@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = 'auth';
 
 export const setToken = (token: string) => localStorage.setItem(STORAGE_KEY, token);

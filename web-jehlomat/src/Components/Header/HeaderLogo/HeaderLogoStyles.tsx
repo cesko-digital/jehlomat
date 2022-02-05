@@ -10,6 +10,7 @@ export const Logo = styled('img')<{ mobile?: boolean }>`
 `;
 
 export const Container = styled('div')<{ mobile?: boolean }>`
+    margin-top: 122px;
     background-color: ${primary};
     ${props =>
         !props.mobile &&
