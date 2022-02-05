@@ -9,6 +9,7 @@ export const LINKS = {
     organization: '/organizace',
     organizationRegistration: '/organizace/registrace',
     organizationThankYou: '/organizace/dekujeme',
+    team: '/team',
     profile: '/profil',
     newFind: (step?: 0 | 1 | 2 | 3 | 4) => `/novy-nalez${step ? `?step=${step}` : ''}`,
     findings: '/nalezy',

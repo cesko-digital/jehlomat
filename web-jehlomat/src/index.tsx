@@ -26,6 +26,7 @@ const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
 const LandingPage = lazy(() => import('./screens/LandingPage'));
 const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
+const Team = lazy(() => import('./screens/Team/Team'));
 
 ReactDOM.render(
     <React.StrictMode>
@@ -75,7 +76,14 @@ ReactDOM.render(
                                 </>
                             )}
                         />
-
+                        <Route
+                            path={LINKS.team}
+                            render={() => (
+                                <>
+                                    <Route component={Team} exact />
+                                </>
+                            )}
+                        />
                         <Route path={LINKS.profile} component={Profil} />
                         <Route path={LINKS.error} component={ErrorPage} />
                         <Route path={LINKS.disposalInstructions} component={NavodLikvidace} />

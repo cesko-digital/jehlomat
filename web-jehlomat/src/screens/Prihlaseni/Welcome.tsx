@@ -8,52 +8,28 @@ import { AxiosResponse } from 'axios';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import { getToken } from 'utils/login';
+import {getToken} from "utils/login";
+import { getUser } from 'config/user';
 
 const Login: FC<any> = () => {
     let history = useHistory();
 
     const [user, setUser] = useState('');
 
-    interface IResponse {
-        id: number;
-        email?: string;
-        username: string;
-        password?: string;
-        organizationId: number;
-        teamId: number;
-        isAdmin?: boolean;
-        verified?: boolean;
-    }
 
-    interface IToken {
-        aud: string;
-        'user-id': string;
-        iss: string;
-        exp: string;
-    }
 
     useEffect(() => {
-        const getMe = (token: string) => {
-            const decoded: IToken = jwt_decode(token);
-            return decoded['user-id'];
-        };
-        const getUser = async (token: string) => {
-            const response: AxiosResponse<IResponse> = await API.get('/api/v1/jehlomat/user/' + getMe(token));
-            return response.data.username;
-        };
-
-        const token = getToken();
+        const token = localStorage.getItem("token");
 
         if (token) {
             getUser(token)
-                .then(user => {
-                    setUser(user);
-                    console.log(user);
-                })
-                .catch(error => {
-                    console.log(error); //should goes to the error page
-                });
+            .then((data)=>{
+                setUser(data.username);
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error) //should goes to the error page
+            });
         }
     }, []);
 
