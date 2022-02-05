@@ -6,8 +6,6 @@ import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS } from 'utils/links';
 import { isLoggedIn, logout } from 'utils/login';
-import { useMediaQuery } from '@mui/material';
-import { media } from 'utils/media';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from "Components/Navigator/Navigator";
