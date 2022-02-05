@@ -8,7 +8,7 @@ import { AxiosResponse } from 'axios';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import {getToken} from "utils/login";
+import { getToken } from 'utils/login';
 
 const Login: FC<any> = () => {
     let history = useHistory();

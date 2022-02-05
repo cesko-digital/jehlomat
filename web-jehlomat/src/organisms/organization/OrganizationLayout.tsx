@@ -19,36 +19,37 @@ export enum RegistrationStep {
 
 interface Props {
     title?: string;
+    backRoute?: string;
     step: RegistrationStep;
 }
 
 export function OrganizationLayout(props: PropsWithChildren<Props>) {
-    const { step, title, children } = props;
+    const { step, title, children, backRoute } = props;
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     return (
         <>
-            <Header mobileTitle={title || ''} />
+            <Header backRoute={backRoute} mobileTitle={title || ''} />
 
             {!isMobile && (
                 <Box minHeight={1} display="flex">
-                    <SStep active={1 <= step} flex={1} bgcolor={secondaryColorVariant('light')}>
-                        <SIcon active={1 <= step}>
-                            <img src={1 <= step ? PenIcon : PenInactiveIcon} alt="vytvoření účtu" />
+                    <SStep initialStep={0 === step} active={0 <= step} flex={1} bgcolor={secondaryColorVariant('light')}>
+                        <SIcon active={0 <= step}>
+                            <img src={0 <= step ? PenIcon : PenInactiveIcon} alt="vytvoření účtu" />
                         </SIcon>
 
                         <SSubTitle>zadání údajů k vytvoření účtu</SSubTitle>
                     </SStep>
-                    <SStep active={2 <= step} flex={1} bgcolor={secondaryColorVariant('regular')}>
-                        <SIcon active={2 <= step}>
-                            <img src={2 <= step ? MessageIcon : MessageInactiveIcon} alt="ověření e-mailové adresy" />
+                    <SStep active={1 <= step} flex={1} bgcolor={secondaryColorVariant('regular')}>
+                        <SIcon active={1 <= step}>
+                            <img src={1 <= step ? MessageIcon : MessageInactiveIcon} alt="ověření e-mailové adresy" />
                         </SIcon>
 
                         <SSubTitle>ověření e-mailové adresy</SSubTitle>
                     </SStep>
-                    <SStep active={3 <= step} flex={1} bgcolor={secondaryColorVariant('dark')}>
-                        <SIcon active={3 <= step}>
-                            <img src={3 <= step ? CheckSecondaryIcon : CheckInactiveIcon} alt="úspěšné založení účtu" />
+                    <SStep active={2 <= step} flex={1} bgcolor={secondaryColorVariant('dark')}>
+                        <SIcon active={2 <= step}>
+                            <img src={2 <= step ? CheckSecondaryIcon : CheckInactiveIcon} alt="úspěšné založení účtu" />
                         </SIcon>
 
                         <SSubTitle>úspěšné založení účtu</SSubTitle>

@@ -10,6 +10,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     error?: string | undefined;
     fullWidth?: boolean;
+    className?: string;
 }
 
 const Label = styled.label`
@@ -29,11 +30,11 @@ const Container = styled.div`
 `;
 
 const TextInput: FC<Props> = props => {
-    const { type: propType } = props;
+    const { type: propType, className } = props;
     const [type, setType] = useState(propType || 'text');
 
     return (
-        <Container>
+        <Container className={className}>
             <Label htmlFor={props.name}>{props.label}</Label>
             <MInput
                 id={props.id}

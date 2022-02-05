@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
@@ -6,7 +7,7 @@ import { size } from '../../utils/spacing';
 
 const ICON_SIZE = 14;
 
-export const SStep = styled(Box)<{ active: boolean; uppercase?: boolean }>`
+export const SStep = styled(Box)<{ active: boolean; initialStep?: boolean }>`
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -27,6 +28,16 @@ export const SStep = styled(Box)<{ active: boolean; uppercase?: boolean }>`
         z-index: 1;
     }
 
+    ${({ initialStep }) =>
+        initialStep &&
+        css`
+            &:first-of-type {
+                &:after {
+                    background: ${primary};
+                }
+            }
+        `}
+
     &:last-of-type {
         &:after {
             display: none;
@@ -45,7 +56,7 @@ export const SIcon = styled.div<{ active: boolean }>`
     z-index: 2;
     background-color: ${({ active }) => (active ? secondary : white)};
     border-radius: 50%;
-    border: 2px solid ${({ active }) => (active ? secondary : primary)};
+    border: 2px solid ${({ active }) => (active ? white : primary)};
     margin-bottom: ${size(2)};
 
     > img {
