@@ -1,5 +1,4 @@
 import { Typography, Grid, Container, useMediaQuery } from '@mui/material';
-import jehlomatLogo from '../../assets/logo/logo-jehlomat-green.svg';
 import map from '../../assets/images/map.png';
 import { HeaderMobile } from '../../Components/Header/HeaderMobile';
 import { Header } from '../../Components/Header/Header';
@@ -35,9 +34,7 @@ const LandingPage = () => {
                     <Typography align="left" variant="h2" color={darkGrey} fontSize="24px" lineHeight="28px" sx={{ my: '50px' }}>
                         Našli jste jehlu a nevíte co s ní?
                     </Typography>
-                    {/*<Grid container justifyContent="left">*/}
                     <PrimaryButton text="zadat nález ANONYMNĚ" type="button" />
-                    {/*</Grid>*/}
                     <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
                         Jehlomat.cz je online nástroj, sloužící terénním pracovníkům a veřejnosti ke hlášení nálezů odhozených injekčních stříkaček a následně k jejich odborné likvidaci
                     </Typography>

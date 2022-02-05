@@ -14,14 +14,17 @@ export const Container = styled('div')<{ mobile?: boolean }>`
     font-size: 1em;
     line-height: 16px;
     letter-spacing: 1.25px;
+
     &:last-child {
         border-right: none;
     }
 `;
 
 export const Link = styled('div')<{ mobile?: boolean }>`
-    align-content: center;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 21px;
     ${props =>
         !props.mobile &&
         `
