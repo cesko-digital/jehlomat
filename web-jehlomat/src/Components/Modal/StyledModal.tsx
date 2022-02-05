@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import styled from '@emotion/styled';
-import { white } from '../../utils/colors';
+import { white, primaryDark } from '../../utils/colors';
 import { media } from '../../utils/media';
 import AddButton from '../Buttons/AddButton/AddButton';
 import TextButton from '../Buttons/TextButton/TextButton';
@@ -48,7 +48,7 @@ const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
             {isMobile ? 
                 <AddButton style={{ marginLeft: '10px' }} onClick={() => setOpenModal(true)} />
                 :
-                <TextButton text={buttonText} style={{ marginLeft: '10px' }} onClick={() => setOpenModal(true)} />
+                <TextButton text={buttonText} style={{ marginLeft: '10px', color: `${primaryDark}` }} onClick={() => setOpenModal(true)} />
             }
 
             <Modal
