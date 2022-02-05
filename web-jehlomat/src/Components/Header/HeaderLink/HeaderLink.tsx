@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import * as s from './HeaderLinkStyles';
 import { useHistory } from 'react-router-dom';
+import { isFunction } from 'formik';
 
 export enum HeaderLinkType {
     AboutApp,
@@ -10,17 +11,24 @@ export enum HeaderLinkType {
 }
 
 export interface IHeaderLink {
-    type: HeaderLinkType;
-    route: string;
+    type?: HeaderLinkType;
+    route?: string;
     mobile?: boolean;
+    onClick?: () => void;
 }
 
-export const HeaderLink: FC<IHeaderLink> = ({ type, route, mobile }) => {
+export const HeaderLink: FC<IHeaderLink> = ({ type, children, route, mobile, onClick }) => {
     let history = useHistory();
 
     return (
-        <s.Container mobile={mobile} onClick={() => history.push(route)}>
-            <s.Link mobile={mobile}>{titleForType(type)}</s.Link>
+        <s.Container
+            mobile={mobile}
+            onClick={() => {
+                route && history.push(route);
+                isFunction(onClick) && onClick();
+            }}
+        >
+            <s.Link mobile={mobile}>{type ? titleForType(type) : children}</s.Link>
         </s.Container>
     );
 };
