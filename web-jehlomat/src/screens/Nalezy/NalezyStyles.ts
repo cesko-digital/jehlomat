@@ -39,3 +39,10 @@ export const FilterLink = styled.a`
         color: ${primaryLight};
     }
 `
+
+export const ListWrapper = styled.div`
+    background-color: ${primaryLight};
+    border-radius: 8px 8px 0px 0px;
+    padding: 20px 43px;
+    min-height: 100vh;
+`

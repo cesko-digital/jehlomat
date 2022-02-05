@@ -10,7 +10,11 @@ import { Header } from '../../Components/Header/Header';
 // import { Link } from 'react-router-dom';
 // import { LINKS } from '../../utils/links';
 import { useMediaQuery } from '@mui/material';
-import { TextHeader, FilterLink } from './NalezyStyles';
+import { 
+    TextHeader, 
+    FilterLink,
+    ListWrapper 
+} from './NalezyStyles';
 import { media } from '../../utils/media';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
 import SearchInputDesktop 
@@ -65,6 +69,11 @@ const NavodLikvidace: FC<Props> = () => {
                         <FilterLink href="#">Exportovat vybrané</FilterLink>
                     </Box>
                 </Grid>
+                <Box mt={2}>
+                    <ListWrapper>
+                        test
+                    </ListWrapper>
+                </Box>
             </Box>
         </>
     );
