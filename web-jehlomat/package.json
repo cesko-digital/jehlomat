@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.2.1",
     "axios": "^0.23.0",
     "babel-jest": "^27.2.4",
+    "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
     "formik": "^2.2.9",
     "jwt-decode": "^3.1.2",
