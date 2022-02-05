@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from 'utils/login';
 
 const fetchClient = () => {
     const defaultOptions = {
@@ -9,12 +10,6 @@ const fetchClient = () => {
     };
 
     let instance = axios.create(defaultOptions);
-
-    //instance.interceptors.request.use(function (config) {
-    //const token = localStorage.getItem('token');
-    //config.headers.Authorization =  token ? `Bearer ${token}` : '';
-    //return config;
-    //});
 
     instance.interceptors.response.use(
         function (response) {
@@ -30,3 +25,16 @@ const fetchClient = () => {
 };
 
 export default fetchClient();
+
+const authorizedAPIfnc = () => {
+   const client = fetchClient();
+    const token = getToken();
+
+    client.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
+    console.log(client.defaults.headers)
+
+    return client;
+
+};
+
+export const authorizedAPI = authorizedAPIfnc();

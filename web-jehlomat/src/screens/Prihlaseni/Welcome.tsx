@@ -8,6 +8,7 @@ import { AxiosResponse } from 'axios';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
+import {getToken} from "utils/login";
 
 const Login: FC<any> = () => {
     let history = useHistory();
@@ -42,7 +43,7 @@ const Login: FC<any> = () => {
             return response.data.username;
         };
 
-        const token = localStorage.getItem('token');
+        const token = getToken();
 
         if (token) {
             getUser(token)

@@ -40,7 +40,7 @@ const TextInput: FC<Props> = props => {
                 variant="outlined"
                 name={props.name}
                 required={props.required}
-                type={propType}
+                type={type}
                 placeholder={props.placeholder}
                 value={props.value}
                 onChange={props.onChange}
@@ -52,7 +52,7 @@ const TextInput: FC<Props> = props => {
             />
             {propType === 'password' && (
                 <IconWrapper onClick={() => setType(type === 'text' ? 'password' : 'text')}>
-                    <FontAwesomeIcon icon={type === 'text' ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon icon={type !== 'text' ? faEye : faEyeSlash} />
                 </IconWrapper>
             )}
         </Container>
