@@ -43,21 +43,21 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
             <Container>
                 <FormWrapper>
                     <FormItem>
-                        <FormItemLabel>Počet jehel</FormItemLabel>
-                        <TextInput type="number" readOnly value={count} placeholder="Počet nebyl zadán" />
+                        <FormItemLabel>Počet injekčních stříkaček</FormItemLabel>
+                        <TextInput type="number" readOnly value={count} placeholder="Počet nebyl zadán" disabled />
                     </FormItem>
                     <FormItem>
                         <FormItemLabel>Místo nálezu</FormItemLabel>
-                        <TextInput type="text" readOnly value={`${lat}, ${lng}`} />
+                        <TextInput type="text" readOnly value={`${lat}, ${lng}`} disabled />
                     </FormItem>
                     <TextButton text="Zobrazit a upravit na mapě" onClick={onLocationChangeClick} />
                     <FormItem>
                         <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                        <TextInput type="date" readOnly value={datetime} placeholder="Datum nebylo zadáno" />
+                        <TextInput type="date" readOnly value={datetime} placeholder="Datum nebylo zadáno" disabled />
                     </FormItem>
                     <FormItem>
-                        <FormItemLabel>Poznámka k nálezu</FormItemLabel>
-                        <TextInput type="text" readOnly value={info} placeholder="Poznámky nebyly zadány" />
+                        <FormItemLabel>Poznámky k nálezu</FormItemLabel>
+                        <TextInput type="text" readOnly value={info} placeholder="Poznámky nebyly zadány" disabled />
                     </FormItem>
                 </FormWrapper>
                 <ButtonContainer>
