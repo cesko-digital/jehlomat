@@ -1,6 +1,4 @@
 import styled from '@emotion/styled';
-// import { media } from '../../utils/media';
-// import { size } from '../../utils/spacing';
 import { 
     fontFamilyRoboto, 
     fontWeight500,

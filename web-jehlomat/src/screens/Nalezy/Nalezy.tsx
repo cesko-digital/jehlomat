@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { useState, FC } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 // import Card from './components/Card';
@@ -25,11 +25,13 @@ import { media } from '../../utils/media';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
 import SearchInputDesktop 
     from '../../Components/Inputs/SearchInput/SearchInputDesktop';
+import { syringeMock } from './syringeMock'
 
 interface Props {}
 
 const NavodLikvidace: FC<Props> = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const [syringes, setSyringes] = useState(syringeMock.syringeList);
 
     return (
         <>
@@ -69,6 +71,11 @@ const NavodLikvidace: FC<Props> = () => {
                             // desktop komponenta
                             <SearchInputDesktop
                                 placeholder="Hledat"
+                                onChange={
+                                    e => setSyringes(syringeMock.syringeList.filter(
+                                        item => item.id.includes(e.target.value)
+                                    ))
+                                }
                             />
                         )}
                         <FilterLink href="#">Filtrovat</FilterLink>
