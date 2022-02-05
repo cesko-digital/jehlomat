@@ -7,6 +7,10 @@ import Navigation from '../../../Components/Navigation/Navigation';
 import { primaryDark, white } from '../../../utils/colors';
 import { Header } from '../../../Components/Header/Header';
 import { STEPS } from '../NovyNalez';
+import whiteArrow from '../../../../src/assets/images/white-arrow.png';
+import Box from '@mui/material/Box';
+import { useMediaQuery } from '@mui/material';
+import { media } from '../../../utils/media';
 
 interface iInfo {
     handleStepChange: (newStep: STEPS) => void;
@@ -14,8 +18,12 @@ interface iInfo {
 
 const Container = styled.div`
     display: flex;
+    position: relative;
     flex-direction: column;
     height: 100%;
+    @media (min-width: 700px) {
+        flex-direction: row;
+    }
 `;
 interface iCard {
     backgroundColor: string;
@@ -23,12 +31,20 @@ interface iCard {
 
 const Card = styled.div<iCard>`
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background: ${props => props.backgroundColor};
     padding: 1rem 0rem;
     flex-grow: 1;
+    @media (min-width: 700px) {
+        padding: 1rem 0 0.5rem;
+        &:last-child {
+            display: none;
+            background-color: red;
+        }
+    }
 `;
 
 const Icon = styled.div`
@@ -41,6 +57,8 @@ const Icon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    @media (min-width: 700px) {
+    }
 `;
 
 const Title = styled.h6`
@@ -57,41 +75,63 @@ const MutedText = styled.p`
     font-size: 14px;
     font-weight: 400;
     line-height: 16.4px;
-    margin: 0;
+    margin: 0 0 25px;
+    @media (min-width: 700px) {
+        display: none;
+    }
+`;
+
+const Arrow = styled.img`
+    width: 20px;
+    height: 20px;
+    margin: 15px;
+    position: absolute;
+    top: 140px;
+    z-index: 2;
+    @media (min-width: 700px) {
+        display: none;
+    }
 `;
 
 const Info: FC<iInfo> = ({ handleStepChange }) => {
+    const isMobile = useMediaQuery(media.lte('mobile'));
     return (
         <>
             <Header mobileTitle="Zadávaní nálezu" />
-
-            <Container>
-                <Card backgroundColor="#BFE3E0">
-                    <Icon>
-                        <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
-                    </Icon>
-                    <Title>Přidat do mapy</Title>
-                    <MutedText>Nejprve označte místo nálezu do mapy</MutedText>
-                </Card>
-                <Card backgroundColor="#CDEAE7">
-                    <Icon>
-                        <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
-                    </Icon>
-                    <Title>Přidat podrobnosti do mapy</Title>
-                    <MutedText>Poté vložte podrobnosti o nálezu a jeho fotografii.</MutedText>
-                </Card>
-                <Card backgroundColor="#DEF1EF">
-                    <Icon>
-                        <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
-                    </Icon>
-                    <Title>Úspěšné vložení nálezu</Title>
-                    <MutedText>Nález bude profesionálně zlikvidován</MutedText>
-                </Card>
-                <Card backgroundColor="#EEF8F7">
-                    <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
-                </Card>
-                <Navigation></Navigation>
-            </Container>
+            <Box minHeight={'100vh'}>
+                <Container>
+                    <Card backgroundColor="#BFE3E0">
+                        <Icon>
+                            <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
+                        </Icon>
+                        <Title>Přidat do mapy</Title>
+                        <MutedText>Nejprve označte místo nálezu do mapy</MutedText>
+                        <Arrow src={whiteArrow}></Arrow>
+                    </Card>
+                    <Card backgroundColor="#CDEAE7">
+                        <Icon>
+                            <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
+                        </Icon>
+                        <Title>Přidat podrobnosti do mapy</Title>
+                        <MutedText>Poté vložte podrobnosti o nálezu a jeho fotografii.</MutedText>
+                        <Arrow src={whiteArrow}></Arrow>
+                    </Card>
+                    <Card backgroundColor="#DEF1EF">
+                        <Icon>
+                            <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
+                        </Icon>
+                        <Title>Úspěšné vložení nálezu</Title>
+                        <MutedText>Nález bude profesionálně zlikvidován</MutedText>
+                    </Card>
+                    {isMobile && (
+                        <Card backgroundColor="#EEF8F7">
+                            <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
+                        </Card>
+                    )}
+                    
+                    <Navigation></Navigation>
+                </Container>
+            </Box>
         </>
     );
 };

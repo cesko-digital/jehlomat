@@ -46,8 +46,16 @@ fun Application.module(testing: Boolean = false) {
 
     install(CORS){
         header(HttpHeaders.ContentType)
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlAllowOrigin)
         header("key")
         anyHost()
+        method(HttpMethod.Options)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        allowNonSimpleContentTypes = true
+        allowCredentials = true
+        allowSameOrigin = true
     }
 
 
