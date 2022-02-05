@@ -6,6 +6,7 @@ import App from './App';
 import { LINKS } from './utils/links';
 import { Footer } from './Components/Footer/Footer';
 import AboutPage from './screens/AboutPage';
+import Layout from './Components/Layout/Layout';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
@@ -60,12 +61,20 @@ ReactDOM.render(
                                 </>
                             )}
                         />
+                        <Route
+                            path={LINKS.findings}
+                            render={() => (
+                                <>
+                                    <Route component={Layout} />
+                                    <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
+                                    <Route path={LINKS.newFind(0)} component={NovyNalez} />
+                                    <Route path={'/'} component={Nalezy} />
+                                </>
+                            )}
+                        />
 
                         <Route path={LINKS.profile} component={Profil} />
-                        <Route path={LINKS.newFind(0)} component={NovyNalez} />
-                        <Route path={LINKS.findings} component={Nalezy} />
                         <Route path={LINKS.error} component={ErrorPage} />
-                        <Route path={LINKS.trackingFind} component={TrackovaniNalezu} />
                         <Route path={LINKS.disposalInstructions} component={NavodLikvidace} />
                         <Route path={LINKS.about} component={AboutPage} />
                         <Route path={LINKS.home}>
