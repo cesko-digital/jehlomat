@@ -15,24 +15,21 @@ interface Props {
 }
 
 export const Header = (props: Props) => {
+    const history = useHistory();
     const isMobile = useMediaQuery(media.lte('mobile'));
     const logoutFnc = useCallback(() => {
         logout();
         window.location.reload();
     }, []);
-    const history = useHistory();
     const loginFnc = () => {
-        console.log({isMobile})
         if (isMobile) {
             history.push(LINKS.login);
         } else {
-
         }
     };
 
     const renderLoginLogout = () => {
         const isLogged = isLoggedIn();
-
         if (isLogged) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
