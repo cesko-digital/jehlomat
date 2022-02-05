@@ -22,9 +22,10 @@ interface IZadatKod {
     onClickBack: (event: React.MouseEvent<HTMLButtonElement>) => void;
     handleStepChange: (newStep: STEPS) => void;
     handleNewSyringeState: (syringeState: SyringeStateType) => void;
+    height: string;
 }
 
-const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyringeState }) => {
+const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyringeState, height }) => {
     const history = useHistory();
 
     const handleOnClickBackButton = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -36,7 +37,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
     };
 
     return (
-        <Container maxWidth="xs" sx={{ height: '100vh' }}>
+        <Container maxWidth="xs" sx={{ height }}>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
                     <Typography align="center" variant="body1" fontWeight="bold" color={primaryDark}>
@@ -47,6 +48,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             initialValues={{ kod: '' }}
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
+
                                 try {
                                     const response: AxiosResponse<any> = await authorizedAPI.get(`/api/v1/jehlomat/syringe/${values.kod}`);
                                     const { status } = response;
