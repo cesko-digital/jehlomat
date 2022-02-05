@@ -17,7 +17,7 @@ Please change it in example by your postgres configuration.
 
 4) Create the Magdalena organization and super admin with email `super@admin.cz` and password `SuperAdmin1`. Use this script only for testing purposes.
 ```shell
-  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/insert_super_admin.sql
+  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
 ```
 5) Update email api keys
 
