@@ -18,6 +18,9 @@ const FloatinButtonContainer = styled.div`
     bottom: calc(5vh + 86px);
     left: calc(50vw - 87px);
     z-index: 5;
+    @media (min-width: 700px) {
+        bottom: calc(100vh / 4);
+    }
 `;
 
 let DefaultIcon = L.icon({
