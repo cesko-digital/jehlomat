@@ -32,6 +32,7 @@ interface Props {}
 const NavodLikvidace: FC<Props> = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [syringes, setSyringes] = useState(syringeMock.syringeList);
+    let i = 1
 
     return (
         <>
@@ -102,12 +103,11 @@ const NavodLikvidace: FC<Props> = () => {
 
                         {/* Items */}
                         <tbody>
-                            <ListItem>
+                        {syringes.map((item) => (
+                            <ListItem key={item.id}>
                                 <ListItemCell style={{
                                     paddingLeft: '14px'
-                                }}>
-                                    1
-                                </ListItemCell>
+                                }}>{i++}</ListItemCell>
                                 <ListItemCell><SyringeIcon/></ListItemCell>
                                 <ListItemCell>Benešov</ListItemCell>
                                 <ListItemCell>Benešov - u hřiště</ListItemCell>
@@ -116,52 +116,9 @@ const NavodLikvidace: FC<Props> = () => {
                                 <ListItemCell>Magdalena</ListItemCell>
                                 <ListItemCell>Čeká na likvidaci</ListItemCell>
                                 <ListItemCell><EditIcon /></ListItemCell>
-                                {/* V designe je este radio button, ale nepozname 
-                                dovod preco, takze zatim neni implementovany */}
-                            </ListItem>
-                            <ListItem>
-                                <ListItemCell style={{
-                                    paddingLeft: '14px'
-                                }}>
-                                    2
-                                </ListItemCell>
-                                <ListItemCell><SyringeIcon/></ListItemCell>
-                                <ListItemCell>Praha</ListItemCell>
-                                <ListItemCell>Anděl</ListItemCell>
-                                <ListItemCell>15. 3. 2021</ListItemCell>
-                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
-                                <ListItemCell>Magdalena</ListItemCell>
-                                <ListItemCell>Čeká na likvidaci</ListItemCell>
                                 <ListItemCell><EditIcon /></ListItemCell>
                             </ListItem>
-                            <ListItem>
-                                <ListItemCell style={{
-                                    paddingLeft: '14px'
-                                }}>3</ListItemCell>
-                                <ListItemCell><SyringeIcon/></ListItemCell>
-                                <ListItemCell>Praha</ListItemCell>
-                                <ListItemCell>Anděl</ListItemCell>
-                                <ListItemCell>15. 3. 2021</ListItemCell>
-                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
-                                <ListItemCell>Magdalena</ListItemCell>
-                                <ListItemCell>Čeká na likvidaci</ListItemCell>
-                                <ListItemCell><EditIcon /></ListItemCell>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemCell style={{
-                                    paddingLeft: '14px'
-                                }}>
-                                    4
-                                </ListItemCell>
-                                <ListItemCell><SyringeIcon/></ListItemCell>
-                                <ListItemCell>Praha</ListItemCell>
-                                <ListItemCell>Anděl</ListItemCell>
-                                <ListItemCell>15. 3. 2021</ListItemCell>
-                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
-                                <ListItemCell>Magdalena</ListItemCell>
-                                <ListItemCell>Čeká na likvidaci</ListItemCell>
-                                <ListItemCell><EditIcon /></ListItemCell>
-                            </ListItem>
+                        ))}
                         </tbody>
 
                     </ListWrapper>

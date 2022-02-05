@@ -86,7 +86,7 @@ export const syringeMock: IListSyringe = {
                 obec: 554791,
                 mestkaCast: 546003
             }
-        }
+        },
     ],
     pageInfo: {
       index: 0,

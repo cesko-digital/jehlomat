@@ -4,8 +4,7 @@ import {
     fontWeight500,
     fontWeightBold
 } from '../../utils/typography';
-import { 
-    // primary, 
+import {
     primaryDark, 
     primaryLight,
     white,
@@ -85,11 +84,11 @@ export const ListItemCell = styled.td`
     line-height: 24px;
     letter-spacing: 0.15px;
     color: ${black};
-    &:first-child {
+    &:first-of-type {
         border-top-left-radius: 10px; 
         border-bottom-left-radius: 10px;
     }
-    &:last-child {
+    &:last-of-type {
         border-top-right-radius: 10px; 
         border-bottom-right-radius: 10px;
     }
