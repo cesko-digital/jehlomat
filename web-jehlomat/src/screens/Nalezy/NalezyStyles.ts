@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 // import { size } from '../../utils/spacing';
 import { 
     fontFamilyRoboto, 
-    fontWeight500 
+    fontWeight500,
+    fontWeightBold
 } from '../../utils/typography';
 import { 
     // primary, 
@@ -40,9 +41,24 @@ export const FilterLink = styled.a`
     }
 `
 
-export const ListWrapper = styled.div`
-    background-color: ${primaryLight};
+export const ListWrapper = styled.table`
+    background: rgba(47, 166, 154, 0.4);
     border-radius: 8px 8px 0px 0px;
     padding: 20px 43px;
     min-height: 100vh;
+    width: 100%;
+`
+
+export const ListHeader = styled.tr`
+    witdh: 100%;
+`
+
+export const ListHeaderItem = styled.th`
+    ${fontFamilyRoboto};
+    font-style: normal;
+    ${fontWeightBold};
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: #808285;
 `

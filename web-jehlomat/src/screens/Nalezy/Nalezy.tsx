@@ -13,7 +13,9 @@ import { useMediaQuery } from '@mui/material';
 import { 
     TextHeader, 
     FilterLink,
-    ListWrapper 
+    ListWrapper,
+    ListHeader,
+    ListHeaderItem
 } from './NalezyStyles';
 import { media } from '../../utils/media';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
@@ -42,6 +44,7 @@ const NavodLikvidace: FC<Props> = () => {
                 minHeight={'100vh'} 
                 mt={8}
             >
+                {/* Nadpis & filter */}
                 <Grid container 
                     direction="row" alignItems="center" 
                     justifyContent="space-between"
@@ -71,7 +74,23 @@ const NavodLikvidace: FC<Props> = () => {
                 </Grid>
                 <Box mt={2}>
                     <ListWrapper>
-                        test
+                        {/* Sortable header */}
+                        <thead>
+                        <ListHeader>
+                            <ListHeaderItem>Město</ListHeaderItem>
+                            <ListHeaderItem>Název</ListHeaderItem>
+                            <ListHeaderItem>Datum nálezu</ListHeaderItem>
+                            <ListHeaderItem>Datum likvidace</ListHeaderItem>
+                            <ListHeaderItem>Zadavatel</ListHeaderItem>
+                            <ListHeaderItem>Stav</ListHeaderItem>
+                        </ListHeader>
+                        </thead>
+
+                        {/* Items */}
+                        <tbody>
+
+                        </tbody>
+
                     </ListWrapper>
                 </Box>
             </Box>
