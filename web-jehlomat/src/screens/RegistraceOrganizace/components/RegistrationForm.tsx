@@ -54,7 +54,7 @@ export default function RegistrationForm() {
                             email: values.email,
                             password: values.heslo,
                         };
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization/', organizace);
+                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization', organizace);
                         const status = response.status;
 
                         switch (true) {
