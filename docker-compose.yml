@@ -2,16 +2,12 @@
 version: '2.1'
 volumes:
   dbbackups:
-  postgis-data:
-
+  postgis-data: 
 services:
-
   db:
-    image: kartoza/postgis:14-3.1
-    volumes:
-      - postgis-data:/var/lib/postgresql
+    build: .
     environment:
-      # If you need to create multiple database you can add coma separated databases eg gis,data
+      # If you need to create multiple database yo u can add coma separated databases eg gis,data
       - POSTGRES_DB=jehlomat
       - POSTGRES_USER=jehlomat
       - POSTGRES_PASS=jehlomat
@@ -19,7 +15,7 @@ services:
       # Add extensions you need to be enabled by default in the DB. Default are the five specified below
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
     ports:
-      - 5433:5432
+      - 5432:5432
     restart: on-failure
     healthcheck:
       test: "exit 0"
