@@ -15,7 +15,11 @@ import {
     FilterLink,
     ListWrapper,
     ListHeader,
-    ListHeaderItem
+    ListHeaderItem,
+    ListItem,
+    ListItemCell,
+    SyringeIcon,
+    EditIcon,
 } from './NalezyStyles';
 import { media } from '../../utils/media';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
@@ -77,18 +81,80 @@ const NavodLikvidace: FC<Props> = () => {
                         {/* Sortable header */}
                         <thead>
                         <ListHeader>
+                            <ListHeaderItem />
+                            <ListHeaderItem />
                             <ListHeaderItem>Město</ListHeaderItem>
                             <ListHeaderItem>Název</ListHeaderItem>
                             <ListHeaderItem>Datum nálezu</ListHeaderItem>
                             <ListHeaderItem>Datum likvidace</ListHeaderItem>
                             <ListHeaderItem>Zadavatel</ListHeaderItem>
                             <ListHeaderItem>Stav</ListHeaderItem>
+                            <ListHeaderItem />
                         </ListHeader>
                         </thead>
 
                         {/* Items */}
                         <tbody>
-
+                            <ListItem>
+                                <ListItemCell style={{
+                                    paddingLeft: '14px'
+                                }}>
+                                    1
+                                </ListItemCell>
+                                <ListItemCell><SyringeIcon/></ListItemCell>
+                                <ListItemCell>Benešov</ListItemCell>
+                                <ListItemCell>Benešov - u hřiště</ListItemCell>
+                                <ListItemCell>15. 4. 2021</ListItemCell>
+                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
+                                <ListItemCell>Magdalena</ListItemCell>
+                                <ListItemCell>Čeká na likvidaci</ListItemCell>
+                                <ListItemCell><EditIcon /></ListItemCell>
+                                {/* V designe je este radio button, ale nepozname 
+                                dovod preco, takze zatim neni implementovany */}
+                            </ListItem>
+                            <ListItem>
+                                <ListItemCell style={{
+                                    paddingLeft: '14px'
+                                }}>
+                                    2
+                                </ListItemCell>
+                                <ListItemCell><SyringeIcon/></ListItemCell>
+                                <ListItemCell>Praha</ListItemCell>
+                                <ListItemCell>Anděl</ListItemCell>
+                                <ListItemCell>15. 3. 2021</ListItemCell>
+                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
+                                <ListItemCell>Magdalena</ListItemCell>
+                                <ListItemCell>Čeká na likvidaci</ListItemCell>
+                                <ListItemCell><EditIcon /></ListItemCell>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemCell style={{
+                                    paddingLeft: '14px'
+                                }}>3</ListItemCell>
+                                <ListItemCell><SyringeIcon/></ListItemCell>
+                                <ListItemCell>Praha</ListItemCell>
+                                <ListItemCell>Anděl</ListItemCell>
+                                <ListItemCell>15. 3. 2021</ListItemCell>
+                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
+                                <ListItemCell>Magdalena</ListItemCell>
+                                <ListItemCell>Čeká na likvidaci</ListItemCell>
+                                <ListItemCell><EditIcon /></ListItemCell>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemCell style={{
+                                    paddingLeft: '14px'
+                                }}>
+                                    4
+                                </ListItemCell>
+                                <ListItemCell><SyringeIcon/></ListItemCell>
+                                <ListItemCell>Praha</ListItemCell>
+                                <ListItemCell>Anděl</ListItemCell>
+                                <ListItemCell>15. 3. 2021</ListItemCell>
+                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
+                                <ListItemCell>Magdalena</ListItemCell>
+                                <ListItemCell>Čeká na likvidaci</ListItemCell>
+                                <ListItemCell><EditIcon /></ListItemCell>
+                            </ListItem>
                         </tbody>
 
                     </ListWrapper>

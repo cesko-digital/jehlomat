@@ -9,8 +9,12 @@ import {
 import { 
     // primary, 
     primaryDark, 
-    primaryLight 
+    primaryLight,
+    white,
+    black,
 } from '../../utils/colors';
+import Syringe from '../../assets/images/syringe.svg';
+import Edit from '../../assets/images/edit.svg';
 
 export const TextHeader = styled.h1`
     ${fontFamilyRoboto};
@@ -45,8 +49,9 @@ export const ListWrapper = styled.table`
     background: rgba(47, 166, 154, 0.4);
     border-radius: 8px 8px 0px 0px;
     padding: 20px 43px;
-    min-height: 100vh;
     width: 100%;
+    border-collapse:separate; 
+    border-spacing: 0 10px;
 `
 
 export const ListHeader = styled.tr`
@@ -61,4 +66,45 @@ export const ListHeaderItem = styled.th`
     line-height: 24px;
     letter-spacing: 0.15px;
     color: #808285;
+    text-align: left;
+`
+
+export const ListItem = styled.tr`
+    background: ${white};
+    border: 2px solid ${white};
+    box-sizing: border-box;
+    border-radius: 8px;
+    min-height: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+`
+
+export const ListItemCell = styled.td`
+    ${fontFamilyRoboto};
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: ${black};
+    &:first-child {
+        border-top-left-radius: 10px; 
+        border-bottom-left-radius: 10px;
+    }
+    &:last-child {
+        border-top-right-radius: 10px; 
+        border-bottom-right-radius: 10px;
+    }
+`
+
+export const SyringeIcon = styled.div`
+    background-image: url(${Syringe});
+    width: 15px;
+    height: 27px;
+`
+
+export const EditIcon = styled.div`
+    background-image: url(${Edit});
+    width: 18px;
+    height: 18px;
 `
