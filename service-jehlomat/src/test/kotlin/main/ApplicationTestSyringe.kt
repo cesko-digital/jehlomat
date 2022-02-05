@@ -235,7 +235,7 @@ class ApplicationTestSyringe {
     fun testPutSyringe() = withTestApplication(Application::module) {
         val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, createdBy = defaultUser, demolisherType = Demolisher.CITY_POLICE)))
@@ -255,7 +255,7 @@ class ApplicationTestSyringe {
     fun testPutSyringeWrongChange() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
         val syringeId = database.insertSyringe(defaultSyringe)
-        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, count = -100)))
@@ -278,7 +278,7 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPostSyringe() = withTestApplication({ module(testing = true) }) {
-        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(defaultSyringe.copy(createdBy = defaultUser)))
         }) {
@@ -299,10 +299,10 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPostSyringeWithWrongUser() = withTestApplication({ module(testing = true) }) {
-        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(defaultSyringe.copy(createdBy = UserInfo(
-                id = 0, "", 0, null
+                id = 0, "", 0, null, false
             )
             )))
         }) {

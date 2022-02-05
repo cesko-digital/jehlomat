@@ -28,7 +28,7 @@ class TestUtils {
         }
 
         fun TestApplicationEngine.loginUser(email: String, password: String): String {
-            with(handleRequest(HttpMethod.Post, "/api/v1/jehlomat/login/") {
+            with(handleRequest(HttpMethod.Post, "/api/v1/jehlomat/login") {
                 addHeader("Content-Type", "application/json")
                 setBody(Json.encodeToString(LoginRequest(email = email, password = password)))
             }) {

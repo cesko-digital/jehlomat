@@ -3,6 +3,7 @@ import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
+import { LINKS } from '../../utils/links';
 
 interface Props {
     mobileTitle: string;
@@ -16,7 +17,7 @@ export const Header = (props: Props) => {
                 <HeaderLogo />
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.AboutApp} route={'about'} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={'create'} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organization} />
                     <HeaderLink type={HeaderLinkType.Login} route={'login'} />
                 </SLinkContainer>
             </SContainer>

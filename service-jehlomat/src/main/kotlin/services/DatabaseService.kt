@@ -76,6 +76,7 @@ class DatabaseService(
                 username = row[table.username]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
+                isAdmin = row[table.isAdmin]!!
             )
         } else {
             null
@@ -612,6 +613,10 @@ class DatabaseService(
 
     fun <T> useTransaction(func: () -> T): T {
         databaseInstance.useTransaction { return func.invoke() }
+    }
+
+    fun <T> useConnection(func: (java.sql.Connection) -> T): T {
+        databaseInstance.useConnection { return func.invoke(it) }
     }
 
     fun createSqlFormatter(): SqlFormatter {

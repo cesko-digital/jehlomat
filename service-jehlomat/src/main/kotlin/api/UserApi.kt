@@ -15,7 +15,7 @@ import utils.isValidPassword
 
 fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
-    return route("/") {
+    return route("") {
         authenticate(JWT_CONFIG_NAME) {
             get("/{id}") {
                 val id = call.parameters["id"]?.toIntOrNull()

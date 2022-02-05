@@ -19,7 +19,7 @@ export const FormItem = styled.div`
     flex-direction: column;
     align-items: baseline;
     justify-content: center;
-    text-align: flex-start;
+    text-align: left;
     width: 80%;
     font-family: Roboto;
     margin: 10px;

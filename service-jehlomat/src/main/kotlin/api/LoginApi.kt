@@ -13,7 +13,7 @@ import services.JwtManager
 
 fun Route.loginApi(database: DatabaseService, jwtManager: JwtManager): Route {
 
-    return route("/") {
+    return route("") {
         post {
             val credentials = call.receive<LoginRequest>()
 

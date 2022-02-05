@@ -1,5 +1,6 @@
 export const LINKS = {
     home: '/',
+    login: '/prihlaseni',
     user: '/uzivatel',
     userNew: '/uzivatel/novy',
     userValidation: '/uzivatel/validace',
@@ -15,4 +16,7 @@ export const LINKS = {
     trackingFind: '/trackovani-nalezu',
     disposalInstructions: '/navod-likvidace',
     policeAssistance: '/ohlasit-nalez-policii',
+    forgottenPassword: '/zapomenute-heslo',
+    welcome: '/vitejte',
+    about: '/about',
 } as const;

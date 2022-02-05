@@ -23,8 +23,9 @@ export const Title = styled.div`
     display: block;
     padding: 2em 2em;
     text-align: center;
-    font-size: 16.5px;
+    font-size: 18px;
     line-height: 21px;
+    font-weight: 500;
 `;
 
 export const LinkContainer = styled.div`
@@ -33,8 +34,8 @@ export const LinkContainer = styled.div`
     align-self: center;
     margin-top: 1em;
     /*flex-direction: column;
-  column-count: 3;
-   */
+column-count: 3;
+ */
 `;
 export const LineVertical = styled.div`
     display: block;
@@ -43,6 +44,7 @@ export const LineVertical = styled.div`
     height: 41px;
     background-color: #ffffff;
     margin: 0 1em;
+    align-self: center;
 `;
 
 export const LineHorizontal = styled.div`

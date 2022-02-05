@@ -84,9 +84,7 @@ export const SecondaryNavigationButtonIcon = styled.div<ISecondaryNavigationButt
     border: 2px solid ${props => (props.selected ? primary : 'white')};
     box-sizing: border-box;
     border-radius: 20px;
-
     box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.13);
-
     margin-bottom: 5px;
 `;
 
@@ -96,6 +94,5 @@ export interface ISecondaryNavigationButtonTitle {
 
 export const SecondaryNavigationButtonTitle = styled.span<ISecondaryNavigationButtonTitle>`
     font-size: 12px;
-
     color: ${props => (props.selected ? primary : 'black')};
 `;
