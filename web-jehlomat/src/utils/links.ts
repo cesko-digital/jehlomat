@@ -17,5 +17,6 @@ export const LINKS = {
     disposalInstructions: '/navod-likvidace',
     policeAssistance: '/ohlasit-nalez-policii',
     forgottenPassword: '/zapomenute-heslo',
-    welcome: '/vitejte'
+    welcome: '/vitejte',
+    about: '/about',
 } as const;

@@ -1,26 +1,28 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
-import { primaryDark } from '../../../utils/colors';
-import { H4 } from '../../../utils/typography';
+import { white } from '../../../utils/colors';
+import Typography from '@mui/material/Typography/Typography';
 
 interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement> {
     text: String;
 }
 
 const Button = styled.button`
-    height: 48px;
     border: none;
     box-shadow: none;
     background: transparent;
-    color: ${primaryDark};
+    color: ${white};
     cursor: pointer;
-    padding: 0px 20px;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    margin-bottom: 10px;
 `;
 
 const TextButton: FC<ITextButton> = ({ text, ...props }) => {
     return (
         <Button {...props}>
-            <H4>{text}</H4>
+            <Typography sx={{ fontWeight: 'bold', lineHeight: '18px' }}>{text}</Typography>
         </Button>
     );
 };
