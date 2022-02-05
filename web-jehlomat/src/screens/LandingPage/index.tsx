@@ -18,25 +18,32 @@ const LandingPage = () => {
         <>
             <Header mobileTitle="" />
 
-            <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-                <Grid xs={6} alignItems="start" container direction="column" justifyContent="center">
-                    <img height={22} alt="Jehlomat" src={jehlomatLogo} />
-                    <Typography align="left" variant="h1" color={primaryDark} fontSize="48px" lineHeight="56px" sx={{ mt: '40px' }}>
-                        Monitorovací ananalytický nástroj ochrany veřejného zdraví
+            <Container
+                maxWidth="lg"
+                sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                }}
+            >
+                <Grid xs={7} alignItems="start" container direction="column" justifyContent="center">
+                    <Typography align="left" variant="h1" color={primaryDark} fontSize="48px" lineHeight="56px" fontWeight="300" sx={{ mt: '40px', mb: '100px' }}>
+                        Nástroj pro hlášení a likvidaci injekčních stříkaček
                     </Typography>
-                    <Typography align="left" variant="h2" color={darkGrey} fontSize="24px" lineHeight="28px" sx={{ my: '40px' }}>
+                    <Typography align="left" variant="h2" color={darkGrey} fontSize="24px" lineHeight="28px" sx={{ my: '50px' }}>
                         Našli jste jehlu a nevíte co s ní?
                     </Typography>
-                    <Grid container justifyContent="center">
-                        <PrimaryButton text="zadat nález injekční stříkačky" type="button" />
-                    </Grid>
-                    <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: '80px' }}>
-                        Aplikace jehlomat.cz slouží od roku 2014 ke sběru údajů o nálezech injekčního materiálu, které provádějí terénní pracovníci adiktologických služeb, městští strážníci či
-                        pracovníci technických služeb.
+                    {/*<Grid container justifyContent="left">*/}
+                    <PrimaryButton text="zadat nález ANONYMNĚ" type="button" />
+                    {/*</Grid>*/}
+                    <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
+                        Jehlomat.cz je online nástroj, sloužící terénním pracovníkům a veřejnosti ke hlášení nálezů odhozených injekčních stříkaček a následně k jejich odborné likvidaci
                     </Typography>
                 </Grid>
-                <Grid xs={6} alignItems="center" container>
-                    <img width="100%" alt="Mapa" src={map} />
+                <Grid xs={5} alignItems="center" container>
+                    <img width="120%" alt="Mapa" src={map} />
                 </Grid>
             </Container>
         </>
