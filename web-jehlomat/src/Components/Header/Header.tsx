@@ -6,29 +6,24 @@ import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS } from 'utils/links';
 import { isLoggedIn, logout } from 'utils/login';
-import { useMediaQuery } from '@mui/material';
-import { media } from 'utils/media';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
+import Navigator from "Components/Navigator/Navigator";
 
 interface Props {
     mobileTitle: string;
     backRoute?: string;
 }
 
+const loginModal = <></>
+
 export const Header = (props: Props) => {
     const history = useHistory();
-    const isMobile = useMediaQuery(media.lte('mobile'));
+
     const logoutFnc = useCallback(() => {
         logout();
         window.location.reload();
     }, []);
-    const loginFnc = () => {
-        if (isMobile) {
-            history.push(LINKS.login);
-        } else {
-        }
-    };
 
     const onBack = () => {
         if (props.backRoute) {
@@ -38,10 +33,12 @@ export const Header = (props: Props) => {
 
     const renderLoginLogout = () => {
         const isLogged = isLoggedIn();
+
         if (isLogged) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
-            return <HeaderLink onClick={loginFnc}>Přihlásit</HeaderLink>;
+            // TODO modal
+            return <HeaderLink><Navigator to={LINKS.login} modal={loginModal}>Přihlásit</Navigator></HeaderLink>;
         }
     };
 
