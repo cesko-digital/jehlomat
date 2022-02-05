@@ -4,7 +4,6 @@ import {primaryDark} from "../../../utils/colors";
 export const IconWrapper = styled.label`
     position: absolute;
     right: 20px;
-    top: calc(50% + 10px);
-    transform: translateY(-50%);
+    top: 38px; // static position cause input with error text has bigger height than without
     color: ${primaryDark};
 `;

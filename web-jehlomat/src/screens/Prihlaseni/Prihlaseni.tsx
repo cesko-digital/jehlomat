@@ -1,5 +1,5 @@
 import { FC } from 'react';
-
+import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import { useHistory } from 'react-router-dom';
@@ -8,6 +8,8 @@ import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import LoginForm from '../../Components/LoginForm/LoginForm';
+import { LINKS } from 'utils/links';
+import Link from 'Components/Link';
 
 const Login: FC<any> = () => {
     let history = useHistory();
@@ -20,9 +22,13 @@ const Login: FC<any> = () => {
                     onIconClick={() => {
                         history.goBack();
                     }}
-                ></TitleBar>
+                />
                 <Grid container direction="column" sx={{ height: '100%', width: '100%', paddingTop: '85px' }} justifyContent="start" alignItems="center">
-                    <LoginForm  />
+                    <LoginForm />
+
+                    <Box sx={{ marginTop: '60px' }}>
+                        <Link to={LINKS.forgottenPassword}> Zapomněli jste heslo? </Link>
+                    </Box>
                 </Grid>
             </Grid>
         </Container>

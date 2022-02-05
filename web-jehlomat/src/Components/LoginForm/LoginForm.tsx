@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import TextInput from 'src/Components/Inputs/TextInput';
+import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
