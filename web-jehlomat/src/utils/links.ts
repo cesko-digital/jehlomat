@@ -1,5 +1,6 @@
 export const LINKS = {
     home: '/',
+    login: '/prihlaseni',
     user: '/uzivatel',
     userNew: '/uzivatel/novy',
     userValidation: '/uzivatel/validace',
