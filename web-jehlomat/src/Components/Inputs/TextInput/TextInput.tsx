@@ -1,8 +1,7 @@
 import { FC, InputHTMLAttributes, useState } from 'react';
 import { grey } from '../../../utils/colors';
-import { default as MInput, TextFieldProps } from '@mui/material/TextField';
+import { default as MInput } from '@mui/material/TextField';
 import styled from '@emotion/styled';
-import { primaryDark, primaryLight, white } from '../../../utils/colors';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconWrapper } from './TextInput.style';
