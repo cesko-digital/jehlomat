@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
-import {primaryDark} from "../../../utils/colors";
+import styled from '@emotion/styled';
+import { primaryDark } from '../../../utils/colors';
 
 export const IconWrapper = styled.label`
     position: absolute;

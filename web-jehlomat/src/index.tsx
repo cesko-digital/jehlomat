@@ -8,7 +8,7 @@ import { Footer } from './Components/Footer/Footer';
 import AboutPage from './screens/AboutPage';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
-const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome'));  // Temp welcome
+const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));

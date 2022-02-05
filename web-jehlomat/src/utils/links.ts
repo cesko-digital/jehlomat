@@ -18,5 +18,5 @@ export const LINKS = {
     policeAssistance: '/ohlasit-nalez-policii',
     forgottenPassword: '/zapomenute-heslo',
     welcome: '/vitejte',
-    about: '/about'
+    about: '/about',
 } as const;
