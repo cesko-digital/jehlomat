@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ZadatKod from './components/ZadatKod';
 import ZobrazitStav from './components/ZobrazitStav';
+import { Header } from 'Components/Header/Header';
 
 interface Props {}
 
@@ -62,12 +63,21 @@ const TrackovaniNalezu: FC<Props> = () => {
         setSyringeState(syringeState);
     };
 
-    switch (currentStep) {
-        case STEPS.ZobraitStav:
-            return <ZobrazitStav syringeState={syringeStates[syringeState]!} />;
-        default:
-            return <ZadatKod onClickBack={handleOnClickBack} handleStepChange={handleStepChange} handleNewSyringeState={handleNewSyringeState} />;
-    }
+    const renderContent = () => {
+        switch (currentStep) {
+            case STEPS.ZobraitStav:
+                return <ZobrazitStav syringeState={syringeStates[syringeState]!} />;
+            default:
+                return <ZadatKod onClickBack={handleOnClickBack} handleStepChange={handleStepChange} handleNewSyringeState={handleNewSyringeState} />;
+        }
+    };
+
+    return (
+        <>
+            <Header />
+            {renderContent()}
+        </>
+    );
 };
 
 export default TrackovaniNalezu;
