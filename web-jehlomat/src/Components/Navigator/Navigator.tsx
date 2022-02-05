@@ -34,6 +34,7 @@ export const Navigator: React.FC<Props> = ({ to, children, modal }) => {
     return (
         <>
             {renderLink()}
+            {/* // TODO  show and handle modal with portal? */}
             {showModal && modal}
         </>
     );
