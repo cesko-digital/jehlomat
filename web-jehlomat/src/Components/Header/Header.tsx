@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS } from 'utils/links';
-import { isLoggedIn, setToken, logout } from 'utils/login';
+import { isLoggedIn, logout } from 'utils/login';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 
@@ -44,7 +44,7 @@ export const Header = (props: Props) => {
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.AboutApp} route={"/"} />
                     <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organization} />
-                    <HeaderLink type={HeaderLinkType.Login} route={"prihlaseni"} />
+                    {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
 
