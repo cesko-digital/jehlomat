@@ -22,9 +22,9 @@ import java.time.Instant
 
 fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
-    return route("/") {
+    return route("") {
         authenticate(JWT_CONFIG_NAME) {
-            post("search") {
+            post("/search") {
                 val request = call.receive<SyringeFilterRequest>()
 
                 val requestedPageInfo = request.pageInfo.ensureValidity()
@@ -37,7 +37,7 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 call.respond(HttpStatusCode.OK, SyringeFilterResponse(filteredSyringes, pageInfo))
             }
 
-            post("export") {
+            post("/export") {
                 val loggedInUser = jwtManager.getLoggedInUser(call, database)
                 val roles = PermissionService.determineRoles(loggedInUser, loggedInUser)
                 if (!roles.contains(Role.OrgAdmin) && !roles.contains(Role.SuperAdmin)) {

@@ -13,7 +13,7 @@ import services.*
 // TODO: all operations need to be atomic
 fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Route {
 
-    return route("/") {
+    return route("") {
         authenticate(JWT_CONFIG_NAME) {
             get("/{id}") {
                 val id = call.parameters["id"]?.toIntOrNull()
