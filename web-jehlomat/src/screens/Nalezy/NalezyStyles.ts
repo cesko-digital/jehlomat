@@ -9,6 +9,9 @@ import {
     primaryLight,
     white,
     black,
+    // greyLight,
+    darkGrey,
+    textGold
 } from '../../utils/colors';
 import Syringe from '../../assets/images/syringe.svg';
 import Edit from '../../assets/images/edit.svg';
@@ -104,4 +107,20 @@ export const EditIcon = styled.div`
     background-image: url(${Edit});
     width: 18px;
     height: 18px;
+`
+export const TextMuted = styled.span`
+    color: ${darkGrey};
+`
+export const TextGold = styled.span`
+    color: ${textGold};
+    ${fontWeight500};
+`
+export const TextHighlight = styled.span`
+    color: ${primaryDark};
+    ${fontWeight500};
+`
+export const TextMutedBold = styled(TextMuted) `${fontWeight500}`
+
+export const CheckboxRadio = styled.input`
+
 `

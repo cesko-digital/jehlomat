@@ -20,12 +20,20 @@ import {
     ListItemCell,
     SyringeIcon,
     EditIcon,
+    CheckboxRadio,
+    TextMuted,
+    TextMutedBold,
+    TextGold,
+    TextHighlight
 } from './NalezyStyles';
 import { media } from '../../utils/media';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
 import SearchInputDesktop 
     from '../../Components/Inputs/SearchInput/SearchInputDesktop';
 import { syringeMock } from './syringeMock'
+import dayjs from 'dayjs'
+
+dayjs().format()
 
 interface Props {}
 
@@ -106,17 +114,132 @@ const NavodLikvidace: FC<Props> = () => {
                         {syringes.map((item) => (
                             <ListItem key={item.id}>
                                 <ListItemCell style={{
-                                    paddingLeft: '14px'
-                                }}>{i++}</ListItemCell>
-                                <ListItemCell><SyringeIcon/></ListItemCell>
-                                <ListItemCell>Benešov</ListItemCell>
-                                <ListItemCell>Benešov - u hřiště</ListItemCell>
-                                <ListItemCell>15. 4. 2021</ListItemCell>
-                                <ListItemCell>zatím nezlikvidováno</ListItemCell>
-                                <ListItemCell>Magdalena</ListItemCell>
-                                <ListItemCell>Čeká na likvidaci</ListItemCell>
-                                <ListItemCell><EditIcon /></ListItemCell>
-                                <ListItemCell><EditIcon /></ListItemCell>
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill 
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill
+                                        ? '2px solid #FEAB0D': '',
+                                    borderLeft: item.demolished === false && !item.reservedTill
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    {i++}
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill 
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    <SyringeIcon/>
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    Benešov
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    Benešov - u hřiště
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    {
+                                        dayjs(item.createdAt * 1000)
+                                        .format("D. M. YYYY")
+                                    }
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    {
+                                    item.demolishedAt && 
+                                    item.demolished === true 
+                                    ? dayjs(item.demolishedAt * 1000)
+                                        .format("D. M. YYYY")
+                                    : <>
+                                        {item.reservedTill 
+                                        ? <TextMuted>
+                                            rezervace do
+                                            {' '}
+                                            {dayjs(item.reservedTill * 1000)
+                                            .format("D. M. YYYY")}
+                                          </TextMuted>
+                                        : <TextMuted>zatím nezlikvidováno</TextMuted>
+                                        }
+                                      </>
+                                    }
+                                </ListItemCell>
+                                <ListItemCell  style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    Magdalena
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill 
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    {
+                                    item.demolishedAt && 
+                                    item.demolished === true 
+                                    ? <TextMutedBold>
+                                        Zlikvidováno
+                                      </TextMutedBold>
+                                    : <>
+                                        {item.reservedTill 
+                                        ? <TextHighlight>
+                                            Rezervováno TP
+                                          </TextHighlight>
+                                        : <TextGold>Čeká na likvidaci</TextGold>
+                                        }
+                                      </>
+                                    }
+                                </ListItemCell>
+                                <ListItemCell  style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    <EditIcon />
+                                </ListItemCell>
+                                <ListItemCell style={{
+                                    paddingLeft: "14px",
+                                    borderTop: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderBottom: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': '',
+                                    borderRight: item.demolished === false && !item.reservedTill  
+                                        ? '2px solid #FEAB0D': ''
+                                }}>
+                                    <CheckboxRadio type="checkbox" />
+                                </ListItemCell>
                             </ListItem>
                         ))}
                         </tbody>

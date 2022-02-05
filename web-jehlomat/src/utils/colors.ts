@@ -16,3 +16,4 @@ export const darkGrey = '#787878';
 // text
 export const textPrimary = black;
 export const textSecondary = black;
+export const textGold = '#FEAB0D';

@@ -28,10 +28,10 @@ export interface ISyringe {
     id: string,
     createdAt: number,
     createdBy: IPerson,
-    reservedTill: number,
-    reservedBy: IPerson,
-    demolishedAt: number,
-    demolishedBy: IPerson,
+    reservedTill?: number,
+    reservedBy?: IPerson,
+    demolishedAt?: number,
+    demolishedBy?: IPerson,
     photo?: string,
     count: number,
     note: string,
@@ -66,7 +66,8 @@ export const syringeMock: IListSyringe = {
                 isAdmin: true
             },
             gps_coordinates: "25.326,-31.265",
-            demolishedAt: 1637092279,
+            demolished: false,
+            demolishedAt: 1639092279,
             demolishedBy: {
                 id: 0,
                 email: "peter@raavn.net",
@@ -79,7 +80,74 @@ export const syringeMock: IListSyringe = {
             count: 1,
             note: "note 1",
             demolisher: "NO",
+            location: {
+                id: 0,
+                okres: "CZ0323",
+                obec: 554791,
+                mestkaCast: 546003
+            }
+        },
+        {
+            id: "DMGID1AC",
+            createdAt: 1637092279,
+            createdBy: {
+                id: 0,
+                email: "peter@raavn.net",
+                username: "Peter124",
+                verified: false,
+                organizationId: 1,
+                teamId: 1,
+                isAdmin: true,
+            },
+            reservedTill: 1637092279,
+            reservedBy: {
+                id: 0,
+                email: "peter@raavn.net",
+                username: "Peter124",
+                verified: false,
+                organizationId: 1,
+                teamId: 1,
+                isAdmin: true
+            },
+            gps_coordinates: "25.326,-31.265",
+            demolished: true,
+            demolishedAt: 1639092279,
+            demolishedBy: {
+                id: 0,
+                email: "peter@raavn.net",
+                username: "Peter123",
+                verified: false,
+                organizationId: 0,
+                teamId: 0,
+                isAdmin: true
+            },
+            count: 1,
+            note: "note 1",
+            demolisher: "NO",
+            location: {
+                id: 0,
+                okres: "CZ0323",
+                obec: 554791,
+                mestkaCast: 546003
+            }
+        },
+        {
+            id: "R4YFD1F2",
+            createdAt: 1637092279,
+            createdBy: {
+                id: 0,
+                email: "peter@raavn.net",
+                username: "Peter124",
+                verified: false,
+                organizationId: 1,
+                teamId: 1,
+                isAdmin: true,
+            },
+            gps_coordinates: "25.326,-31.265",
             demolished: false,
+            count: 1,
+            note: "note 1",
+            demolisher: "NO",
             location: {
                 id: 0,
                 okres: "CZ0323",
