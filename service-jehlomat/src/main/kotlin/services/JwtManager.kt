@@ -13,7 +13,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-private const val TOKEN_LIFESPAN_MS = 3600000
+private const val TOKEN_LIFESPAN_MS = 10800000
 private const val KEY_SIZE = 3072
 const val JWT_PAYLOAD_PROPERTY_NAME = "user-id"
 const val JWT_CONFIG_NAME = "auth-jwt"
