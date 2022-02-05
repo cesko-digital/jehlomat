@@ -9,6 +9,8 @@ import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
+import {LINKS} from "utils/links";
+import {setToken} from "utils/login";
 
 interface LoginFormProps {}
 
@@ -48,8 +50,8 @@ export const LoginForm: React.FC<LoginFormProps> = props => {
                             case /2[0-9][0-9]/g.test(status.toString()): {
                                 const token = response?.data?.token;
                                 if (token) {
-                                    localStorage.setItem('auth', token);
-                                    history.push('/welcome');
+                                    setToken(token)
+                                    history.push(LINKS.welcome);
                                 }
                                 break;
                             }
