@@ -8,17 +8,21 @@ import { Formik, Form } from 'formik';
 import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
-import API from '../../config/baseURL';
+import API, { authorizedAPI } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
 import { getUser } from '../../config/user';
+import { getToken } from 'utils/login';
 
 
 
 const validationSchema = yup.object({
     name: yup.string().required('Název Teamu je povinné pole'),
-    location: yup.string().required('Výběr oblasti je povinné pole'),
+    location: yup.string(),
+    member: yup.string(),
 });
+
+
 
 
 const Team = () => {
@@ -37,8 +41,7 @@ const Team = () => {
 
             return getUser(token)
                 .then(async (user) => {
-                    const response: AxiosResponse<any> = await API.get(`/api/v1/jehlomat/organization/${user.organizationId}/users`);
-                    console.log(response);
+                    const response: AxiosResponse<any> = await authorizedAPI.get(`/api/v1/jehlomat/organization/${user.organizationId}/users`);
                     return response.data;
                 })
                 .catch((error) => {
@@ -53,8 +56,7 @@ const Team = () => {
             console.log(error) //should redirect to Error page
         });
         
-        const token = localStorage.getItem("token");
-        console.log("token", token)
+        const token = getToken();
         if (token) {
             getMember(token).then((data) => {
                 setMembers(data)
@@ -62,7 +64,7 @@ const Team = () => {
                 console.log(error) //should redirect to Error page
             });
         }
-
+        console.log(selectedLocation)
     }, []);
 
     return (
@@ -70,7 +72,7 @@ const Team = () => {
             <Header mobileTitle="" />
             <Container maxWidth="lg" sx={{flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                 <Formik
-                    initialValues={{ name: '', location: '' }}
+                    initialValues={{ name: '', location: '', member: ''}}
                     validationSchema={validationSchema}
                     onSubmit={async () => {
                         try {
@@ -111,13 +113,13 @@ const Team = () => {
                                         }}
                                     >
                                         {location.map((place: any) => {
-                                            return (<MenuItem key={place.id} id={place.id} value={place.name}>{place.name}</MenuItem>)
+                                            return (<MenuItem key={place.id} id={place.id} value={place}>{place.name}</MenuItem>)
                                         })}
                                     </Select>
                                 </FormControl>
                                 <div>
-                                    {selectedLocation.map((place: string) => {
-                                        return (<Item data={place}></Item>)
+                                    {selectedLocation.map((place: any, id: number) => {
+                                        return (<Item key={id} data={place.name}></Item>)
                                     })}
                                 </div>
                                 <FormControl fullWidth>
@@ -126,7 +128,7 @@ const Team = () => {
                                         labelId="team-member-label"
                                         id="team-member-select"
                                         name="member"
-                                        value={values.location}
+                                        value={values.member}
                                         label="Vyberte členy týmu"
                                         onChange={(event) => {
                                             handleChange(event);
@@ -136,10 +138,16 @@ const Team = () => {
                                         }}
                                     >
                                         {members.map((member: any) => {
-                                            return (<MenuItem key={member.id} id={member.id} value={member.name}>{member.name}</MenuItem>)
+                                            return (<MenuItem key={member.id} id={member.id} value={member}>{member.username}</MenuItem>)
                                         })}
                                     </Select>
                                 </FormControl>
+                                <div>
+                                    {selectedMembers.map((member: any, id: number) => {
+                                        return (<Item key={id} data={member.username}></Item>)
+                                    })}
+                                </div>
+                                <PrimaryButton id="submit" text="Založit Team" type="submit" disabled={!isValid} />
                             </Form>
                         )
                     }}

@@ -43,7 +43,7 @@ export const LoginForm: React.FC<LoginFormProps> = props => {
                             email: values.email,
                             password: values.password,
                         };
-                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login/', login);
+                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login', login);
                         const status = response.status;
 
                         switch (true) {
