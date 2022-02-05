@@ -1,24 +1,22 @@
-import {FC, useEffect, useState} from 'react';
-import {authorizedAPI} from "config/baseURL";
+import { FC, useEffect } from 'react';
+import { authorizedAPI } from 'config/baseURL';
 
 interface Props {}
 
 const Organizace: FC<Props> = () => {
-    const [org, setOrg] = useState();
+    //const [org, setOrg] = useState();
 
-    useEffect( () => {
-
+    useEffect(() => {
         async function fetchMyAPI() {
-            const data = await authorizedAPI.get(`/api/v1/jehlomat/organization/${1}`)
+            const data = await authorizedAPI.get(`/api/v1/jehlomat/organization/${1}`);
 
-            console.log({data})
-            if(data) {
+            console.log({ data });
+            if (data) {
                 // setOrg(data);
             }
         }
-        fetchMyAPI()
-
-    })
+        fetchMyAPI();
+    });
 
     return <div>Organizace</div>;
 };
