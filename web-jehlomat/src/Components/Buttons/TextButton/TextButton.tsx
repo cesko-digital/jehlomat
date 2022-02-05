@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
-import { primaryDark, primaryLight, white } from '../../../utils/colors';
-import { H4 } from '../../../utils/typography';
+import { white } from '../../../utils/colors';
 import Typography from '@mui/material/Typography/Typography';
 
 interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement> {
