@@ -4,6 +4,8 @@ import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import SecondaryButton from '../Buttons/SecondaryButton/SecondaryButton';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import TextButton from '../Buttons/TextButton/TextButton';
+import { Link } from 'react-router-dom';
+import { LINKS } from 'utils/links';
 
 export const HeaderMobile: FC = () => {
     return (
@@ -13,7 +15,9 @@ export const HeaderMobile: FC = () => {
             </s.LogoContainer>
             <s.Title>Monitorovací a analytický nástroj ochrany veřejného zdraví</s.Title>
             <s.ButtonContainer>
-                <SecondaryButton text={'Přihlášení'} />
+                <SecondaryButton>
+                    <Link to={LINKS.login}>Přihlášení</Link>
+                </SecondaryButton>
             </s.ButtonContainer>
             <s.LinkContainer>
                 <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={'create'} mobile={true} />

@@ -4,7 +4,7 @@ import { primaryDark, white } from '../../../utils/colors';
 import { H4 } from '../../../utils/typography';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-    text: String;
+    text?: string;
 }
 
 const Button = styled.button`
@@ -16,12 +16,17 @@ const Button = styled.button`
     color: ${primaryDark};
     cursor: pointer;
     padding: 0px 20px;
+  
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 `;
 
-const SecondaryButton: FC<Props> = ({ text, ...props }) => {
+const SecondaryButton: FC<Props> = ({ text, children, ...props }) => {
     return (
         <Button {...props}>
-            <H4>{text}</H4>
+            <H4>{text || children}</H4>
         </Button>
     );
 };
