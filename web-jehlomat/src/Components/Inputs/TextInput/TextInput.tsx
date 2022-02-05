@@ -11,6 +11,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
     error?: string | undefined;
     fullWidth?: boolean;
     className?: string;
+    width?: string;
 }
 
 const Label = styled.label`
@@ -50,6 +51,11 @@ const TextInput: FC<Props> = props => {
                 helperText={props.error}
                 disabled={props.disabled}
                 fullWidth={props.fullWidth ?? true}
+                inputProps={{
+                    style: {
+                        width: props.width
+                    }
+                }}
             />
             {propType === 'password' && (
                 <IconWrapper onClick={() => setType(type === 'text' ? 'password' : 'text')}>
