@@ -12,7 +12,7 @@ interface Props {
 
 const StyledLink = styled.a`
     color: inherit;
-  text-decoration: inherit;
+    text-decoration: inherit;
 `;
 
 /* Go to page on mobile, show modal on desktop */
@@ -25,7 +25,7 @@ export const Navigator: React.FC<Props> = ({ to, children, modal }) => {
         return isMobile ? (
             <Link to={to}>{children}</Link>
         ) : (
-            <StyledLink href="#" onClick={() => setShowModal(true)} >
+            <StyledLink href="#" onClick={() => setShowModal(true)}>
                 {children}
             </StyledLink>
         );

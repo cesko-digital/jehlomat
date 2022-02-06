@@ -10,7 +10,7 @@ import API from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
 import styled from '@emotion/styled';
-import { primaryDark} from '../../utils/colors';
+import { primaryDark } from '../../utils/colors';
 import { media } from '../../utils/media';
 
 interface Props {}
@@ -68,7 +68,6 @@ const ModalFormItemDescription = styled(FormItemDescription)<{ mobile?: boolean 
     `}
 `;
 
-
 const PridatUzivateleModal: FC<Props> = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
@@ -120,7 +119,7 @@ const PridatUzivateleModal: FC<Props> = () => {
                                             placeholder="Email"
                                             required={true}
                                             error={touched.email && Boolean(errors.email) ? errors.email : undefined}
-                                            width={isMobile ? "270px" : "320px"}
+                                            width={isMobile ? '270px' : '320px'}
                                         />
                                     </ModalFormItem>
                                     <ModalFormItemDescription mobile={isMobile}>Na danou adresu bude zaslán registrační odkaz pro nového uživatele.</ModalFormItemDescription>

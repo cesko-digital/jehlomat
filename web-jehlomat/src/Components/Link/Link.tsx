@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyledRouteLink, StyledLink } from './Link.style';
 
-
 interface Props {
     to?: string; //
     href?: string; // one of these two

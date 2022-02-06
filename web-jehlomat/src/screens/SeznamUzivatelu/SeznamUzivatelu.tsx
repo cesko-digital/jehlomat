@@ -63,7 +63,7 @@ const SeznamUzivatelu: FC<Props> = () => {
                 <TopWrapper>
                     <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
                     {/* <AddButton style={{ marginLeft: '10px' }} onClick={e => history.push('/uzivatel/novy')} /> */}
-                    <StyledModal buttonText={"Přidat nového uživatele"} modalHeaderText={"Přidat uživatele"}>
+                    <StyledModal buttonText={'Přidat nového uživatele'} modalHeaderText={'Přidat uživatele'}>
                         <PridatUzivateleModal />
                     </StyledModal>
                 </TopWrapper>
