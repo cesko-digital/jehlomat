@@ -9,7 +9,7 @@ import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
-import { LINKS } from 'utils/links';
+import { LINKS } from 'routes';
 import { setToken } from 'utils/login';
 
 interface LoginFormProps {}
@@ -29,7 +29,7 @@ const validationSchema = yup.object({
     password: yup.string().required('Heslo je povinné pole'),
 });
 
-export const LoginForm: React.FC<LoginFormProps> = props => {
+export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
 
     return (
@@ -51,7 +51,7 @@ export const LoginForm: React.FC<LoginFormProps> = props => {
                                 const token = response?.data?.token;
                                 if (token) {
                                     setToken(token);
-                                    history.push(LINKS.welcome);
+                                    history.push(LINKS.WELCOME);
                                 }
                                 break;
                             }

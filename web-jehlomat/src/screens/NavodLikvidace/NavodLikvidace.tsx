@@ -8,7 +8,7 @@ import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
 import TextButton from '../../Components/Buttons/TextButton/TextButton';
 import { Header } from '../../Components/Header/Header';
 import { Link } from 'react-router-dom';
-import { LINKS } from '../../utils/links';
+import { LINKS, LINKS_WITH_PARAMS } from 'routes';
 import { useMediaQuery } from '@mui/material';
 import { TextHeader } from './NavodLinkvidaceStyles';
 import { media } from '../../utils/media';
@@ -75,12 +75,12 @@ const NavodLikvidace: FC<Props> = () => {
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} bgcolor={isMobile ? undefined : '#2FA69A0A'} width={1} mb={isMobile ? 0 : 16}>
                         <Box mt={4}>
-                            <Link to={LINKS.newFind(3)}>
+                            <Link to={LINKS_WITH_PARAMS.NEW_FIND?.(3)}>
                                 <PrimaryButton text="NÁLEZ JE ZLIKVIDOVÁN" type="button" />
                             </Link>
                         </Box>
                         <Box mt={4} mb={6}>
-                            <Link to={LINKS.policeAssistance}>
+                            <Link to={LINKS.POLICE_ASSISTANCE}>
                                 <TextButton text="NÁLEZ NEBUDU LIKVIDOVAT SÁM/SAMA" type="button" />
                             </Link>
                         </Box>

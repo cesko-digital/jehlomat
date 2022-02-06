@@ -4,7 +4,7 @@ import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
-import { LINKS } from 'utils/links';
+import { LINKS, Routes } from 'routes';
 import { isLoggedIn, logout } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
@@ -15,7 +15,6 @@ interface Props {
     backRoute?: string;
 }
 
-const loginModal = <></>;
 
 export const Header = (props: Props) => {
     const history = useHistory();
@@ -37,12 +36,9 @@ export const Header = (props: Props) => {
         if (isLogged) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
-            // TODO modal
             return (
                 <HeaderLink>
-                    <Navigator to={LINKS.login} modal={loginModal}>
-                        Přihlásit
-                    </Navigator>
+                    <Navigator route={Routes.LOGIN}>Přihlásit</Navigator>
                 </HeaderLink>
             );
         }
@@ -54,7 +50,7 @@ export const Header = (props: Props) => {
                 <HeaderLogo />
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organization} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} />
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
