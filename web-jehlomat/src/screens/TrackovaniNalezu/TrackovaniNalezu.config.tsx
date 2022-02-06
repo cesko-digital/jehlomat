@@ -31,12 +31,22 @@ export const syringeStates: syringeStateTypes = {
     [SyringeStateType.RESERVED]: {
         hasCheckMark: false,
         firstLine: 'pracujeme na tom, nález je',
-        secondLine: <>REZEROVAVNÝ<br /> k likvidaci</>,
+        secondLine: (
+            <>
+                REZEROVAVNÝ
+                <br /> k likvidaci
+            </>
+        ),
     },
     [SyringeStateType.ANNOUNCED]: {
         hasCheckMark: true,
         firstLine: 'nález je',
-        secondLine: <>NAHLÁŠENÝ<br /> na městskou policii</>,
+        secondLine: (
+            <>
+                NAHLÁŠENÝ
+                <br /> na městskou policii
+            </>
+        ),
     },
     [SyringeStateType.NOTFOUND]: {
         hasCheckMark: false,
@@ -44,4 +54,3 @@ export const syringeStates: syringeStateTypes = {
         secondLine: 'NEBYLA nalezena',
     },
 };
-

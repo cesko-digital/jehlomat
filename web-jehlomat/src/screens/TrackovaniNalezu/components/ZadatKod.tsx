@@ -48,7 +48,6 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             initialValues={{ kod: '' }}
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
-
                                 try {
                                     const response: AxiosResponse<any> = await authorizedAPI.get(`/api/v1/jehlomat/syringe/${values.kod}`);
                                     const { status } = response;

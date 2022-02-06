@@ -128,7 +128,7 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                             <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
                         </Card>
                     )}
-                    
+
                     <Navigation></Navigation>
                 </Container>
             </Box>

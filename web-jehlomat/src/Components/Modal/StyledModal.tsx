@@ -45,18 +45,18 @@ const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
 
     return (
         <>
-            {isMobile ? 
+            {isMobile ? (
                 <AddButton style={{ marginLeft: '10px' }} onClick={() => setOpenModal(true)} />
-                :
+            ) : (
                 <TextButton text={buttonText} style={{ marginLeft: '10px', color: `${primaryDark}` }} onClick={() => setOpenModal(true)} />
-            }
+            )}
 
             <Modal
                 open={openModal}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                style={{display:'flex', flexDirection: 'column', alignItems:'center', justifyContent:'center', background: `${white}`}}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: `${white}` }}
             >
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
@@ -68,12 +68,9 @@ const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
                         {modalHeaderText}
                     </TitleBar>
 
-                    <ModalBody mobile={isMobile}>
-                        {children}
-                    </ModalBody>
+                    <ModalBody mobile={isMobile}>{children}</ModalBody>
                 </ModalWrapper>
             </Modal>
-
         </>
     );
 };

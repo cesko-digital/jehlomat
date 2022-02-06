@@ -8,14 +8,14 @@ import { LINKS } from 'utils/links';
 import { isLoggedIn, logout } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import Navigator from "Components/Navigator/Navigator";
+import Navigator from 'Components/Navigator/Navigator';
 
 interface Props {
     mobileTitle: string;
     backRoute?: string;
 }
 
-const loginModal = <></>
+const loginModal = <></>;
 
 export const Header = (props: Props) => {
     const history = useHistory();
@@ -38,7 +38,13 @@ export const Header = (props: Props) => {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
             // TODO modal
-            return <HeaderLink><Navigator to={LINKS.login} modal={loginModal}>Přihlásit</Navigator></HeaderLink>;
+            return (
+                <HeaderLink>
+                    <Navigator to={LINKS.login} modal={loginModal}>
+                        Přihlásit
+                    </Navigator>
+                </HeaderLink>
+            );
         }
     };
 

@@ -53,8 +53,8 @@ const TextInput: FC<Props> = props => {
                 fullWidth={props.fullWidth ?? true}
                 inputProps={{
                     style: {
-                        width: props.width
-                    }
+                        width: props.width,
+                    },
                 }}
             />
             {propType === 'password' && (
