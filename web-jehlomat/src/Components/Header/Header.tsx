@@ -15,6 +15,7 @@ interface Props {
     backRoute?: string;
 }
 
+
 export const Header = (props: Props) => {
     const history = useHistory();
 
@@ -49,7 +50,7 @@ export const Header = (props: Props) => {
                 <HeaderLogo />
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} />
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
