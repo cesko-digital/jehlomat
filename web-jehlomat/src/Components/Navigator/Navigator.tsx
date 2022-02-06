@@ -1,41 +1,42 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { Routes, routesById } from 'routes';
+import Modal from 'Components/Modal/Modal';
 
-interface Props {
-    to: string;
-    modal: React.ReactNode;
-    // children is text of the link
+interface RouteProps {
+    route: Routes;
 }
 
-const StyledLink = styled.a`
+const StyledLink = styled.span`
     color: inherit;
     text-decoration: inherit;
 `;
 
 /* Go to page on mobile, show modal on desktop */
-export const Navigator: React.FC<Props> = ({ to, children, modal }) => {
+export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [showModal, setShowModal] = useState(false);
+    const routeObj = routesById[route];
+    const hideModal = useCallback(() => {
+        setShowModal(false);
+    }, []);
+
+    if (!routeObj) return <>Define route obj for route: {route}</>;
+    const endPathString = typeof routeObj.path === 'function' ? routeObj.path(0) : routeObj.path;
 
     const renderLink = () => {
-        // TODO
-        return isMobile ? (
-            <Link to={to}>{children}</Link>
-        ) : (
-            <StyledLink href="#" onClick={() => setShowModal(true)}>
-                {children}
-            </StyledLink>
-        );
+        return isMobile ? <Link to={endPathString}>{children}</Link> : <StyledLink onClick={() => setShowModal(true)}>{children}</StyledLink>;
     };
 
     return (
         <>
             {renderLink()}
-            {/* // TODO  show and handle modal with portal? */}
-            {showModal && modal}
+            <Modal modalHeaderText={routeObj.title || ''} open={showModal} onClose={hideModal}>
+                <routeObj.Component inModal={true} />
+            </Modal>
         </>
     );
 };

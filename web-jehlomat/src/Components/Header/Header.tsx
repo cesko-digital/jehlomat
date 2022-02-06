@@ -4,7 +4,7 @@ import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
-import { LINKS } from 'utils/links';
+import { LINKS, Routes } from 'routes';
 import { isLoggedIn, logout } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
@@ -15,6 +15,10 @@ interface Props {
     backRoute?: string;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 769feff (feat: routes with modal)
 export const Header = (props: Props) => {
     const history = useHistory();
 
@@ -37,9 +41,13 @@ export const Header = (props: Props) => {
         } else {
             return (
                 <HeaderLink>
+<<<<<<< HEAD
                     <Navigator to={LINKS.login} modal={<></>}>
                         Přihlásit
                     </Navigator>
+=======
+                    <Navigator route={Routes.LOGIN}>Přihlásit</Navigator>
+>>>>>>> 769feff (feat: routes with modal)
                 </HeaderLink>
             );
         }
@@ -50,9 +58,14 @@ export const Header = (props: Props) => {
             <SContainer>
                 <HeaderLogo />
                 <SLinkContainer>
+<<<<<<< HEAD
                     <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organizationRegistration} />
                     <HeaderLink type={HeaderLinkType.Watch} route={LINKS.findings} />
 
+=======
+                    <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} />
+>>>>>>> 769feff (feat: routes with modal)
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>

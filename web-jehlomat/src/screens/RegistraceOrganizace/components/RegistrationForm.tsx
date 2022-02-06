@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 import { SContainer, STextInput, SBackLink } from './RegistrationForm.styled';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import { LINKS } from 'utils/links';
+import { LINKS } from 'routes';
 import { media } from 'utils/media';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
@@ -141,7 +141,7 @@ export default function RegistrationForm() {
                                     <SecondaryButton id="submit" text="Založit" type="submit" disabled={!isValid} />
                                 )}
 
-                                <SBackLink to={LINKS.home}>Zrušit</SBackLink>
+                                <SBackLink to={LINKS.HOME}>Zrušit</SBackLink>
                             </Box>
                         </Form>
                     );

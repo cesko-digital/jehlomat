@@ -2,11 +2,15 @@ import { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
 import { usersMock } from './usersMock';
-import { grey } from '../../utils/colors';
+import { grey, primaryDark } from '../../utils/colors';
 import ListItem from '../../Components/List/ListItem/ListItem';
 import { Header } from '../../Components/Header/Header';
-import StyledModal from '../../Components/Modal/StyledModal';
+import Modal from 'Components/Modal/Modal';
 import PridatUzivateleModal from '../../Components/Modal/PridatUzivateleModal';
+import AddButton from 'Components/Buttons/AddButton/AddButton';
+import TextButton from 'Components/Buttons/TextButton/TextButton';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
 
 interface Props {}
 
@@ -50,6 +54,12 @@ const ListInfo = styled.div`
 const SeznamUzivatelu: FC<Props> = () => {
     const [users, setUsers] = useState(usersMock);
     const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
+    const [openModal, setOpenModal] = useState(false);
+    const isMobile = useMediaQuery(media.lte('mobile'));
+
+    const handleClose = () => {
+        setOpenModal(false);
+    };
 
     return (
         <>
@@ -59,9 +69,15 @@ const SeznamUzivatelu: FC<Props> = () => {
                 <TopWrapper>
                     <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
                     {/* <AddButton style={{ marginLeft: '10px' }} onClick={e => history.push('/uzivatel/novy')} /> */}
-                    <StyledModal buttonText={'Přidat nového uživatele'} modalHeaderText={'Přidat uživatele'}>
+
+                    {isMobile ? (
+                        <AddButton style={{ marginLeft: '10px' }} onClick={() => setOpenModal(true)} />
+                    ) : (
+                        <TextButton text={'Přidat nového uživatele'} style={{ marginLeft: '10px', color: `${primaryDark}` }} onClick={() => setOpenModal(true)} />
+                    )}
+                    <Modal open={openModal} onClose={handleClose} modalHeaderText={'Přidat uživatele'}>
                         <PridatUzivateleModal />
-                    </StyledModal>
+                    </Modal>
                 </TopWrapper>
                 <ListInfo>{listTitle}</ListInfo>
                 <ListWrapper>
