@@ -1,11 +1,9 @@
 import { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
-import AddButton from '../../Components/Buttons/AddButton/AddButton';
 import { usersMock } from './usersMock';
 import { grey } from '../../utils/colors';
 import ListItem from '../../Components/List/ListItem/ListItem';
-import { useHistory } from 'react-router';
 import { Header } from '../../Components/Header/Header';
 import StyledModal from '../../Components/Modal/StyledModal';
 import PridatUzivateleModal from '../../Components/Modal/PridatUzivateleModal';
@@ -52,8 +50,6 @@ const ListInfo = styled.div`
 const SeznamUzivatelu: FC<Props> = () => {
     const [users, setUsers] = useState(usersMock);
     const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
-
-    const history = useHistory();
 
     return (
         <>

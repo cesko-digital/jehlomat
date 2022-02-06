@@ -1,17 +1,8 @@
 import { FC } from 'react';
-import { Formik, Form } from 'formik';
-import TextInput from '../../Components/Inputs/TextInput/TextInput';
-import { FormItemLabel, FormItemDescription } from '../../utils/typography';
-import { FormItem } from '../../Components/Form/Form';
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import { useHistory } from 'react-router-dom';
-import API from '../../config/baseURL';
-import { AxiosResponse } from 'axios';
-import * as yup from 'yup';
-import { Header } from '../../Components/Header/Header';
 
 interface Props {}
 
+/*
 interface Values {
     email: string;
 }
@@ -19,9 +10,9 @@ interface Values {
 const validationSchema = yup.object({
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
 });
+*/
 
 const PridatUzivatele: FC<Props> = () => {
-    let history = useHistory();
     return (
         <>
             <p></p>
