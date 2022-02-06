@@ -1,0 +1,12 @@
+name: 'Ignore test outside of projects'
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'web-jehlomat/**'
+      - 'service-jehlomat/**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No test required" '

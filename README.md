@@ -86,3 +86,9 @@ psql -h localhost -p 5432 -U jehlomat -d jehlomat < db.sql
 # Frontend dev
 
 Before commit to git please run `npm run fix` and `npm run lint`. Feel free to commit if both commands are successful.
+
+# CI/CD Pipeline
+
+Before merging PR to master, the check to test code is required. For both FE and BE.
+
+There is an extra action to ignore this test check for changes outside of project. `.github/workflows/test_ignore_outside_projects.yml`
