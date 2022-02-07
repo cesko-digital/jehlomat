@@ -15,8 +15,6 @@ interface Props {
     backRoute?: string;
 }
 
-const loginModal = <></>;
-
 export const Header = (props: Props) => {
     const history = useHistory();
 
@@ -37,10 +35,9 @@ export const Header = (props: Props) => {
         if (isLogged) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
-            // TODO modal
             return (
                 <HeaderLink>
-                    <Navigator to={LINKS.login} modal={loginModal}>
+                    <Navigator to={LINKS.login} modal={<></>}>
                         Přihlásit
                     </Navigator>
                 </HeaderLink>
@@ -53,8 +50,9 @@ export const Header = (props: Props) => {
             <SContainer>
                 <HeaderLogo />
                 <SLinkContainer>
-                    <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organization} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.organizationRegistration} />
+                    <HeaderLink type={HeaderLinkType.Watch} route={LINKS.findings} />
+
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
