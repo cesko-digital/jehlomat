@@ -18,7 +18,7 @@ const Organizace: FC<Props> = () => {
         fetchMyAPI();
     });
 
-    return null;
+    return <>Organizace</>;
 };
 
 export default Organizace;
