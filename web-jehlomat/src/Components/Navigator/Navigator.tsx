@@ -27,8 +27,13 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     if (!routeObj) return <>Define route obj for route: {route}</>;
     const endPathString = typeof routeObj.path === 'function' ? routeObj.path(0) : routeObj.path;
 
+    const onModalShow = () => {
+        setShowModal(true);
+        window.history.replaceState(null, routeObj.title || '', `/#${routeObj.path}`)
+    }
+
     const renderLink = () => {
-        return isMobile ? <Link to={endPathString}>{children}</Link> : <StyledLink onClick={() => setShowModal(true)}>{children}</StyledLink>;
+        return isMobile ? <Link to={endPathString}>{children}</Link> : <StyledLink onClick={onModalShow}>{children}</StyledLink>;
     };
 
     return (
