@@ -8,11 +8,11 @@ import { AxiosResponse } from 'axios';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import { getToken } from 'utils/login';
+import { getToken, useLogin } from 'utils/login';
 
 const Login: FC<any> = () => {
     let history = useHistory();
-
+    const { token } = useLogin();
     const [user, setUser] = useState('');
 
     interface IResponse {
@@ -34,28 +34,28 @@ const Login: FC<any> = () => {
     }
 
     useEffect(() => {
-        const getMe = (token: string) => {
-            const decoded: IToken = jwt_decode(token);
-            return decoded['user-id'];
-        };
-        const getUser = async (token: string) => {
-            const response: AxiosResponse<IResponse> = await API.get('/api/v1/jehlomat/user/' + getMe(token));
-            return response.data.username;
-        };
+        if(token) {
+            const getMe = (token: string) => {
+                const decoded: IToken = jwt_decode(token);
+                return decoded['user-id'];
+            };
+            const getUser = async (token: string) => {
+                const response: AxiosResponse<IResponse> = await API.get('/api/v1/jehlomat/user/' + getMe(token));
+                return response.data.username;
+            };
 
-        const token = getToken();
-
-        if (token) {
-            getUser(token)
-                .then(user => {
-                    setUser(user);
-                    console.log(user);
-                })
-                .catch(error => {
-                    console.log(error); //should goes to the error page
-                });
+            if (token) {
+                getUser(token)
+                    .then(user => {
+                        setUser(user);
+                        console.log(user);
+                    })
+                    .catch(error => {
+                        console.log(error); //should goes to the error page
+                    });
+            }
         }
-    }, []);
+    }, [token]);
 
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>

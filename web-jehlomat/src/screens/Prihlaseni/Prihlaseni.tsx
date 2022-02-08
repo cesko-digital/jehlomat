@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TitleBar from '../../Components/Navigation/TitleBar';
@@ -11,16 +11,17 @@ import LoginForm from '../../Components/LoginForm/LoginForm';
 import { LINKS } from 'routes';
 import Link from 'Components/Link';
 import { WithModal } from 'types';
+import { ModalContext } from 'Components/Navigator/Navigator';
 
 const Login: FC<WithModal> = ({ inModal }) => {
-    let history = useHistory();
+    const history = useHistory();
 
     const renderContent = (children: React.ReactNode) => {
         if (!inModal) {
             return (
                 <Container sx={{ height: '100vh', width: '100%' }}>
                     <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>
-                        <Box marginBottom={85}>
+                        <Box marginBottom={'85px'}>
                             <TitleBar
                                 icon={<ChevronLeft sx={{ color: white, fontSize: 40 }} />}
                                 onIconClick={() => {

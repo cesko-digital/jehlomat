@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextInput from 'Components/Inputs/TextInput';
 
@@ -10,7 +10,9 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
-import { setToken } from 'utils/login';
+import { setStorageToken, useLogin } from 'utils/login';
+import { ModalContext } from 'Components/Navigator/Navigator';
+import jwt_decode from 'jwt-decode';
 
 interface LoginFormProps {}
 
@@ -31,6 +33,8 @@ const validationSchema = yup.object({
 
 export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
+    const { setLogin } = useLogin();
+    const { isModalVisible, closeModal } = useContext(ModalContext);
 
     return (
         <>
@@ -43,14 +47,16 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                             email: values.email,
                             password: values.password,
                         };
-                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login/', login);
+                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login', login);
                         const status = response.status;
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
                                 const token = response?.data?.token;
                                 if (token) {
-                                    setToken(token);
+                                    setLogin(token);
+                                    console.log(jwt_decode(token));
+                                    if (isModalVisible) closeModal();
                                     history.push(LINKS.WELCOME);
                                 }
                                 break;
