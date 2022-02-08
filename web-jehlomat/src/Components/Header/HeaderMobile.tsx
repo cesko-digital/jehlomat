@@ -1,11 +1,12 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import * as s from './HeaderMobileStyles';
-import { HeaderLogo } from './HeaderLogo/HeaderLogo';
+import {HeaderLogo} from './HeaderLogo/HeaderLogo';
 import SecondaryButton from '../Buttons/SecondaryButton/SecondaryButton';
-import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
+import {HeaderLink, HeaderLinkType} from './HeaderLink/HeaderLink';
 import TextButton from '../Buttons/TextButton/TextButton';
-import { LINKS } from 'routes';
-import { Link } from 'react-router-dom';
+import {LINKS, Routes} from 'routes';
+import {Link} from 'react-router-dom';
+import Navigator from "Components/Navigator/Navigator";
 
 export const HeaderMobile: FC = () => {
     return (
@@ -22,7 +23,11 @@ export const HeaderMobile: FC = () => {
             <s.LinkContainer>
                 <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} mobile={true} />
                 <s.LineVertical />
-                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true} />
+                <HeaderLink mobile={true} >
+                    <Navigator route={Routes.TRACKING_FIND} >
+                        Sledovat nález
+                    </Navigator>
+                </HeaderLink>
             </s.LinkContainer>
             <s.LineHorizontal />
 

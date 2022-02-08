@@ -5,7 +5,7 @@ import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS, Routes } from 'routes';
-import { isLoggedIn, logout } from 'utils/login';
+import { isLoggedIn, removeToken, useLogin } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
@@ -15,13 +15,15 @@ interface Props {
     backRoute?: string;
 }
 
-
 export const Header = (props: Props) => {
     const history = useHistory();
+    const { token, logout } = useLogin();
+
+    console.log({token})
 
     const logoutFnc = useCallback(() => {
         logout();
-        window.location.reload();
+      //  window.location.reload();
     }, []);
 
     const onBack = () => {
@@ -31,9 +33,7 @@ export const Header = (props: Props) => {
     };
 
     const renderLoginLogout = () => {
-        const isLogged = isLoggedIn();
-
-        if (isLogged) {
+        if (token) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
         } else {
             return (
