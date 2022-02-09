@@ -127,7 +127,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222932,
                     "Potvrzení zaznamenání nálezu",
-                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
+                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId/info",
                     email,
                     ""
                 )

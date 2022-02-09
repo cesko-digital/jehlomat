@@ -265,6 +265,24 @@ paths:
       responses:
         '200':
           description: successful operation
+  /syringe/{id}/info:
+    get:
+      summary: Get info about specific syringe
+      description: Returns a single syringe
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/SyringeInfo'
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email
@@ -697,6 +715,35 @@ definitions:
       demolished:
         type: boolean
         example: false
+      location:
+        $ref: '#/definitions/Location'
+  SyringeInfo:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "R4YFD1AC"
+      createdAt:
+        type: integer
+        example: 1637092279
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      gps_coordinates:
+        type: string
+        example: 25.326,-31.265
+      status:
+        type: string
+        enum:
+          - WAITING
+          - RESERVED
+          - DEMOLISHED
       location:
         $ref: '#/definitions/Location'
   SyringeCreate:
