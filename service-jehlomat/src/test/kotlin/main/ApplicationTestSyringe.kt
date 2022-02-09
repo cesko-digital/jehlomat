@@ -232,6 +232,32 @@ class ApplicationTestSyringe {
     }
 
     @Test
+    fun testGetSyringeInfo() = withTestApplication(Application::module) {
+        database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
+        val actualSyringes = database.selectSyringes()
+
+        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/${actualSyringes[0].id}/info"){
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(
+                Json.encodeToString(defaultSyringe.copy(
+                    id=actualSyringes[0].id,
+                    createdBy = defaultUser
+                ).toSyringeInfo()).replace(" ", ""),
+                response.content?.replace(" ", "")?.replace("\n", ""))
+        }
+    }
+
+    @Test
+    fun testGetSyringeInfoNotFound() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$SYRINGE_API_PATH/1/info"){
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals(null, response.content)
+        }
+    }
+
+    @Test
     fun testPutSyringe() = withTestApplication(Application::module) {
         val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         val token = loginUser(USER.email, USER.password)

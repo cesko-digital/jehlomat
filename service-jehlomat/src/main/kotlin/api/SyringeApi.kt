@@ -6,10 +6,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.CSVExportSchema
-import model.DateInterval
-import model.Role
-import model.Syringe
+import model.*
 import model.pagination.OrderByDefinition
 import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
@@ -145,6 +142,16 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                         mailer.sendSyringeFindingConfirmation(syringeTracking.email, syringe.id)
                         call.respond(HttpStatusCode.NoContent)
                     }
+                }
+            }
+
+            get("/info") {
+                val id = call.parameters["id"]
+                val result = id?.let { it1 -> database.selectSyringeById(it1) }
+                if (result != null) {
+                    call.respond(HttpStatusCode.OK, result.toSyringeInfo())
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
                 }
             }
 
