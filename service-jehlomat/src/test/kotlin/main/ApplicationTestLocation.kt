@@ -24,18 +24,27 @@ class LocationTest {
                 """[ {
   "id" : 0,
   "okres" : "CZ0323",
+  "okresName" : "Plzeň-město",
   "obec" : 554791,
-  "mestkaCast" : 546003
+  "obecName" : "Plzeň",
+  "mestkaCast" : 546003,
+  "mestkaCastName" : "Plzeň 3"
 }, {
   "id" : 0,
   "okres" : "CZ0323",
+  "okresName" : "Plzeň-město",
   "obec" : 554791,
-  "mestkaCast" : -1
+  "obecName" : "Plzeň",
+  "mestkaCast" : -1,
+  "mestkaCastName" : ""
 }, {
   "id" : 0,
   "okres" : "CZ0323",
+  "okresName" : "Plzeň-město",
   "obec" : -1,
-  "mestkaCast" : -1
+  "obecName" : "",
+  "mestkaCast" : -1,
+  "mestkaCastName" : ""
 } ]""",
                 response.content
             )

@@ -1,6 +1,7 @@
 package main
 
 import TestUtils.Companion.loginUser
+import api.SyringeTable.locationId
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -17,7 +18,7 @@ import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
-val LOCATION = Location(0,"Tyn nad Vltavou", 10, 11)
+val LOCATION = Location(0,"CZ123456", "Tyn nad Vltavou okres", 10, "Tyn nad Vltavou obec",11, "Tyn nad Vltavou mc")
 
 val TEAM = Team(
     0,
@@ -61,10 +62,13 @@ class TeamTest {
   "id" : """ + newTeamId + """,
   "name" : "ceska jehlova",
   "location" : {
-    "id" : ${locationId},
-    "okres" : "Tyn nad Vltavou",
-    "obec" : 10,
-    "mestkaCast" : 11
+    "id" : """ + locationId + """,
+    "okres" : """" + LOCATION.okres + """",
+    "okresName" : """" + LOCATION.okresName + """",
+    "obec" : """ + LOCATION.obec + """,
+    "obecName" : """" + LOCATION.obecName + """",
+    "mestkaCast" : """ + LOCATION.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION.mestkaCastName + """"
   },
   "organizationId" : """ + defaultOrgId + """
 }""",
@@ -181,7 +185,7 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeamNewLocation() = withTestApplication(Application::module) {
-        val newTeam = TEAM.copy(organizationId = defaultOrgId,location = Location(0, okres="CZ0323", obec=554791, mestkaCast=546003))
+        val newTeam = TEAM.copy(organizationId = defaultOrgId,location =Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3"))
         var teamId = 0
         val token = loginUser(USER.email, USER.password)
 

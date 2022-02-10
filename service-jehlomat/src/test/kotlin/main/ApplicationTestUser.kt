@@ -28,7 +28,7 @@ const val API_PATH = "/api/v1/jehlomat/user"
 val team = Team(
     2,
     "name",
-    Location(0,okres="CZ0323", obec=554791, mestkaCast=546003),
+    Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3"),
     1,
 )
 
