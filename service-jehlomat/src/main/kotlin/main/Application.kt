@@ -3,8 +3,6 @@ package main
 import api.*
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.papsign.ktor.openapigen.OpenAPIGen
-import com.papsign.ktor.openapigen.openAPIGen
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -18,7 +16,6 @@ import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
-import org.slf4j.event.Level
 import services.*
 
 val jwtModule = module {
@@ -71,26 +68,6 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    install(OpenAPIGen) {
-        // basic info
-        info {
-            version = "0.0.1"
-            title = "Test API"
-            description = "The Test API"
-            contact {
-                name = "Support"
-                email = "support@test.com"
-            }
-        }
-        // describe the server, add as many as you want
-        server("http://localhost:8082/") {
-            description = "Test server"
-        }
-
-        serveSwaggerUi = true
-        swaggerUiPath = "/swagger-ui"
-    }
-
     install(CallLogging)
 
     install(Koin) {
@@ -133,12 +110,6 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        get("/openapi.json") {
-            call.respond(application.openAPIGen.api.serialize())
-        }
-        get("/") {
-            call.respondRedirect("/swagger-ui/index.html?url=/static/swagger.json", true)
-        }
         route("/api/v1/jehlomat/syringe") {
             syringeApi(service, jwtManager, mailer)
         }
@@ -162,12 +133,6 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/admin") {
             adminApi(service)
-        }
-        get("/.well-known/jwks.json") {
-            call.respond(jwtManager.generateJwk())
-        }
-        static("/static") {
-            resources("files")
         }
     }
 }
