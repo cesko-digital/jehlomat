@@ -46,8 +46,11 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
 object LocationTable: Table<Nothing>("locations") {
     val id = int("location_id").primaryKey()
     val okres = varchar("okres")
+    val okres_name = varchar("okres_name")
     val obec = int("obec")
+    val obec_name = varchar("obec_name")
     val mestka_cast = int("mestka_cast")
+    val mestka_cast_name = varchar("mestka_cast_name")
 }
 
 object OrganizationTable: BaseTable<Organization>("organizations") {

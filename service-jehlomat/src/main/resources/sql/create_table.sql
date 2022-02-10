@@ -13,8 +13,11 @@ CREATE TABLE public.organizations(
 CREATE TABLE public.locations(
     location_id SERIAL PRIMARY KEY,
     okres TEXT NOT NULL,
+    okres_name TEXT NOT NULL,
     obec INT NOT NULL,
+    obec_name TEXT NOT NULL,
     mestka_cast INT NOT NULL,
+    mestka_cast_name TEXT NOT NULL,
 
     CONSTRAINT unique_location UNIQUE (okres, obec, mestka_cast)
 );
