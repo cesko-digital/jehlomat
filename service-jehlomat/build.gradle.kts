@@ -51,9 +51,6 @@ dependencies {
     //Mailjet
     implementation("com.mailjet:mailjet-client:5.2.0")
 
-    //Swager API
-    implementation("com.github.papsign:Ktor-OpenAPI-Generator:-SNAPSHOT")
-
     //Hash and encryption
     implementation("org.mindrot:jbcrypt:0.4")
 
