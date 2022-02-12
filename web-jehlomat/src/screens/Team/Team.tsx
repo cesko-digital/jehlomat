@@ -13,23 +13,46 @@ import { AxiosResponse } from 'axios';
 import Item from './Item';
 import { getUser } from '../../config/user';
 import { getToken } from 'utils/login';
+import styled from '@emotion/styled';
+import _ from 'lodash';
 
+const StyledFormControl = styled(FormControl)`
+    padding: 0.5em 0 0.5em 0;
+`;
 
+const SelectList = styled.ul`
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+`;
 
 const validationSchema = yup.object({
     name: yup.string().required('Název Teamu je povinné pole'),
-    location: yup.string(),
-    member: yup.string(),
 });
-
-
-
 
 const Team = () => {
     const [location, setLocation] = useState([]);
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
+
+    const removeLocation = (item: any)=>{
+        const data = selectedLocation;
+        _.remove(data, {
+            id: item
+        });
+        setSelectedLocation([...data]);
+    }
+
+    const removeMembers = (item: any)=>{
+        const data = selectedMembers;
+        _.remove(data, {
+            id: item
+        });
+        setSelectedMembers([...data]);
+    }
 
 
     useEffect(() => {
@@ -55,7 +78,7 @@ const Team = () => {
         }).catch((error) => {
             console.log(error) //should redirect to Error page
         });
-        
+
         const token = getToken();
         if (token) {
             getMember(token).then((data) => {
@@ -64,15 +87,15 @@ const Team = () => {
                 console.log(error) //should redirect to Error page
             });
         }
-        console.log(selectedLocation)
-    }, []);
+        console.log(selectedMembers)
+    }, [selectedLocation, selectedMembers]);
 
     return (
         <>
             <Header mobileTitle="" />
-            <Container maxWidth="lg" sx={{flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', padding: '1em 0 1em 0'}}>
                 <Formik
-                    initialValues={{ name: '', location: '', member: ''}}
+                    initialValues={{ name: '', location: {id: '', name: '', type: ''}, member: '' }}
                     validationSchema={validationSchema}
                     onSubmit={async () => {
                         try {
@@ -85,27 +108,28 @@ const Team = () => {
                     {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => {
                         return (
                             <Form onSubmit={handleSubmit}>
-                                <TextInput
-                                    id="name"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.name}
-                                    type="text"
-                                    name="name"
-                                    placeholder="Název Teamu *"
-                                    label="Jméno teamu"
-                                    required={true}
-                                    error={touched.name && Boolean(errors.name) ? errors.name : undefined}
-                                />
-                                <FormControl fullWidth>
-                                    <InputLabel id="team-locality">Vyberte oblast působení</InputLabel>
+                                <StyledFormControl fullWidth>
+                                    <TextInput
+                                        id="name"
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        value={values.name}
+                                        type="text"
+                                        name="name"
+                                        placeholder="Název Teamu *"
+                                        label="Jméno teamu"
+                                        required={true}
+                                        error={touched.name && Boolean(errors.name) ? errors.name : undefined}
+                                    />
+                                </StyledFormControl>
+                                <StyledFormControl fullWidth>
+                                    <label htmlFor="team-locality-select">Vyberte území týmu</label>
                                     <Select
-                                        labelId="team-locality-label"
                                         id="team-locality-select"
                                         name="location"
                                         value={values.location}
-                                        label="Vyberte oblast působení"
                                         onChange={(event) => {
+                                            console.log(event.target.value)
                                             handleChange(event);
                                             const data = selectedLocation;
                                             data.push(event.target.value);
@@ -116,16 +140,15 @@ const Team = () => {
                                             return (<MenuItem key={place.id} id={place.id} value={place}>{place.name}</MenuItem>)
                                         })}
                                     </Select>
-                                </FormControl>
-                                <div>
+                                </StyledFormControl>
+                                <SelectList>
                                     {selectedLocation.map((place: any, id: number) => {
-                                        return (<Item key={id} data={place.name}></Item>)
+                                        return (<Item key={id} id={place.id} name={place.name} remove={removeLocation}></Item>)
                                     })}
-                                </div>
-                                <FormControl fullWidth>
-                                    <InputLabel id="team-member">Vyberte členy týmu</InputLabel>
+                                </SelectList>
+                                <StyledFormControl fullWidth>
+                                    <label htmlFor="team-member-select">Vyberte členy týmu</label>
                                     <Select
-                                        labelId="team-member-label"
                                         id="team-member-select"
                                         name="member"
                                         value={values.member}
@@ -141,12 +164,12 @@ const Team = () => {
                                             return (<MenuItem key={member.id} id={member.id} value={member}>{member.username}</MenuItem>)
                                         })}
                                     </Select>
-                                </FormControl>
-                                <div>
+                                </StyledFormControl>
+                                <SelectList>
                                     {selectedMembers.map((member: any, id: number) => {
-                                        return (<Item key={id} data={member.username}></Item>)
+                                        return (<Item key={id} id={member.id} name={member.username} remove={removeMembers}></Item>)
                                     })}
-                                </div>
+                                </SelectList>
                                 <PrimaryButton id="submit" text="Založit Team" type="submit" disabled={!isValid} />
                             </Form>
                         )
