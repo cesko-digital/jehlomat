@@ -12,6 +12,7 @@ import OrganizationValidation from 'screens/OrganizationValidation/OrganizationV
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
+const OrganizationConfirmedVerified = lazy(() => import('./screens/OrganizationConfirmedVerified/OrganizationConfirmedVerified'));
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
@@ -60,6 +61,7 @@ ReactDOM.render(
                                     <Route component={Organizace} />
                                     <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} />
                                     <Route path={LINKS.organizationValidation} component={OrganizationValidation} exact />
+                                    <Route path={LINKS.organizationConfirmedVerified} component={OrganizationConfirmedVerified} />
                                     <Route path={LINKS.organizationThankYou} component={Dekujeme} />
                                 </>
                             )}
