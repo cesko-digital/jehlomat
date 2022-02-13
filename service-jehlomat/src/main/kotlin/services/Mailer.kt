@@ -40,6 +40,7 @@ class FakeMailer: MailerService {
 
 
 class Mailer: MailerService {
+    private val publicUrl = System.getenv("JWT_ISSUER")
     private val appConfig = DefaultConfig().get()
     private val client = MailjetClient(
         ClientOptions.builder()
@@ -86,7 +87,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
                     "Schválení organizace",
-                    "https://jehlomat.cz/api/v1/jehlomat/verification/organization?orgId=${organization.id}",
+                    "${publicUrl}api/v1/jehlomat/verification/organization?orgId=${organization.id}",
                     PermissionService.getSuperAdminEmail(),
                     organization.name,
                 )
@@ -108,7 +109,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222927,
                     "Dokončení registrace",
-                    "https://jehlomat.cz/uzivatel/registrace/?email=${userEmail}&code=${verificationCode}",
+                    "${publicUrl}uzivatel/registrace/?email=${userEmail}&code=${verificationCode}",
                     userEmail,
                     organization.name
                 )
@@ -126,7 +127,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222932,
                     "Potvrzení zaznamenání nálezu",
-                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId/info",
+                    "${publicUrl}api/v1/jehlomat/syringe/$syringeId/info",
                     email,
                     ""
                 )
@@ -144,7 +145,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBody(
                     3222921,
                     "Nález",
-                    "https://jehlomat.cz/api/v1/jehlomat/syringe/$syringeId",
+                    "${publicUrl}api/v1/jehlomat/syringe/$syringeId",
                     email,
                     organization.name
                 )
