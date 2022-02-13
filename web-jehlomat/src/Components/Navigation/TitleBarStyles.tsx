@@ -32,7 +32,7 @@ export const NavIcon = styled.div`
 `;
 
 interface IContent {
-    isCentered: boolean;
+    isCentered: boolean | undefined;
 }
 
 export const Content = styled.div<IContent>`

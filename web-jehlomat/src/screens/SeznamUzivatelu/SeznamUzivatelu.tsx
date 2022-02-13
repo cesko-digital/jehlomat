@@ -1,14 +1,16 @@
 import { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
-import AddButton from '../../Components/Buttons/AddButton/AddButton';
 import { usersMock } from './usersMock';
 import { grey } from '../../utils/colors';
 import ListItem from '../../Components/List/ListItem/ListItem';
 import { useHistory } from 'react-router';
 import { Header } from '../../Components/Header/Header';
-import StyledModal from '../../Components/Modal/StyledModal';
-import PridatUzivateleModal from '../../Components/Modal/PridatUzivateleModal';
+import { useMediaQuery } from '@mui/material';
+import AddButton from '../../Components/Buttons/AddButton/AddButton';
+import TextButton from '../../Components/Buttons/TextButton/TextButton';
+import { media } from '../../utils/media';
+import { primaryDark } from '../../utils/colors';
 
 interface Props {}
 
@@ -49,23 +51,37 @@ const ListInfo = styled.div`
     color: ${grey};
 `;
 
-const SeznamUzivatelu: FC<Props> = () => {
+const buttonStyles = {
+    marginLeft: '10px',
+    marginBottom: '0px',
+    color: `${primaryDark}`,
+    textDecoration: 'underline'
+}
+
+const SeznamUzivatelu: FC<Props> = (props: any) => {
     const [users, setUsers] = useState(usersMock);
     const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
+    const isMobile = useMediaQuery(media.lte('mobile'));
+    let history = useHistory();
 
-    const history = useHistory();
+    const handleOpen = () => {
+        history.push({
+            pathname: '/uzivatel/novy',
+            state: { openModal: true }
+        });
+    };
 
     return (
         <>
             <Header mobileTitle="Seznam uživatelů" />
-
             <LayoutWrapper>
                 <TopWrapper>
                     <SearchInput onChange={e => setUsers(usersMock.filter(item => item.name?.includes(e.target.value)))} />
-                    {/* <AddButton style={{ marginLeft: '10px' }} onClick={e => history.push('/uzivatel/novy')} /> */}
-                    <StyledModal buttonText={"Přidat nového uživatele"} modalHeaderText={"Přidat uživatele"}>
-                        <PridatUzivateleModal />
-                    </StyledModal>
+                    {isMobile ? (
+                        <AddButton style={buttonStyles} onClick={handleOpen} />
+                    ) : (
+                        <TextButton text={'Přidat nového uživatele'} style={buttonStyles} onClick={handleOpen} />
+                    )}
                 </TopWrapper>
                 <ListInfo>{listTitle}</ListInfo>
                 <ListWrapper>
