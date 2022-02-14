@@ -48,7 +48,7 @@ export function OrganizationLayout(props: PropsWithChildren<Props>) {
                         <SSubTitle>ověření e-mailové adresy</SSubTitle>
                     </SStep>
                     <SStep active={2 <= step} flex={1} bgcolor={secondaryColorVariant('dark')}>
-                        <SIcon active={2 <= step}>
+                        <SIcon inverted active={2 <= step}>
                             <img src={2 <= step ? CheckSecondaryIcon : CheckInactiveIcon} alt="úspěšné založení účtu" />
                         </SIcon>
 

@@ -8,6 +8,8 @@ export const LINKS = {
     userThankYou: '/uzivatel/dekujeme',
     organization: '/organizace',
     organizationRegistration: '/organizace/registrace',
+    organizationValidation: '/organizace/validace',
+    organizationConfirmedVerified: '/organizace/potvrzeni-overeni',
     organizationThankYou: '/organizace/dekujeme',
     profile: '/profil',
     newFind: (step?: 0 | 1 | 2 | 3 | 4) => `/novy-nalez${step ? `?step=${step}` : ''}`,

@@ -45,7 +45,7 @@ export const SStep = styled(Box)<{ active: boolean; initialStep?: boolean }>`
     }
 `;
 
-export const SIcon = styled.div<{ active: boolean }>`
+export const SIcon = styled.div<{ active: boolean; inverted?: boolean }>`
     min-width: ${size(ICON_SIZE)};
     min-height: ${size(ICON_SIZE)};
     width: ${size(ICON_SIZE)};
@@ -54,9 +54,9 @@ export const SIcon = styled.div<{ active: boolean }>`
     justify-content: center;
     align-items: center;
     z-index: 2;
-    background-color: ${({ active }) => (active ? secondary : white)};
+    background-color: ${({ active, inverted }) => (active ? (inverted ? white : secondary) : white)};
     border-radius: 50%;
-    border: 2px solid ${({ active }) => (active ? white : primary)};
+    border: 2px solid ${({ active, inverted }) => (active ? (inverted ? secondary : white) : primary)};
     margin-bottom: ${size(2)};
 
     > img {
