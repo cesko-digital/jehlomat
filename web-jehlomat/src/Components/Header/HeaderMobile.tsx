@@ -11,7 +11,7 @@ export const HeaderMobile: FC = () => {
     return (
         <s.Container>
             <s.LogoContainer>
-                <HeaderLogo mobile={true} />
+                <HeaderLogo />
             </s.LogoContainer>
             <s.Title>nástroj pro hlášení a likvidaci injekčních stříkaček</s.Title>
             <s.ButtonContainer>

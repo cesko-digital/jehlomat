@@ -40,7 +40,7 @@ const LandingPage = () => {
                     </Typography>
                 </Grid>
                 <Grid xs={5} alignItems="center" container>
-                    <img width="120%" alt="Mapa" src={map} />
+                    <img width="100%" alt="Mapa" src={map} />
                 </Grid>
             </Container>
         </>
