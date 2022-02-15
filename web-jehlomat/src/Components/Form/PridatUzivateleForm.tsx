@@ -7,12 +7,13 @@ import { FormWrapper, FormItem } from '../Form/Form';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
-import API from '../../config/baseURL';
+import { authorizedAPI } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
 import styled from '@emotion/styled';
 import { primaryDark } from '../../utils/colors';
 import { media } from '../../utils/media';
+import { LINKS } from 'utils/links';
 
 interface Props {}
 
@@ -98,12 +99,12 @@ const PridatUzivateleModal: FC<Props> = () => {
                 validationSchema={validationSchema}
                 onSubmit={async (values: Values, { setErrors }) => {
                     try {
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await authorizedAPI.post('/api/v1/jehlomat/user', values);
                         const status = response.status;
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
-                                history.push('/uzivatel/dekujeme');
+                                history.push(LINKS.userThankYou);
                                 break;
                             }
                             case status === 409: {

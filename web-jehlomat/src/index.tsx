@@ -39,15 +39,15 @@ ReactDOM.render(
                         <Route path="/welcome">
                             <Welcome />
                         </Route>
+                        <Route path={LINKS.userValidation} component={OvereniEmailu} />
+                        <Route path={LINKS.userRegistration} component={RegistraceUzivatele} />
+                        <Route path={LINKS.userThankYou} component={DekujemeUzivatel}/>
                         <Route
                             path={LINKS.user}
                             render={() => (
                                 <>
-                                    <Route component={SeznamUzivatelu} exact />
+                                    <Route component={SeznamUzivatelu} />
                                     <Route path={LINKS.userNew} component={PridatUzivatele} />
-                                    <Route path={LINKS.userValidation} component={OvereniEmailu} />
-                                    <Route path={LINKS.userRegistration} component={RegistraceUzivatele} />
-                                    <Route path={LINKS.userThankYou} component={DekujemeUzivatel} />
                                 </>
                             )}
                         />
@@ -55,7 +55,7 @@ ReactDOM.render(
                             path={LINKS.organization}
                             render={() => (
                                 <>
-                                    <Route component={Organizace} />
+                                    <Route component={Organizace} exact />
                                     <Route path={LINKS.organizationRegistration} component={RegistraceOrganizace} exact />
                                     <Route path={LINKS.organizationThankYou} component={Dekujeme} />
                                 </>

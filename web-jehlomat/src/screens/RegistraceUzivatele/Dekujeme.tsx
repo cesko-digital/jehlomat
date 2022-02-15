@@ -26,7 +26,7 @@ const Dekujeme = () => {
                     }}
                 ></TitleBar>
                 <Grid container direction="column" rowSpacing={4} justifyContent="center" alignItems="center">
-                    <Grid item direction="column" justifyContent="center" alignItems="center">
+                    <Grid container direction="column" justifyContent="center" alignItems="center">
                         <Typography align="center" variant="body1" fontWeight="bold">
                             Vaše registrace v aplikaci
                         </Typography>
@@ -37,7 +37,7 @@ const Dekujeme = () => {
                             byla úspěšná
                         </Typography>
                     </Grid>
-                    <Grid item direction="column" justifyContent="center" alignItems="center">
+                    <Grid container direction="column" justifyContent="center" alignItems="center">
                         <CheckCircle sx={{ color: secondary, fontSize: 80 }} />
                     </Grid>
                 </Grid>
