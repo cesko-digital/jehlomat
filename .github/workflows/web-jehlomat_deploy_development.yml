@@ -10,6 +10,8 @@ env:
   bucket: ${{ secrets.DEVELOPMENT_FRONTEND_BUCKET_NAME }}
   cloudFrontDeploymentId: ${{ secrets.AWS_CLOUDFRONT_DEVELOPMENT_DEPLOYMENT_ID }}
   name: 'web-jehlomat'
+  REACT_APP_SERVER: §{{secrets.APP_SERVER}}
+  REACT_APP_PORT: ${{secrets.APP_SERVER_PORT}}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,5 +32,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'eu-central-1'
-          REACT_APP_SERVER: §{{secrets.APP_SERVER}}
-          REACT_APP_PORT: ${{secrets.APP_SERVER_PORT}}
