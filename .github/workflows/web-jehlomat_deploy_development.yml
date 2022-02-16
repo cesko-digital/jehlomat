@@ -1,6 +1,7 @@
 name: 'Deploy development web-jehlomat to S3'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
