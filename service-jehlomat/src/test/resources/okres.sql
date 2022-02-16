@@ -23,7 +23,7 @@ SET default_table_access_method = heap;
 --
 -- Name: sph_okres; Type: TABLE; Schema: public; Owner: jehlomat
 --
-
+DROP TABLE IF EXISTS public.sph_okres CASCADE;
 CREATE TABLE public.sph_okres (
     ogc_fid integer NOT NULL,
     wkb_geometry bytea,

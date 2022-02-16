@@ -23,7 +23,7 @@ SET default_table_access_method = heap;
 --
 -- Name: sph_obec; Type: TABLE; Schema: public; Owner: jehlomat
 --
-
+DROP TABLE IF EXISTS public.sph_obec CASCADE;
 CREATE TABLE public.sph_obec (
     ogc_fid integer NOT NULL,
     wkb_geometry bytea,

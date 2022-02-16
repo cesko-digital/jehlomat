@@ -23,7 +23,7 @@ SET default_table_access_method = heap;
 --
 -- Name: sph_mc; Type: TABLE; Schema: public; Owner: jehlomat
 --
-
+DROP TABLE IF EXISTS public.sph_mc CASCADE;
 CREATE TABLE public.sph_mc (
     ogc_fid integer NOT NULL,
     id numeric(24,5),
