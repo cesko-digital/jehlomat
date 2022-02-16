@@ -10,6 +10,10 @@ class PermissionService {
     companion object {
         private val superAdminEmail = System.getenv("SUPER_ADMIN_EMAIL")
 
+        fun getSuperAdminEmail(): String {
+            return superAdminEmail
+        }
+
         fun <T> determineRoles(loggedIdUser: User, targetObj: T?): Set<Role> {
             return when(targetObj) {
                 is User -> return determineUserRoles(loggedIdUser, targetObj)

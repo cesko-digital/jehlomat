@@ -65,7 +65,6 @@ class Mailer: MailerService {
                 .put(
                     Emailv31.Message.TO, JSONArray()
                         .put(
-                            // TODO: JH-77 fix the organization confirmation email, which should be send to the superadmin email
                             JSONObject()
                                 .put("Email", toEmail)
                                 .put("Name", organizationName)
@@ -88,7 +87,7 @@ class Mailer: MailerService {
                     3222927, // TODO: JH-32 this is a dummy number, a template doesn't exist yet
                     "Schválení organizace",
                     "https://jehlomat.cz/api/v1/jehlomat/verification/organization?orgId=${organization.id}",
-                    email,
+                    PermissionService.getSuperAdminEmail(),
                     organization.name,
                 )
             )
