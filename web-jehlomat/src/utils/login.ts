@@ -9,6 +9,7 @@ export const removeToken = () => localStorage.removeItem(STORAGE_KEY);
 
 interface UseLoginReturn {
     setToken: (token: string) => void;
+    setLogin: (token: string) => void;
     logout: () => void;
     isLoggedIn: boolean;
     token: string | null;
@@ -21,6 +22,7 @@ export const defaultLoginValues = {
 
 export const LoginContext = React.createContext<{token: null| string, setToken: (token: string) => void}>(defaultLoginValues);
 
+//
 export const useLogin = (): UseLoginReturn => {
     const [token, setToken] = useState<string | null>(null);
 
@@ -41,5 +43,6 @@ export const useLogin = (): UseLoginReturn => {
         logout,
         isLoggedIn: !!token,
         token,
+        setLogin: setToken
     };
 };
