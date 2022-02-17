@@ -8,8 +8,6 @@ import com.mailjet.client.resource.Emailv31
 import model.Organization
 import org.json.JSONArray
 import org.json.JSONObject
-import utils.DefaultConfig
-
 
 interface MailerService {
     fun sendRegistrationConfirmationEmail(organization: Organization, userEmail: String, verificationCode: String)
@@ -41,11 +39,10 @@ class FakeMailer: MailerService {
 
 class Mailer: MailerService {
     private val publicUrl = System.getenv("JWT_ISSUER")
-    private val appConfig = DefaultConfig().get()
     private val client = MailjetClient(
         ClientOptions.builder()
-            .apiKey(appConfig.getString("mailjet.publicKey"))
-            .apiSecretKey(appConfig.getString("mailjet.privateKey"))
+            .apiKey(System.getenv("MAILJET_PUBLIC_KEY"))
+            .apiSecretKey(System.getenv("MAILJET_PRIVATE_KEY"))
             .build())
 
     private fun prepareBody(

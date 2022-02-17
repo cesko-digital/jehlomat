@@ -50,3 +50,9 @@ variable "jwt-audience" {
 variable "jwt-realm" {
   type = string
 }
+variable "mailjet_public_key" {
+  type = string
+}
+variable "mailjet_private_key" {
+  type = string
+}
