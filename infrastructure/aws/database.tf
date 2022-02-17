@@ -22,7 +22,7 @@ resource "aws_db_instance" "database" {
   engine                  = "postgres"
   engine_version          = "13.3"
   instance_class          = "db.t3.micro"
-  name                    = "${var.codename}development"
+  db_name                 = "${var.codename}development"
   backup_retention_period = 7
 
   username = var.database-username
