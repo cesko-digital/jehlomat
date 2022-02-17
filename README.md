@@ -19,18 +19,8 @@ Please change it in example by your postgres configuration.
 ```shell
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
 ```
-5) Update email api keys
 
-```
-mailjet {
-    publicKey = ""
-    privateKey = ""
-}
-```
-
-in `service-jehlomat/src/main/resources/application.conf`
-
-6) Set environment variables
+5) Set environment variables
 ```shell
 export DATABASE_HOST=localhost
 export DATABASE_PORT=5432
@@ -41,8 +31,10 @@ export JWT_ISSUER=http://localhost:8082/
 export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
 export SUPER_ADMIN_EMAIL=super@admin.cz
+export MAILJET_PUBLIC_KEY=public-key-for-mailjet
+export MAILJET_PRIVATE_KEY=private-key-for-mailjet
 ```
-7) Run application
+6) Run application
 ```shell
 ./gradlew run --parallel
 ```
