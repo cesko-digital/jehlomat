@@ -147,7 +147,7 @@ export const routes: Route[] = [
         path: '/zapomenute-heslo',
     },
     {
-        id: Routes.USER_THANK_YOU,
+        id: Routes.WELCOME,
         Component: Welcome,
         path: '/vitejte',
     },

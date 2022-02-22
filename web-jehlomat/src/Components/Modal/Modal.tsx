@@ -44,7 +44,7 @@ const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
                 onClose={onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: `${white}` }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
             >
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
