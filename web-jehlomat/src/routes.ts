@@ -101,11 +101,6 @@ export const routes: Route[] = [
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
     },
     {
-        id: Routes.ORGANIZATION,
-        Component: Organizace,
-        path: `/${ORGANIZATION_URL_PATH}`,
-    },
-    {
         id: Routes.PROFILE,
         Component: Profil,
         path: '/profil',

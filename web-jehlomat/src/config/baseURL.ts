@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getToken } from 'utils/login';
 
 const fetchClient = () => {
     const defaultOptions = {
@@ -28,10 +27,9 @@ export default fetchClient();
 
 const authorizedAPIfnc = () => {
     const client = fetchClient();
-    const token = getToken();
+    const token = localStorage.getItem("auth");
 
     client.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
-    console.log(client.defaults.headers);
 
     return client;
 };
