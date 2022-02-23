@@ -15,10 +15,10 @@ const Organizace: FC<Props> = () => {
                 // setOrg(data);
             }
         }
-        fetchMyAPI();
+        //fetchMyAPI();
     });
 
-    return null;
+    return <h1>ORG</h1>;
 };
 
 export default Organizace;

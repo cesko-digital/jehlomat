@@ -64,11 +64,6 @@ export const routes: Route[] = [
         path: '/prihlaseni',
     },
     {
-        id: Routes.USER,
-        Component: SeznamUzivatelu,
-        path: `/${USER_URL_PATH_}`,
-    },
-    {
         id: Routes.USER_NEW,
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
@@ -87,11 +82,13 @@ export const routes: Route[] = [
         id: Routes.USER_THANK_YOU,
         Component: DekujemeUzivatel,
         path: `/${USER_URL_PATH_}/dekujeme`,
+        exact: true,
     },
     {
-        id: Routes.ORGANIZATION,
-        Component: Organizace,
-        path: `/${ORGANIZATION_URL_PATH}/`,
+        id: Routes.USER,
+        Component: SeznamUzivatelu,
+        path: `/${USER_URL_PATH_}/`,
+        exact: true,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
@@ -102,6 +99,11 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_THANK_YOU,
         Component: DekujemeOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
+    },
+    {
+        id: Routes.ORGANIZATION,
+        Component: Organizace,
+        path: `/${ORGANIZATION_URL_PATH}`,
     },
     {
         id: Routes.PROFILE,

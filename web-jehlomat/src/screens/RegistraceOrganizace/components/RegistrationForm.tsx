@@ -1,7 +1,7 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { authorizedAPI } from '../../../config/baseURL';
+import API from '../../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import { SContainer, STextInput, SBackLink } from './RegistrationForm.styled';
 import { Box, Typography, useMediaQuery } from '@mui/material';
@@ -57,7 +57,7 @@ export default function RegistrationForm() {
                             password: values.heslo,
                         };
 
-                        const response: AxiosResponse<any> = await authorizedAPI.post('/api/v1/jehlomat/organization', organizace);
+                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization', organizace);
                         const status = response.status;
 
                         switch (true) {

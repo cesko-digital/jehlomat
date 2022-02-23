@@ -19,7 +19,6 @@ const StoryBook: FC<StoryBook> = ({}) => {
         <Layout>
             <PrimaryButton onClick={_ => alert('PrimaryButton')} text="Primary" />
             <SecondaryButton onClick={_ => alert('SecondaryButton')} text="Secondary" />
-            <AddButton onClick={_ => alert('AddButton')} />
             <TextInput onChange={e => console.log(e.target.value)} />
             <SearchInput onChange={e => console.log(e.target.value)} />
         </Layout>
