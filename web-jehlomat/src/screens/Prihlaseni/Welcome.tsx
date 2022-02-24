@@ -34,16 +34,17 @@ const Login: FC<any> = () => {
         exp: string;
     }
 
-    const getMe = (token: string) => {
-        const decoded: IToken = jwt_decode(token);
-        return decoded['user-id'];
-    };
-    const getUser = async (token: string) => {
-        const response: AxiosResponse<IResponse> = await authorizedAPI(token).get('/api/v1/jehlomat/user/' + getMe(token));
-        return response.data.username;
-    };
+    
 
     useEffect(() => {
+        const getMe = (token: string) => {
+            const decoded: IToken = jwt_decode(token);
+            return decoded['user-id'];
+        };
+        const getUser = async (token: string) => {
+            const response: AxiosResponse<IResponse> = await authorizedAPI(token).get('/api/v1/jehlomat/user/' + getMe(token));
+            return response.data.username;
+        };
         if (token) {
             getUser(token)
                 .then(user => {
@@ -54,7 +55,7 @@ const Login: FC<any> = () => {
                     console.log(error); //should goes to the error page
                 });
         }
-    }, [token, getUser]);
+    }, [token]);
 
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>

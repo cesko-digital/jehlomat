@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Routes, routesById } from 'routes';
 import Modal from 'Components/Modal/Modal';
@@ -25,9 +25,9 @@ export const ModalContext = React.createContext({
 export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [showModal, setShowModal] = useState(false);
-    const [originalUrl, setOriginalUrl] = useState();
+    //const [originalUrl, setOriginalUrl] = useState();
     const routeObj = routesById[route];
-    const history = useHistory();
+    //const history = useHistory();
     const hideModal = useCallback(() => {
         //history.goBack();
         setShowModal(false);
