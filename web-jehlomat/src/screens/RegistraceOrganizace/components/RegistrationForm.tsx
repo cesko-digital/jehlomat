@@ -64,7 +64,7 @@ export default function RegistrationForm() {
                             case /2[0-9][0-9]/g.test(status.toString()): {
                                 setValue(values.email);
                                 //for all success response;
-                                history.push('/organizace/validace', { email: values.email });
+                                history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
                                 break;
                             }
                             case status === 409: {
