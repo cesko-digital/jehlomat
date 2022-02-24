@@ -3,12 +3,12 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { OrganizationLayout, RegistrationStep } from 'organisms/organization/OrganizationLayout';
 import { grey, primary, primaryDark, textSubTitles, white } from 'utils/colors';
-import { LINKS } from 'utils/links';
 import { media } from 'utils/media';
 import organizationValidationImage from '../../assets/organization/organizationValidation.svg';
 import messageIcon from '../../assets/icons/message.svg';
 import { SResend, SMessageIcon, SResendDelimiter } from './OrganizationValidation.styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
+import { LINKS } from 'routes';
 
 export default function OrganizationValidation() {
     const [email] = useLocalStorage('organizationEmail', '');
@@ -54,7 +54,7 @@ export default function OrganizationValidation() {
                     <Typography>Pro dokončení registrace klikněte na link v e-mailu.</Typography>
 
                     <Box mt={5} mb="auto">
-                        <a href={LINKS.login}>
+                        <a href={LINKS.LOGIN}>
                             <SecondaryButton text="ZPĚT na Přihlášení" />
                         </a>
                     </Box>
@@ -82,7 +82,7 @@ export default function OrganizationValidation() {
                         <Typography>Pro dokončení registrace klikněte na link v e-mailu.</Typography>
                     </Box>
 
-                    <a href={LINKS.login}>
+                    <a href={LINKS.LOGIN}>
                         <PrimaryButton text="Zpět na Přihlášení" />
                     </a>
 
