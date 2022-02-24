@@ -10,7 +10,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
-import { useLogin, LoginContext} from 'utils/login';
+import { LoginContext} from 'utils/login';
 import { ModalContext } from 'Components/Navigator/Navigator';
 
 interface LoginFormProps {}

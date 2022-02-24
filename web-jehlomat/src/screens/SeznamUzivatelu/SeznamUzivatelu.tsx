@@ -7,7 +7,7 @@ import ListItem from '../../Components/List/ListItem/ListItem';
 import { Header } from '../../Components/Header/Header';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { useHistory } from 'react-router';
+//import { useHistory } from 'react-router';
 import { Routes } from 'routes';
 import Navigator from 'Components/Navigator/Navigator';
 import { default as MIconButton } from '@mui/material/IconButton';
@@ -86,7 +86,7 @@ const SeznamUzivatelu: FC<Props> = () => {
     const listTitle = `${users.length} uživatel${users.length > 0 ? (users.length === 1 ? '' : users.length < 5 ? 'é' : 'ů') : 'ů'}`;
     const isMobile = useMediaQuery(media.lte('mobile'));
 
-    const history = useHistory();
+    //const history = useHistory();
     return (
         <>
             <Header mobileTitle="Seznam uživatelů" />

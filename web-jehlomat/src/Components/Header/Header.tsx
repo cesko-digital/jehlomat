@@ -5,7 +5,7 @@ import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS, Routes } from 'routes';
-import { isLoggedIn, LoginContext, removeToken, useLogin } from 'utils/login';
+import { LoginContext, useLogin } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
@@ -25,7 +25,7 @@ export const Header = (props: Props) => {
     const logoutFnc = useCallback(() => {
         logout();
         window.location.reload();
-    }, []);
+    }, [logout]);
 
     const onBack = () => {
         if (props.backRoute) {

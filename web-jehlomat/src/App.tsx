@@ -3,8 +3,7 @@ import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { routes } from 'routes';
 import { Footer } from 'Components/Footer/Footer';
-import { LoginContext, defaultLoginValues, useLogin } from 'utils/login';
-import { ConstructionOutlined } from '@mui/icons-material';
+import { LoginContext, useLogin } from 'utils/login';
 
 const Router: FC = () => (
     <HashRouter>
@@ -24,7 +23,7 @@ const Router: FC = () => (
 );
 
 const Providers: FC = ({ children }) => {
-    let { token, setToken, setLogin} = useLogin();
+    let { token, setLogin} = useLogin();
     if(!token){
         if(localStorage.getItem("auth")){
             token = localStorage.getItem("auth");
