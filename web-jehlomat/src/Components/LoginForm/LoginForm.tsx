@@ -10,7 +10,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
-import { LoginContext} from 'utils/login';
+import { LoginContext } from 'utils/login';
 import { ModalContext } from 'Components/Navigator/Navigator';
 
 interface LoginFormProps {}
@@ -33,7 +33,7 @@ const validationSchema = yup.object({
 export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
     const { isModalVisible, closeModal } = useContext(ModalContext);
-    const {setToken} = useContext(LoginContext)
+    const { setToken } = useContext(LoginContext);
     //const {setLogin} = useLogin();
 
     return (

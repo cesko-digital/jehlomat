@@ -34,8 +34,6 @@ const Login: FC<any> = () => {
         exp: string;
     }
 
-    
-
     useEffect(() => {
         const getMe = (token: string) => {
             const decoded: IToken = jwt_decode(token);

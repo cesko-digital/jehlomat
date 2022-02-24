@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Routes, routesById } from 'routes';
 import Modal from 'Components/Modal/Modal';
@@ -34,7 +34,7 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     }, []);
 
     if (!routeObj) {
-        console.warn(`Define route obj for route: ${route}`)
+        console.warn(`Define route obj for route: ${route}`);
         return null;
     }
     const endPathString = typeof routeObj.path === 'function' ? routeObj.path(0) : routeObj.path;
@@ -42,7 +42,7 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     const onModalShow = () => {
         setShowModal(true);
         //window.history.replaceState(null, routeObj.title || '', `/#${routeObj.path}`)
-    }
+    };
 
     const renderLink = () => {
         return isMobile ? <Link to={endPathString}>{children}</Link> : <StyledLink onClick={onModalShow}>{children}</StyledLink>;
@@ -52,9 +52,9 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
         <>
             {renderLink()}
             <ModalContext.Provider value={{ isModalVisible: showModal, openModal: onModalShow, closeModal: hideModal }}>
-            <Modal modalHeaderText={routeObj.title || ''} open={showModal} onClose={hideModal}>
-                <routeObj.Component inModal={true} />
-            </Modal>
+                <Modal modalHeaderText={routeObj.title || ''} open={showModal} onClose={hideModal}>
+                    <routeObj.Component inModal={true} />
+                </Modal>
             </ModalContext.Provider>
         </>
     );

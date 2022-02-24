@@ -18,9 +18,7 @@ interface Props {
 export const Header = (props: Props) => {
     const history = useHistory();
     const { token } = useContext(LoginContext);
-    const { logout} = useLogin();
-
-
+    const { logout } = useLogin();
 
     const logoutFnc = useCallback(() => {
         logout();

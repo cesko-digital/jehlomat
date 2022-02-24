@@ -38,7 +38,7 @@ const AddUser: FC<WithModal> = ({ inModal }) => {
     return renderContent(
         <Grid container direction="column" sx={{ height: 'auto', width: '100%', paddingX: '20px' }} justifyContent="start" alignItems="center">
             <AddUserForm />
-        </Grid>
+        </Grid>,
     );
 };
 

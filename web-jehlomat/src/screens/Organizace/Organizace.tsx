@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 //import { authorizedAPI } from 'config/baseURL';
 //import { LoginContext } from 'utils/login';
 
-interface Props { }
+interface Props {}
 
 const Organizace: FC<Props> = () => {
     //const [org, setOrg] = useState();

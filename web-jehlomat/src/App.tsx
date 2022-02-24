@@ -23,10 +23,10 @@ const Router: FC = () => (
 );
 
 const Providers: FC = ({ children }) => {
-    let { token, setLogin} = useLogin();
-    if(!token){
-        if(localStorage.getItem("auth")){
-            token = localStorage.getItem("auth");
+    let { token, setLogin } = useLogin();
+    if (!token) {
+        if (localStorage.getItem('auth')) {
+            token = localStorage.getItem('auth');
         }
     }
     return <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>;

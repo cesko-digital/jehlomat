@@ -17,10 +17,10 @@ interface UseLoginReturn {
 
 export const defaultLoginValues = {
     token: null,
-    setToken: (token: string) => {}
-}
+    setToken: (token: string) => {},
+};
 
-export const LoginContext = React.createContext<{token: null| string, setToken: (token: string) => void}>(defaultLoginValues);
+export const LoginContext = React.createContext<{ token: null | string; setToken: (token: string) => void }>(defaultLoginValues);
 
 //
 export const useLogin = (): UseLoginReturn => {
@@ -29,7 +29,7 @@ export const useLogin = (): UseLoginReturn => {
     const setLogin = (token: string) => {
         setToken(token);
         setStorageToken(token);
-        console.log('called setLogin', token)
+        console.log('called setLogin', token);
     };
 
     const logout = () => {
@@ -37,12 +37,11 @@ export const useLogin = (): UseLoginReturn => {
         setToken(null);
     };
 
-
     return {
         setToken,
         logout,
         isLoggedIn: !!token,
         token,
-        setLogin: setLogin
+        setLogin: setLogin,
     };
 };

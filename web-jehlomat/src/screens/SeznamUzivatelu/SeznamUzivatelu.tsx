@@ -13,7 +13,7 @@ import Navigator from 'Components/Navigator/Navigator';
 import { default as MIconButton } from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
-interface Props { }
+interface Props {}
 
 const LayoutWrapper = styled.div`
     display: flex;
@@ -53,15 +53,15 @@ const ListInfo = styled.div`
 `;
 
 const TextButton = styled.button`
-border: none;
-box-shadow: none;
-background: transparent;
-color: ${white};
-cursor: pointer;
-font-size: 16px;
-line-height: 19px;
-text-align: center;
-margin-bottom: 10px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    color: ${white};
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    margin-bottom: 10px;
 `;
 
 const IconButton = styled(MIconButton)`
@@ -98,11 +98,11 @@ const SeznamUzivatelu: FC<Props> = () => {
 
                     {isMobile ? (
                         <IconButton>
-                            <Navigator route={Routes.USER_NEW}><AddIcon style={{ fill: `${primary}` }} fontSize="large"/></Navigator>
+                            <Navigator route={Routes.USER_NEW}>
+                                <AddIcon style={{ fill: `${primary}` }} fontSize="large" />
+                            </Navigator>
                         </IconButton>
-
                     ) : (
-
                         <TextButton style={{ marginLeft: '10px', color: `${primaryDark}` }}>
                             <Navigator route={Routes.USER_NEW}>Přidat nového uživatele</Navigator>
                         </TextButton>
