@@ -1,11 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
 import { LINKS, Routes } from 'routes';
-import { isLoggedIn, removeToken, useLogin } from 'utils/login';
+import { isLoggedIn, LoginContext, removeToken, useLogin } from 'utils/login';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
@@ -17,13 +17,14 @@ interface Props {
 
 export const Header = (props: Props) => {
     const history = useHistory();
-    const { token, logout } = useLogin();
+    const { token } = useContext(LoginContext);
+    const { logout} = useLogin();
 
-    console.log({token})
+
 
     const logoutFnc = useCallback(() => {
         logout();
-      //  window.location.reload();
+        window.location.reload();
     }, []);
 
     const onBack = () => {

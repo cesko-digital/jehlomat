@@ -29,7 +29,7 @@ export const useLogin = (): UseLoginReturn => {
     const setLogin = (token: string) => {
         setToken(token);
         setStorageToken(token);
-        console.log('called setLogin')
+        console.log('called setLogin', token)
     };
 
     const logout = () => {
@@ -43,6 +43,6 @@ export const useLogin = (): UseLoginReturn => {
         logout,
         isLoggedIn: !!token,
         token,
-        setLogin: setToken
+        setLogin: setLogin
     };
 };

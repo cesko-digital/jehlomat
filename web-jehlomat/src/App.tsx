@@ -4,6 +4,7 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import { routes } from 'routes';
 import { Footer } from 'Components/Footer/Footer';
 import { LoginContext, defaultLoginValues, useLogin } from 'utils/login';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const Router: FC = () => (
     <HashRouter>
@@ -23,8 +24,13 @@ const Router: FC = () => (
 );
 
 const Providers: FC = ({ children }) => {
-    const { token, setToken } = useLogin();
-    return <LoginContext.Provider value={{ token, setToken }}>{children}</LoginContext.Provider>;
+    let { token, setToken, setLogin} = useLogin();
+    if(!token){
+        if(localStorage.getItem("auth")){
+            token = localStorage.getItem("auth");
+        }
+    }
+    return <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>;
 };
 
 const App: FC = ({ children }) => {

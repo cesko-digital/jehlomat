@@ -27,10 +27,11 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
     const [showModal, setShowModal] = useState(false);
     const [originalUrl, setOriginalUrl] = useState();
     const routeObj = routesById[route];
+    const history = useHistory();
     const hideModal = useCallback(() => {
+        //history.goBack();
         setShowModal(false);
     }, []);
-    const history = useHistory();
 
     if (!routeObj) {
         console.warn(`Define route obj for route: ${route}`)
@@ -40,7 +41,7 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
 
     const onModalShow = () => {
         setShowModal(true);
-        window.history.replaceState(null, routeObj.title || '', `/#${routeObj.path}`)
+        //window.history.replaceState(null, routeObj.title || '', `/#${routeObj.path}`)
     }
 
     const renderLink = () => {
