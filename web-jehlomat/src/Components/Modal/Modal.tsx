@@ -1,18 +1,18 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useMediaQuery } from '@mui/material';
 import styled from '@emotion/styled';
-import { white, primaryDark } from '../../utils/colors';
+import { white } from '../../utils/colors';
 import { media } from '../../utils/media';
-import AddButton from '../Buttons/AddButton/AddButton';
-import TextButton from '../Buttons/TextButton/TextButton';
-import { Modal } from '@mui/material';
+import MuiModal, { ModalProps } from '@mui/material/Modal';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface Props {
-    buttonText: string;
+type CloseFunction = () => void;
+
+interface Props extends Pick<ModalProps, 'open'> {
     modalHeaderText?: string;
+    onClose: CloseFunction;
 }
 
 const ModalWrapper = styled.div<{ mobile?: boolean }>`
@@ -34,35 +34,23 @@ const ModalBody = styled.div<{ mobile?: boolean }>`
     padding-top: 50px;
 `;
 
-const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
+const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
-
-    const [openModal, setOpenModal] = useState(false);
-
-    const handleClose = () => {
-        setOpenModal(false);
-    };
 
     return (
         <>
-            {isMobile ? (
-                <AddButton style={{ marginLeft: '10px' }} onClick={() => setOpenModal(true)} />
-            ) : (
-                <TextButton text={buttonText} style={{ marginLeft: '10px', color: `${primaryDark}` }} onClick={() => setOpenModal(true)} />
-            )}
-
-            <Modal
-                open={openModal}
-                onClose={handleClose}
+            <MuiModal
+                open={open}
+                onClose={onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: `${white}` }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
             >
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
                         icon={isMobile ? <ChevronLeft sx={{ color: white, fontSize: 40 }} /> : <CloseIcon sx={{ color: white, fontSize: 40 }} />}
                         onIconClick={() => {
-                            setOpenModal(false);
+                            onClose();
                         }}
                     >
                         {modalHeaderText}
@@ -70,9 +58,9 @@ const StyledModal: FC<Props> = ({ children, buttonText, modalHeaderText }) => {
 
                     <ModalBody mobile={isMobile}>{children}</ModalBody>
                 </ModalWrapper>
-            </Modal>
+            </MuiModal>
         </>
     );
 };
 
-export default StyledModal;
+export default Modal;

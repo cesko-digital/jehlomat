@@ -1,12 +1,12 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { authorizedAPI } from '../../../config/baseURL';
+import API from '../../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import { SContainer, STextInput, SBackLink } from './RegistrationForm.styled';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import { LINKS } from 'utils/links';
+import { LINKS } from 'routes';
 import { media } from 'utils/media';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
@@ -57,14 +57,14 @@ export default function RegistrationForm() {
                             password: values.heslo,
                         };
 
-                        const response: AxiosResponse<any> = await authorizedAPI.post('/api/v1/jehlomat/organization', organizace);
+                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization', organizace);
                         const status = response.status;
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
                                 setValue(values.email);
                                 //for all success response;
-                                history.push('/organizace/validace', { email: values.email });
+                                history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
                                 break;
                             }
                             case status === 409: {
@@ -141,7 +141,7 @@ export default function RegistrationForm() {
                                     <SecondaryButton id="submit" text="Založit" type="submit" disabled={!isValid} />
                                 )}
 
-                                <SBackLink to={LINKS.home}>Zrušit</SBackLink>
+                                <SBackLink to={LINKS.HOME}>Zrušit</SBackLink>
                             </Box>
                         </Form>
                     );
