@@ -1,16 +1,18 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import API from '../../config/baseURL';
+import { authorizedAPI } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
+import { LoginContext } from 'utils/login';
 
-interface Props {}
+
+interface Props { }
 interface Values {
     email: string;
 }
@@ -21,6 +23,7 @@ const validationSchema = yup.object({
 
 const PridatUzivatele: FC<Props> = () => {
     const history = useHistory();
+    const { token } = useContext(LoginContext);
 
     return (
         <Formik
@@ -28,26 +31,30 @@ const PridatUzivatele: FC<Props> = () => {
             validationSchema={validationSchema}
             onSubmit={async (values: Values, { setErrors }) => {
                 try {
-                    const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user/', values);
-                    const status = response.status;
+                    if (token) {
+                        const response: AxiosResponse<any> = await authorizedAPI(token).post('/api/v1/jehlomat/user', values);
+                        const status = response.status;
 
-                    switch (true) {
-                        case /2[0-9][0-9]/g.test(status.toString()): {
-                            history.push('/uzivatel/dekujeme');
-                            break;
-                        }
-                        case status === 409: {
-                            //for validation error;
-                            setErrors({ email: response.data });
-                            break;
-                        }
-                        default: {
-                            //all others goes to error page; TODO push to error page
-                            break;
+                        switch (true) {
+                            case /2[0-9][0-9]/g.test(status.toString()): {
+                                history.push('/uzivatel/dekujeme');
+                                break;
+                            }
+                            case status === 409: {
+                                //for validation error;
+                                setErrors({ email: response.data });
+                                break;
+                            }
+                            default: {
+                                //all others goes to error page; TODO push to error page
+                                history.push('/error');
+                                break;
+                            }
                         }
                     }
+                    
                 } catch (error: any) {
-                    //link to error page
+                    history.push('/error');
                 }
             }}
         >
