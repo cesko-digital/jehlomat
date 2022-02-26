@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import * as s from './HeaderMobileStyles';
-import { HeaderLogo } from './HeaderLogo/HeaderLogo';
+import {HeaderLogo} from './HeaderLogo/HeaderLogo';
 import SecondaryButton from '../Buttons/SecondaryButton/SecondaryButton';
-import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
+import {HeaderLink, HeaderLinkType} from './HeaderLink/HeaderLink';
 import TextButton from '../Buttons/TextButton/TextButton';
 import { LINKS, Routes } from 'routes';
 import { Link } from 'react-router-dom';

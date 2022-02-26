@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { Link } from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Routes, routesById } from 'routes';
 import Modal from 'Components/Modal/Modal';
@@ -32,6 +32,7 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
         //history.goBack();
         setShowModal(false);
     }, []);
+    const history = useHistory();
 
     if (!routeObj) {
         console.warn(`Define route obj for route: ${route}`);
