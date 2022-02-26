@@ -32,7 +32,6 @@ export const Navigator: React.FC<RouteProps> = ({ children, route }) => {
         //history.goBack();
         setShowModal(false);
     }, []);
-    const history = useHistory();
 
     if (!routeObj) {
         console.warn(`Define route obj for route: ${route}`);
