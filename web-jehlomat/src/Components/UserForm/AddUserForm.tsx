@@ -3,7 +3,7 @@ import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import API from '../../config/baseURL';
+import API, { authorizedAPI } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -21,6 +21,7 @@ const validationSchema = yup.object({
 
 const PridatUzivatele: FC<Props> = () => {
     const history = useHistory();
+    const { token } = useContext(LoginContext);
 
     return (
         <Formik
@@ -28,7 +29,7 @@ const PridatUzivatele: FC<Props> = () => {
             validationSchema={validationSchema}
             onSubmit={async (values: Values, { setErrors }) => {
                 try {
-                    const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user/', values);
+                    const response: AxiosResponse<any> = await authorizedAPI(token).post('/api/v1/jehlomat/user', values);
                     const status = response.status;
 
                     switch (true) {
