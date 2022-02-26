@@ -25,15 +25,6 @@ const fetchClient = () => {
 
 export default fetchClient();
 
-<<<<<<< HEAD
-export const authorizedAPI = (jwt: string) => {
-    const client = fetchClient();
-    //const token = localStorage.getItem("auth");
-    client.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
-
-    return client;
-};
-=======
 export const authorizedAPI = (jwt:string) => {
     const client = fetchClient();
     //const token = localStorage.getItem("auth");
@@ -41,4 +32,3 @@ export const authorizedAPI = (jwt:string) => {
 
     return client;
 };
->>>>>>> 8c6cb25 (Token to context and refreshing context when page reloaded)
