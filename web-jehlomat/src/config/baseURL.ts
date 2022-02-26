@@ -36,7 +36,7 @@ export const authorizedAPI = (jwt: string) => {
 =======
 export const authorizedAPI = (jwt:string) => {
     const client = fetchClient();
-    const token = localStorage.getItem("auth");
+    //const token = localStorage.getItem("auth");
     client.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
 
     return client;

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Routes, routesById } from 'routes';
 import Modal from 'Components/Modal/Modal';
