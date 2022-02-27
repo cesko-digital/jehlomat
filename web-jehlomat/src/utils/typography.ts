@@ -46,11 +46,11 @@ export const NavigationTitle = styled.span`
     line-height: 24px;
     color: white;
 `;
-export const FormItemLabel = styled.label<{disableUppercase?: boolean}>`
+export const FormItemLabel = styled.label<{ disableUppercase?: boolean }>`
     font-size: Menlo;
     font-size: 16px;
     letter-spacing: 1.25px;
-    text-transform: ${props => props.disableUppercase? 'none' : 'uppercase'};
+    text-transform: ${props => (props.disableUppercase ? 'none' : 'uppercase')};
     padding-bottom: 15px;
     color: grey;
     @media (min-width: 420px) {
@@ -75,10 +75,10 @@ export const FormHeading = styled.p`
     }
 `;
 
-export const FormItemDescription = styled.p<{green?: boolean, sm?: boolean}>`
+export const FormItemDescription = styled.p<{ green?: boolean; sm?: boolean }>`
     ${fontFamilyRoboto}
     width: 75%;
-    color: ${props => props.green ? primaryDark : 'black'};
+    color: ${props => (props.green ? primaryDark : 'black')};
     font-size: 18px;
     display: flex;
     align-items: baseline;
@@ -91,6 +91,6 @@ export const FormItemDescription = styled.p<{green?: boolean, sm?: boolean}>`
         width: 100%;
         font-weight: 500;
         margin: 0 0 3rem;
-        font-size: ${props => props.sm ? '16px' : '18px'};
+        font-size: ${props => (props.sm ? '16px' : '18px')};
     }}
 `;

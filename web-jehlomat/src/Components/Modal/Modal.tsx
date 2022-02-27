@@ -5,7 +5,6 @@ import { white } from '../../utils/colors';
 import { media } from '../../utils/media';
 import MuiModal, { ModalProps } from '@mui/material/Modal';
 import TitleBar from '../../Components/Navigation/TitleBar';
-import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
 
 type CloseFunction = () => void;

@@ -97,15 +97,12 @@ export const routes: Route[] = [
         id: Routes.USER,
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
-<<<<<<< HEAD
         protectedRoute: true,
-=======
     },
     {
         id: Routes.ORGANIZATION,
         Component: Organizace,
         path: `/${ORGANIZATION_URL_PATH}/`,
->>>>>>> 1ee9309 (Styled modal and mobile view after new routing - on PridatUzivatele)
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
@@ -116,11 +113,6 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_THANK_YOU,
         Component: DekujemeOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
-    },
-    {
-        id: Routes.ORGANIZATION,
-        Component: Organizace,
-        path: `/${ORGANIZATION_URL_PATH}/`,
     },
     {
         id: Routes.PROFILE,

@@ -23,8 +23,8 @@ const validationSchema = yup.object({
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
 });
 
-const TextNewline = styled.br<{mobile: boolean}>`
-    display: ${props => props.mobile ? 'none' : 'block'} ;
+const TextNewline = styled.br<{ mobile: boolean }>`
+    display: ${props => (props.mobile ? 'none' : 'block')};
 `;
 
 const AddUserForm: FC<Props> = () => {
@@ -82,9 +82,11 @@ const AddUserForm: FC<Props> = () => {
                                 error={touched.email && Boolean(errors.email) ? errors.email : undefined}
                             />
                         </FormItem>
-                        <FormItemDescription green sm>Na danou adresu bude zaslán registrační odkaz <TextNewline mobile={isMobile}/> pro nového uživatele.</FormItemDescription>
+                        <FormItemDescription green sm>
+                            Na danou adresu bude zaslán registrační odkaz <TextNewline mobile={isMobile} /> pro nového uživatele.
+                        </FormItemDescription>
                         <Box sx={{ mt: isMobile ? '9rem' : '3rem', mb: '1rem' }}>
-                            <PrimaryButton text="Přidat" type="submit" disabled={!isValid}/>
+                            <PrimaryButton text="Přidat" type="submit" disabled={!isValid} />
                         </Box>
                     </FormWrapper>
                 );

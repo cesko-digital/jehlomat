@@ -25,7 +25,9 @@ const PridatUzivatele: FC<WithModal> = ({ inModal }) => {
                                 onIconClick={() => {
                                     history.goBack();
                                 }}
-                            > Přidat uživatele </TitleBar>
+                            >
+                                Přidat uživatele
+                            </TitleBar>
                         </Box>
                         {children}
                     </Grid>
