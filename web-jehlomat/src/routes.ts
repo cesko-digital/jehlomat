@@ -49,6 +49,7 @@ interface Route {
     Component: LazyExoticComponent<any>;
     AdditionalComponents?: ComponentType;
     path: string | Function;
+    protectedRoute?: boolean;
     exact?: boolean;
     title?: string;
 }
@@ -67,6 +68,7 @@ export const routes: Route[] = [
         id: Routes.USER_NEW,
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
+        protectedRoute: true,
     },
     {
         id: Routes.USER_VALIDATION,
@@ -87,6 +89,7 @@ export const routes: Route[] = [
         id: Routes.USER,
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
+        protectedRoute: true,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
