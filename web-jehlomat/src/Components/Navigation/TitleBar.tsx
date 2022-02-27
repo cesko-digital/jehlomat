@@ -5,10 +5,11 @@ import { IconButton } from '@mui/material';
 
 interface ITitleBar {
     icon?: any | undefined;
+    mobile?: boolean | undefined;
     onIconClick?: MouseEventHandler | undefined;
 }
 
-const TitleBar: FC<ITitleBar> = ({ icon, children, onIconClick }) => {
+const TitleBar: FC<ITitleBar> = ({ icon, children, mobile, onIconClick }) => {
     return (
         <s.Container>
             {icon && (
@@ -16,7 +17,7 @@ const TitleBar: FC<ITitleBar> = ({ icon, children, onIconClick }) => {
                     <IconButton aria-label="Zpět">{icon}</IconButton>
                 </s.NavIcon>
             )}
-            <s.Content isCentered={!icon}>
+            <s.Content isCentered>
                 <NavigationTitle>{children}</NavigationTitle>
             </s.Content>
         </s.Container>

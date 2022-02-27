@@ -48,7 +48,7 @@ const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
             >
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
-                        icon={isMobile ? <ChevronLeft sx={{ color: white, fontSize: 40 }} /> : <CloseIcon sx={{ color: white, fontSize: 40 }} />}
+                        icon={<CloseIcon sx={{ color: white, fontSize: 25 }} />}
                         onIconClick={() => {
                             onClose();
                         }}

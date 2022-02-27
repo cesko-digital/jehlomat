@@ -76,6 +76,7 @@ export const routes: Route[] = [
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
         protectedRoute: true,
+        title: "Přidat uživatele"
     },
     {
         id: Routes.USER_VALIDATION,
@@ -96,7 +97,15 @@ export const routes: Route[] = [
         id: Routes.USER,
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
+<<<<<<< HEAD
         protectedRoute: true,
+=======
+    },
+    {
+        id: Routes.ORGANIZATION,
+        Component: Organizace,
+        path: `/${ORGANIZATION_URL_PATH}/`,
+>>>>>>> 1ee9309 (Styled modal and mobile view after new routing - on PridatUzivatele)
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,

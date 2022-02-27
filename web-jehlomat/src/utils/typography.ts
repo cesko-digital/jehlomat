@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import { primaryDark } from './colors';
+import { media } from 'utils/media';
 
 export const fontFamilyRoboto = 'font-family: Roboto;';
 
@@ -44,14 +46,18 @@ export const NavigationTitle = styled.span`
     line-height: 24px;
     color: white;
 `;
-export const FormItemLabel = styled.label`
+export const FormItemLabel = styled.label<{disableUppercase?: boolean}>`
     font-size: Menlo;
     font-size: 16px;
     letter-spacing: 1.25px;
-    text-transform: uppercase;
+    text-transform: ${props => props.disableUppercase? 'none' : 'uppercase'};
+    padding-bottom: 15px;
     color: grey;
     @media (min-width: 420px) {
         align-self: flex-start;
+    }
+    @media ${media.lte('mobile')} {
+        font-weight: 700;
     }
 `;
 
@@ -69,12 +75,22 @@ export const FormHeading = styled.p`
     }
 `;
 
-export const FormItemDescription = styled.p`
+export const FormItemDescription = styled.p<{green?: boolean, sm?: boolean}>`
     ${fontFamilyRoboto}
-    width: 80%;
-    color: black;
-    font-size: 16px;
-    @media (min-width: 700px) {
-        width: 340px;
-    }
+    width: 75%;
+    color: ${props => props.green ? primaryDark : 'black'};
+    font-size: 18px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    text-align: center;
+    line-height: 24px;
+
+    @media ${media.lte('mobile')} {
+        text-align: left;
+        width: 100%;
+        font-weight: 500;
+        margin: 0 0 3rem;
+        font-size: ${props => props.sm ? '16px' : '18px'};
+    }}
 `;
