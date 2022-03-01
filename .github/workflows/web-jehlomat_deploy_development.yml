@@ -22,7 +22,7 @@ jobs:
       - name: 'Build'
         run: |
           npm install
-          npm run build
+          CI=false npm run build
         working-directory: ${{ env.name }}
       - name: 'Deploy to AWS'
         run: |
