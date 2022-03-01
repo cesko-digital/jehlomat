@@ -48,8 +48,8 @@ export const Header = (props: Props) => {
             <SContainer>
                 <HeaderLogo />
                 <SLinkContainer>
-                    <HeaderLink type={HeaderLinkType.AboutApp} route={'/'} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} />
+                    <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
+                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>

@@ -4,18 +4,28 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import { routes } from 'routes';
 import { Footer } from 'Components/Footer/Footer';
 import { LoginContext, useLogin } from 'utils/login';
+import PrivateRoute from 'config/protectedRoute';
 
 const Router: FC = () => (
     <HashRouter>
         <Switch>
-            {routes.map(({ Component, exact, AdditionalComponents, path }) => {
+            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute }) => {
                 const stringPath = typeof path === 'string' ? path : path(0);
-                return (
-                    <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
-                        {AdditionalComponents && <AdditionalComponents />}
-                        <Component exact={exact} />
-                    </Route>
-                );
+                if (protectedRoute) {
+                    return (
+                        <PrivateRoute path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                            {AdditionalComponents && <AdditionalComponents />}
+                            <Component exact={exact} />
+                        </PrivateRoute>
+                    )
+                } else {
+                    return (
+                        <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                            {AdditionalComponents && <AdditionalComponents />}
+                            <Component exact={exact} />
+                        </Route>
+                    );
+                }
             })}
         </Switch>
         <Footer />
