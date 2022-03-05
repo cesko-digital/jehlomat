@@ -42,8 +42,8 @@ class ApplicationTestWorkflows {
     @Test
     fun testFullRegistration() = withTestApplication({ module(testing = true) }) {
         // create org admin
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
-        val token = loginUser("org@admin.cz", USER.password)
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        val token = loginUser("org@cesko.digital", USER.password)
 
         // register a new user
         val emailToTest = "email@email.email"
