@@ -1,10 +1,11 @@
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { LatLngExpression } from 'leaflet';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
-import { LatLngExpression } from 'leaflet';
 import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
 import { LocationState } from './types';
+import { MapContext } from './MapContext';
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
@@ -92,10 +93,12 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
 
     return (
         <StyledContainer id="map-container">
-            <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
-            {mapSize && mapSize.width != 0 && mapSize.height != 0 && (
-                <Mapa userPosition={userPosition} handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} setUserPosition={setUserPosition} />
-            )}
+            <MapContext.Provider value={{position: userPosition, setPosition: setUserPosition}}>
+                <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
+                {mapSize && mapSize.width != 0 && mapSize.height != 0 && (
+                    <Mapa handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height}  />
+                )}
+            </MapContext.Provider>
         </StyledContainer>
     );
 };

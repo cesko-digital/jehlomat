@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LatLngExpression } from 'leaflet';
 import { useMap } from 'react-leaflet';
@@ -9,11 +9,11 @@ import location from '../../assets/images/location.svg';
 import spinner from '../../assets/images/tail-spin.svg';
 import AddressSearch from '../../NovyNalez/Components/AddressSearch';
 import { ChangeView } from '../../NovyNalez/Components/ChangeView';
+import { MapContext } from './MapContext';
 
 interface MapControlProps {
     // onSearchSubmit: (search: string) => void;
     // onLocationClick: () => void;
-    setUserPosition: Dispatch<SetStateAction<LatLngExpression | null>>;
 }
 
 const StyledWrapper = styled.div`
@@ -44,18 +44,17 @@ const StyledItem = styled.div<{ expanded?: boolean }>`
   `}
 `;
 
-export const MapControl: React.FC<MapControlProps> = ({ setUserPosition }) => {
+export const MapControl: React.FC<MapControlProps> = ({  }) => {
     const [searchShown, setSearchShown] = useState(false);
-    const [changedPosition, setChangedPosition] = useState<[number, number]>();
     const [checkingPosition, setCheckingPosition] = useState(false);
+    const { setPosition } = useContext(MapContext);
 
     const getUserGeolocation = () => {
         setCheckingPosition(true);
 
         navigator.geolocation.getCurrentPosition(
             position => {
-                setUserPosition({ lat: position.coords.latitude, lng: position.coords.longitude });
-                setChangedPosition([position.coords.latitude, position.coords.longitude]);
+                setPosition({ lat: position.coords.latitude, lng: position.coords.longitude });
                 setCheckingPosition(false);
             },
             positionError => {
@@ -76,7 +75,6 @@ export const MapControl: React.FC<MapControlProps> = ({ setUserPosition }) => {
             <StyledItem onClick={getUserGeolocation}>
                 <img src={checkingPosition ? spinner : location} alt="current location" />
             </StyledItem>
-            {changedPosition && <ChangeView center={changedPosition} callback={() => setChangedPosition(undefined)} />}
         </StyledWrapper>
     );
 };

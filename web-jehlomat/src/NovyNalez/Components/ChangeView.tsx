@@ -1,9 +1,10 @@
 import {useMap} from "react-leaflet";
 import {useEffect} from "react";
+import {LatLngExpression} from "leaflet";
 
 
 export interface IChangeViewProps {
-    center: [number, number];
+    center: LatLngExpression;
     zoom?: number;
     callback?: () => void;
 
