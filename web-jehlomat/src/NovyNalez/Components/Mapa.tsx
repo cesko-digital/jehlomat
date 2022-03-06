@@ -46,6 +46,7 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height, setUse
         if (userPosition) {
             console.log('User position changed:', userPosition);
             setPosition(userPosition);
+            setMarkerPosition(userPosition);
         }
     }, [userPosition]);
 
