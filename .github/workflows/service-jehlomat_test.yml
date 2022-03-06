@@ -33,7 +33,7 @@ jobs:
           DATABASE_USERNAME: jehlomat
           PGPASSWORD: password
           DATABASE_NAME: jehlomat
-          SUPER_ADMIN_EMAIL: super@admin.cz
+          SUPER_ADMIN_EMAIL: jehlomat@cesko.digital
           JWT_ISSUER: http://localhost:8082/
           JWT_AUDIENCE: http://localhost:8082/
           JWT_REALM: jehlomat
