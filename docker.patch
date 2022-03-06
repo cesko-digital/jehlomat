@@ -1,0 +1,74 @@
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..0e762d1
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,7 @@
++FROM kartoza/postgis:14-3.1
++
++RUN apt-get update && apt-get install -y \
++    git
++
++RUN git clone https://github.com/cesko-digital/jehlomat.git
++WORKDIR "jehlomat"
+\ No newline at end of file
+diff --git a/docker-compose.yml b/docker-compose.yml
+new file mode 100644
+index 0000000..7b0cac7
+--- /dev/null
++++ b/docker-compose.yml
+@@ -0,0 +1,21 @@
++# docker-compose build
++version: '2.1'
++volumes:
++  dbbackups:
++  postgis-data: 
++services:
++  db:
++    build: .
++    environment:
++      # If you need to create multiple database yo u can add coma separated databases eg gis,data
++      - POSTGRES_DB=jehlomat
++      - POSTGRES_USER=jehlomat
++      - POSTGRES_PASS=jehlomat
++      - ALLOW_IP_RANGE=0.0.0.0/0
++      # Add extensions you need to be enabled by default in the DB. Default are the five specified below
++      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
++    ports:
++      - 5432:5432
++    restart: on-failure
++    healthcheck:
++      test: "exit 0"
+diff --git a/service-jehlomat/src/main/resources/application.conf b/service-jehlomat/src/main/resources/application.conf
+index 8fed234..c03ece8 100644
+--- a/service-jehlomat/src/main/resources/application.conf
++++ b/service-jehlomat/src/main/resources/application.conf
+@@ -1,14 +1,14 @@
+ ktor {
+     deployment {
+-        port = 8082
++        port = 8089
+     }
+ 
+     databaseConfiguration {
+         host = "localhost"
+-        port = "3456"
+-        database = "postgres"
+-        user = "george"
+-        password = ""
++        port = "5432"
++        database = "jehlomat"
++        user = "jehlomat"
++        password = "jehlomat"
+     }
+ 
+     application {
+@@ -17,6 +17,6 @@ ktor {
+ }
+ 
+ mailjet {
+-    publicKey = ""
+-    privateKey = ""
++    publicKey = "cbb81504a06f2fd735db577f09666b7f"
++    privateKey = "fdd479b47c4af6e4d46bb07bf889432d"
+ }
