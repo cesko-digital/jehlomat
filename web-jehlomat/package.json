@@ -32,15 +32,16 @@
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
         "@fortawesome/react-fontawesome": "^0.1.15",
-        "@react-leaflet/core": "^1.1.1",
-        "@types/styled-components": "^5.1.14",
-        "babel-jest": "^27.2.4",
         "@mui/icons-material": "^5.0.5",
         "@mui/material": "^5.0.6",
+        "@react-leaflet/core": "^1.1.1",
+        "@types/styled-components": "^5.1.14",
         "axios": "^0.23.0",
+        "babel-jest": "^27.2.4",
         "dotenv": "^10.0.0",
         "formik": "^2.2.9",
         "leaflet": "^1.7.1",
+        "prettier": "^2.5.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-leaflet": "^3.2.1",
@@ -76,7 +77,7 @@
         "ts-jest": "^27.0.5",
         "ts-loader": "^9.2.6",
         "webpack": "^5.55.1",
-        "webpack-cli": "^4.8.0",
+        "webpack-cli": "^4.9.2",
         "webpack-dev-server": "^4.3.0"
     }
 }

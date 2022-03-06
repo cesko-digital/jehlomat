@@ -30,19 +30,19 @@ const ZadavaniNalezu: FC<IZadavaniNalezu> = ({ syringeInfo, onInputChange, onSum
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet jehel</FormItemLabel>
-                    <TextInput name="count" type="number" value={syringeInfo.count} placeholder="Zadejte počet stříkaček" onChange={handleInputChange} />
+                    <TextInput name="count" type="number" value={syringeInfo.count} placeholder="Zadejte počet stříkaček" onChange={handleInputChange} fullWidth />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                    <TextInput name="datetime" type="date" value={syringeInfo.datetime} onChange={handleInputChange} />
+                    <TextInput name="datetime" type="date" value={syringeInfo.datetime} onChange={handleInputChange} fullWidth/>
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Poznámky</FormItemLabel>
-                    <TextInput name="info" type="text" value={syringeInfo.info} placeholder="Rozšiřující informace" onChange={handleInputChange} />
+                    <TextInput name="info" type="text" value={syringeInfo.info} placeholder="Rozšiřující informace" onChange={handleInputChange} fullWidth/>
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Foto z místa nálezu</FormItemLabel>
-                    <TextInput type="text" disabled placeholder="Tuto funkci brzy zpřístupníme" />
+                    <TextInput type="text" disabled placeholder="Tuto funkci brzy zpřístupníme" fullWidth/>
                 </FormItem>
                 <FormItem>
                     <PrimaryButton text="Dokončit" onClick={onSumbit} />

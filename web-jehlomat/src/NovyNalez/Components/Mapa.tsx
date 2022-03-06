@@ -1,6 +1,7 @@
 import L, { LatLngExpression } from 'leaflet';
-import { FC, Fragment, useEffect, useState } from 'react';
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
+import Box from '@mui/material/Box';
+import { FC, Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
+import { MapContainer, Marker, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../constants';
 
 const FloatinButtonContainer = styled.div`
@@ -12,17 +13,18 @@ const FloatinButtonContainer = styled.div`
 
 // Leaflet hack to make it works
 // @ts-ignore
-import icon from 'leaflet/dist/images/marker-icon.png';
-// @ts-ignore
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import icon from '../../assets/images/marker_orange.svg';
 import 'leaflet/dist/leaflet.css';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import styled from 'styled-components';
 import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
+import MapControl from './MapControl';
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
-    shadowUrl: iconShadow,
+    shadowUrl: '',
+    iconSize: [60, 60],
+    iconAnchor: [30, 60]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 // ------------
@@ -32,9 +34,10 @@ interface IMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
     width: number;
     height: number;
+    setUserPosition: Dispatch<SetStateAction<LatLngExpression | null>>
 }
 
-const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height }) => {
+const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height, setUserPosition }) => {
     const [position, setPosition] = useState<LatLngExpression | null>(null);
 
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
@@ -69,56 +72,36 @@ const Mapa: FC<IMapa> = ({ userPosition, handleStepChange, width, height }) => {
         return { lat: undefined, lng: undefined };
     };
 
-    // TO-DO: refactor
-    if (userPosition === null) {
-        return (
-            <Fragment>
-                <MapContainer
-                    center={DEFAULT_POSITION}
-                    zoom={DEFAULT_ZOOM_LEVEL}
-                    scrollWheelZoom={false}
-                    style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
-                    preferCanvas
-                    whenCreated={map => {
-                        handleMapCenterChange(map, setMarkerPosition);
-                    }}
-                >
-                    <MapCustomEvents />
-                    <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                    {markerPosition && <Marker position={markerPosition} />}
-                </MapContainer>
-                <FloatinButtonContainer>
-                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
-                </FloatinButtonContainer>
-            </Fragment>
-        );
-    } else if (position !== null) {
-        return (
-            <Fragment>
-                <MapContainer
-                    center={position}
-                    zoom={DEFAULT_ZOOM_LEVEL}
-                    scrollWheelZoom={false}
-                    style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
-                    preferCanvas
-                    whenCreated={map => {
-                        handleMapCenterChange(map, setMarkerPosition);
-                    }}
-                >
-                    <MapCustomEvents />
-                    <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                    {markerPosition && <Marker position={markerPosition} />}
-                </MapContainer>
-                <FloatinButtonContainer>
-                    <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
-                </FloatinButtonContainer>
-            </Fragment>
-        );
-    } else {
+    if (userPosition && !position) {
         return null;
     }
+
+
+    return (
+        <Box position="relative">
+            <MapContainer
+                center={!userPosition ? DEFAULT_POSITION : (position || {lat: 50.082476, lng: 14.4305313})}
+                zoom={DEFAULT_ZOOM_LEVEL}
+                scrollWheelZoom={false}
+                style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
+                preferCanvas
+                whenCreated={map => {
+                    handleMapCenterChange(map, setMarkerPosition);
+                }}
+                zoomControl={false}
+            >
+                <MapControl setUserPosition={setUserPosition} />
+                <MapCustomEvents />
+                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+                {markerPosition && <Marker position={markerPosition} />}
+                <ZoomControl position="bottomright" />
+            </MapContainer>
+            <FloatinButtonContainer>
+                <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
+            </FloatinButtonContainer>
+        </Box>
+    );
 };
 
 export default Mapa;

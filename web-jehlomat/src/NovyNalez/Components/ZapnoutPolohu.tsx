@@ -1,19 +1,20 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../Components/Buttons/TextButton/TextButton';
-import { ModalBody, ModalContainer } from '../../Components/Modal/ModalStyles';
+import {ModalBody, ModalContainer} from '../../Components/Modal/ModalStyles';
+import {LocationState} from "./types";
 
 interface IZapnoutPolohu {
     visible: boolean;
     handleAllowGeolocation: (lat: number, lng: number) => void;
     handleDenyGeolocation: () => void;
+    locationState?: LocationState;
 }
 
-const ZapnoutPolohu: FC<IZapnoutPolohu> = ({ visible, handleAllowGeolocation, handleDenyGeolocation }) => {
+const ZapnoutPolohu: FC<IZapnoutPolohu> = ({ visible, handleAllowGeolocation, handleDenyGeolocation , locationState}) => {
     const getUserGeolocation = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
-                console.log(position);
                 handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
             },
             positionError => console.log(positionError),
@@ -24,7 +25,8 @@ const ZapnoutPolohu: FC<IZapnoutPolohu> = ({ visible, handleAllowGeolocation, ha
         return (
             <ModalContainer>
                 <ModalBody>
-                    <PrimaryButton text="Povolit použítí mojí lokality" onClick={getUserGeolocation} />
+                    {locationState && locationState === LocationState.CHECKING ? <>Zjišťování stavu vaší polohy...</> : <PrimaryButton text="Povolit použítí mojí lokality" onClick={getUserGeolocation} />}
+
                     <TextButton text="Zadat místo do mapy bez mojí lokalizace" onClick={handleDenyGeolocation} />
                 </ModalBody>
             </ModalContainer>

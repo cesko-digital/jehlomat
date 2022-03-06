@@ -1,18 +1,29 @@
 import { FC, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
 import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
+import { LocationState } from './types';
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
     userSelectedLocation: [number | undefined, number | undefined];
 }
 
+const StyledContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+`;
+
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
     const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
     const [mapSize, setMapSize] = useState<Record<'height' | 'width', number> | null>(null);
+
+    const [locationState, setLocationState] = useState<LocationState>();
 
     // Je potřeba zjistit, jak dlouho po odkliknutí povolit polohu v prohlížeči
     // toto povolení vydrží a podle toho možná uložit cookie?
@@ -20,12 +31,32 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
     useEffect(() => {
         if (userSelectedLocation[0] != undefined && userSelectedLocation[1] != undefined) {
             setUserPosition(userSelectedLocation as LatLngExpression);
-        } else if ('geolocation' in navigator && userSelectedLocation[0] == undefined && userSelectedLocation[1] == undefined) {
+        } else {
+            setLocationState(LocationState.CHECKING);
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    console.log('getting location', position);
+                    if (position.coords.latitude) {
+                        handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
+                        setLocationState(LocationState.GRANTED);
+                    }
+                },
+                () => {},
+            );
+        }
+
+        if ('geolocation' in navigator && userSelectedLocation[0] == undefined && userSelectedLocation[1] == undefined) {
             setModalVisible(true);
         } else {
             setModalVisible(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (locationState === LocationState.GRANTED && modalVisible) {
+            setModalVisible(false);
+        }
+    }, [modalVisible, locationState]);
 
     /**
      * Získá aktuální velikost containeru.
@@ -60,10 +91,12 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
     };
 
     return (
-        <div id="map-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} />
-            {mapSize && mapSize.width != 0 && mapSize.height != 0 && <Mapa userPosition={userPosition} handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} />}
-        </div>
+        <StyledContainer id="map-container">
+            <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
+            {mapSize && mapSize.width != 0 && mapSize.height != 0 && (
+                <Mapa userPosition={userPosition} handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} setUserPosition={setUserPosition} />
+            )}
+        </StyledContainer>
     );
 };
 
