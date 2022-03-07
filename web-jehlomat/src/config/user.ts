@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import { AxiosResponse } from 'axios';
-import API from './baseURL';
+import {authorizedAPI} from './baseURL';
 
 interface IToken {
     "aud": string;
@@ -25,7 +25,7 @@ export const getMe = (token: string) => {
     return decoded["user-id"];
 }
 export const getUser = async (token: string) => {
-    const response: AxiosResponse<IResponse> = await API.get("/api/v1/jehlomat/user/" + getMe(token));
+    const response: AxiosResponse<IResponse> = await authorizedAPI.get("/api/v1/jehlomat/user/" + getMe(token));
     return response.data;
 }
 
