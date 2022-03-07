@@ -19,8 +19,6 @@ const FloatinButtonContainer = styled.div`
     z-index: 5;
 `;
 
-
-
 let DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: '',

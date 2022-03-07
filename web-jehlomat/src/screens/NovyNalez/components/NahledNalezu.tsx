@@ -38,8 +38,6 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
     const { lat, lng, datetime, info, count } = syringeInfo;
     return (
         <>
-            <Header mobileTitle="Kontrola zadaných údajů o nálezu" />
-
             <Container>
                 <FormWrapper>
                     <FormItem>

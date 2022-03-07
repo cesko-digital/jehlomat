@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import { Footer } from 'Components/Footer/Footer';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
@@ -8,6 +8,9 @@ import Potvrzeni from './components/Potvrzeni';
 import ZadatNalezMapa from './components/ZadatNalezMapa';
 import ZadavaniNalezu from './components/ZadavaniNalezu';
 import Container from '@mui/material/Container';
+import { authorizedAPI } from 'config/baseURL';
+import { LoginContext } from 'utils/login';
+import {isNumber} from "util";
 // import Stepper from './Components/Stepper';
 
 export interface INovaJehla {
@@ -27,8 +30,17 @@ export enum StepsEnum {
     Potvrzeni,
 }
 
+const StepsTitleMap = new Map<StepsEnum, string>([
+    [StepsEnum.Start, 'Start přidání nálezu'],
+    [StepsEnum.Mapa, 'Zadejte nález na mapě'],
+    [StepsEnum.Info, 'Info'],
+    [StepsEnum.Nahled, 'Náhled stříkačky'],
+    [StepsEnum.Potvrzeni, 'Potvrzení stříkačky'],
+]);
+
 const NovyNalezContainer: FC = () => {
     const [currentStep, setCurrentStep] = useState<StepsEnum>(StepsEnum.Start);
+    const { token } = useContext(LoginContext);
 
     const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: '', count: undefined });
 
@@ -46,9 +58,19 @@ const NovyNalezContainer: FC = () => {
         setCurrentStep(StepsEnum.Nahled);
     };
 
-    const handleOnSave = () => {
+    const handleOnSave = async () => {
         try {
-            // ASYNC CALL TO BE
+            const { lat, lng, datetime, count, info } = newSyringeInfo;
+            const apiSyringe = {
+                createdAt: datetime,
+                gps_coordinates: `${lat},${lng}`,
+                note: info,
+                ...(count ? { count:  typeof count === 'number' ? count : parseInt(count) } : {}),
+            };
+
+            const data = await authorizedAPI(token).post('/api/v1/jehlomat/syringe/', apiSyringe);
+
+            console.log('returned data', data);
             setCurrentStep(StepsEnum.Potvrzeni);
         } catch (error) {
             // Error handling 101
@@ -61,7 +83,7 @@ const NovyNalezContainer: FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Header mobileTitle="Nový nález"  />
+            <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
             {/* If desktop show stepper */}
             {/* {currentStep != 0 && <Stepper currentStep={currentStep} />} */}
             <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
@@ -91,7 +113,6 @@ const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputCha
         case StepsEnum.Info:
             return <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit} />;
         case StepsEnum.Nahled:
-            // Chybi logika odeslani na server
             return <NahledNalezu syringeInfo={newSyringeInfo} onSaveClick={handleOnSave} onEditClick={handleOnEdit} onLocationChangeClick={handleOnLocationChange} />;
         case StepsEnum.Potvrzeni:
             return <Potvrzeni />;

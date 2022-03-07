@@ -97,7 +97,6 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     return (
         <>
-            <Header mobileTitle="Zadávaní nálezu" />
             <Box minHeight={'100vh'}>
                 <Container>
                     <Card backgroundColor="#BFE3E0">

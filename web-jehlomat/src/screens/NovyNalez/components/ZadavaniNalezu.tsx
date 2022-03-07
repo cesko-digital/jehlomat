@@ -6,7 +6,6 @@ import { FormItem, FormWrapper } from '../../../Components/Form/Form';
 import { FormItemLabel } from '../../../utils/typography';
 import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import { Header } from '../../../Components/Header/Header';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
@@ -35,7 +34,6 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
 
     return (
         <>
-            <Header mobileTitle="Kontrola zadaných údajů o nálezu" />
             <Box minHeight={'100vh'}>
                 <Container>
                     <Grid container spacing={2}>
