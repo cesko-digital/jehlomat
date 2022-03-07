@@ -3,7 +3,7 @@ import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import API, { authorizedAPI } from '../../config/baseURL';
+import { authorizedAPI } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
