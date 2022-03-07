@@ -6,14 +6,14 @@ import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButt
 import Navigation from '../../../Components/Navigation/Navigation';
 import { primaryDark, white } from '../../../utils/colors';
 import { Header } from '../../../Components/Header/Header';
-import { STEPS } from '../NovyNalez';
-import whiteArrow from '../../../../src/assets/images/white-arrow.png';
+import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
+import {INovaJehla, StepsEnum} from "screens/NovyNalez/NovyNalezContainer";
 
 interface iInfo {
-    handleStepChange: (newStep: STEPS) => void;
+    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
 }
 
 const Container = styled.div`
@@ -125,7 +125,7 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                     </Card>
                     {isMobile && (
                         <Card backgroundColor="#EEF8F7">
-                            <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
+                            <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(StepsEnum.Mapa)} />
                         </Card>
                     )}
 

@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { LatLngExpression } from 'leaflet';
 import { useMap } from 'react-leaflet';
-import { primary } from '../../Components/Utils/Colors';
-import searchIcon from '../../assets/images/search.svg';
-import questionMark from '../../assets/images/question_mark.svg';
-import location from '../../assets/images/location.svg';
-import spinner from '../../assets/images/tail-spin.svg';
-import AddressSearch from '../../NovyNalez/Components/AddressSearch';
-import { ChangeView } from '../../NovyNalez/Components/ChangeView';
+import styled from '@emotion/styled';
+import { primary } from 'utils/colors';
+import searchIcon from 'assets/images/search.svg';
+import questionMark from 'assets/images/question_mark.svg';
+import location from 'assets/images/location.svg';
+import spinner from 'assets/images/tail-spin.svg';
+import AddressSearch from '../../NovyNalez/components/AddressSearch';
+import { ChangeView } from '../../NovyNalez/components/ChangeView';
 import { MapContext } from './MapContext';
 
 interface MapControlProps {
@@ -34,7 +34,7 @@ const StyledItem = styled.div<{ expanded?: boolean }>`
     margin-bottom: 19px;
     transition: 0.2s all;
 
-    ${({ expanded }) =>
+    ${({ expanded }: any) =>
         expanded &&
         `
     width: 80vw;
@@ -44,7 +44,7 @@ const StyledItem = styled.div<{ expanded?: boolean }>`
   `}
 `;
 
-export const MapControl: React.FC<MapControlProps> = ({  }) => {
+export const MapControl: React.FC<MapControlProps> = ({}) => {
     const [searchShown, setSearchShown] = useState(false);
     const [checkingPosition, setCheckingPosition] = useState(false);
     const { setPosition } = useContext(MapContext);

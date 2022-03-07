@@ -1,12 +1,12 @@
 import Box from '@mui/material/Box';
 import { FC, useState } from 'react';
-import { Footer } from '../Components/Footer/Footer';
-import { Header } from '../Components/Header/Header';
-import Info from './Components/Info';
-import NahledNalezu from './Components/NahledNalezu';
-import Potvrzeni from './Components/Potvrzeni';
-import ZadatNalezMapa from './Components/ZadatNalezMapa';
-import ZadavaniNalezu from './Components/ZadavaniNalezu';
+import { Footer } from 'Components/Footer/Footer';
+import { Header } from 'Components/Header/Header';
+import Info from 'screens/NovyNalez/components/Info';
+import NahledNalezu from 'screens/NovyNalez/components/NahledNalezu';
+import Potvrzeni from './components/Potvrzeni';
+import ZadatNalezMapa from './components/ZadatNalezMapa';
+import ZadavaniNalezu from './components/ZadavaniNalezu';
 import Container from '@mui/material/Container';
 // import Stepper from './Components/Stepper';
 
@@ -61,7 +61,7 @@ const NovyNalezContainer: FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Header />
+            <Header mobileTitle="Nový nález"  />
             {/* If desktop show stepper */}
             {/* {currentStep != 0 && <Stepper currentStep={currentStep} />} */}
             <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">

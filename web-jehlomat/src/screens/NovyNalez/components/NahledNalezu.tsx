@@ -8,7 +8,7 @@ import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import { white } from '../../../utils/colors';
 import { FormItemLabel } from '../../../utils/typography';
 
-import { INovaJehla } from '../NovyNalez';
+import { INovaJehla } from '../NovyNalezContainer';
 
 const Container = styled.div`
     display: flex;

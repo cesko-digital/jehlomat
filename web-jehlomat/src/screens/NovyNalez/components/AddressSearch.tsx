@@ -1,5 +1,5 @@
 import React from 'react';
-import TextInput from "../../Components/Inputs/TextInput/TextInput";
+import TextInput from "Components/Inputs/TextInput/TextInput";
 
 interface AddressSearchProps {
 }

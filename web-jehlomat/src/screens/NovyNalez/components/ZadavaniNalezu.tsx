@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import { INovaJehla } from '../NovyNalez';
+import { INovaJehla } from '../NovyNalezContainer';
 import { white } from '../../../utils/colors';
 import { FormItem, FormWrapper } from '../../../Components/Form/Form';
 import { FormItemLabel } from '../../../utils/typography';

@@ -3,6 +3,14 @@ import Box from '@mui/material/Box';
 import React, { FC, useEffect, useState, useContext } from 'react';
 import { MapContainer, Marker, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../constants';
+import icon from 'assets/images/marker_orange.svg';
+import 'leaflet/dist/leaflet.css';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import styled from '@emotion/styled';
+import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
+import MapControl from './MapControl';
+import { MapContext } from './MapContext';
+import { ChangeView } from './ChangeView';
 
 const FloatinButtonContainer = styled.div`
     position: absolute;
@@ -11,16 +19,7 @@ const FloatinButtonContainer = styled.div`
     z-index: 5;
 `;
 
-// Leaflet hack to make it works
-// @ts-ignore
-import icon from '../../assets/images/marker_orange.svg';
-import 'leaflet/dist/leaflet.css';
-import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-import styled from 'styled-components';
-import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
-import MapControl from './MapControl';
-import { MapContext } from './MapContext';
-import { ChangeView } from './ChangeView';
+
 
 let DefaultIcon = L.icon({
     iconUrl: icon,

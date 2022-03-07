@@ -1,8 +1,10 @@
 import { FC, Fragment, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import ZapnoutPolohu from './ZapnoutPolohu';
 import Mapa from './Mapa';
 import { LatLngExpression } from 'leaflet';
-import { INovaJehla, STEPS } from '../NovyNalez';
+import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
+import {MapContext} from "./MapContext";
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
@@ -15,6 +17,12 @@ const StyledContainer = styled.div`
     justify-content: center;
     height: 100%;
 `;
+
+export enum LocationState {
+    CHECKING =  'CHECKING',
+
+    GRANTED ='GRANTED',
+}
 
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
@@ -33,7 +41,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
             setLocationState(LocationState.CHECKING);
             navigator.geolocation.getCurrentPosition(
                 position => {
-                    console.log('getting location', position);
+
                     if (position.coords.latitude) {
                         handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
                         setLocationState(LocationState.GRANTED);
