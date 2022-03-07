@@ -1,25 +1,23 @@
-import styled, {createGlobalStyle} from "styled-components";
-import {primary} from '../../Utils/Colors';
+import styled from '@emotion/styled';
+import { media } from 'utils/media';
+import { primary } from '../../../utils/colors';
 
+export const Logo = styled.img`
+    max-width: 200px;
 
-export const Logo = styled("img")<{mobile?: boolean}>`
-  ${props => props.mobile && `
-    width: 80vw;
-`}
-`
+    @media ${media.lte('mobile')} {
+        max-width: 290px;
+    }
+`;
 
-export const Container = styled("div")<{mobile?: boolean}>`
-  background-color: ${primary};
-  ${props => !props.mobile && `
-    float: left;
+export const Container = styled.div`
+    background-color: ${primary};
     max-height: 40px;
     max-width: 300px;
     padding: 1.5em 2em;
-    `}
-${props => props.mobile && `
-    width: 100vw;
-    max-height: 100%;
-    padding: 0;
-    float: none;
-`}
-`
+
+    @media ${media.lte('mobile')} {
+        max-height: 100%;
+        padding: 0;
+    }
+`;

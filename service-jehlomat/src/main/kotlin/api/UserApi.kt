@@ -15,19 +15,19 @@ import utils.isValidPassword
 
 fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
-    return route("/") {
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-            val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
-
-            if (user != null ) {
-                call.respond(HttpStatusCode.OK, user.toUserInfo())
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
+    return route("") {
         authenticate(JWT_CONFIG_NAME) {
+            get("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
+
+                if (user != null ) {
+                    call.respond(HttpStatusCode.OK, user.toUserInfo())
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+
             post {
                 val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
                 if (!loggedInUser.isAdmin) {
@@ -67,9 +67,7 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                     }
                 }
             }
-        }
 
-        authenticate(JWT_CONFIG_NAME) {
             put {
                 val newUser = call.receive<User>()
                 val userToChange = databaseInstance.selectUserById(newUser.id)

@@ -10,6 +10,7 @@ import model.*
 import model.user.User
 import model.user.toUserInfo
 import services.*
+import services.RequestValidationWrapper.Companion.validateOrganizationRequest
 import services.RequestValidationWrapper.Companion.validatePutObject
 import utils.isValidMail
 import utils.isValidPassword
@@ -17,22 +18,7 @@ import utils.isValidUsername
 
 
 fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
-    return route("/") {
-        get {
-            call.respond(HttpStatusCode.OK, database.selectOrganizations())
-        }
-
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-            val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
-
-            if (organization != null ) {
-                call.respond(HttpStatusCode.OK, organization)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "Organization not found")
-            }
-        }
-
+    return route("") {
         post {
             val registration = call.receive<OrganizationRegistration>()
             when {
@@ -69,6 +55,37 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
         }
 
         authenticate(JWT_CONFIG_NAME) {
+            get {
+                call.respond(HttpStatusCode.OK, database.selectOrganizations())
+            }
+
+            get("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val organization = id?.let { it1 -> database.selectOrganizationById(it1) }
+
+                if (organization != null ) {
+                    call.respond(HttpStatusCode.OK, organization)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Organization not found")
+                }
+            }
+
+            get("/{id}/users") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (validateOrganizationRequest(call, jwtManager, database, id)) {
+                    val users = database.selectUsersByOrganization(id!!)
+                    call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
+                }
+            }
+
+            get("/{id}/teams") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (validateOrganizationRequest(call, jwtManager, database, id)){
+                    val teams = database.selectTeamsByOrganizationId(id!!)
+                    call.respond(HttpStatusCode.OK, teams)
+                }
+            }
+
             put {
                 val newOrganization = call.receive<Organization>()
                 val currentOrganization = database.selectOrganizationById(newOrganization.id)

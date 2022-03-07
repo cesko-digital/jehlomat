@@ -34,3 +34,27 @@ variable "database-username" {
 variable "database-password" {
   type = string
 }
+
+variable "super-admin-email" {
+  type = string
+}
+
+variable "jwt-issuer" {
+  type = string
+}
+
+variable "jwt-audience" {
+  type = string
+}
+
+variable "jwt-realm" {
+  type = string
+}
+
+variable "mailjet-public-key" {
+  type = string
+}
+
+variable "mailjet-private-key" {
+  type = string
+}

@@ -17,7 +17,7 @@ securityDefinitions:
     name: Authorization
     in: header
 paths:
-  /login/:
+  /login:
     post:
       summary: Log in the application
       consumes:
@@ -29,7 +29,7 @@ paths:
           schema:
             type: object
             properties:
-              name:
+              email:
                 type: string
               password:
                 type: string
@@ -49,6 +49,8 @@ paths:
       description: Returns a single organization
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -62,11 +64,59 @@ paths:
             $ref: '#/definitions/Organization'
         '404':
           description: Organization not found
-  /organization/:
+  /organization/{id}/users:
+    get:
+      summary: Get organization users
+      description: Returns a list of users in the requested organization
+      produces:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserInfo'
+        '404':
+          description: Organization not found
+  /organization/{id}/teams:
+    get:
+      summary: Get organization teams
+      description: Returns a list of teams in the requested organization
+      produces:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Team'
+        '404':
+          description: Organization not found
+  /organization:
     get:
       summary: Get all organizations
       produces:
         - application/json
+      security:
+        - Bearer: []
       responses:
         '200':
           description: successful operation
@@ -113,6 +163,8 @@ paths:
       description: Returns a list of syringes
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -124,7 +176,26 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/SyringeSearchResponse'
-  /syringe/:
+  /syringe/export:
+    post:
+      summary: Search syringes by parameters and returns CSV table
+      description: Returns a list of syringes in CSV format
+      produces:
+        - text/csv
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeSearch'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+  /syringe:
     post:
       summary: Add a new syringe
       description: ''
@@ -149,6 +220,8 @@ paths:
       description: ''
       consumes:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -165,6 +238,8 @@ paths:
       description: Returns a single syringe
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -180,6 +255,8 @@ paths:
     delete:
       summary: Delete syringe by ID
       description: Delete a single syringe
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -188,6 +265,24 @@ paths:
       responses:
         '200':
           description: successful operation
+  /syringe/{id}/info:
+    get:
+      summary: Get info about specific syringe
+      description: Returns a single syringe
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/SyringeInfo'
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email
@@ -218,6 +313,8 @@ paths:
       description: Returns a single team
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -231,7 +328,7 @@ paths:
             $ref: '#/definitions/Team'
         '404':
           description: Team not found
-  /team/:
+  /team:
     post:
       summary: Add a new team
       consumes:
@@ -274,6 +371,8 @@ paths:
       description: Returns a single user
       produces:
         - application/json
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -287,7 +386,7 @@ paths:
             $ref: '#/definitions/User'
         '404':
           description: User not found
-  /user/:
+  /user:
     post:
       summary: Add a new user
       consumes:
@@ -417,13 +516,8 @@ definitions:
     properties:
       id:
         type: integer
-      email:
-        type: string
       username:
         type: string
-      verified:
-        type: boolean
-        default: false
       organizationId:
         type: integer
       teamId:
@@ -485,53 +579,55 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Organization'
+  SyringeSearch:
+    type: object
+    properties:
+      locationIds:
+        type: array
+        items:
+          type: number
+      createdAt:
+        type: object
+        properties:
+          from:
+            type: integer
+            example: 1637092279
+          to:
+            type: integer
+            example: 1637092279
+      createdBy:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          type:
+            type: string
+            enum:
+              - USER
+              - TEAM
+              - ORGANIZATION
+              - ANONYMOUS
+      demolishedAt:
+        type: object
+        properties:
+          from:
+            type: integer
+            example: 1637092279
+          to:
+            type: integer
+            example: 1637092279
+      status:
+        type: string
+        enum:
+          - WAITING
+          - RESERVED
+          - DEMOLISHED
   SyringeSearchRequest:
     type: object
     properties:
       filter:
-        type: object
-        properties:
-          locationIds:
-            type: array
-            items:
-              type: number
-          createdAt:
-            type: object
-            properties:
-              from:
-                type: integer
-                example: 1637092279
-              to:
-                type: integer
-                example: 1637092279
-          createdBy:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              type:
-                type: string
-                enum:
-                  - USER
-                  - TEAM
-                  - ORGANIZATION
-                  - ANONYMOUS
-          demolishedAt:
-            type: object
-            properties:
-              from:
-                type: integer
-                example: 1637092279
-              to:
-                type: integer
-                example: 1637092279
-          status:
-            type: string
-            enum:
-              - WAITING
-              - RESERVED
-              - DEMOLISHED
+        $ref: '#/definitions/SyringeSearch'
       pageInfo:
         type: object
         properties:
@@ -621,6 +717,35 @@ definitions:
         example: false
       location:
         $ref: '#/definitions/Location'
+  SyringeInfo:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "R4YFD1AC"
+      createdAt:
+        type: integer
+        example: 1637092279
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      gps_coordinates:
+        type: string
+        example: 25.326,-31.265
+      status:
+        type: string
+        enum:
+          - WAITING
+          - RESERVED
+          - DEMOLISHED
+      location:
+        $ref: '#/definitions/Location'
   SyringeCreate:
     type: object
     properties:
@@ -662,12 +787,21 @@ definitions:
           okres:
             type: string
             example: CZ0323
+          okresName:
+            type: string
+            example: Plzeň-město
           obec:
             type: string
             example: 554791
+          obecName:
+            type: string
+            example: Plzeň
           mestkaCast:
             type: string
             example: 546003
+          mestkaCastName:
+            type: string
+            example: Plzeň 3
       organizationId:
         type: integer
         example: 0

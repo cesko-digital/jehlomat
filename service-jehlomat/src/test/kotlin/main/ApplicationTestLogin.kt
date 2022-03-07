@@ -39,7 +39,7 @@ class ApplicationTestLogin {
 
     @Test
     fun testLoginOk(): Unit = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(LoginRequest(USER.email, USER.password)))
         }) {
@@ -52,7 +52,7 @@ class ApplicationTestLogin {
 
     @Test
     fun testLoginNotExistedUser(): Unit = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(LoginRequest("notExisted@user.com", USER.password)))
         }) {
@@ -62,7 +62,7 @@ class ApplicationTestLogin {
 
     @Test
     fun testLoginWrongPassword(): Unit = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$LOGIN_API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(LoginRequest(USER.email, "wrong password")))
         }) {

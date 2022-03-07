@@ -1,6 +1,7 @@
 name: 'Deploy development web-jehlomat to S3'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -10,6 +11,8 @@ env:
   bucket: ${{ secrets.DEVELOPMENT_FRONTEND_BUCKET_NAME }}
   cloudFrontDeploymentId: ${{ secrets.AWS_CLOUDFRONT_DEVELOPMENT_DEPLOYMENT_ID }}
   name: 'web-jehlomat'
+  REACT_APP_SERVER: ${{secrets.APP_SERVER}}
+  REACT_APP_SERVER_PORT: ${{secrets.APP_SERVER_PORT}}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,17 +21,15 @@ jobs:
         uses: actions/checkout@v1
       - name: 'Build'
         run: |
-          yarn install
-          yarn build
+          npm install
+          CI=false npm run build
         working-directory: ${{ env.name }}
       - name: 'Deploy to AWS'
         run: |
           aws s3 sync --acl public-read --delete . s3://${{ env.bucket }}
           aws cloudfront create-invalidation --distribution-id ${{ env.cloudFrontDeploymentId }} --paths "/*"
-        working-directory: ${{ env.name }}/dist
+        working-directory: ${{ env.name }}/build
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'eu-central-1'
-          REACT_APP_SERVER: §{{secrets.APP_SERVER}}
-          REACT_APP_PORT: ${{secrets.APP_SERVER_PORT}}

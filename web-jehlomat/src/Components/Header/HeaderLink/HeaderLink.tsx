@@ -1,37 +1,47 @@
-import React, {FC} from 'react';
-import * as s from "./HeaderLinkStyles";
+import React, { FC } from 'react';
+import * as s from './HeaderLinkStyles';
 import { useHistory } from 'react-router-dom';
+import { isFunction } from 'formik';
 
 export enum HeaderLinkType {
     AboutApp,
     CreateOrgAccount,
     Watch,
     Login,
-
 }
 
 export interface IHeaderLink {
-    type: HeaderLinkType
-    route: string
-    mobile?: boolean
+    type?: HeaderLinkType;
+    route?: string;
+    mobile?: boolean;
+    onClick?: () => void;
 }
 
-export const HeaderLink: FC<IHeaderLink> = ({type, route, mobile}) => {
-    let history = useHistory()
+export const HeaderLink: FC<IHeaderLink> = ({ type, children, route, mobile, onClick }) => {
+    let history = useHistory();
 
-    return <s.Container mobile={mobile} onClick={ () => history.push(route) }><s.Link mobile={mobile}>{titleForType(type)}</s.Link></s.Container>
-}
+    return (
+        <s.Container
+            mobile={mobile}
+            onClick={() => {
+                route && history.push(route);
+                isFunction(onClick) && onClick();
+            }}
+        >
+            <s.Link mobile={mobile}>{type ? titleForType(type) : children}</s.Link>
+        </s.Container>
+    );
+};
 
 function titleForType(type: HeaderLinkType): string {
     switch (type) {
         case HeaderLinkType.AboutApp:
-            return "O aplikaci";
+            return 'O aplikaci';
         case HeaderLinkType.CreateOrgAccount:
-            return "Založit organizaci";
+            return 'Založit organizaci';
         case HeaderLinkType.Watch:
-            return "Sledovat nález";
+            return 'Sledovat nález';
         case HeaderLinkType.Login:
-            return "Přihlásit se";
-
+            return 'Přihlásit se';
     }
 }

@@ -1,6 +1,7 @@
 package model
 
 import kotlinx.serialization.Serializable
+import model.syringe.SyringeStatus
 import model.user.UserInfo
 import utils.UnchangeableByPut
 
@@ -20,4 +21,15 @@ data class Syringe (
     @UnchangeableByPut val gps_coordinates: String,
     @UnchangeableByPut val location: Location,
     val demolished: Boolean
+)
+
+fun Syringe.toSyringeInfo() = SyringeInfo(
+    id = id,
+    createdAt = createdAt,
+    photo = photo,
+    count = count,
+    note = note,
+    gps_coordinates = gps_coordinates,
+    location = location,
+    status = SyringeStatus.fromDbRecord(this)
 )

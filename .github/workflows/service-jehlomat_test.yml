@@ -33,14 +33,14 @@ jobs:
           DATABASE_USERNAME: jehlomat
           PGPASSWORD: password
           DATABASE_NAME: jehlomat
-          SUPER_ADMIN_EMAIL: super@admin.cz
+          SUPER_ADMIN_EMAIL: jehlomat@cesko.digital
           JWT_ISSUER: http://localhost:8082/
           JWT_AUDIENCE: http://localhost:8082/
           JWT_REALM: jehlomat
         run: |
-          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/postgis.sql
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
           psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
-          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/create_table.sql
+          psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
           ./gradlew service-jehlomat:test --no-daemon --stacktrace

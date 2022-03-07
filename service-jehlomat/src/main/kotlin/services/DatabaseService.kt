@@ -38,6 +38,7 @@ class DatabaseService(
     private val syringeCreatedByAlias = UserTable.aliased("uCreatedBy")
     private val syringeReservedByAlias = UserTable.aliased("uReservedBy")
     private val syringeDemolishedByAlias = UserTable.aliased("uDemolishedBy")
+    private val teamTableAlias = TeamTable.aliased("teamAlias")
 
     private val syringeSelectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
 
@@ -75,6 +76,7 @@ class DatabaseService(
                 username = row[table.username]!!,
                 organizationId = row[table.organizationId]!!,
                 teamId = row[table.teamId],
+                isAdmin = row[table.isAdmin]!!
             )
         } else {
             null
@@ -128,6 +130,48 @@ class DatabaseService(
             .map(mapSyringeRow)
     }
 
+    fun selectSyringes(filter: SyringeFilter, organizationId: Int?): List<CSVExportSchema> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias, organizationId)
+
+        val selectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
+        selectColumns.addAll(SyringeTable.columns)
+        selectColumns.addAll(LocationTable.columns)
+        selectColumns.addAll(syringeCreatedByAlias.columns)
+        selectColumns.addAll(syringeDemolishedByAlias.columns)
+        selectColumns.addAll(OrganizationTable.columns)
+        selectColumns.addAll(teamTableAlias.columns)
+
+        return databaseInstance.from(SyringeTable)
+            .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
+            .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
+            .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
+            .leftJoin(OrganizationTable, syringeCreatedByAlias.organizationId eq OrganizationTable.organizationId)
+            .leftJoin(teamTableAlias, teamTableAlias.teamId eq syringeCreatedByAlias.teamId)
+            .select(selectColumns)
+            .where { filterDsl }
+            .orderBy(SyringeTable.id.asc())
+            .map { row ->
+                CSVExportSchema(
+                    id = row[SyringeTable.id]!!,
+                    createdTimestamp = row[SyringeTable.createdAt]!!,
+                    createdByEmail = row[syringeCreatedByAlias.email]!!,
+                    createdByUsername = row[syringeCreatedByAlias.username]!!,
+                    destroyedByEmail = row[syringeDemolishedByAlias.email],
+                    destroyedByUsername = row[syringeDemolishedByAlias.username],
+                    destroyedTimestamp = row[SyringeTable.demolishedAt],
+                    demolishingType = Demolisher.valueOf(row[SyringeTable.demolisherType]!!).czechName(),
+                    count = row[SyringeTable.count],
+                    gpsCoordinates = row[SyringeTable.gpsCoordinates],
+                    okres = row[LocationTable.okres_name]!!,
+                    mc = row[LocationTable.mestka_cast_name]!!,
+                    obec = row[LocationTable.obec_name]!!,
+                    destroyed = if(row[SyringeTable.demolished]!!) "ANO" else "NE",
+                    teamName = row[teamTableAlias.name],
+                    organizationName =row[OrganizationTable.name]!!
+                )
+            }
+    }
+
     fun selectUserById(id: Int): User? {
         return databaseInstance
             .from(UserTable)
@@ -155,6 +199,16 @@ class DatabaseService(
             .firstOrNull()
     }
 
+    fun selectUsersByOrganization(organizationId: Int): List<User> {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { (UserTable.organizationId eq organizationId) and (UserTable.verified eq true) }
+            .orderBy(UserTable.username.asc())
+            .map(mapUserRow)
+            .toList()
+    }
+
     fun findAdmin(organization: Organization): User {
         return databaseInstance
             .from(UserTable)
@@ -168,8 +222,11 @@ class DatabaseService(
         Location(
             id = row[LocationTable.id]!!,
             obec = row[LocationTable.obec]!!,
+            obecName = row[LocationTable.obec_name]!!,
             okres = row[LocationTable.okres]!!,
+            okresName = row[LocationTable.okres_name]!!,
             mestkaCast = row[LocationTable.mestka_cast]!!,
+            mestkaCastName = row[LocationTable.mestka_cast_name]!!,
         )
     }
 
@@ -211,6 +268,18 @@ class DatabaseService(
             .firstOrNull()
     }
 
+
+    fun selectTeamsByOrganizationId(organizationId: Int): List<Team> {
+        return databaseInstance
+            .from(TeamTable)
+            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
+            .select()
+            .where { TeamTable.organization_id eq organizationId }
+            .orderBy(TeamTable.name.asc())
+            .map(mapTeamRow)
+            .toList()
+    }
+
     fun selectOrganizations(): List<Organization> {
         return databaseInstance
             .from(OrganizationTable)
@@ -222,6 +291,9 @@ class DatabaseService(
     fun updateUser(user: User) {
         databaseInstance.update(UserTable) {
             updateUserRecord(this, it, user)
+            where {
+                it.userId eq user.id
+            }
         }
     }
 
@@ -258,6 +330,9 @@ class DatabaseService(
         databaseInstance.update(OrganizationTable) {
             set(it.name, organization.name)
             set(it.verified, organization.verified)
+            where {
+                it.organizationId eq organization.id
+            }
         }
     }
 
@@ -266,6 +341,9 @@ class DatabaseService(
             set(it.name, team.name)
             set(it.location_id, getLocationId(team))
             set(it.organization_id, team.organizationId)
+            where {
+                it.teamId eq team.id
+            }
         }
     }
 
@@ -291,6 +369,9 @@ class DatabaseService(
     fun updateSyringe(syringe: Syringe) {
         databaseInstance.update(SyringeTable) {
             updateSyringeRecord(this, it, syringe)
+            where {
+                it.id eq syringe.id
+            }
         }
     }
 
@@ -337,7 +418,9 @@ class DatabaseService(
     }
 
     private fun getLocationId(team: Team): Int {
-        insertLocation(team.location.okres, team.location.mestkaCast, team.location.obec)
+        with(team.location) {
+            insertLocation(okres, okresName, mestkaCast, mestkaCastName, obec, obecName)
+        }
 
         return databaseInstance
             .from(LocationTable)
@@ -358,29 +441,33 @@ class DatabaseService(
         databaseInstance.delete(TeamTable) { it.name eq name }
     }
 
-    fun postgisLocation(table: String, gpsCoordinates: String, column: String): String {
+    private fun postgisLocation(table: String, gpsCoordinates: String, idColumn: String, nameColumn: String): LocationPart {
         val names = databaseInstance.useConnection { conn ->
             val sql =
-                "SELECT $column FROM $table WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, $table.wkb_geometry)"
+                "SELECT $idColumn, $nameColumn FROM $table WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, $table.wkb_geometry)"
 
             conn.prepareStatement(sql).use { statement ->
-                statement.executeQuery().asIterable().map { it.getString(1) }
+                statement.executeQuery().asIterable().map { LocationPart(
+                    it.getString(1), it.getString(2)
+                ) }
             }
         }
 
-        return names.firstOrNull() ?: ""
+        return names.firstOrNull() ?:
+            if (table == "sph_okres") LocationPart("", "")
+            else LocationPart("-1", "")
     }
 
-    fun getObec(gpsCoordinates: String): String {
-        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2")
+    fun getObec(gpsCoordinates: String): LocationPart {
+        return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2", "nazev_lau2")
     }
 
-    fun getMC(gpsCoordinates: String): String {
-        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc")
+    fun getMC(gpsCoordinates: String): LocationPart {
+        return postgisLocation("sph_mc", gpsCoordinates, "kod_mc", "nazev_mc")
     }
 
-    fun getOkres(gpsCoordinates: String): String {
-        return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1")
+    fun getOkres(gpsCoordinates: String): LocationPart {
+        return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1", "nazev_lau1")
     }
 
     fun getLocations(): List<Map<String, String>> {
@@ -405,23 +492,49 @@ class DatabaseService(
         }
     }
 
+    private fun getLocationName(locationId: String, table: String): String {
+        val mapTableToColumnName = mapOf(
+            "sph_okres" to "nazev_lau1",
+            "sph_obec" to "nazev_lau2",
+            "sph_mc" to "nazev_mc"
+        )
+
+        val mapTableToId = mapOf(
+            "sph_okres" to "kod_lau1",
+            "sph_obec" to "kod_lau2",
+            "sph_mc" to "kod_mc"
+        )
+
+        return databaseInstance.useConnection { conn ->
+            val sql = "SELECT ${mapTableToColumnName[table]} FROM $table WHERE ${mapTableToId[table]} = '$locationId'"
+            conn.prepareStatement(sql).use { statement ->
+                statement.executeQuery().asIterable().map {
+                    it.getString(1)
+                }
+            }
+        }.first()
+    }
+
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
         val okres = getOkres(gpsCoordinates)
 
         return listOfNotNull(
-            Location(0, okres, obec, mc),
-            Location(0, okres, obec, ""),
-            Location(0, okres, "", ""),
+            Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, mc.id.toInt(), mc.name),
+            Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, -1, ""),
+            Location(0, okres.id, okres.name, -1, "", -1, ""),
         )
     }
 
-    fun insertLocation(district: String, locality: String, town:String): Location {
+    fun insertLocation(district: String, districtName:String, locality: Int, localityName: String, town: Int, townName: String): Location {
         val id = databaseInstance.insertOrUpdateReturning(LocationTable, LocationTable.id) {
             set(it.mestka_cast, locality)
+            set(it.mestka_cast_name, localityName)
             set(it.okres, district)
+            set(it.okres_name, districtName)
             set(it.obec, town)
+            set(it.obec_name, townName)
             onConflict(it.mestka_cast, it.okres, it.obec) { doNothing() }
         }
 
@@ -437,10 +550,10 @@ class DatabaseService(
         val locality = getMC(gpsCoordinates)
         val district = getOkres(gpsCoordinates)
 
-        return selectLocation(district, locality, town)
+        return selectLocation(district.id, locality.id.toInt(), town.id.toInt())
     }
 
-    private fun selectLocation(district: String, locality: String, town: String): Location? {
+    private fun selectLocation(district: String, locality: Int, town: Int): Location? {
         return (selectLocationInner((LocationTable.mestka_cast eq locality) and (LocationTable.obec eq town) and (LocationTable.okres eq district))
             ?: run { selectLocationInner((LocationTable.obec eq town) and (LocationTable.okres eq district)) }
             ?: run { selectLocationInner(LocationTable.okres eq district) })
@@ -459,7 +572,8 @@ class DatabaseService(
         val locality = getMC(gpsCoordinates)
         val district = getOkres(gpsCoordinates)
 
-        return selectLocation(district, locality, town) ?: insertLocation(district, locality, town)
+        return selectLocation(district.id, locality.id.toInt(), town.id.toInt())
+            ?: insertLocation(district.id, district.name, locality.id.toInt(), locality.name, town.id.toInt(), town.name)
     }
 
     fun resolveNearestTeam(gpsCoordinates: String): Team? {
@@ -506,6 +620,10 @@ class DatabaseService(
 
     fun <T> useTransaction(func: () -> T): T {
         databaseInstance.useTransaction { return func.invoke() }
+    }
+
+    fun <T> useConnection(func: (java.sql.Connection) -> T): T {
+        databaseInstance.useConnection { return func.invoke(it) }
     }
 
     fun createSqlFormatter(): SqlFormatter {

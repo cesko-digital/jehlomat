@@ -28,7 +28,7 @@ const val API_PATH = "/api/v1/jehlomat/user"
 val team = Team(
     2,
     "name",
-    Location(0,okres="CZ0323", obec="554791", mestkaCast="546003"),
+    Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3"),
     1,
 )
 
@@ -46,7 +46,7 @@ val USER = User(
 
 val SUPER_ADMIN = User(
     4,
-    "super@admin.cz",
+    "jehlomat@cesko.digital",
     "Super Admin",
     "aaAA11aa",
     true,
@@ -85,7 +85,9 @@ class ApplicationTest {
     @Test
     fun testGetUser() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Get, "$API_PATH/$userId") {
+            addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
@@ -93,7 +95,8 @@ class ApplicationTest {
   "id" : """ + userId + """,
   "username" : "Franta Pepa 1",
   "organizationId" : """ + defaultOrgId + """,
-  "teamId" : """ + defaultTeamId + """
+  "teamId" : """ + defaultTeamId + """,
+  "isAdmin" : false
 }""",
                 response.content
             )
@@ -102,7 +105,11 @@ class ApplicationTest {
 
     @Test
     fun testGetUserNotFound() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Get, "$API_PATH/not_exists_username")) {
+        database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = null))
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, "$API_PATH/not_exists_username") {
+            addHeader("Authorization", "Bearer $token")
+        }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertEquals(null, response.content)
         }
@@ -113,7 +120,7 @@ class ApplicationTest {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(USER.email, USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(
@@ -142,7 +149,7 @@ class ApplicationTest {
     fun testPutUserNotLogged() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(USER.copy(password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
         }) {
@@ -156,7 +163,7 @@ class ApplicationTest {
         database.insertUser(USER.copy(email = "different@email.cz", username = "different user", organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser("different@email.cz", USER.password)
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(USER.copy(verified = true, password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
@@ -169,7 +176,7 @@ class ApplicationTest {
     fun testPutUserIncorrectToken() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
 
-        with(handleRequest(HttpMethod.Put, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Put, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer asdasfasdf")
             setBody(Json.encodeToString(USER.copy(password = "new password", id = userId, organizationId = defaultOrgId, teamId = defaultTeamId)))
@@ -181,11 +188,11 @@ class ApplicationTest {
 
     @Test
     fun testPostUser() = withTestApplication({ module(testing = true) }) {
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
-        val token = loginUser("org@admin.cz", USER.password)
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        val token = loginUser("org@cesko.digital", USER.password)
 
         val emailToTest = "email@email.email"
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$API_PATH") {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(UserRegistrationRequest(emailToTest)))
@@ -207,10 +214,10 @@ class ApplicationTest {
 
     @Test
     fun testPostAlreadyExistingUser() = withTestApplication(Application::module) {
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
-        val token = loginUser("org@admin.cz", USER.password)
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        val token = loginUser("org@cesko.digital", USER.password)
 
-        with(handleRequest(HttpMethod.Post, "$API_PATH/") {
+        with(handleRequest(HttpMethod.Post, "$API_PATH") {
             database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
             addHeader("Authorization", "Bearer $token")
             addHeader("Content-Type", "application/json")

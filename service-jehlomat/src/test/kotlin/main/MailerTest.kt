@@ -21,7 +21,8 @@ val user = UserInfo(
     1,
     "Franta Pepa 1",
     1,
-    null
+    null,
+    false
 )
 
 class MailerTest {

@@ -1,25 +1,23 @@
-import styled, { createGlobalStyle } from 'styled-components';
-import { primary } from '../Utils/Colors';
+import styled from '@emotion/styled';
+import { primary } from '../../utils/colors';
 
-export const GlobalBody = createGlobalStyle`
-  body {
-    padding-top: 56px;
-  }
-`;
-
-export const Container = styled.div`
+export const Container = styled.div<{ mobile?: boolean }>`
     display: flex;
     flex-direction: row;
     height: 56px;
     width: 100%;
-
     position: fixed;
     top: 0;
     left: 0;
-
     z-index: 200;
-
     background-color: ${primary};
+
+    ${props =>
+        !props.mobile &&
+        `
+        position: static;
+        width: auto;
+    `}
 `;
 
 export const NavIcon = styled.div`

@@ -9,13 +9,13 @@ on:
 env:
   name: 'web-jehlomat'
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v1
       - name: 'Build'
         run: |
-          yarn install
-          yarn build
+          npm install
+          CI=false npm run build
         working-directory: ${{ env.name }}

@@ -1,9 +1,8 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import AddButton from './Buttons/AddButton/AddButton';
 import PrimaryButton from './Buttons/PrimaryButton/PrimaryButton';
 import SecondaryButton from './Buttons/SecondaryButton/SecondaryButton';
-import PasswordInput from './Inputs/PasswordInput/PasswordInput';
 import SearchInput from './Inputs/SearchInput/SearchInput';
 import TextInput from './Inputs/TextInput/TextInput';
 
@@ -18,12 +17,11 @@ const Layout = styled.div`
 const StoryBook: FC<StoryBook> = ({}) => {
     return (
         <Layout>
-            <PrimaryButton onClick={e => alert('PrimaryButton')} text="Primary" />
-            <SecondaryButton onClick={e => alert('SecondaryButton')} text="Secondary" />
-            <AddButton onClick={e => alert('AddButton')} />
+            <PrimaryButton onClick={_ => alert('PrimaryButton')} text="Primary" />
+            <SecondaryButton onClick={_ => alert('SecondaryButton')} text="Secondary" />
+            <AddButton onClick={_ => alert('AddButton')} />
             <TextInput onChange={e => console.log(e.target.value)} />
             <SearchInput onChange={e => console.log(e.target.value)} />
-            <PasswordInput />
         </Layout>
     );
 };

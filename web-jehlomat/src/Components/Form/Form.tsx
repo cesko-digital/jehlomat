@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Wrapper = styled.section`
     height: 100%;
@@ -18,7 +18,9 @@ export const FormItem = styled.div`
     display: flex;
     flex-direction: column;
     align-items: baseline;
-    
+    justify-content: center;
+    text-align: left;
+    width: 80%;
     font-family: Roboto;
     margin: 10px;
   
