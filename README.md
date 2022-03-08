@@ -39,6 +39,50 @@ export MAILJET_PRIVATE_KEY=private-key-for-mailjet
 ./gradlew run --parallel
 ```
 
+# Run hybrid backend application
+
+> This approach is useful mostly for FE development.
+
+By hybrid means, the BE service will be run locally but the database will be run via docker, so it will not be necessary to install the DB and run it 1. locally.
+
+## Installation
+
+1. Install [Java 8 SDK](https://www.oracle.com/java/technologies/downloads/#java8)
+2. Install Kotlin 1.3.72 (preferable) or 1.4.30
+3. Install Docker (to run DB)
+4. Install Gradle (to run BE Kotlin services)
+
+## Run
+
+1. Set environment variables from **Run backend application locally** block
+2. Checkout to`docker-local-dev` (only to run docker)
+3. In the root run `docker compose up`
+4. Save somewhere the content of the `application.conf`
+5. Create `users` relations:
+    1. Run `docker ps`, you should see a table with just one row. It is your running container. Remember its container id, we will need it in the next step
+    2. Run commands from **Run backend application locally** block, point 3 and 4, but with a prefix `docker exec -it <container_id> <command>`, it will let execute postgre commands **inside** the container. For example:
+    ```shell
+    docker exec -it 0c30405530ec psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
+    ```
+6. Checkout back to your branch
+7. Replace the content of the `application.conf` with the new settings from point 4
+8. In the root run `./gradlew run --parallel`
+
+## Most common errors
+
+### Kotlin could not find the required JDK tools in the Java installation  used by Gradle. Make sure Gradle is running on a JDK, not JRE.
+
+Make sure Java 8 SDK is installed.
+
+### Could not initialize class org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
+
+Version compatibility of Java and Kotlin is incorrect. Make sure the proper versions are installed.
+
+
+### Receive Error 500 on a server request and/or Relation "users" does not exist.
+
+Makr sure you did point 5 in "Run" block.
+
 # Swagger UI
 
 ```
