@@ -1,8 +1,11 @@
-import {FC} from 'react';
+import { FC } from 'react';
+import Box from '@mui/material/Box';
+
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../../Components/Buttons/TextButton/TextButton';
-import {ModalBody, ModalContainer} from './../../../Components/Modal/ModalStyles';
-import {LocationState} from "./types";
+import { ModalBody, ModalContainer } from './../../../Components/Modal/ModalStyles';
+import { LocationState } from './types';
+import { primary } from 'utils/colors';
 
 interface Props {
     visible: boolean;
@@ -11,7 +14,7 @@ interface Props {
     locationState?: LocationState;
 }
 
-const ZapnoutPolohu: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyGeolocation , locationState}) => {
+const ZapnoutPolohu: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyGeolocation, locationState }) => {
     const getUserGeolocation = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -25,9 +28,14 @@ const ZapnoutPolohu: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyG
         return (
             <ModalContainer>
                 <ModalBody>
-                    {locationState && locationState === LocationState.CHECKING ? <>Zjišťování stavu vaší polohy...</> : <PrimaryButton text="Povolit použítí mojí lokality" onClick={getUserGeolocation} />}
-
-                    <TextButton text="Zadat místo do mapy bez mojí lokalizace" onClick={handleDenyGeolocation} />
+                    {locationState && locationState === LocationState.CHECKING ? (
+                        <Box sx={{ fontSize: 'h5.fontSize' }}>Zjišťování stavu vaší polohy...</Box>
+                    ) : (
+                        <PrimaryButton text="Povolit použítí mojí lokality" onClick={getUserGeolocation} />
+                    )}
+                    <Box mt={1}>
+                        <TextButton color={primary} text="Zadat místo do mapy bez mojí lokalizace" onClick={handleDenyGeolocation} />
+                    </Box>
                 </ModalBody>
             </ModalContainer>
         );

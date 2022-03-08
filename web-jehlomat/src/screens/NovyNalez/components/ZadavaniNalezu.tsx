@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
+
 import { INovaJehla } from '../NovyNalezContainer';
 import { white } from '../../../utils/colors';
 import { FormItem, FormWrapper } from '../../../Components/Form/Form';
@@ -8,6 +9,9 @@ import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+import TextField from '@mui/material/TextField';
+import dayjs from "dayjs";
 
 const Container = styled.div`
     display: flex;
@@ -45,7 +49,20 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                 </FormItem>
                                 <FormItem>
                                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                                    <TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />
+                                    {/*<TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />*/}
+                                    <DateTimePicker
+                                        renderInput={(props) => <TextField {...props} fullWidth />}
+                                        value={datetime}
+                                        cancelText="Zrušit"
+                                        clearText="Vymazat"
+                                        todayText="Dnes"
+
+                                        maxDateTime={dayjs()}
+                                        onChange={(newValue) => {
+
+                                            newValue && onInputChange('datetime', dayjs(newValue.$d).unix())
+                                        }}
+                                    />
                                 </FormItem>
                                 <FormItem>
                                     <FormItemLabel>Poznámky</FormItemLabel>

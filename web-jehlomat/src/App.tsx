@@ -2,6 +2,9 @@ import React, { FC, Suspense } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { routes } from 'routes';
+import csLocale from "dayjs/locale/cs";
+import DateAdapter from '@mui/lab/AdapterDayjs';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Footer } from 'Components/Footer/Footer';
 import { LoginContext, useLogin } from 'utils/login';
 import PrivateRoute from 'config/protectedRoute';
@@ -17,7 +20,7 @@ const Router: FC = () => (
                             {AdditionalComponents && <AdditionalComponents />}
                             <Component exact={exact} />
                         </PrivateRoute>
-                    )
+                    );
                 } else {
                     return (
                         <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
@@ -39,7 +42,11 @@ const Providers: FC = ({ children }) => {
             token = localStorage.getItem('auth');
         }
     }
-    return <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>;
+    return (
+        <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
+            <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>{' '}
+        </LocalizationProvider>
+    );
 };
 
 const App: FC = ({ children }) => {

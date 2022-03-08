@@ -19,10 +19,10 @@ const Button = styled.button`
     margin-bottom: 10px;
 `;
 
-const TextButton: FC<ITextButton> = ({ text, ...props }) => {
+const TextButton: FC<ITextButton> = ({ text, color, ...props }) => {
     return (
         <Button {...props}>
-            <Typography sx={{ fontWeight: 'bold', lineHeight: '18px' }}>{text}</Typography>
+            <Typography sx={{ fontWeight: 'bold', lineHeight: '18px' , color: color }}>{text}</Typography>
         </Button>
     );
 };

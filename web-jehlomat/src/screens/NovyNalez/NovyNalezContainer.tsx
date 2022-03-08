@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import { FC, useContext, useState } from 'react';
+import dayjs from 'dayjs';
 import { Footer } from 'Components/Footer/Footer';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
@@ -7,10 +10,9 @@ import NahledNalezu from 'screens/NovyNalez/components/NahledNalezu';
 import Potvrzeni from './components/Potvrzeni';
 import ZadatNalezMapa from './components/ZadatNalezMapa';
 import ZadavaniNalezu from './components/ZadavaniNalezu';
-import Container from '@mui/material/Container';
 import { authorizedAPI } from 'config/baseURL';
 import { LoginContext } from 'utils/login';
-import {isNumber} from "util";
+import { isNumber } from 'util';
 // import Stepper from './Components/Stepper';
 
 export interface INovaJehla {
@@ -61,17 +63,21 @@ const NovyNalezContainer: FC = () => {
     const handleOnSave = async () => {
         try {
             const { lat, lng, datetime, count, info } = newSyringeInfo;
+            const dateObj = dayjs(datetime);
+
             const apiSyringe = {
-                createdAt: datetime,
+                createdAt: dateObj.unix(),
                 gps_coordinates: `${lat},${lng}`,
                 note: info,
-                ...(count ? { count:  typeof count === 'number' ? count : parseInt(count) } : {}),
+                ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-            const data = await authorizedAPI(token).post('/api/v1/jehlomat/syringe/', apiSyringe);
+            const data = await authorizedAPI(token).post('/api/v1/jehlomat/syringe', apiSyringe);
 
             console.log('returned data', data);
-            setCurrentStep(StepsEnum.Potvrzeni);
+            if (data.status === 200) {
+                setCurrentStep(StepsEnum.Potvrzeni);
+            }
         } catch (error) {
             // Error handling 101
             console.log(error);
@@ -80,6 +86,17 @@ const NovyNalezContainer: FC = () => {
 
     const handleOnEdit = () => setCurrentStep(StepsEnum.Info);
     const handleOnLocationChange = () => setCurrentStep(StepsEnum.Mapa);
+
+    useEffect(() => {
+        // check syringe data and no datetime set, set now
+        if(currentStep === StepsEnum.Nahled){
+            const {  datetime } = newSyringeInfo;
+
+            if(!datetime ) {
+                handleInputChange('datetime', dayjs())
+            }
+        }
+    }, [currentStep]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
