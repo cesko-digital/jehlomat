@@ -1,5 +1,6 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from '@emotion/styled';
+import { DatePicker } from 'Components/Inputs/DatePicker/DatePicker';
 
 import { INovaJehla } from '../NovyNalezContainer';
 import { white } from '../../../utils/colors';
@@ -11,7 +12,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import TextField from '@mui/material/TextField';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const Container = styled.div`
     display: flex;
@@ -28,13 +29,14 @@ const ButtonContainer = styled.div`
 `;
 
 interface Props {
-    onInputChange: (key: string, value: string) => void;
+    onInputChange: (key: string, value: string | number) => void;
     onSumbit: () => void;
     syringeInfo: INovaJehla;
 }
 
 const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => {
     const { info, datetime, count } = syringeInfo;
+    const currentTime = useMemo(() => dayjs(), []);
 
     return (
         <>
@@ -50,16 +52,13 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                 <FormItem>
                                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
                                     {/*<TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />*/}
-                                    <DateTimePicker
-                                        renderInput={(props) => <TextField {...props} fullWidth />}
-                                        value={datetime}
-                                        cancelText="Zrušit"
-                                        clearText="Vymazat"
-                                        todayText="Dnes"
-                                        maxDateTime={dayjs()}
-                                        onChange={(newValue) => {
-                                            newValue && onInputChange('datetime', dayjs(newValue.$d).unix())
+                                    <DatePicker
+                                        value={datetime || currentTime.unix()}
+                                        maxDateTime={currentTime}
+                                        onChange={newValue => {
+                                            newValue && onInputChange('datetime', newValue);
                                         }}
+                                        toolbarTitle="Vyberte datum a čas nálezu"
                                     />
                                 </FormItem>
                                 <FormItem>

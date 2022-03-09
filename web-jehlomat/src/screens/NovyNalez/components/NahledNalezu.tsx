@@ -52,7 +52,7 @@ const NahledNalezu: FC<INahledNalezu> = ({ syringeInfo, onEditClick, onLocationC
                     <TextButton text="Zobrazit a upravit na mapě" onClick={onLocationChangeClick} />
                     <FormItem>
                         <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                        <TextInput type="text" readOnly value={dayjs(datetime).format('D. M. YYYY H:mm')} placeholder="Datum nebylo zadáno" disabled />
+                        <TextInput type="text" readOnly value={datetime && dayjs.unix(datetime).format('D. M. YYYY H:mm')} placeholder="Datum nebylo zadáno" disabled />
                     </FormItem>
                     <FormItem>
                         <FormItemLabel>Poznámky k nálezu</FormItemLabel>

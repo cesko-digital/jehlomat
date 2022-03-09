@@ -19,9 +19,9 @@ export interface INovaJehla {
     lat: number | undefined;
     lng: number | undefined;
     info: string | undefined;
-    datetime: string | undefined;
+    datetime: number | undefined; // unix
     count: number | undefined;
-    // TODO: Přidat možnost fotky
+    photo: string | undefined;
 }
 
 export enum StepsEnum {
@@ -44,7 +44,7 @@ const NovyNalezContainer: FC = () => {
     const [currentStep, setCurrentStep] = useState<StepsEnum>(StepsEnum.Start);
     const { token } = useContext(LoginContext);
 
-    const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: '', count: undefined });
+    const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: dayjs().unix(), count: undefined, photo: undefined });
 
     const handleStepChange = (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => {
         if (newInfo != null) {
@@ -54,7 +54,7 @@ const NovyNalezContainer: FC = () => {
         setCurrentStep(newStep);
     };
 
-    const handleInputChange = (key: string, value: string) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
+    const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
 
     const handleOnSubmit = () => {
         setCurrentStep(StepsEnum.Nahled);
@@ -63,11 +63,10 @@ const NovyNalezContainer: FC = () => {
     const handleOnSave = async () => {
         try {
             const { lat, lng, datetime, count, info } = newSyringeInfo;
-            const dateObj = dayjs(datetime);
 
             const apiSyringe = {
-                createdAt: dateObj.unix(),
-                gps_coordinates: `${lat},${lng}`,
+                createdAt: datetime,
+                gps_coordinates: `${lat} ${lng}`,
                 note: info,
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
@@ -87,16 +86,6 @@ const NovyNalezContainer: FC = () => {
     const handleOnEdit = () => setCurrentStep(StepsEnum.Info);
     const handleOnLocationChange = () => setCurrentStep(StepsEnum.Mapa);
 
-    useEffect(() => {
-        // check syringe data and no datetime set, set now
-        if(currentStep === StepsEnum.Nahled){
-            const {  datetime } = newSyringeInfo;
-
-            if(!datetime ) {
-                handleInputChange('datetime', dayjs())
-            }
-        }
-    }, [currentStep]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -142,7 +131,7 @@ interface INovyNalez {
     currentStep: StepsEnum;
     newSyringeInfo: INovaJehla;
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
-    handleInputChange: (key: string, value: string) => void;
+    handleInputChange: (key: string, value: string | number) => void;
     handleOnSubmit: () => void;
     handleOnSave: () => void;
     handleOnEdit: () => void;
