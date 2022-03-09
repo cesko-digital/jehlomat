@@ -207,12 +207,12 @@ paths:
           description: Found syringe object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/Syringe'
+            $ref: '#/definitions/SyringeCreateReq'
       responses:
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/SyringeCreate'
+            $ref: '#/definitions/SyringeCreateRes'
         '409':
           description: Conflict
     put:
@@ -737,7 +737,7 @@ definitions:
         example: "note 1"
       gps_coordinates:
         type: string
-        example: 25.326,-31.265
+        example: 25.326 -31.265
       status:
         type: string
         enum:
@@ -746,7 +746,28 @@ definitions:
           - DEMOLISHED
       location:
         $ref: '#/definitions/Location'
-  SyringeCreate:
+  SyringeCreateReq:
+    type: object
+    properties:
+      createdAt:
+        type: integer
+        example: 1637092279
+      createdBy:
+        type: integer
+        example: 123
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      gps_coordinates:
+        type: string
+        example: 25.326 -31.265
+  SyringeCreateRes:
     type: object
     properties:
       id:

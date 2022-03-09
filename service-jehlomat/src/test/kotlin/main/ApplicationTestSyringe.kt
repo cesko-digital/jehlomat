@@ -261,7 +261,7 @@ class ApplicationTestSyringe {
     fun testPutSyringe() = withTestApplication(Application::module) {
         val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH") {
+        with(handleRequest(HttpMethod.Put, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, createdBy = defaultUser, demolisherType = Demolisher.CITY_POLICE)))
@@ -281,7 +281,7 @@ class ApplicationTestSyringe {
     fun testPutSyringeWrongChange() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
         val syringeId = database.insertSyringe(defaultSyringe)
-        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH") {
+        with(handleRequest(HttpMethod.Put, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, count = -100)))
@@ -304,9 +304,9 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPostSyringe() = withTestApplication({ module(testing = true) }) {
-        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH") {
+        with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(defaultSyringe.copy(createdBy = defaultUser)))
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = defaultUser))))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualSyringes = database.selectSyringes()
@@ -325,12 +325,12 @@ class ApplicationTestSyringe {
 
     @Test
     fun testPostSyringeWithWrongUser() = withTestApplication({ module(testing = true) }) {
-        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH") {
+        with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(defaultSyringe.copy(createdBy = UserInfo(
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = UserInfo(
                 id = 0, "", 0, null, false
             )
-            )))
+            ))))
         }) {
             assertEquals(HttpStatusCode.BadRequest, response.status())
         }
@@ -346,5 +346,16 @@ class ApplicationTestSyringe {
             assertEquals(HttpStatusCode.NoContent, response.status())
             verify(exactly = 1) { mailerMock.sendSyringeFindingConfirmation("email@email.cz", syrId!!) }
         }
+    }
+
+    fun createRequestFromDbObject(original: Syringe): SyringeCreateRequest{
+        return SyringeCreateRequest(
+            createdAt = original.createdAt,
+            createdBy = original.createdBy?.id,
+            photo = original.photo,
+            count = original.count,
+            note = original.note,
+            gps_coordinates = original.gps_coordinates
+        )
     }
 }
