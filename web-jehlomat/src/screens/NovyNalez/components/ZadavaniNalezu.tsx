@@ -56,10 +56,8 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                         cancelText="Zrušit"
                                         clearText="Vymazat"
                                         todayText="Dnes"
-
                                         maxDateTime={dayjs()}
                                         onChange={(newValue) => {
-
                                             newValue && onInputChange('datetime', dayjs(newValue.$d).unix())
                                         }}
                                     />
