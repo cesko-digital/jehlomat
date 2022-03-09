@@ -12,6 +12,8 @@ import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
 import model.pagination.ensureValidity
 import model.syringe.*
+import model.user.User
+import model.user.toUserInfo
 import services.*
 import utils.isValidMail
 import java.time.Instant
@@ -97,24 +99,26 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
         }
 
         post {
-            val syringe = call.receive<Syringe>()
-            if (syringe.createdBy != null) {
-                val user = database.selectUserById(syringe.createdBy.id)
-                if (user == null) {
+            val syringeRequest = call.receive<SyringeCreateRequest>()
+            var userCreatedBy: User? = null
+            if (syringeRequest.createdBy != null) {
+                userCreatedBy = database.selectUserById(syringeRequest.createdBy)
+                if (userCreatedBy == null) {
                     call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
                     return@post
                 }
             }
 
-            val location = database.selectOrInsertLocation(syringe.gps_coordinates)
+            val location = database.selectOrInsertLocation(syringeRequest.gps_coordinates)
 
-            val syringeId = database.insertSyringe(syringe.copy(location = location))
+            val syringe = syringeRequest.toSyringe(location, userCreatedBy?.toUserInfo())
+            val syringeId = database.insertSyringe(syringe)
             if (syringeId == null) {
                 call.respond(HttpStatusCode.InternalServerError, "A syringe cannot be created, please try again later")
                 return@post
             }
 
-            val teamsInLocation = database.resolveTeamsInLocation(syringe.gps_coordinates)
+            val teamsInLocation = database.resolveTeamsInLocation(syringeRequest.gps_coordinates)
             teamsInLocation.forEach {
                 val organization = database.selectOrganizationById(it.organizationId)
                 val admin = database.findAdmin(organization!!)

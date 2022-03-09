@@ -1,17 +1,17 @@
 package main
 
 import api.*
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
-import io.ktor.http.content.*
 import io.ktor.jackson.*
-import io.ktor.response.*
 import io.ktor.http.*
-import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -38,7 +38,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 
 @Suppress("unused", "UNUSED_PARAMETER") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
+@JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
     install(CORS){
@@ -55,6 +55,19 @@ fun Application.module(testing: Boolean = false) {
         allowSameOrigin = true
     }
 
+    install(StatusPages) {
+        exception<MissingKotlinParameterException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} is missing.")
+        }
+
+        exception<JsonMappingException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} has a wrong type.")
+        }
+
+        exception<Throwable> {
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+    }
 
     install(ContentNegotiation) {
         jackson {
