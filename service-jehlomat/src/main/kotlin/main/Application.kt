@@ -64,7 +64,8 @@ fun Application.module(testing: Boolean = false) {
             call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} has a wrong type.")
         }
 
-        exception<Throwable> {
+        exception<Throwable> { cause ->
+            log.error("Uncaught exception ${cause.message} \n ${cause.stackTraceToString()}")
             call.respond(HttpStatusCode.InternalServerError)
         }
     }
