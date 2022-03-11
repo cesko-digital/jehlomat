@@ -11,7 +11,7 @@ import SignInImage from "assets/images/sign-in.svg";
 import {Header} from "Components/Header/Header";
 import PrimaryButton from "Components/Buttons/PrimaryButton/PrimaryButton";
 import TwoColumns from "Components/Layout/TwoColumns";
-import {Input,Inputs,FormTitle,TransparentForm,Buttons,Illustration} from "./Components";
+import {Input,Inputs,FormTitle,TransparentForm,ButtonsContainer,Illustration} from "./Components";
 
 const texts = {
   TITLE: "Nové heslo",
@@ -67,13 +67,18 @@ const ResetPassword: FunctionComponent = () => {
         hasOwnProperty(response.data, "status")
       ) {
         const fieldName = response.data.fieldName as string;
-        
         setErrors({ 
           [fieldName]: response.data.status,
         });
+        
+        return;
       }
+
+      history.push('/');
     } catch (error: unknown) {
-      console.log("Unable to set a new password", error);
+      console.warn("Unable to set a new password", error);
+      
+      history.push('/error');
     }
   };
   
@@ -95,40 +100,38 @@ const ResetPassword: FunctionComponent = () => {
                 errors,
                 isValid
               }
-            ) => {
-              return (
-                <TransparentForm onSubmit={handleSubmit}>
-                  <FormTitle>{texts.TITLE}</FormTitle>
-                  <Inputs>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                      type="password"
-                      name="password"
-                      placeholder={texts.INPUT__PASS__PLACEHOLDER}
-                      label={texts.INPUT__PASS__LABEL}
-                      required={true}
-                      error={(touched.password && errors.password) ? errors.password : undefined}
-                    />
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.rePassword}
-                      type="password"
-                      name="rePassword"
-                      placeholder={texts.INPUT__RE_PASS__PLACEHOLDER}
-                      label={texts.INPUT__RE_PASS__LABEL}
-                      required={true}
-                      error={(touched.rePassword && errors.rePassword) ? errors.rePassword : undefined}
-                    />
-                  </Inputs>
-                  <Buttons>
-                    <PrimaryButton text={texts.BUTTONS__SEND} type="submit" disabled={!isValid} />
-                  </Buttons>
-                </TransparentForm>
-              );
-            }}
+            ) => (
+              <TransparentForm onSubmit={handleSubmit}>
+                <FormTitle>{texts.TITLE}</FormTitle>
+                <Inputs>
+                  <Input
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    type="password"
+                    name="password"
+                    placeholder={texts.INPUT__PASS__PLACEHOLDER}
+                    label={texts.INPUT__PASS__LABEL}
+                    required={true}
+                    error={(touched.password && errors.password) ? errors.password : undefined}
+                  />
+                  <Input
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.rePassword}
+                    type="password"
+                    name="rePassword"
+                    placeholder={texts.INPUT__RE_PASS__PLACEHOLDER}
+                    label={texts.INPUT__RE_PASS__LABEL}
+                    required={true}
+                    error={(touched.rePassword && errors.rePassword) ? errors.rePassword : undefined}
+                  />
+                </Inputs>
+                <ButtonsContainer>
+                  <PrimaryButton text={texts.BUTTONS__SEND} type="submit" disabled={!isValid} />
+                </ButtonsContainer>
+              </TransparentForm>
+            )}
           </Formik>
         )}
         right={isDesktop && (
