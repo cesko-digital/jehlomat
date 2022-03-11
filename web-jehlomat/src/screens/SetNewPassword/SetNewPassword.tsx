@@ -7,6 +7,7 @@ import * as yup from "yup";
 import API from "config/baseURL";
 import {media} from "utils/media";
 import hasOwnProperty from "utils/hasOwnProperty";
+import {PASSWORD_COMPLEXITY} from "utils/constants";
 import SignInImage from "assets/images/sign-in.svg";
 import {Header} from "Components/Header/Header";
 import PrimaryButton from "Components/Buttons/PrimaryButton/PrimaryButton";
@@ -39,7 +40,7 @@ const init: ResetPasswordFormProps = {
 
 const schema = yup.object({
   password: yup.string()
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/, texts.VALIDATIONS__SYMBOLS)
+    .matches(PASSWORD_COMPLEXITY, texts.VALIDATIONS__SYMBOLS)
     .min(8, texts.VALIDATIONS__MIN_LENGTH)
     .required(texts.VALIDATIONS__REQUIRED),
   rePassword: yup.string().oneOf([yup.ref('password')], texts.VALIDATIONS__MATCH),

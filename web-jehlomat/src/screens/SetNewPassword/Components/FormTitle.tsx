@@ -1,7 +1,7 @@
 ﻿import {styled} from "@mui/material";
-import {Heading2} from "utils/typography";
 import {size} from "utils/spacing";
+import Heading from "./Heading";
 
-export const FormTitle = styled(Heading2)({
+export const FormTitle = styled(Heading)({
   paddingBottom: size(10),
 });
