@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS public.syringes CASCADE;
+DROP TABLE IF EXISTS public.team_locations CASCADE;
 DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.organizations CASCADE;
@@ -22,15 +23,24 @@ CREATE TABLE public.locations(
     CONSTRAINT unique_location UNIQUE (okres, obec, mestka_cast)
 );
 
-
 CREATE TABLE public.teams(
     team_id SERIAL PRIMARY KEY,
     name TEXT not null,
     organization_id INT NOT NULL,
-    location_id INT NOT NULL,
 
     CONSTRAINT fk_organization FOREIGN KEY(organization_id)
-        REFERENCES organizations(organization_id),
+        REFERENCES organizations(organization_id)
+);
+
+CREATE TABLE public.team_locations(
+    team_location_id SERIAL PRIMARY KEY,
+    team_id INT NOT NULL,
+    location_id INT NOT NULL,
+
+    CONSTRAINT unique_team_location UNIQUE (team_id, location_id),
+
+    CONSTRAINT fk_team FOREIGN KEY(team_id)
+        REFERENCES teams(team_id),
     CONSTRAINT fk_location FOREIGN KEY(location_id)
         REFERENCES locations(location_id)
 );

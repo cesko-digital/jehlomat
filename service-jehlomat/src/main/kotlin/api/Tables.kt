@@ -1,7 +1,5 @@
 package api
 
-import api.MCTable.primaryKey
-import api.ObecTable.primaryKey
 import model.*
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
@@ -72,7 +70,12 @@ open class TeamTable(alias: String?) : Table<Nothing>("teams", alias) {
     val teamId = int("team_id").primaryKey()
     val name = varchar("name")
     val organization_id = int("organization_id")
-    val location_id = int("location_id")
+}
+
+object TeamLocationTable: Table<Nothing>("team_locations") {
+    val teamLocationId = int("team_location_id").primaryKey()
+    val teamId = int("team_id")
+    val locationId = int("location_id")
 }
 
 

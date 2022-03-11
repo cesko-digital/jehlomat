@@ -100,17 +100,17 @@ class DatabaseServiceTest {
     @Test
     fun testResolveNearestTeam() {
         val exactTeamLocation = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")
-        val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
+        val exactTeam = Team(0,"teamA", listOf(exactTeamLocation), defaultOrgId)
 
         val obecTeamLocation = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=559199, mestkaCastName = "Plzeň 9-Malesice")
-        val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
+        val obecTeam = Team(0, "teamB", listOf(obecTeamLocation), defaultOrgId)
 
         val exactTeamId = database.insertTeam(exactTeam)
         database.insertTeam(obecTeam)
 
         val actualTeam = database.resolveNearestTeam("13.3719999 49.7278823")
         // update ID because of DB auto incementation
-        val expectedTeam = exactTeam.copy(location=exactTeamLocation.copy(id=actualTeam!!.location.id ), id = exactTeamId)
+        val expectedTeam = exactTeam.copy(locations=listOf(exactTeamLocation.copy(id=actualTeam!!.locations.first().id )), id = exactTeamId)
 
         assertEquals(expectedTeam, actualTeam)
     }
@@ -119,7 +119,7 @@ class DatabaseServiceTest {
     fun testSelectSyringes() {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
-        val loc = selectTeamById?.location!!
+        val loc = selectTeamById?.locations?.first()!!
         val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()
@@ -162,7 +162,7 @@ class DatabaseServiceTest {
     fun testSelectSyringesBySuperAdminButDateNotMatches() {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
-        val loc = selectTeamById?.location!!
+        val loc = selectTeamById?.locations?.first()!!
         val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()
@@ -182,7 +182,7 @@ class DatabaseServiceTest {
     fun testSelectSyringesBySuperAdminButCreatedAtNotMatches() {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
-        val loc = selectTeamById?.location!!
+        val loc = selectTeamById?.locations?.first()!!
         val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()
@@ -202,7 +202,7 @@ class DatabaseServiceTest {
     fun testInsertAndUpdateSyringe() {
         val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
         val selectTeamById = database.selectTeamById(teamId)
-        val loc = selectTeamById?.location!!
+        val loc = selectTeamById?.locations?.first()!!
         val user = User(0, "email", "password", "Franta Pepa 1", true, "", defaultOrgId, null, false)
         val userId = database.insertUser(user)
         val userInfo = user.copy(id = userId).toUserInfo()

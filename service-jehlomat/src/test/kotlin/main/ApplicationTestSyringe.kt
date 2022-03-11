@@ -54,7 +54,7 @@ class ApplicationTestSyringe {
         database.cleanOrganizations()
         defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
         defaultTeamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
-        defaultLocation = database.selectTeamById(defaultTeamId)?.location!!
+        defaultLocation = database.selectTeamById(defaultTeamId)?.locations?.first()!!
 
         val user1 = ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = true)
         defaultUserId = database.insertUser(user1)
