@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextInput from 'Components/Inputs/TextInput';
 
@@ -9,8 +9,9 @@ import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
-import { LINKS } from 'utils/links';
-import { setToken } from 'utils/login';
+import { LINKS } from 'routes';
+import { LoginContext } from 'utils/login';
+import { ModalContext } from 'Components/Navigator/Navigator';
 
 interface LoginFormProps {}
 
@@ -29,8 +30,11 @@ const validationSchema = yup.object({
     password: yup.string().required('Heslo je povinné pole'),
 });
 
-export const LoginForm: React.FC<LoginFormProps> = props => {
+export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
+    const { isModalVisible, closeModal } = useContext(ModalContext);
+    const { setToken } = useContext(LoginContext);
+    //const {setLogin} = useLogin();
 
     return (
         <>
@@ -43,7 +47,7 @@ export const LoginForm: React.FC<LoginFormProps> = props => {
                             email: values.email,
                             password: values.password,
                         };
-                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login/', login);
+                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login', login);
                         const status = response.status;
 
                         switch (true) {
@@ -51,7 +55,8 @@ export const LoginForm: React.FC<LoginFormProps> = props => {
                                 const token = response?.data?.token;
                                 if (token) {
                                     setToken(token);
-                                    history.push(LINKS.welcome);
+                                    if (isModalVisible) closeModal();
+                                    history.push(LINKS.WELCOME);
                                 }
                                 break;
                             }

@@ -1,19 +1,16 @@
 import styled from '@emotion/styled';
+import { media } from 'utils/media';
 
 export const Container = styled('div')<{ mobile?: boolean }>`
     align-self: center;
-    ${props =>
-        !props.mobile &&
-        `
-    border-right: 1px solid #fff;`}
-    ${props =>
-        props.mobile &&
-        `
-    max-width: 6em;`}
-  padding: 5px 15px;
-    font-size: 1em;
-    line-height: 16px;
-    letter-spacing: 1.25px;
+    border-right: 1px solid #fff;
+
+    @media ${media.lte('mobile')} {
+        max-width: 6em;
+        border-right: none;
+    }
+
+    padding: 5px 15px;
 
     &:last-child {
         border-right: none;
@@ -22,19 +19,10 @@ export const Container = styled('div')<{ mobile?: boolean }>`
 
 export const Link = styled('div')<{ mobile?: boolean }>`
     cursor: pointer;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 21px;
-    ${props =>
-        !props.mobile &&
-        `
-    text-transform: uppercase;
-    text-align: right;`}
-`;
+    font-weight: 400;
 
-/*
-export const Link2 = styled.div(props => ({
-    alignContent: "center",
-    textAlign: "right",
-    textTransform: props.transform
-}));*/
+    @media ${media.gt('mobile')} {
+        text-transform: uppercase;
+        text-align: right;
+    }
+`;

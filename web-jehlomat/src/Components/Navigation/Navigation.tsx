@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import * as s from './NavigationStyles';
 import { NavigationButtonType, PrimaryNavigationButton, SecondaryNavigationButton } from './NavigationButton';
 import { Link, useLocation } from 'react-router-dom';
-import { LINKS } from '../../utils/links';
+import { LINKS, LINKS_WITH_PARAMS } from 'routes';
 import { css, GlobalStyles } from '@mui/styled-engine';
 
 const Navigation: FC = () => {
@@ -18,11 +18,11 @@ const Navigation: FC = () => {
                 `}
             />
             <s.LeftBar>
-                <SecondaryNavigationButton route={LINKS.profile} selected={location.pathname === LINKS.profile} type={NavigationButtonType.Profile} />
-                <SecondaryNavigationButton route={LINKS.findings} selected={location.pathname === LINKS.findings} type={NavigationButtonType.SyringeList} />
-                <SecondaryNavigationButton route={LINKS.user} selected={location.pathname === LINKS.user} type={NavigationButtonType.Users} />
+                <SecondaryNavigationButton route={LINKS.PROFILE} selected={location.pathname === LINKS.PROFILE} type={NavigationButtonType.Profile} />
+                <SecondaryNavigationButton route={LINKS.FINDINGS} selected={location.pathname === LINKS.FINDINGS} type={NavigationButtonType.SyringeList} />
+                <SecondaryNavigationButton route={LINKS.USER} selected={location.pathname === LINKS.USER} type={NavigationButtonType.Users} />
             </s.LeftBar>
-            <Link to={LINKS.newFind(0)}>
+            <Link to={LINKS_WITH_PARAMS.NEW_FIND?.(0)}>
                 <s.PrimaryBar>
                     <PrimaryNavigationButton />
                 </s.PrimaryBar>

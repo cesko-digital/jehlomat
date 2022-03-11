@@ -1,17 +1,18 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import jwt_decode from 'jwt-decode';
 import { useHistory } from 'react-router-dom';
-import API from '../../config/baseURL';
+import { authorizedAPI } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import { getToken } from 'utils/login';
+import { LoginContext } from 'utils/login';
 
 const Login: FC<any> = () => {
     let history = useHistory();
+    const { token } = useContext(LoginContext);
 
     const [user, setUser] = useState('');
 
@@ -39,12 +40,9 @@ const Login: FC<any> = () => {
             return decoded['user-id'];
         };
         const getUser = async (token: string) => {
-            const response: AxiosResponse<IResponse> = await API.get('/api/v1/jehlomat/user/' + getMe(token));
+            const response: AxiosResponse<IResponse> = await authorizedAPI(token).get('/api/v1/jehlomat/user/' + getMe(token));
             return response.data.username;
         };
-
-        const token = getToken();
-
         if (token) {
             getUser(token)
                 .then(user => {
@@ -55,7 +53,7 @@ const Login: FC<any> = () => {
                     console.log(error); //should goes to the error page
                 });
         }
-    }, []);
+    }, [token]);
 
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>

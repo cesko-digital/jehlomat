@@ -1,9 +1,12 @@
 import axios from 'axios';
-import { getToken } from 'utils/login';
+
+const HOST = process.env.REACT_APP_SERVER ?? "localhost";
+const PORT = process.env.REACT_APP_SERVER_PORT ?? 8082;
+const BASE_URL = `${HOST}:${PORT}`;
 
 const fetchClient = () => {
     const defaultOptions = {
-        baseURL: `${process.env.REACT_APP_SERVER}:${process.env.REACT_APP_SERVER_PORT}`,
+        baseURL: BASE_URL,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -26,14 +29,10 @@ const fetchClient = () => {
 
 export default fetchClient();
 
-const authorizedAPIfnc = () => {
+export const authorizedAPI = (jwt: string) => {
     const client = fetchClient();
-    const token = getToken();
-
-    client.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
-    console.log(client.defaults.headers);
+    //const token = localStorage.getItem("auth");
+    client.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
 
     return client;
 };
-
-export const authorizedAPI = authorizedAPIfnc();

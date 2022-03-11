@@ -6,9 +6,10 @@ import { AxiosResponse } from 'axios';
 import { SContainer, STextInput, SBackLink } from './RegistrationForm.styled';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import { LINKS } from 'utils/links';
+import { LINKS } from 'routes';
 import { media } from 'utils/media';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 interface IValues {
     organizace: string;
@@ -36,6 +37,7 @@ const validationSchema = yup.object({
 
 export default function RegistrationForm() {
     const history = useHistory();
+    const [, setValue] = useLocalStorage('organizationEmail', '');
 
     const isMobile = useMediaQuery(media.lte('mobile'));
 
@@ -54,13 +56,15 @@ export default function RegistrationForm() {
                             email: values.email,
                             password: values.heslo,
                         };
+
                         const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization', organizace);
                         const status = response.status;
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
+                                setValue(values.email);
                                 //for all success response;
-                                history.push('/organizace/dekujeme');
+                                history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
                                 break;
                             }
                             case status === 409: {
@@ -137,7 +141,7 @@ export default function RegistrationForm() {
                                     <SecondaryButton id="submit" text="Založit" type="submit" disabled={!isValid} />
                                 )}
 
-                                <SBackLink to={LINKS.home}>Zrušit</SBackLink>
+                                <SBackLink to={LINKS.HOME}>Zrušit</SBackLink>
                             </Box>
                         </Form>
                     );

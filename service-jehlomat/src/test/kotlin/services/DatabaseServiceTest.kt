@@ -44,25 +44,25 @@ class DatabaseServiceTest {
     @Test
     fun testGetObec() {
         val actualObec = database.getObec("17.2825351 49.6602072")
-        assertEquals(500852, actualObec)
+        assertEquals(500852, actualObec.id.toInt())
     }
 
     @Test
     fun testGetMC() {
         val actualObec = database.getMC("13.3719999 49.7278823")
-        assertEquals(546003, actualObec)
+        assertEquals(546003, actualObec.id.toInt())
     }
 
     @Test
     fun testGetOkres() {
         val actualObec = database.getOkres("13.3719999 49.7278823")
-        assertEquals("CZ0323", actualObec)
+        assertEquals("CZ0323", actualObec.id)
     }
 
     @Test
     fun testGetNone() {
         val actualObec = database.getObec("00.0000000 00.0000000")
-        assertEquals(-1, actualObec)
+        assertEquals(-1, actualObec.id.toInt())
     }
 
     @Test
@@ -99,10 +99,10 @@ class DatabaseServiceTest {
 
     @Test
     fun testResolveNearestTeam() {
-        val exactTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=546003)
+        val exactTeamLocation = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")
         val exactTeam = Team(0,"teamA", exactTeamLocation, defaultOrgId)
 
-        val obecTeamLocation = Location(0, okres="CZ0323", obec=554791, mestkaCast=559199)
+        val obecTeamLocation = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=559199, mestkaCastName = "Plzeň 9-Malesice")
         val obecTeam = Team(0, "teamB", obecTeamLocation, defaultOrgId)
 
         val exactTeamId = database.insertTeam(exactTeam)
@@ -227,9 +227,9 @@ class DatabaseServiceTest {
     fun testSelectAllLocations() {
         assertEquals(
             listOf(
-                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=546003),
-                Location(id=0, okres="CZ0323", obec=554791, mestkaCast=-1),
-                Location(id=0, okres="CZ0323", obec=-1, mestkaCast=-1)
+                Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3"),
+                Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=-1, mestkaCastName = ""),
+                Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=-1, obecName = "", mestkaCast=-1, mestkaCastName = "")
             ),
             database.getLocationCombinations("13.3719999 49.7278823")
         )

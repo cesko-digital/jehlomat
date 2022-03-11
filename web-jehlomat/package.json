@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "jehlomat",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -56,6 +56,7 @@
     "eject": "react-scripts eject",
     "fix": "run-p -lsc 'fix:*'",
     "fix:prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "lint": "run-p -lsc 'lint:*'",
     "lint:ts": "tsc --noEmit -p tsconfig.json",
     "lint:prettier": "prettier -l \"src/**/*.{ts,tsx,json}\""

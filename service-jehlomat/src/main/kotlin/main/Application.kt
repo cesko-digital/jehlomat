@@ -1,24 +1,21 @@
 package main
 
 import api.*
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.papsign.ktor.openapigen.OpenAPIGen
-import com.papsign.ktor.openapigen.openAPIGen
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
-import io.ktor.http.content.*
 import io.ktor.jackson.*
-import io.ktor.response.*
 import io.ktor.http.*
-import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
-import org.slf4j.event.Level
 import services.*
 
 val jwtModule = module {
@@ -41,7 +38,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 
 @Suppress("unused", "UNUSED_PARAMETER") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
+@JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
     install(CORS){
@@ -58,6 +55,20 @@ fun Application.module(testing: Boolean = false) {
         allowSameOrigin = true
     }
 
+    install(StatusPages) {
+        exception<MissingKotlinParameterException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} is missing.")
+        }
+
+        exception<JsonMappingException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} has a wrong type.")
+        }
+
+        exception<Throwable> { cause ->
+            log.error("Uncaught exception ${cause.message} \n ${cause.stackTraceToString()}")
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+    }
 
     install(ContentNegotiation) {
         jackson {
@@ -69,26 +80,6 @@ fun Application.module(testing: Boolean = false) {
                 SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false
             )
         }
-    }
-
-    install(OpenAPIGen) {
-        // basic info
-        info {
-            version = "0.0.1"
-            title = "Test API"
-            description = "The Test API"
-            contact {
-                name = "Support"
-                email = "support@test.com"
-            }
-        }
-        // describe the server, add as many as you want
-        server("http://localhost:8082/") {
-            description = "Test server"
-        }
-
-        serveSwaggerUi = true
-        swaggerUiPath = "/swagger-ui"
     }
 
     install(CallLogging)
@@ -133,12 +124,6 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        get("/openapi.json") {
-            call.respond(application.openAPIGen.api.serialize())
-        }
-        get("/") {
-            call.respondRedirect("/swagger-ui/index.html?url=/static/swagger.json", true)
-        }
         route("/api/v1/jehlomat/syringe") {
             syringeApi(service, jwtManager, mailer)
         }
@@ -159,15 +144,6 @@ fun Application.module(testing: Boolean = false) {
         }
         route("/api/v1/jehlomat/login") {
             loginApi(service, jwtManager)
-        }
-        route("/api/v1/jehlomat/admin") {
-            adminApi(service)
-        }
-        get("/.well-known/jwks.json") {
-            call.respond(jwtManager.generateJwk())
-        }
-        static("/static") {
-            resources("files")
         }
     }
 }

@@ -28,7 +28,7 @@ const val API_PATH = "/api/v1/jehlomat/user"
 val team = Team(
     2,
     "name",
-    Location(0,okres="CZ0323", obec=554791, mestkaCast=546003),
+    Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3"),
     1,
 )
 
@@ -46,7 +46,7 @@ val USER = User(
 
 val SUPER_ADMIN = User(
     4,
-    "super@admin.cz",
+    "jehlomat@cesko.digital",
     "Super Admin",
     "aaAA11aa",
     true,
@@ -188,8 +188,8 @@ class ApplicationTest {
 
     @Test
     fun testPostUser() = withTestApplication({ module(testing = true) }) {
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
-        val token = loginUser("org@admin.cz", USER.password)
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        val token = loginUser("org@cesko.digital", USER.password)
 
         val emailToTest = "email@email.email"
         with(handleRequest(HttpMethod.Post, "$API_PATH") {
@@ -214,8 +214,8 @@ class ApplicationTest {
 
     @Test
     fun testPostAlreadyExistingUser() = withTestApplication(Application::module) {
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@admin.cz", username = "org admin"))
-        val token = loginUser("org@admin.cz", USER.password)
+        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        val token = loginUser("org@cesko.digital", USER.password)
 
         with(handleRequest(HttpMethod.Post, "$API_PATH") {
             database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))

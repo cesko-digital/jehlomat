@@ -17,6 +17,11 @@ const Container = styled.div`
     align-items: center;
     color: ${white};
     background-color: ${primary};
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
 `;
 
 export default function Dekujeme() {

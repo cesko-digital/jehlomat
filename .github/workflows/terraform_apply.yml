@@ -18,6 +18,8 @@ env:
   TF_VAR_jwt-issuer: ${{ secrets.JWT_ISSUER }}
   TF_VAR_jwt-audience: ${{ secrets.JWT_AUDIENCE }}
   TF_VAR_jwt-realm: ${{ secrets.JWT_REALM }}
+  TF_VAR_mailjet-public-key: ${{ secrets.MAILJET_PUBLIC_KEY }}
+  TF_VAR_mailjet-private-key: ${{ secrets.MAILJET_PRIVATE_KEY }}
 jobs:
   terraform:
     name: 'Terraform'

@@ -207,12 +207,12 @@ paths:
           description: Found syringe object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/Syringe'
+            $ref: '#/definitions/SyringeCreateReq'
       responses:
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/SyringeCreate'
+            $ref: '#/definitions/SyringeCreateRes'
         '409':
           description: Conflict
     put:
@@ -265,6 +265,24 @@ paths:
       responses:
         '200':
           description: successful operation
+  /syringe/{id}/info:
+    get:
+      summary: Get info about specific syringe
+      description: Returns a single syringe
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/SyringeInfo'
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email
@@ -699,7 +717,57 @@ definitions:
         example: false
       location:
         $ref: '#/definitions/Location'
-  SyringeCreate:
+  SyringeInfo:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "R4YFD1AC"
+      createdAt:
+        type: integer
+        example: 1637092279
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      gps_coordinates:
+        type: string
+        example: 25.326 -31.265
+      status:
+        type: string
+        enum:
+          - WAITING
+          - RESERVED
+          - DEMOLISHED
+      location:
+        $ref: '#/definitions/Location'
+  SyringeCreateReq:
+    type: object
+    properties:
+      createdAt:
+        type: integer
+        example: 1637092279
+      createdBy:
+        type: integer
+        example: 123
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      gps_coordinates:
+        type: string
+        example: 25.326 -31.265
+  SyringeCreateRes:
     type: object
     properties:
       id:
@@ -740,12 +808,21 @@ definitions:
           okres:
             type: string
             example: CZ0323
+          okresName:
+            type: string
+            example: Plzeň-město
           obec:
             type: string
             example: 554791
+          obecName:
+            type: string
+            example: Plzeň
           mestkaCast:
             type: string
             example: 546003
+          mestkaCastName:
+            type: string
+            example: Plzeň 3
       organizationId:
         type: integer
         example: 0

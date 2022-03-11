@@ -1,76 +1,45 @@
 import { FC } from 'react';
+import { Box } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import TitleBar from '../../Components/Navigation/TitleBar';
+import { useHistory } from 'react-router-dom';
 
-interface Props {}
+import { Container } from '@mui/material';
+import { white } from '../../utils/colors';
+import { ChevronLeft } from '@mui/icons-material';
+import { WithModal } from 'types';
+import AddUserForm from 'Components/UserForm/AddUserForm';
 
-/*
-interface Values {
-    email: string;
-}
+const AddUser: FC<WithModal> = ({ inModal }) => {
+    let history = useHistory();
 
-const validationSchema = yup.object({
-    email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
-});
-*/
+    const renderContent = (children: React.ReactNode) => {
+        if (!inModal) {
+            return (
+                <Container sx={{ height: '100vh', width: '100%' }}>
+                    <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>
+                        <Box>
+                            <TitleBar
+                                icon={<ChevronLeft sx={{ color: white, fontSize: 40 }} />}
+                                onIconClick={() => {
+                                    history.goBack();
+                                }}
+                            />
+                        </Box>
+                        {children}
+                    </Grid>
+                </Container>
+            );
+        } else {
+            return <>{children}</>;
+        }
+    };
 
-const PridatUzivatele: FC<Props> = () => {
-    return (
-        <>
-            <p></p>
-            {/* <Header mobileTitle="Přidat uživatele" />
-
-            <Formik
-                initialValues={{ email: '' }}
-                validationSchema={validationSchema}
-                onSubmit={async (values: Values, { setErrors }) => {
-                    try {
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user/', values);
-                        const status = response.status;
-
-                        switch (true) {
-                            case /2[0-9][0-9]/g.test(status.toString()): {
-                                history.push('/uzivatel/dekujeme');
-                                break;
-                            }
-                            case status === 409: {
-                                //for validation error;
-                                setErrors({ email: response.data });
-                                break;
-                            }
-                            default: {
-                                //all others goes to error page; TODO push to error page
-                                break;
-                            }
-                        }
-                    } catch (error: any) {
-                        //link to error page
-                    }
-                }}
-            >
-                {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => {
-                    return (
-                        <Form onSubmit={handleSubmit}>
-                            <FormItem>Vložte e-mailovou adresu a stiskněte tlačítko přidat.</FormItem>
-                            <FormItem>
-                                <FormItemLabel>Email uživatele</FormItemLabel>
-                                <TextInput
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.email}
-                                    type="text"
-                                    name="email"
-                                    placeholder="Email"
-                                    required={true}
-                                    error={touched.email && Boolean(errors.email) ? errors.email : undefined}
-                                />
-                                <FormItemDescription>Na danou adresu bude zaslán registrační odkaz pro nového uživatele.</FormItemDescription>
-                            </FormItem>
-                            <PrimaryButton text="Přidat" type="submit" disabled={!isValid} />
-                        </Form>
-                    );
-                }}
-            </Formik> */}
-        </>
+    return renderContent(
+        <Grid container direction="column" sx={{ height: 'auto', width: '100%', paddingX: '20px' }} justifyContent="start" alignItems="center">
+            <AddUserForm />
+        </Grid>,
     );
 };
 
-export default PridatUzivatele;
+export default AddUser;

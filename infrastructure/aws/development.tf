@@ -4,16 +4,24 @@
 
 resource "aws_s3_bucket" "frontend" {
   bucket = var.development-frontend-bucket-name
-  acl    = "private"
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+resource "aws_s3_bucket_acl" "frontend" {
+  bucket = aws_s3_bucket.frontend.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "frontend" {
+  bucket = aws_s3_bucket.frontend.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
 
+resource "aws_s3_bucket_policy" "frontend" {
+  bucket = aws_s3_bucket.frontend.id
   policy = templatefile("roles/s3-cloudfront-policy.tmpl", {
     cloudfront-arn = aws_cloudfront_origin_access_identity.default.iam_arn,
     bucket-name    = var.development-frontend-bucket-name
@@ -79,7 +87,9 @@ resource "aws_ecs_task_definition" "service-jehlomat" {
     super-admin-email   = var.super-admin-email,
     jwt-issuer          = var.jwt-issuer,
     jwt-audience        = var.jwt-audience,
-    jwt-realm           = var.jwt-realm
+    jwt-realm           = var.jwt-realm,
+    mailjet-public-key  = var.mailjet-public-key,
+    mailjet-private-key = var.mailjet-private-key
   })
   network_mode          = "awsvpc"
   execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn

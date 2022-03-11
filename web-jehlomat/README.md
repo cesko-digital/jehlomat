@@ -2,6 +2,27 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Configuration
+To configure Web app create a local configuration file `.env` or `.env.development` within the root of the web-jehlomat folder.
+The configuration should define the port of running backend service and configuration of local react app server, like following:
+
+```yaml
+REACT_APP_SERVER=http://localhost
+REACT_APP_SERVER_PORT=8082
+```
+
+The port configuration of the backend service is located in the `application.conf` and they must match.
+
+```
+ktor {
+    deployment {
+        port = 8082
+    }
+    
+    ...
+}
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
