@@ -43,6 +43,23 @@ paths:
                 type: string
         '401':
           description: Name or password is wrong
+  /password-reset/get-code/{email}:
+    get:
+      summary: Obtain a password reset code
+      description: Returns a password reset code if user found.
+      produces:
+        - application/json
+      parameters:
+        - name: email
+          in: path
+          description: Email of user to be reset
+          required: true
+          type: string
+      responses:
+        '200':
+          description: "TODO: document urlCode"
+        '404':
+          description: User with this email not found
   /organization/{id}:
     get:
       summary: Find organization by id

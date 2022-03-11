@@ -144,6 +144,9 @@ fun Application.module(testing: Boolean = false) {
         route("/api/v1/jehlomat/location") {
             locationApi(service)
         }
+        route("/api/v1/jehlomat/password-reset") {
+            passwordResetApi(service, mailer)
+        }
         route("/api/v1/jehlomat/team") {
             teamApi(service, jwtManager)
         }
