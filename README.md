@@ -24,7 +24,7 @@ Please change it in example by your postgres configuration.
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
 ```
 
-4) Create the Magdalena organization and super admin with email `super@admin.cz` and password `SuperAdmin1`. Use this script only for testing purposes.
+4) Create the Magdalena organization and super admin with email `jehlomat@cesko.digital` and password `SuperAdmin1`. Use this script only for testing purposes.
 ```shell
   psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
 ```
@@ -38,7 +38,6 @@ export DATABASE_NAME=jehlomat
 export JWT_ISSUER=http://localhost:8082/
 export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
-export SUPER_ADMIN_EMAIL=super@admin.cz
 ```
 6) cd service-jehlomat 
 7) ../gradlew shadowJar 
@@ -71,7 +70,6 @@ export DATABASE_NAME=jehlomat
 export JWT_ISSUER=http://localhost:8082/
 export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
-export SUPER_ADMIN_EMAIL=super@admin.cz
 ```
 6. cd service-jehlomat
 7. ../gradlew shadowJar
