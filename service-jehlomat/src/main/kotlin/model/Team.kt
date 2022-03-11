@@ -8,6 +8,6 @@ import utils.UnchangeableByPut
 data class Team(
     @UnchangeableByPut val id: Int,
     @AuthRole(Role.OrgAdmin) val name: String,
-    @AuthRole(Role.OrgAdmin) val location: Location,
+    @AuthRole(Role.OrgAdmin) val locations: List<Location>,
     @AuthRole(Role.SuperAdmin) val organizationId: Int
 )

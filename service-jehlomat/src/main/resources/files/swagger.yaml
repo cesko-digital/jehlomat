@@ -784,12 +784,21 @@ definitions:
       okres:
         type: string
         example: CZ0323
+      okresName:
+        type: string
+        example: Plzeň-město
       obec:
         type: string
         example: 554791
+      obecName:
+        type: string
+        example: Plzeň
       mestkaCast:
         type: string
         example: 546003
+      mestkaCastName:
+        type: string
+        example: Plzeň 3
   Team:
     type: object
     properties:
@@ -799,30 +808,10 @@ definitions:
       name:
         type: string
         example: Super team
-      location:
-        type: object
-        properties:
-          id:
-            type: integer
-            example: 0
-          okres:
-            type: string
-            example: CZ0323
-          okresName:
-            type: string
-            example: Plzeň-město
-          obec:
-            type: string
-            example: 554791
-          obecName:
-            type: string
-            example: Plzeň
-          mestkaCast:
-            type: string
-            example: 546003
-          mestkaCastName:
-            type: string
-            example: Plzeň 3
+      locations:
+        type: array
+        items:
+          $ref: '#/definitions/Location'
       organizationId:
         type: integer
         example: 0
