@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { textSubTitles } from "./colors";
 
 export const fontFamilyRoboto = 'font-family: Roboto;';
 
@@ -25,7 +26,7 @@ export const H2 = styled.span`
 export const H3 = styled.span`
     ${fontFamilyRoboto}
     ${fontWeightBold}
-  font-size: 18px;
+    font-size: 18px;
     letter-spacing: 1.25px;
     text-transform: uppercase;
 `;
@@ -77,4 +78,12 @@ export const FormItemDescription = styled.p`
     @media (min-width: 700px) {
         width: 340px;
     }
+`;
+
+export const Heading2 = styled.h2`
+    ${fontFamilyRoboto}
+    font-weight: 300;
+    color: ${textSubTitles};
+    font-size: 24px;
+    line-height: 28px;
 `;

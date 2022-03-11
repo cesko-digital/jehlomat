@@ -11,6 +11,7 @@ const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dek
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));
 const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
+const SetNewPassword = lazy(() => import('./screens/SetNewPassword/SetNewPassword'));
 
 const DekujemeUzivatel = lazy(() => import('./screens/RegistraceUzivatele/Dekujeme'));
 const SeznamUzivatelu = lazy(() => import('./screens/SeznamUzivatelu/SeznamUzivatelu'));
@@ -63,6 +64,11 @@ export const routes: Route[] = [
         id: Routes.LOGIN,
         Component: Prihlaseni,
         path: '/prihlaseni',
+    },
+    {
+        id: Routes.USER_NEW,
+        Component: SetNewPassword,
+        path: `/${USER_URL_PATH_}/nove-heslo`,
     },
     {
         id: Routes.USER_NEW,
