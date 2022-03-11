@@ -16,5 +16,5 @@ dist
 
 node_modules
 
-# Environment confugurations
+# Environment configurations
 **/.env*
