@@ -38,6 +38,9 @@ export DATABASE_NAME=jehlomat
 export JWT_ISSUER=http://localhost:8082/
 export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
+export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
+export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
+export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
 6) cd service-jehlomat 
 7) ../gradlew shadowJar 
@@ -53,12 +56,12 @@ By hybrid means, the BE service will be run locally but the database will be run
     1. Run `docker ps`, you should see a table with just one row. It is your running container. Remember its container id, we will need it in the next step
     2. Run commands:
     ```shell
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
-    docker exec -it CONTAINER_ID psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
+    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
     ```
 3. Set env variables
 ```shell
@@ -70,6 +73,9 @@ export DATABASE_NAME=jehlomat
 export JWT_ISSUER=http://localhost:8082/
 export JWT_AUDIENCE=http://localhost:8082/
 export JWT_REALM=jehlomat_local_realm
+export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
+export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
+export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
 6. cd service-jehlomat
 7. ../gradlew shadowJar
