@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { media } from 'utils/media';
 
 export const Wrapper = styled.section`
     height: 100%;
@@ -7,11 +8,22 @@ export const Wrapper = styled.section`
     align-items: center;
 `;
 
-export const FormWrapper = styled.form`
+export const FormWrapper = styled.form<{ horizontal?: boolean }>`
     display: flex;
     align-items: center;
     flex-direction: column;
     width: 100%;
+
+    ${props => props.horizontal && 
+        `
+        flex-direction: row;
+
+        @media ${media.lte('mobile')} {
+            flex-direction: row;
+        }
+        `
+    }
+
 `;
 
 export const FormItem = styled.div`

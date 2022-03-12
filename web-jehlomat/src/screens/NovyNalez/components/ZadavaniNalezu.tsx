@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import { INovaJehla } from '../NovyNalez';
 import { white } from '../../../utils/colors';
@@ -9,6 +9,9 @@ import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButt
 import { Header } from '../../../Components/Header/Header';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import DatumCasLikvidaceNalezu from './DatumCasLikvidaceNalezu';
+import DialogStyled from '../../../Components/Dialog/DialogStyled';
+
 
 const Container = styled.div`
     display: flex;
@@ -30,12 +33,28 @@ interface Props {
     syringeInfo: INovaJehla;
 }
 
+// const handleTimeChange = () => {
+// }
+
 const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => {
     const { info, datetime, count } = syringeInfo;
+    const [openDialog, setOpenDialog] = useState(false);
 
+    const showModal = (e: any) => {
+        e.preventDefault(); // to avoid calendar popup opened
+        setOpenDialog(true)
+    };
+
+    const hideModal = () => {
+        setOpenDialog(false)
+    };
+    
     return (
         <>
             <Header mobileTitle="Kontrola zadaných údajů o nálezu" />
+            <DialogStyled open={openDialog} onClose={hideModal}>
+                <DatumCasLikvidaceNalezu onClose={hideModal} />
+            </DialogStyled>
             <Box minHeight={'100vh'}>
                 <Container>
                     <Grid container spacing={2}>
@@ -45,7 +64,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                     <FormItemLabel>Počet stříkaček</FormItemLabel>
                                     <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} />
                                 </FormItem>
-                                <FormItem>
+                                <FormItem onClick={(e) => showModal(e)}>
                                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
                                     <TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />
                                 </FormItem>
