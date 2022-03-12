@@ -12,7 +12,6 @@ import Grid from '@mui/material/Grid';
 import DatumCasLikvidaceNalezu from './DatumCasLikvidaceNalezu';
 import DialogStyled from '../../../Components/Dialog/DialogStyled';
 
-
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -42,13 +41,13 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
 
     const showModal = (e: any) => {
         e.preventDefault(); // to avoid calendar popup opened
-        setOpenDialog(true)
+        setOpenDialog(true);
     };
 
     const hideModal = () => {
-        setOpenDialog(false)
+        setOpenDialog(false);
     };
-    
+
     return (
         <>
             <Header mobileTitle="Kontrola zadaných údajů o nálezu" />
@@ -64,7 +63,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                     <FormItemLabel>Počet stříkaček</FormItemLabel>
                                     <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} />
                                 </FormItem>
-                                <FormItem onClick={(e) => showModal(e)}>
+                                <FormItem onClick={e => showModal(e)}>
                                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
                                     <TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />
                                 </FormItem>

@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     text: String;
-    fontSize? : string;
+    fontSize?: string;
 }
 
 const Button = styled.button`
@@ -22,7 +22,7 @@ const Button = styled.button`
 const PrimaryButton: FC<Props> = ({ text, fontSize, ...props }) => {
     return (
         <Button {...props}>
-            <Typography variant="button" sx={{ fontSize: `${fontSize ? fontSize : '20px'}`, lineHeight: '16px', fontWeight: '400'}}>
+            <Typography variant="button" sx={{ fontSize: `${fontSize ? fontSize : '20px'}`, lineHeight: '16px', fontWeight: '400' }}>
                 {text}
             </Typography>
         </Button>

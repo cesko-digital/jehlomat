@@ -5,7 +5,6 @@ import DateAdapter from '@mui/lab/AdapterDayjs';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 
-
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
     name?: string;
     label?: string;
@@ -22,12 +21,11 @@ const Container = styled.div`
     border-radius: 90px;
     position: relative;
     width: 90px;
-
 `;
 
 const DateTimeUndertext = styled.label`
     position: absolute;
-    color: #898A8D;
+    color: #898a8d;
     margin-left: -25px;
     width: 50px;
     left: 50%;
@@ -37,16 +35,15 @@ const DateTimeUndertext = styled.label`
     text-align: center;
 `;
 
-
 const DateInput: FC<Props> = props => {
-    const { type: propType, className, undertext } = props;
+    const { className, undertext } = props;
 
     const [date, setDate] = useState(new Date('2014-08-18T21:11:54'));
 
     const handleDateChange = (newDate: any) => {
-        console.log('cau', newDate)
-        setDate(newDate)
-    }
+        console.log('cau', newDate);
+        setDate(newDate);
+    };
     return (
         <Container className={className}>
             <LocalizationProvider dateAdapter={DateAdapter}>
@@ -55,34 +52,33 @@ const DateInput: FC<Props> = props => {
                     inputFormat="DD/MM/YY"
                     value={date}
                     onChange={handleDateChange}
-
-                    renderInput={(params) => 
+                    renderInput={params => (
                         <MInput
                             {...params}
                             inputProps={{
                                 style: {
                                     padding: '7px 6px',
                                     fontSize: '14px',
-                                    textAlign: 'center'
+                                    textAlign: 'center',
                                 },
-                                ...params.inputProps
+                                ...params.inputProps,
                             }}
                             InputProps={{
                                 style: {
                                     width: '100%',
                                     borderRadius: '60px',
                                 },
-                                ...params.InputProps
+                                ...params.InputProps,
                             }}
                             InputLabelProps={{
                                 shrink: true,
                                 style: {
-                                    color: '#898A8D'
+                                    color: '#898A8D',
                                 },
-                                ...params.InputLabelProps
+                                ...params.InputLabelProps,
                             }}
                         />
-                    } 
+                    )}
                 />
             </LocalizationProvider>
             <DateTimeUndertext> {undertext} </DateTimeUndertext>

@@ -14,16 +14,15 @@ export const FormWrapper = styled.form<{ horizontal?: boolean }>`
     flex-direction: column;
     width: 100%;
 
-    ${props => props.horizontal && 
+    ${props =>
+        props.horizontal &&
         `
         flex-direction: row;
 
         @media ${media.lte('mobile')} {
             flex-direction: row;
         }
-        `
-    }
-
+        `}
 `;
 
 export const FormItem = styled.div`

@@ -3,11 +3,7 @@ import { useMediaQuery } from '@mui/material';
 import styled from '@emotion/styled';
 import { white } from '../../utils/colors';
 import { media } from '../../utils/media';
-import TitleBar from '../../Components/Navigation/TitleBar';
-import ChevronLeft from '@mui/icons-material/ChevronLeft';
-import CloseIcon from '@mui/icons-material/Close';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
-
 
 type CloseFunction = () => void;
 
@@ -39,7 +35,6 @@ const DialogBody = styled.div`
     }
 `;
 
-
 const DialogStyled: FC<Props> = ({ children, open, onClose }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
@@ -55,12 +50,12 @@ const DialogStyled: FC<Props> = ({ children, open, onClose }) => {
                 aria-labelledby="dialog-dialog-title"
                 aria-describedby="dialog-dialog-description"
                 fullWidth
-                maxWidth='xl'
+                maxWidth="xl"
                 PaperProps={{
                     style: {
                         margin: '10px',
                         width: isMobile ? 'calc(100% - 30px)' : 'auto',
-                        borderRadius: '40px'
+                        borderRadius: '40px',
                     },
                 }}
             >

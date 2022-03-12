@@ -1,5 +1,4 @@
-
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled from '@emotion/styled';
 import { media } from '../../../utils/media';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
@@ -13,7 +12,7 @@ import { useMediaQuery } from '@mui/material';
 
 type CloseFunction = () => void;
 
-interface Props { 
+interface Props {
     onClose: CloseFunction;
 }
 
@@ -48,8 +47,7 @@ const Title = styled.h2`
     }
 `;
 
-
-const DatumCasLikvidaceNalezu: FC<Props> = ({onClose}) => {
+const DatumCasLikvidaceNalezu: FC<Props> = ({ onClose }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     return (
@@ -58,34 +56,24 @@ const DatumCasLikvidaceNalezu: FC<Props> = ({onClose}) => {
                 <Title>Vyberte prosím datum a čas likvidace nálezu</Title>
             </TextContainer>
             <FormWrapper horizontal>
-                <FormItem style={{alignItems: 'flex-end'}}>
+                <FormItem style={{ alignItems: 'flex-end' }}>
                     {/* <FormItemLabel>Datum</FormItemLabel> */}
-                    <DateInput
-                        label="Datum"
-                        type="date"
-                        value={"bb"}
-                        undertext="DD/MM/RR"
-                    />
+                    <DateInput label="Datum" type="date" value={'bb'} undertext="DD/MM/RR" />
                 </FormItem>
-                <FormItem style={{alignItems: 'flex-start'}}>
-                    <TimeInput
-                        label="Čas"
-                        type="time"
-                        value="2017-06-01"
-                        onChange={() => console.log('aj')}
-                        undertext="HH:MM"
-                    />
+                <FormItem style={{ alignItems: 'flex-start' }}>
+                    <TimeInput label="Čas" type="time" value="2017-06-01" onChange={() => console.log('aj')} undertext="HH:MM" />
                 </FormItem>
             </FormWrapper>
-            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: "center", alignItems:"center" }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <Box mt={isMobile ? 2 : 4}>
-                    <PrimaryButton fontSize="18px" text="REZERVOVAT NÁLEZ">Chci nález zlikvidovat sám</PrimaryButton>
+                    <PrimaryButton fontSize="18px" text="REZERVOVAT NÁLEZ">
+                        Chci nález zlikvidovat sám
+                    </PrimaryButton>
                 </Box>
                 <Box mt={isMobile ? 3 : 4} mb={isMobile ? 0 : 6}>
                     <TextButton fontSize="18px" onClick={onClose} style={{ color: `${primaryDark}` }} text="ZPĚT NA NÁLEZ" type="button" />
                 </Box>
             </Box>
-
         </Container>
     );
 };

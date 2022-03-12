@@ -14,7 +14,6 @@ import { tokenState } from 'store/login';
 import apiURL from 'utils/api-url';
 
 interface Props {}
-
 interface Values {
     email: string;
 }

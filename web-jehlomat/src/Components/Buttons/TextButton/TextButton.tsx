@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography/Typography';
 
 interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement> {
     text: String;
-    fontSize? : string;
+    fontSize?: string;
 }
 
 const Button = styled.button`
