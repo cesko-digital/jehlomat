@@ -9,8 +9,8 @@ import {
     darkGrey,
     textGold,
 } from '../../utils/colors';
-import Syringe from '../../assets/images/syringe.svg';
-import Edit from '../../assets/images/edit.svg';
+import Syringe from 'assets/icons/syringe.svg';
+import Edit from 'assets/icons/edit.svg';
 
 export const TextHeader = styled.h1`
     ${fontFamilyRoboto};
