@@ -11,6 +11,7 @@ import { Header } from '../../Components/Header/Header';
 import { useQuery } from '../../utils/location';
 import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
+import {PASSWORD_COMPLEXITY} from 'utils/constants';
 
 interface Props {}
 
@@ -33,7 +34,7 @@ const validationSchema = yup.object({
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
     heslo: yup
         .string()
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/, 'Heslo musí obsahovat číslo, velké a malé písmeno')
+        .matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno')
         .min(8, 'Heslo musí být 8 znaků dlouhé')
         .required('Heslo je povinné pole'),
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná'),
