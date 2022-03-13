@@ -176,28 +176,44 @@ class OrganizationTest {
                 """[ {
   "id" : """ + teamId1 + """,
   "name" : "team 1",
-  "location" : {
-    "id" : """ + team1.location.id + """,
-    "okres" : """" + LOCATION.okres + """",
-    "okresName" : """" + LOCATION.okresName + """",
-    "obec" : """ + LOCATION.obec + """,
-    "obecName" : """" + LOCATION.obecName + """",
-    "mestkaCast" : """ + LOCATION.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION.mestkaCastName + """"
-  },
+  "locations" : [ {
+    "id" : """ + team1.locations[0].id + """,
+    "okres" : """" + LOCATION1.okres + """",
+    "okresName" : """" + LOCATION1.okresName + """",
+    "obec" : """ + LOCATION1.obec + """,
+    "obecName" : """" + LOCATION1.obecName + """",
+    "mestkaCast" : """ + LOCATION1.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION1.mestkaCastName + """"
+  }, {
+    "id" : """ + team1.locations[1].id + """,
+    "okres" : """" + LOCATION2.okres + """",
+    "okresName" : """" + LOCATION2.okresName + """",
+    "obec" : """ + LOCATION2.obec + """,
+    "obecName" : """" + LOCATION2.obecName + """",
+    "mestkaCast" : """ + LOCATION2.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION2.mestkaCastName + """"
+  } ],
   "organizationId" : """ + orgId + """
 }, {
   "id" : """ + teamId2 + """,
   "name" : "team 2",
-  "location" : {
-    "id" : """ + team1.location.id + """,
-    "okres" : """" + LOCATION.okres + """",
-    "okresName" : """" + LOCATION.okresName + """",
-    "obec" : """ + LOCATION.obec + """,
-    "obecName" : """" + LOCATION.obecName + """",
-    "mestkaCast" : """ + LOCATION.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION.mestkaCastName + """"
-  },
+  "locations" : [ {
+    "id" : """ + team1.locations[0].id + """,
+    "okres" : """" + LOCATION1.okres + """",
+    "okresName" : """" + LOCATION1.okresName + """",
+    "obec" : """ + LOCATION1.obec + """,
+    "obecName" : """" + LOCATION1.obecName + """",
+    "mestkaCast" : """ + LOCATION1.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION1.mestkaCastName + """"
+  }, {
+    "id" : """ + team1.locations[1].id + """,
+    "okres" : """" + LOCATION2.okres + """",
+    "okresName" : """" + LOCATION2.okresName + """",
+    "obec" : """ + LOCATION2.obec + """,
+    "obecName" : """" + LOCATION2.obecName + """",
+    "mestkaCast" : """ + LOCATION2.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION2.mestkaCastName + """"
+  } ],
   "organizationId" : """ + orgId + """
 } ]""",
                 response.content)

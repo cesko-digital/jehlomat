@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+const HOST = process.env.REACT_APP_SERVER ?? "localhost";
+const PORT = process.env.REACT_APP_SERVER_PORT ?? 8082;
+const BASE_URL = `${HOST}:${PORT}`;
+
 const fetchClient = () => {
     const defaultOptions = {
-        baseURL: `${process.env.REACT_APP_SERVER}:${process.env.REACT_APP_SERVER_PORT}`,
+        baseURL: BASE_URL,
         headers: {
             'Content-Type': 'application/json',
         },

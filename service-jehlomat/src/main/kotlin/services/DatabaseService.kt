@@ -234,49 +234,46 @@ class DatabaseService(
         Team(
             id = row[TeamTable.teamId]!!,
             name = row[TeamTable.name]!!,
-            location = mapLocationRow(row),
-            organizationId = row[TeamTable.organization_id]!!
+            organizationId = row[TeamTable.organization_id]!!,
+            locations = listOf(mapLocationRow(row))
         )
     }
 
     fun selectTeams(): List<Team> {
-        return databaseInstance
-            .from(TeamTable)
-            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
-            .select()
-            .orderBy(TeamTable.name.asc())
-            .map(mapTeamRow)
+        return selectTeamsByCondition { TeamTable.teamId notEq 0 }
     }
 
     fun selectTeamById(id: Int): Team? {
-        return databaseInstance
-            .from(TeamTable)
-            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
-            .select()
-            .where { TeamTable.teamId eq id }
-            .map(mapTeamRow)
-            .firstOrNull()
+        return selectTeamsByCondition { TeamTable.teamId eq id }.firstOrNull()
     }
 
     fun selectTeamByName(name: String): Team? {
-        return databaseInstance
-            .from(TeamTable)
-            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
-            .select()
-            .where { TeamTable.name eq name }
-            .map(mapTeamRow)
-            .firstOrNull()
+        return selectTeamsByCondition { TeamTable.name eq name }.firstOrNull()
     }
 
 
     fun selectTeamsByOrganizationId(organizationId: Int): List<Team> {
+        return selectTeamsByCondition { TeamTable.organization_id eq organizationId }.sortedBy { team -> team.name }
+    }
+
+    private fun selectTeamsByCondition(condition: () -> ColumnDeclaring<Boolean>): List<Team> {
         return databaseInstance
             .from(TeamTable)
-            .innerJoin(LocationTable, LocationTable.id eq TeamTable.location_id)
+            .innerJoin(TeamLocationTable, TeamLocationTable.teamId eq TeamTable.teamId)
+            .innerJoin(LocationTable, LocationTable.id eq TeamLocationTable.locationId)
             .select()
-            .where { TeamTable.organization_id eq organizationId }
-            .orderBy(TeamTable.name.asc())
+            .where(condition)
             .map(mapTeamRow)
+            .groupBy { it.id }
+            .values
+            .map {
+                Team (
+                    id = it.first().id,
+                    name = it.first().name,
+                    organizationId = it.first().organizationId,
+                    locations = it.fold(mutableListOf()) { acc, el -> acc.addAll(el.locations); acc }
+                )
+            }
             .toList()
     }
 
@@ -337,13 +334,16 @@ class DatabaseService(
     }
 
     fun updateTeam(team: Team) {
-        databaseInstance.update(TeamTable) {
-            set(it.name, team.name)
-            set(it.location_id, getLocationId(team))
-            set(it.organization_id, team.organizationId)
-            where {
-                it.teamId eq team.id
+        useTransaction {
+            databaseInstance.update(TeamTable) {
+                set(it.name, team.name)
+                set(it.organization_id, team.organizationId)
+                where {
+                    it.teamId eq team.id
+                }
             }
+            databaseInstance.delete(TeamLocationTable) { it.teamId eq team.id }
+            insertTeamLocations(team.id, team.locations)
         }
     }
 
@@ -410,15 +410,30 @@ class DatabaseService(
     }
 
     fun insertTeam(team: Team): Int {
-        return databaseInstance.insertAndGenerateKey(TeamTable) {
-            set(it.organization_id, team.organizationId)
-            set(it.location_id, getLocationId(team))
-            set(it.name, team.name)
-        } as Int
+        var teamId = 0
+
+        useTransaction {
+            teamId = databaseInstance.insertAndGenerateKey(TeamTable) {
+                set(it.organization_id, team.organizationId)
+                set(it.name, team.name)
+            } as Int
+            insertTeamLocations(teamId, team.locations)
+        }
+
+        return teamId
     }
 
-    private fun getLocationId(team: Team): Int {
-        with(team.location) {
+    private fun insertTeamLocations(teamId: Int, locations: List<Location>) {
+        for (loc in locations) {
+            databaseInstance.insert(TeamLocationTable) {
+                set(it.teamId, teamId)
+                set(it.locationId, getLocationId(loc))
+            }
+        }
+    }
+
+    private fun getLocationId(location: Location): Int {
+        with(location) {
             insertLocation(okres, okresName, mestkaCast, mestkaCastName, obec, obecName)
         }
 
@@ -426,9 +441,9 @@ class DatabaseService(
             .from(LocationTable)
             .select()
             .where(
-                (LocationTable.mestka_cast eq team.location.mestkaCast)
-                        and (LocationTable.obec eq team.location.obec)
-                        and (LocationTable.okres eq team.location.okres)
+                (LocationTable.mestka_cast eq location.mestkaCast)
+                        and (LocationTable.obec eq location.obec)
+                        and (LocationTable.okres eq location.okres)
             )
             .map { it.getInt("location_id") }.first()
     }
@@ -583,19 +598,13 @@ class DatabaseService(
     fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team> {
         val location = selectLocation(gpsCoordinates) ?: return setOf()
 
-        return databaseInstance
-            .from(TeamTable)
-            .select()
-            .where { TeamTable.location_id eq location.id }
-            .map { row ->
-                Team(
-                    id=row.getInt("team_id"),
-                    name=row.getString("name")!!,
-                    location=location,
-                    organizationId=row.getInt("organization_id"),
-                )
-            }
+        val teamIds = databaseInstance
+            .from(TeamLocationTable)
+            .select(TeamLocationTable.teamId)
+            .where { TeamLocationTable.locationId eq location.id }
+            .map { row -> row.getInt(1) }
             .toHashSet()
+        return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
     }
 
     fun cleanLocation(): Int {
@@ -603,6 +612,7 @@ class DatabaseService(
     }
 
     fun cleanTeams(): Int {
+        databaseInstance.deleteAll(TeamLocationTable)
         return databaseInstance.deleteAll(TeamTable)
     }
 
