@@ -10,6 +10,8 @@ import { LINKS } from 'routes';
 import { media } from 'utils/media';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import apiURL from 'utils/api-url';
 
 interface IValues {
     organizace: string;
@@ -57,17 +59,17 @@ export default function RegistrationForm() {
                             password: values.heslo,
                         };
 
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/organization', organizace);
+                        const response: AxiosResponse<any> = await API.post(apiURL.organization, organizace);
                         const status = response.status;
 
                         switch (true) {
-                            case /2[0-9][0-9]/g.test(status.toString()): {
+                            case isStatusGeneralSuccess(status): {
                                 setValue(values.email);
                                 //for all success response;
                                 history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
                                 break;
                             }
-                            case status === 409: {
+                            case isStatusValidationError(status): {
                                 //for validation error;
                                 const fieldName = response.data.fieldName;
                                 setErrors({ [fieldName]: response.data.status });

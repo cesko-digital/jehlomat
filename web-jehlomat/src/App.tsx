@@ -9,11 +9,11 @@ import PrivateRoute from 'config/protectedRoute';
 const Router: FC = () => (
     <HashRouter>
         <Switch>
-            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute }) => {
+            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute, from }) => {
                 const stringPath = typeof path === 'string' ? path : path(0);
                 if (protectedRoute) {
                     return (
-                        <PrivateRoute path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                        <PrivateRoute from={from} path={typeof path === 'string' ? path : path(0)} key={stringPath}>
                             {AdditionalComponents && <AdditionalComponents />}
                             <Component exact={exact} />
                         </PrivateRoute>

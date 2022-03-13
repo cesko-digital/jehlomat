@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
@@ -46,7 +46,9 @@ export const Header = (props: Props) => {
     return (
         <>
             <SContainer>
-                <HeaderLogo />
+                <Link to={LINKS.HOME}>
+                    <HeaderLogo />
+                </Link>
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
                     <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />

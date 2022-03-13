@@ -9,6 +9,7 @@ import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import { LoginContext } from 'utils/login';
+import apiURL from 'utils/api-url';
 
 const Login: FC<any> = () => {
     let history = useHistory();
@@ -40,7 +41,7 @@ const Login: FC<any> = () => {
             return decoded['user-id'];
         };
         const getUser = async (token: string) => {
-            const response: AxiosResponse<IResponse> = await authorizedAPI(token).get('/api/v1/jehlomat/user/' + getMe(token));
+            const response: AxiosResponse<IResponse> = await authorizedAPI(token).get(apiURL.getUser(getMe(token)));
             return response.data.username;
         };
         if (token) {

@@ -7,11 +7,14 @@ import { AxiosResponse } from 'axios';
 import API from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
 import { LoginContext } from 'utils/login';
 import { ModalContext } from 'Components/Navigator/Navigator';
+import { convertSearchParamsToMap } from 'utils/url';
+import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import apiURL from 'utils/api-url';
 
 interface LoginFormProps {}
 
@@ -34,6 +37,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
     const { isModalVisible, closeModal } = useContext(ModalContext);
     const { setToken } = useContext(LoginContext);
+    const { search } = useLocation();
     //const {setLogin} = useLogin();
 
     return (
@@ -47,20 +51,21 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                             email: values.email,
                             password: values.password,
                         };
-                        const response: AxiosResponse<IResponse> = await API.post('/api/v1/jehlomat/login', login);
+                        const response: AxiosResponse<IResponse> = await API.post(apiURL.login, login);
                         const status = response.status;
 
                         switch (true) {
-                            case /2[0-9][0-9]/g.test(status.toString()): {
+                            case isStatusGeneralSuccess(status): {
                                 const token = response?.data?.token;
                                 if (token) {
                                     setToken(token);
                                     if (isModalVisible) closeModal();
-                                    history.push(LINKS.WELCOME);
+                                    const link = getRedirectionLink(search);
+                                    history.push(link);
                                 }
                                 break;
                             }
-                            case status === 401: {
+                            case isStatusValidationError(status): {
                                 //for validation error;
                                 setErrors({ email: ' ', password: 'E-mail nebo heslo nejsou správne!' });
                                 break;
@@ -114,5 +119,11 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
         </>
     );
 };
+
+function getRedirectionLink(search: string, defaultLink = LINKS.WELCOME) {
+    const searchMap = convertSearchParamsToMap(search);
+    const fromLink = searchMap.get('from');
+    return fromLink || defaultLink;
+}
 
 export default LoginForm;

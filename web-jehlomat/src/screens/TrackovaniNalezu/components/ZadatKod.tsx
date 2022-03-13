@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
 import { STEPS, SyringeStateType } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 import API from '../../../config/baseURL';
+import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import apiURL from 'utils/api-url';
 
 const validationSchema = yup.object({
     kod: yup.string().length(8, 'Trackovaí kód musí mít přesně 8 znaků.').required('Trackovací kód je povivnný.'),
@@ -49,11 +51,11 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
-                                    const response: AxiosResponse<any> = await API.get(`/api/v1/jehlomat/syringe/${values.kod}`);
+                                    const response: AxiosResponse<any> = await API.get(apiURL.getSyringe(values.kod));
                                     const { status } = response;
 
                                     switch (true) {
-                                        case /2[0-9][0-9]/g.test(status.toString()): {
+                                        case isStatusGeneralSuccess(status): {
                                             const { data } = response;
 
                                             if (data.demolished) {
@@ -65,7 +67,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                                             handleStepChange(STEPS.ZobraitStav);
                                             break;
                                         }
-                                        case status === 409: {
+                                        case isStatusValidationError(status): {
                                             const fieldName = response.data.fieldName;
                                             setErrors({ [fieldName]: response.data.status });
                                             break;

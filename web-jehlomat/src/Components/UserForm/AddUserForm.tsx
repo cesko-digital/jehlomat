@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
 import { LoginContext } from 'utils/login';
+import apiURL from 'utils/api-url';
 
 interface Props { }
 interface Values {
@@ -31,7 +32,7 @@ const PridatUzivatele: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await authorizedAPI(token).post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await authorizedAPI(token).post(apiURL.user, values);
                         const status = response.status;
 
                         switch (true) {
