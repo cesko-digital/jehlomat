@@ -51,7 +51,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
 
     return (
         <>
-            <Box minHeight={'100vh'}>
+            <Box minHeight={'100vh'} pt={4}>
                 <Container>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>

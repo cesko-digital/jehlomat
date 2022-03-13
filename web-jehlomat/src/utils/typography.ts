@@ -50,6 +50,8 @@ export const FormItemLabel = styled.label`
     letter-spacing: 1.25px;
     text-transform: uppercase;
     color: grey;
+    padding-bottom: 5px;
+  
     @media (min-width: 420px) {
         align-self: flex-start;
     }

@@ -22,14 +22,15 @@ const Container = styled.div`
         color: currentColor;
         background: none;
         margin: 0;
+        margin-top: 1px;
         display: block;
         min-width: 0;
         padding: 16.5px 14px;
-
         border: 1px solid rgba(0, 0, 0, 0.23);
         border-radius: 4px;
-
+        
         &:focus {
+            margin-top: 0px;
             border: 2px solid ${primary};
             outline: none;
         }
