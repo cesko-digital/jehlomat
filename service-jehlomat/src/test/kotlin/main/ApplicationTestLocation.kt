@@ -133,5 +133,61 @@ class LocationTest {
             """.trimIndent(), response.content)
         }
     }
+
+    @Test
+    fun testGetGeomMissingOkOkres() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=CZ0323&type=okres") {
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomMissingOkObec() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=554791&type=obec") {
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomMissingOkMc() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=554766&type=mc") {
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomWringIdType() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=55a4766&type=mc") {
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomMissingId() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?type=obec") {
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomMissingType() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=123") {
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testGetGeomWrongType() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Get, "$LOCATION_API_PATH/geometry?id=123&type=wrongType") {
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
 }
 
