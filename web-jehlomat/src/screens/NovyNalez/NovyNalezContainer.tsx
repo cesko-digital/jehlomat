@@ -6,10 +6,10 @@ import dayjs from 'dayjs';
 import { Footer } from 'Components/Footer/Footer';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
-import NahledNalezu from 'screens/NovyNalez/components/NahledNalezu';
-import Potvrzeni from './components/Potvrzeni';
-import ZadatNalezMapa from './components/ZadatNalezMapa';
-import ZadavaniNalezu from './components/ZadavaniNalezu';
+import NahledNalezu from 'screens/NovyNalez/screens/NahledNalezu';
+import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
+import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
+import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
 import { authorizedAPI } from 'config/baseURL';
 import { LoginContext } from 'utils/login';
 import { isNumber } from 'util';
@@ -62,19 +62,20 @@ const NovyNalezContainer: FC = () => {
 
     const handleOnSave = async () => {
         try {
-            const { lat, lng, datetime, count, info } = newSyringeInfo;
+            const { lat, lng, datetime, count, info, photo } = newSyringeInfo;
 
             const apiSyringe = {
                 createdAt: datetime,
                 gps_coordinates: `${lat} ${lng}`,
                 note: info,
+                photo,
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
             const data = await authorizedAPI(token).post('/api/v1/jehlomat/syringe', apiSyringe);
 
             console.log('returned data', data);
-            if (data.status === 200) {
+            if (data.status === 200 || data.status === 201) {
                 setCurrentStep(StepsEnum.Potvrzeni);
             }
         } catch (error) {
@@ -86,9 +87,8 @@ const NovyNalezContainer: FC = () => {
     const handleOnEdit = () => setCurrentStep(StepsEnum.Info);
     const handleOnLocationChange = () => setCurrentStep(StepsEnum.Mapa);
 
-
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
             {/* If desktop show stepper */}
             {/* {currentStep != 0 && <Stepper currentStep={currentStep} />} */}
@@ -104,8 +104,6 @@ const NovyNalezContainer: FC = () => {
                     handleOnSave={handleOnSave}
                 />
             </Container>
-
-            <Footer />
         </Box>
     );
 };

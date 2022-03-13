@@ -1,10 +1,10 @@
 import { FC, Fragment, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import ZapnoutPolohu from './ZapnoutPolohu';
-import Mapa from './Mapa';
+import ZapnoutPolohu from 'screens/NovyNalez/components/ZapnoutPolohu';
+import Mapa from 'screens/NovyNalez/components/Mapa';
 import { LatLngExpression } from 'leaflet';
-import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
-import {MapContext} from "./MapContext";
+import { INovaJehla, StepsEnum } from 'screens/NovyNalez/NovyNalezContainer';
+import {MapContext} from "screens/NovyNalez/components/MapContext";
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
@@ -51,7 +51,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
             );
         }
 
-        if ('geolocation' in navigator && userSelectedLocation[0] == undefined && userSelectedLocation[1] == undefined) {
+        if ('geolocation' in navigator && userSelectedLocation[0] === undefined && userSelectedLocation[1] === undefined) {
             setModalVisible(true);
         } else {
             setModalVisible(false);

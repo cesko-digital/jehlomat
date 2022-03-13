@@ -1,18 +1,20 @@
 import { FC, useMemo } from 'react';
 import styled from '@emotion/styled';
-import { DatePicker } from 'Components/Inputs/DatePicker/DatePicker';
-
-import { INovaJehla } from '../NovyNalezContainer';
-import { white } from '../../../utils/colors';
-import { FormItem, FormWrapper } from '../../../Components/Form/Form';
-import { FormItemLabel } from '../../../utils/typography';
-import TextInput from '../../../Components/Inputs/TextInput/TextInput';
-import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
+
+import { DatePicker } from 'Components/Inputs/DatePicker/DatePicker';
+
+import { INovaJehla } from 'screens/NovyNalez/NovyNalezContainer';
+import { white } from 'utils/colors';
+import { FormItem, FormWrapper } from 'Components/Form/Form';
+import { FormItemLabel } from 'utils/typography';
+import TextInput from 'Components/Inputs/TextInput/TextInput';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import PhotoUpload from "screens/NovyNalez/components/PhotoUpload";
 
 const Container = styled.div`
     display: flex;
@@ -40,7 +42,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
 
     return (
         <>
-            <Box minHeight={'100vh'}>
+            <Box minHeight={'100vh'} >
                 <Container>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
@@ -67,7 +69,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, onSumbit }) => 
                                 </FormItem>
                                 <FormItem>
                                     <FormItemLabel>Foto z místa nálezu</FormItemLabel>
-                                    <TextInput type="text" disabled placeholder="Tuto funkci brzy zpřístupníme" />
+                                    <PhotoUpload  onChange={value => onInputChange('photo', value)} />
                                 </FormItem>
                                 <FormItem>
                                     <ButtonContainer>

@@ -1,14 +1,14 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import TextButton from '../../../Components/Buttons/TextButton/TextButton';
-import { FormItem, FormWrapper } from '../../../Components/Form/Form';
-import { Header } from '../../../Components/Header/Header';
-import TextInput from '../../../Components/Inputs/TextInput/TextInput';
-import { white } from '../../../utils/colors';
-import { FormItemLabel } from '../../../utils/typography';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import TextButton from 'Components/Buttons/TextButton/TextButton';
+import { FormItem, FormWrapper } from 'Components/Form/Form';
+import { Header } from 'Components/Header/Header';
+import TextInput from 'Components/Inputs/TextInput/TextInput';
+import { white } from 'utils/colors';
+import { FormItemLabel } from 'utils/typography';
 
-import { INovaJehla } from '../NovyNalezContainer';
+import { INovaJehla } from 'screens/NovyNalez/NovyNalezContainer';
 import dayjs from "dayjs";
 
 const Container = styled.div`

@@ -2,12 +2,14 @@ import React, { FC, Suspense } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { routes } from 'routes';
-import csLocale from "dayjs/locale/cs";
+import { ThemeProvider } from '@mui/material/styles';
+import csLocale from 'dayjs/locale/cs';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Footer } from 'Components/Footer/Footer';
 import { LoginContext, useLogin } from 'utils/login';
 import PrivateRoute from 'config/protectedRoute';
+import { theme } from 'theme';
 
 const Router: FC = () => (
     <HashRouter>
@@ -17,15 +19,15 @@ const Router: FC = () => (
                 if (protectedRoute) {
                     return (
                         <PrivateRoute path={typeof path === 'string' ? path : path(0)} key={stringPath}>
-                            {AdditionalComponents && <AdditionalComponents />}
                             <Component exact={exact} />
+                            {AdditionalComponents && <AdditionalComponents />}
                         </PrivateRoute>
                     );
                 } else {
                     return (
                         <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
-                            {AdditionalComponents && <AdditionalComponents />}
                             <Component exact={exact} />
+                            {AdditionalComponents && <AdditionalComponents />}
                         </Route>
                     );
                 }
@@ -43,9 +45,11 @@ const Providers: FC = ({ children }) => {
         }
     }
     return (
-        <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
-            <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>{' '}
-        </LocalizationProvider>
+        <ThemeProvider theme={theme}>
+            <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
+                <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>{' '}
+            </LocalizationProvider>
+        </ThemeProvider>
     );
 };
 
