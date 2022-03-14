@@ -79,7 +79,7 @@ export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
 6. `cd service-jehlomat`
 7. ../gradlew shadowJar
-8. java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf
+8. `java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf`
 
 ## Most common errors
 
