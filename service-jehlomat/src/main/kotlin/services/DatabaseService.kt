@@ -607,7 +607,12 @@ class DatabaseService(
             .where { TeamLocationTable.locationId eq location.id }
             .map { row -> row.getInt(1) }
             .toHashSet()
-        return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
+
+        if (teamIds.isNotEmpty()) {
+            return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
+        } else {
+            return emptySet()
+        }
     }
 
     fun cleanLocation(): Int {
