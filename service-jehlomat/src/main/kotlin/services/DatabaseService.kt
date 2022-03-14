@@ -519,7 +519,7 @@ class DatabaseService(
 
         return databaseInstance.useConnection { conn ->
             val sql =
-                conn.prepareStatement("SELECT ST_GeomFromWKB(wkb_geometry) FROM ${table.tableName} where $idColumn = ?")
+                conn.prepareStatement("SELECT ST_AsGeoJSON(ST_GeomFromWKB(wkb_geometry)) FROM ${table.tableName} where $idColumn = ?")
             when (table) {
                 OkresTable -> sql.setString(1, id)
                 ObecTable -> sql.setInt(1, id.toInt())
