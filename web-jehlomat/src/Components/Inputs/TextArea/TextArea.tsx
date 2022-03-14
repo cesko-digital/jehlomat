@@ -34,6 +34,10 @@ const Container = styled.div`
             border: 2px solid ${primary};
             outline: none;
         }
+      
+        &:disabled {
+          -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+        }
     }
 `;
 

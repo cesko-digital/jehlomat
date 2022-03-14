@@ -6,9 +6,11 @@ import Resizer from 'react-image-file-resizer';
 import FileUpload, { FileUploadProps } from 'Components/Inputs/FileUpload/FileUpload';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import { H4 } from 'utils/typography';
 
 interface PhotoUploadProps extends Omit<FileUploadProps, 'onChange' | 'value'> {
     onChange: (value: string) => void;
+    readOnly?: boolean;
 }
 
 const resizeFile = (file: File) =>
@@ -27,7 +29,7 @@ const resizeFile = (file: File) =>
         );
     });
 
-export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange }) => {
+export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [filesResizing, setFilesResizing] = useState(false);
     const [encodedFiles, setEncodedFiles] = useState<string[]>([]);
@@ -52,7 +54,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange }) => {
 
     return (
         <>
-            <FileUpload value={files} onChange={setFiles} accept={'image/*'} maxFiles={3} />
+            {!readOnly && <FileUpload value={files} onChange={setFiles} accept={'image/*'} maxFiles={3} />}
 
             {filesResizing && (
                 <Box mt={2}>
@@ -61,9 +63,8 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange }) => {
                 </Box>
             )}
 
-            {encodedFiles.length > 0 && (
+            {encodedFiles.length > 0 && readOnly && (
                 <Box mt={2} maxWidth="100%">
-                    <Typography variant={'h6'}>Nahrané fotky</Typography>
                     <Box sx={{ overflowX: 'scroll' }} display="flex" alignItems="flex-start">
                         {encodedFiles.map(photo => (
                             <>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { FC, useContext, useState } from 'react';
@@ -6,13 +6,14 @@ import dayjs from 'dayjs';
 import { Footer } from 'Components/Footer/Footer';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
-import NahledNalezu from 'screens/NovyNalez/screens/NahledNalezu';
 import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
 import { authorizedAPI } from 'config/baseURL';
 import { LoginContext } from 'utils/login';
-import { isNumber } from 'util';
+import { primary } from 'utils/colors';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import TextButton from 'Components/Buttons/TextButton/TextButton';
 // import Stepper from './Components/Stepper';
 
 export interface INovaJehla {
@@ -87,6 +88,10 @@ const NovyNalezContainer: FC = () => {
     const handleOnEdit = () => setCurrentStep(StepsEnum.Info);
     const handleOnLocationChange = () => setCurrentStep(StepsEnum.Mapa);
 
+    const handleGoToEdit = useCallback(() => {
+        setCurrentStep(StepsEnum.Info);
+    }, []);
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
@@ -102,22 +107,37 @@ const NovyNalezContainer: FC = () => {
                     handleOnEdit={handleOnEdit}
                     handleOnLocationChange={handleOnLocationChange}
                     handleOnSave={handleOnSave}
+                    handleGoToEdit={handleGoToEdit}
                 />
             </Container>
         </Box>
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputChange, handleOnEdit, handleOnLocationChange, handleOnSave, handleOnSubmit, handleStepChange }) => {
+const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputChange, handleOnEdit, handleOnLocationChange, handleOnSave, handleOnSubmit, handleStepChange, handleGoToEdit }) => {
     switch (currentStep) {
         case StepsEnum.Start:
             return <Info handleStepChange={handleStepChange} />;
         case StepsEnum.Mapa:
             return <ZadatNalezMapa handleStepChange={handleStepChange} userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />;
         case StepsEnum.Info:
-            return <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit} />;
+            return (
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit}>
+                    <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                </ZadavaniNalezu>
+            );
         case StepsEnum.Nahled:
-            return <NahledNalezu syringeInfo={newSyringeInfo} onSaveClick={handleOnSave} onEditClick={handleOnEdit} onLocationChangeClick={handleOnLocationChange} />;
+            return (
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit} readOnly>
+                    <Box display="flex" justifyContent="center" flexDirection="column">
+                        <PrimaryButton text="Uložit" onClick={handleOnSubmit} />
+                        <Box display="flex" mt={3} justifyContent="center">
+                            <TextButton fontSize={18} color={primary} text="Editovat nález" onClick={handleGoToEdit} textTransform="uppercase" />
+                        </Box>
+                    </Box>
+                </ZadavaniNalezu>
+            );
+
         case StepsEnum.Potvrzeni:
             return <Potvrzeni />;
         default:
@@ -134,6 +154,7 @@ interface INovyNalez {
     handleOnSave: () => void;
     handleOnEdit: () => void;
     handleOnLocationChange: () => void;
+    handleGoToEdit: () => void;
 }
 
 export default NovyNalezContainer;

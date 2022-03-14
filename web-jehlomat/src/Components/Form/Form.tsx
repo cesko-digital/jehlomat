@@ -20,9 +20,9 @@ export const FormItem = styled.div`
     align-items: baseline;
     justify-content: center;
     text-align: left;
-    width: 80%;
+    
     font-family: Roboto;
-    margin: 15px 5px;
+    margin: 15px 6px;
     position: relative;
   
     @media (min-width: 420px) {
