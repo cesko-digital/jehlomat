@@ -18,6 +18,7 @@ import TextInput from 'Components/Inputs/TextInput/TextInput';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import PhotoUpload from 'screens/NovyNalez/components/PhotoUpload';
 import TextArea from 'Components/Inputs/TextArea';
+import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 
 const Container = styled.div`
     display: flex;
@@ -34,13 +35,15 @@ const ButtonContainer = styled.div`
     width: 100%;
 `;
 
-const Icon = styled.img<{readOnly?: boolean}>`
+const Icon = styled.img<{ readOnly?: boolean }>`
     position: absolute;
     right: 20px;
     bottom: 15px;
     height: 25px;
-  
-    ${({readOnly}) => readOnly && `
+
+    ${({ readOnly }) =>
+        readOnly &&
+        `
         opacity: .6;
     `}
 `;
@@ -49,10 +52,11 @@ interface Props {
     onInputChange: (key: string, value: string | number) => void;
     syringeInfo: INovaJehla;
     readOnly?: boolean;
+    handleEditLocation?: () => void;
 }
 
-const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, children }) => {
-    const { info, datetime, count } = syringeInfo;
+const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, children, handleEditLocation }) => {
+    const { info, datetime, count, lat, lng } = syringeInfo;
     const currentTime = useMemo(() => dayjs(), []);
 
     return (
@@ -64,18 +68,11 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                             <FormWrapper>
                                 <FormItem>
                                     <FormItemLabel>Počet stříkaček</FormItemLabel>
-                                    <TextInput
-                                        type="number"
-                                        value={count}
-                                        placeholder="Zadejte počet stříkaček"
-                                        onChange={e => onInputChange('count', e.target.value)}
-                                        disabled={readOnly}
-                                    />
+                                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
                                     <Icon src={syringe} readOnly={readOnly} />
                                 </FormItem>
                                 <FormItem>
                                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                                    {/*<TextInput type="date" value={datetime} onChange={e => onInputChange('datetime', e.target.value)} />*/}
                                     <DateTimePicker
                                         value={datetime || currentTime.unix()}
                                         maxDateTime={currentTime}
@@ -87,16 +84,27 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                                     />
                                     <Icon src={event} readOnly={readOnly} />
                                 </FormItem>
+                                {readOnly && (
+                                    <>
+                                        <FormItem>
+                                            <FormItemLabel>Místo nálezu</FormItemLabel>
+                                            <TextInput
+                                                type="text"
+                                                value={`${lat},${lng}`}
+                                                placeholder="Zadejte počet stříkaček"
+                                                onChange={e => onInputChange('count', e.target.value)}
+                                                disabled={readOnly}
+                                            />
+                                            <Icon src={event} readOnly={readOnly} />
+                                        </FormItem>
+                                        <Box mt={2} mb={3}>
+                                            <SecondaryButton text="Zobrazit a upravit na mapě " onClick={handleEditLocation} />
+                                        </Box>
+                                    </>
+                                )}
                                 <FormItem>
                                     <FormItemLabel>Poznámky</FormItemLabel>
-                                    <TextArea
-                                        value={info}
-                                        placeholder="Rozšiřující informace"
-                                        onChange={e => onInputChange('info', e.target.value)}
-                                        minRows={2}
-                                        maxRows={30}
-                                        disabled={readOnly}
-                                    />
+                                    <TextArea value={info} placeholder="Rozšiřující informace" onChange={e => onInputChange('info', e.target.value)} minRows={2} maxRows={30} disabled={readOnly} />
                                     <Icon src={create} readOnly={readOnly} />
                                 </FormItem>
                                 <FormItem>

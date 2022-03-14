@@ -92,6 +92,10 @@ const NovyNalezContainer: FC = () => {
         setCurrentStep(StepsEnum.Info);
     }, []);
 
+    const handleEditLocation = useCallback(() => {
+        setCurrentStep(StepsEnum.Mapa);
+    }, [])
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
@@ -108,13 +112,14 @@ const NovyNalezContainer: FC = () => {
                     handleOnLocationChange={handleOnLocationChange}
                     handleOnSave={handleOnSave}
                     handleGoToEdit={handleGoToEdit}
+                    handleEditLocation={handleEditLocation}
                 />
             </Container>
         </Box>
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputChange, handleOnEdit, handleOnLocationChange, handleOnSave, handleOnSubmit, handleStepChange, handleGoToEdit }) => {
+const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputChange, handleOnEdit, handleOnLocationChange, handleOnSave, handleOnSubmit, handleStepChange, handleGoToEdit, handleEditLocation }) => {
     switch (currentStep) {
         case StepsEnum.Start:
             return <Info handleStepChange={handleStepChange} />;
@@ -128,7 +133,7 @@ const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputCha
             );
         case StepsEnum.Nahled:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} readOnly>
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
                     <Box display="flex" justifyContent="center" flexDirection="column">
                         <PrimaryButton text="Uložit" onClick={handleOnSave} />
                         <Box display="flex" mt={3} justifyContent="center">
@@ -155,6 +160,7 @@ interface INovyNalez {
     handleOnEdit: () => void;
     handleOnLocationChange: () => void;
     handleGoToEdit: () => void;
+    handleEditLocation: () => void;
 }
 
 export default NovyNalezContainer;
