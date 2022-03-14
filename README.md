@@ -56,7 +56,7 @@ By hybrid means, the BE service will be run locally but the database will be run
     1. Run `docker ps`, you should see a table with just one row. It is your running container. Remember its container id, we will need it in the next step
     2. Run commands:
     ```shell
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
     docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
     docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
     docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
