@@ -122,15 +122,15 @@ const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputCha
             return <ZadatNalezMapa handleStepChange={handleStepChange} userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />;
         case StepsEnum.Info:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit}>
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} >
                     <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
                 </ZadavaniNalezu>
             );
         case StepsEnum.Nahled:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} onSumbit={handleOnSubmit} readOnly>
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} readOnly>
                     <Box display="flex" justifyContent="center" flexDirection="column">
-                        <PrimaryButton text="Uložit" onClick={handleOnSubmit} />
+                        <PrimaryButton text="Uložit" onClick={handleOnSave} />
                         <Box display="flex" mt={3} justifyContent="center">
                             <TextButton fontSize={18} color={primary} text="Editovat nález" onClick={handleGoToEdit} textTransform="uppercase" />
                         </Box>

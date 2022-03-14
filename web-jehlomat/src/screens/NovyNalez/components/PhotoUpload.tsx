@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
+import ImageViewer from 'react-simple-image-viewer';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Resizer from 'react-image-file-resizer';
 import FileUpload, { FileUploadProps } from 'Components/Inputs/FileUpload/FileUpload';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { H4 } from 'utils/typography';
 
 interface PhotoUploadProps extends Omit<FileUploadProps, 'onChange' | 'value'> {
     onChange: (value: string) => void;
@@ -33,9 +33,23 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
     const [files, setFiles] = useState<File[]>([]);
     const [filesResizing, setFilesResizing] = useState(false);
     const [encodedFiles, setEncodedFiles] = useState<string[]>([]);
+    const [currentImage, setCurrentImage] = useState(0);
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+
     const isMobile = useMediaQuery(media.lte('mobile'));
 
+    const openImageViewer = useCallback(index => {
+        setCurrentImage(index);
+        setIsViewerOpen(true);
+    }, []);
+
+    const closeImageViewer = () => {
+        setCurrentImage(0);
+        setIsViewerOpen(false);
+    };
+
     useEffect(() => {
+        // resize files
         const resizeFiles = async () => {
             setFilesResizing(true);
             const promises = files.map(file => resizeFile(file));
@@ -65,15 +79,17 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
 
             {encodedFiles.length > 0 && readOnly && (
                 <Box mt={2} maxWidth="100%">
-                    <Box sx={{ overflowX: 'scroll' }} display="flex" alignItems="flex-start">
-                        {encodedFiles.map(photo => (
+                    <Box sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px' }} display="flex" alignItems="flex-start">
+                        {encodedFiles.map((photo, index) => (
                             <>
-                                <Box component="img" src={photo} width={isMobile ? 150 : 400} mr={2} />
+                                <Box component="img" src={photo} width={isMobile ? 150 : 400} mr={2} onClick={() => openImageViewer(index)} sx={{ '&:hover': { transform: 'scale(1.1)' } }} />
                             </>
                         ))}
                     </Box>
                 </Box>
             )}
+
+            {isViewerOpen && <ImageViewer src={encodedFiles} currentIndex={currentImage} disableScroll={false} closeOnClickOutside={true} onClose={closeImageViewer} />}
         </>
     );
 };

@@ -47,7 +47,6 @@ const Icon = styled.img<{readOnly?: boolean}>`
 
 interface Props {
     onInputChange: (key: string, value: string | number) => void;
-    onSumbit: () => void;
     syringeInfo: INovaJehla;
     readOnly?: boolean;
 }
