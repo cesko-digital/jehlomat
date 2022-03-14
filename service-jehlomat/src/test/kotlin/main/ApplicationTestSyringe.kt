@@ -324,6 +324,22 @@ class ApplicationTestSyringe {
     }
 
     @Test
+    fun testPostSyringeWithoutLocationAndUser() = withTestApplication({ module(testing = true) }) {
+        with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = null, gps_coordinates = "0 0"))))
+        }) {
+            assertEquals(HttpStatusCode.Created, response.status())
+            val actualSyringes = database.selectSyringes()
+            assertEquals(
+                """{
+  "id" : """" + actualSyringes[0].id + """",
+  "teamAvailable" : false
+}""", response.content)
+        }
+    }
+
+    @Test
     fun testPostSyringeWithWrongUser() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")

@@ -25,7 +25,7 @@ export const H2 = styled.span`
 export const H3 = styled.span`
     ${fontFamilyRoboto}
     ${fontWeightBold}
-  font-size: 18px;
+    font-size: 18px;
     letter-spacing: 1.25px;
     text-transform: uppercase;
 `;
