@@ -42,14 +42,14 @@ export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
 export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
 export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
-6) cd service-jehlomat 
-7) ../gradlew shadowJar 
-8) java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf
+6) `cd service-jehlomat` 
+7) `../gradlew shadowJar` 
+8) `java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf`
+
 
 ## Run hybrid backend application with Docker
 
-> This approach is useful mostly for FE development.
-By hybrid means, the BE service will be run locally but the database will be run via docker, so it will not be necessary to install the DB and run it 1. locally.
+> This approach is useful mostly for FE development. By hybrid means, the BE service will be run locally but the database will be run via docker, so it will not be necessary to install the DB and run it 1. locally.
 
 1. In the root run `docker compose up`
 2. Create relations:
@@ -57,11 +57,11 @@ By hybrid means, the BE service will be run locally but the database will be run
     2. Run commands:
     ```shell
     docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
-    docker exec -it 1f5a39c5e45d psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
     ```
 3. Set env variables
 ```shell
@@ -78,8 +78,8 @@ export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
 export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
 6. `cd service-jehlomat`
-7. ../gradlew shadowJar
-8. `java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf`
+7. `../gradlew shadowJar`  # builds launchable jar with all dependencies
+8. `java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf`  # launch application https://ktor.io/docs/configurations.html#command-line
 
 ## Most common errors
 
