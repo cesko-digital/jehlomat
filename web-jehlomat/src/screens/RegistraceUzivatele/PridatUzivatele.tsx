@@ -20,7 +20,6 @@ const PridatUzivatele: FC<WithModal> = ({ inModal }) => {
                     <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>
                         <Box>
                             <TitleBar
-                                mobile
                                 icon={<ChevronLeft sx={{ color: white, fontSize: 40 }} />}
                                 onIconClick={() => {
                                     history.goBack();
