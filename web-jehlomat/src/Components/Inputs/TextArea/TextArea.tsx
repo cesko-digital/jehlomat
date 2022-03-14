@@ -30,7 +30,7 @@ const Container = styled.div`
         border-radius: 4px;
         
         &:focus {
-            margin-top: 0px;
+            margin-top: 0;
             border: 2px solid ${primary};
             outline: none;
         }
