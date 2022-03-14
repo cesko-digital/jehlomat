@@ -77,7 +77,7 @@ export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
 export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
 export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 ```
-6. cd service-jehlomat
+6. `cd service-jehlomat`
 7. ../gradlew shadowJar
 8. java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf
 
