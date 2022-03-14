@@ -93,7 +93,7 @@ Version compatibility of Java and Kotlin is incorrect. Make sure the proper vers
 
 ### Receive Error 500 on a server request and/or Relation "users" does not exist.
 
-Makr sure you did point 5 in "Run" block.
+Make sure you did point 5 in "Run" block.
 
 # Swagger UI
 
