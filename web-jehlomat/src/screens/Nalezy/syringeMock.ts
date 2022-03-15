@@ -1,4 +1,4 @@
-import {IUser as IPerson} from "types";
+import { IUser as IPerson } from 'types';
 
 export interface IListSyringe {
     syringeList: ISyringe[];
@@ -15,8 +15,6 @@ export interface ILocation {
     obec: number;
     mestkaCast: number;
 }
-
-
 
 export interface ISyringe {
     id: string;
