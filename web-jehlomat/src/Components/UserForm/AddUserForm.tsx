@@ -9,7 +9,8 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
-import { LoginContext } from 'utils/login';
+import {useRecoilValue} from "recoil";
+import {tokenState} from "store/login";
 
 interface Props { }
 interface Values {
@@ -22,7 +23,7 @@ const validationSchema = yup.object({
 
 const PridatUzivatele: FC<Props> = () => {
     const history = useHistory();
-    const { token } = useContext(LoginContext);
+    const token = useRecoilValue(tokenState);
 
     return (
         <Formik
@@ -31,7 +32,7 @@ const PridatUzivatele: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await authorizedAPI(token).post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await authorizedAPI.post('/api/v1/jehlomat/user', values);
                         const status = response.status;
 
                         switch (true) {

@@ -29,10 +29,10 @@ const fetchClient = () => {
 
 export default fetchClient();
 
-export const authorizedAPI = (jwt: string) => {
-    const client = fetchClient();
-    //const token = localStorage.getItem("auth");
-    client.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
+export const authorizedAPI = fetchClient();
 
-    return client;
+export const setAuthorizedApiToken = (jwt: string) => {
+    authorizedAPI.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
+
+    return authorizedAPI;
 };
