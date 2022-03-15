@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextInput from 'Components/Inputs/TextInput';
-import {useSetRecoilState} from "recoil";
+import { useSetRecoilState } from 'recoil';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
@@ -12,8 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
 import { ModalContext } from 'Components/Navigator/Navigator';
-import {tokenState} from "store/login";
-
+import { tokenState } from 'store/login';
 
 interface LoginFormProps {}
 

@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
@@ -9,10 +9,11 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
-import {useRecoilValue} from "recoil";
-import {tokenState} from "store/login";
+import { useRecoilValue } from 'recoil';
+import { tokenState } from 'store/login';
 
-interface Props { }
+interface Props {}
+
 interface Values {
     email: string;
 }

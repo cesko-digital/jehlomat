@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 interface Props {}
 
 export const LoginAlert: React.FC<Props> = () => {
-    // eslint-disable-next-line
+    // eslint-disable-next-lineuseRecoilValue(userIDState)
     const tokenExpiration = useRecoilValue(tokenExpirationState);
 
     // todo show alert 10 minutes before expiration
