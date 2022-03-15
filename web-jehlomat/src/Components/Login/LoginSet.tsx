@@ -30,7 +30,7 @@ export const LoginSet: FC = () => {
                     console.log(error); //should goes to the error page
                 });
         }
-    }, [token, userId]);
+    }, [token, userId, setUser]);
 
     return null;
 };
