@@ -6,28 +6,28 @@ import dayjs, { Dayjs } from 'dayjs';
 
 const { persistAtom } = recoilPersist();
 
-export const tokenState = atom<string | undefined>({
+export const tokenState = atom<string | null>({
     key: 'tokenState',
-    default: undefined,
+    default: null,
     effects_UNSTABLE: [persistAtom],
 });
 
-export const tokenExpirationState = selector<Dayjs | undefined>({
+export const tokenExpirationState = selector<Dayjs | null>({
     key: 'tokenExpiration',
     get: ({ get }) => {
         const token = get(tokenState);
-        if(!token) return undefined;
+        if(!token) return null;
 
         const decoded: IToken = jwt_decode(token);
         return dayjs.unix(decoded.exp);
     },
 });
 
-export const userIDState = selector<number | undefined>({
+export const userIDState = selector<number | null>({
     key: 'userID',
     get: ({ get }) => {
         const token = get(tokenState);
-        if(!token) return undefined;
+        if(!token) return null;
 
         const decoded: IToken = jwt_decode(token);
 

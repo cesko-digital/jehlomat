@@ -22,7 +22,7 @@ export const Header = (props: Props) => {
     const setToken = useSetRecoilState(tokenState);
 
     const logoutFnc = useCallback(() => {
-        setToken(undefined);
+        setToken(null);
     }, [setToken]);
 
     const onBack = () => {
