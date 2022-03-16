@@ -1,6 +1,6 @@
-﻿import styled from "@emotion/styled";
-import {textSubTitles} from "utils/colors";
-import {fontFamilyRoboto} from "utils/typography";
+import styled from '@emotion/styled';
+import { textSubTitles } from 'utils/colors';
+import { fontFamilyRoboto } from 'utils/typography';
 
 const Heading = styled.h2`
     ${fontFamilyRoboto}
