@@ -3,7 +3,7 @@ import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import { authorizedAPI } from '../../config/baseURL';
+import { API } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -33,7 +33,7 @@ const PridatUzivatele: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await authorizedAPI.post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user', values);
                         const status = response.status;
 
                         switch (true) {

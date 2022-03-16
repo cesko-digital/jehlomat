@@ -4,7 +4,7 @@ import { tokenState, userIDState } from 'store/login';
 import { userState } from 'store/user';
 import { IUser } from 'types';
 import { AxiosResponse } from 'axios';
-import { authorizedAPI, setAuthorizedApiToken } from 'config/baseURL';
+import { API, setApiToken } from 'config/baseURL';
 
 export const LoginSet: FC = () => {
     const token = useRecoilValue(tokenState);
@@ -14,10 +14,10 @@ export const LoginSet: FC = () => {
     useEffect(() => {
         if (token && userId) {
             // set token to authorized instance
-            setAuthorizedApiToken(token);
+            setApiToken(token);
 
             const getUser = async (token: string) => {
-                const response: AxiosResponse<IUser> = await authorizedAPI.get('/api/v1/jehlomat/user/' + userId);
+                const response: AxiosResponse<IUser> = await API.get('/api/v1/jehlomat/user/' + userId);
                 return response.data;
             };
 
