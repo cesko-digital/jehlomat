@@ -30,6 +30,8 @@
     "react-router-dom": "5.3.0",
     "react-scripts": "5.0.0",
     "react-simple-image-viewer": "^1.2.1",
+    "recoil": "^0.6.1",
+    "recoil-persist": "^4.0.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0",
     "yup": "^0.32.11"

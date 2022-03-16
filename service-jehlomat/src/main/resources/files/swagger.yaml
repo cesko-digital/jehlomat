@@ -7,7 +7,7 @@ info:
   termsOfService: https://swagger.io/terms/
   contact:
     email: radekludacka@gmail.com
-host: localhost:8082
+host: localhost:8089
 basePath: /api/v1/jehlomat
 schemes:
   - http
@@ -494,6 +494,27 @@ paths:
                   $ref: '#/definitions/Location'
         '400':
           description: Not supported format of GPS coordinates
+  /location/geometry:
+    get:
+      summary: Get geometry of location
+      parameters:
+        - name: type
+          in: query
+          description: type of location
+          type: string
+          enum:
+            - okres
+            - obec
+            - mc
+        - name: id
+          in: query
+          description: id of location
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
   /location/all:
     get:
       summary: Get available locations from database

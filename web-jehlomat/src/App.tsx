@@ -1,16 +1,18 @@
 import React, { FC, Suspense } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
 import { routes } from 'routes';
 import { ThemeProvider } from '@mui/material/styles';
 import csLocale from 'dayjs/locale/cs';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Footer } from 'Components/Footer/Footer';
-import { LoginContext, useLogin } from 'utils/login';
-import PrivateRoute from 'config/protectedRoute';
 import { theme } from 'theme';
+import { LoginAlert } from 'Components/Login/LoginAlert';
+import { SetLogin } from 'Components/Login/SetLogin';
 
+import PrivateRoute from 'config/protectedRoute';
 const Router: FC = () => (
     <HashRouter>
         <Switch>
@@ -37,28 +39,22 @@ const Router: FC = () => (
     </HashRouter>
 );
 
-const Providers: FC = ({ children }) => {
-    let { token, setLogin } = useLogin();
-    if (!token) {
-        if (localStorage.getItem('auth')) {
-            token = localStorage.getItem('auth');
-        }
-    }
-    return (
-        <ThemeProvider theme={theme}>
-            <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
-                <LoginContext.Provider value={{ token, setToken: setLogin }}>{children}</LoginContext.Provider>{' '}
-            </LocalizationProvider>
-        </ThemeProvider>
-    );
-};
+const Providers: FC = ({ children }) => (
+    <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
+            <RecoilRoot>{children}</RecoilRoot>
+        </LocalizationProvider>
+    </ThemeProvider>
+);
 
 const App: FC = ({ children }) => {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <Providers>
+                    <LoginAlert />
                     <Router />
+                    <SetLogin />
                 </Providers>
             </Box>
         </Suspense>

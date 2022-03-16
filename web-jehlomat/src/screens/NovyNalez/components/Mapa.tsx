@@ -71,6 +71,7 @@ const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
 
     return (
         <Box position="relative">
+            <MapControl />
             <MapContainer
                 center={userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
@@ -82,7 +83,7 @@ const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
                 zoomControl={false}
                 preferCanvas
             >
-                <MapControl />
+
                 <MapCustomEvents />
                 <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

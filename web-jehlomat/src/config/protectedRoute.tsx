@@ -1,26 +1,25 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import Box from '@mui/material/Box';
 import { Redirect, Route, useLocation } from 'react-router';
-import { LoginContext } from 'utils/login';
+import { useRecoilValue } from 'recoil';
+import { isLoginValidState } from 'store/login';
 
-const PrivateRoute: FC<any> = (props) => {
-
+const PrivateRoute: FC<any> = props => {
     const location = useLocation();
-    const { token } = useContext(LoginContext);
+    const isLoggedIn = useRecoilValue(isLoginValidState);
 
-
-    return token ? (
+    return isLoggedIn ? (
         <Box py={8}>
-            <Route {...props} />
+        <Route {...props} />
         </Box>
     ) : (
-      <Redirect
-        to={{
-          pathname: "/login",
-          state: { from: location }
-        }}
-      />
+        <Redirect
+            to={{
+                pathname: '/login',
+                state: { from: location },
+            }}
+        />
     );
-  };
+};
 
-  export default PrivateRoute;
+export default PrivateRoute;

@@ -1,3 +1,5 @@
+import { IUser as IPerson } from 'types';
+
 export interface IListSyringe {
     syringeList: ISyringe[];
     pageInfo: {
@@ -12,16 +14,6 @@ export interface ILocation {
     okres: string;
     obec: number;
     mestkaCast: number;
-}
-
-export interface IPerson {
-    id: number;
-    email: string;
-    username: string;
-    verified: boolean;
-    organizationId: number;
-    teamId: number;
-    isAdmin: boolean;
 }
 
 export interface ISyringe {
