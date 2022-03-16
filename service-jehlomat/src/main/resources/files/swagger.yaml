@@ -7,7 +7,7 @@ info:
   termsOfService: https://swagger.io/terms/
   contact:
     email: radekludacka@gmail.com
-host: localhost:8082
+host: localhost:8089
 basePath: /api/v1/jehlomat
 schemes:
   - http
