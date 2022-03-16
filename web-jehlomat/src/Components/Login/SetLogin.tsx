@@ -2,14 +2,17 @@ import { FC, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { tokenState, userIDState } from 'store/login';
 import { userState } from 'store/user';
+import { useHistory } from 'react-router-dom';
 import { IUser } from 'types';
 import { AxiosResponse } from 'axios';
 import { API, setApiToken } from 'config/baseURL';
+import { LINKS } from 'routes';
 
-export const LoginSet: FC = () => {
+export const SetLogin: FC = () => {
     const token = useRecoilValue(tokenState);
     const setUser = useSetRecoilState(userState);
     const userId = useRecoilValue(userIDState);
+    const history = useHistory();
 
     useEffect(() => {
         if (token && userId) {
@@ -26,10 +29,12 @@ export const LoginSet: FC = () => {
                 .then(user => {
                     setUser(user);
                 })
-                .catch(error => {
-                    console.log(error); //should goes to the error page
+                .catch(() => {
+                    history.push(LINKS.ERROR);
                 });
         }
+        // disable because of history var, should be handled better tho
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, userId, setUser]);
 
     return null;

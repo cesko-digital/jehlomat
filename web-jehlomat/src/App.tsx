@@ -1,13 +1,13 @@
-import React, { FC, Suspense, useEffect } from 'react';
+import React, { FC, Suspense  } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { routes } from 'routes';
 import { Footer } from 'Components/Footer/Footer';
 
 import PrivateRoute from 'config/protectedRoute';
 import { LoginAlert } from 'Components/Login/LoginAlert';
-import { LoginSet } from 'Components/Login/LoginSet';
+import { SetLogin } from 'Components/Login/SetLogin';
 
 const Router: FC = () => (
     <HashRouter>
@@ -44,7 +44,7 @@ const App: FC = ({ children }) => {
                 <Providers>
                     <LoginAlert />
                     <Router />
-                    <LoginSet />
+                    <SetLogin />
                 </Providers>
             </Box>
         </Suspense>
