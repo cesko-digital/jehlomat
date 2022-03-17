@@ -3,14 +3,14 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { FC, useContext, useState } from 'react';
 import dayjs from 'dayjs';
-import { Footer } from 'Components/Footer/Footer';
+
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
 import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
-import { authorizedAPI } from 'config/baseURL';
-import { LoginContext } from 'utils/login';
+import {API} from 'config/baseURL';
+
 import { primary } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
@@ -43,7 +43,6 @@ const StepsTitleMap = new Map<StepsEnum, string>([
 
 const NovyNalezContainer: FC = () => {
     const [currentStep, setCurrentStep] = useState<StepsEnum>(StepsEnum.Start);
-    const { token } = useContext(LoginContext);
 
     const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: dayjs().unix(), count: undefined, photo: undefined });
 
@@ -73,7 +72,7 @@ const NovyNalezContainer: FC = () => {
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-            const data = await authorizedAPI(token).post('/api/v1/jehlomat/syringe', apiSyringe);
+            const data = await API.post('/api/v1/jehlomat/syringe', apiSyringe);
 
             console.log('returned data', data);
             if (data.status === 200 || data.status === 201) {

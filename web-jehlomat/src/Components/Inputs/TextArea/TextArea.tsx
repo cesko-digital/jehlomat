@@ -28,6 +28,7 @@ const Container = styled.div`
         padding: 16.5px 14px;
         border: 1px solid rgba(0, 0, 0, 0.23);
         border-radius: 4px;
+        resize: none;
         
         &:focus {
             margin-top: 0;

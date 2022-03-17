@@ -3,15 +3,13 @@ import { FC } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/material';
 import { media } from '../../utils/media';
-import { useLogin } from 'utils/login';
 
 interface Props {}
 
 const Layout: FC<Props> = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
-    let { token } = useLogin();
 
-    if (isMobile && token) {
+    if (isMobile) {
         return (
             <>
                 <Navigation /> <Box py={8} />

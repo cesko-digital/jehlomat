@@ -1,10 +1,10 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, Fragment, useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import ZapnoutPolohu from 'screens/NovyNalez/components/ZapnoutPolohu';
-import Mapa from 'screens/NovyNalez/components/Mapa';
+import LocationAgreement from 'screens/NovyNalez/components/LocationAgreement';
+import Map from 'screens/NovyNalez/components/Map';
 import { LatLngExpression } from 'leaflet';
 import { INovaJehla, StepsEnum } from 'screens/NovyNalez/NovyNalezContainer';
-import {MapContext} from "screens/NovyNalez/components/MapContext";
+import { MapContext } from 'screens/NovyNalez/components/MapContext';
 
 interface IZadatNalezMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
@@ -15,13 +15,20 @@ const StyledContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: 80vh;
+    width: 100%;
+
+    @media (max-width: 768px) {
+        // compensate parent padding, nasty but easiest
+        width: 100vw;
+        transform: translateX(-16px);
+    }
 `;
 
 export enum LocationState {
-    CHECKING =  'CHECKING',
+    CHECKING = 'CHECKING',
 
-    GRANTED ='GRANTED',
+    GRANTED = 'GRANTED',
 }
 
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
@@ -41,13 +48,12 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
             setLocationState(LocationState.CHECKING);
             navigator.geolocation.getCurrentPosition(
                 position => {
-
                     if (position.coords.latitude) {
                         handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
                         setLocationState(LocationState.GRANTED);
                     }
                 },
-                () => {},
+                () => setModalVisible(false),
             );
         }
 
@@ -89,21 +95,23 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
         // };
     }, []);
 
-    const handleAllowGeolocation = (lat: number, lng: number): void => {
+    const handleAllowGeolocation = useCallback(
+        (lat: number, lng: number): void => {
+            setModalVisible(false);
+            setUserPosition([lat, lng]);
+        },
+        [setModalVisible, setUserPosition],
+    );
+
+    const handleDenyGeolocation = useCallback(() => {
         setModalVisible(false);
-        setUserPosition([lat, lng]);
-    };
-    const handleDenyGeolocation = () => {
-        setModalVisible(false);
-    };
+    }, [setModalVisible]);
 
     return (
         <StyledContainer id="map-container">
-            <MapContext.Provider value={{position: userPosition, setPosition: setUserPosition}}>
-                <ZapnoutPolohu visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
-                {mapSize && mapSize.width != 0 && mapSize.height != 0 && (
-                    <Mapa handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height}  />
-                )}
+            <MapContext.Provider value={{ position: userPosition, setPosition: setUserPosition }}>
+                <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
+                {mapSize && mapSize.width != 0 && mapSize.height != 0 && <Map handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} />}
             </MapContext.Provider>
         </StyledContainer>
     );

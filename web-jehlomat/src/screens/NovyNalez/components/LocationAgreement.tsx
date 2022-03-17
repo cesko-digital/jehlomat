@@ -14,13 +14,13 @@ interface Props {
     locationState?: LocationState;
 }
 
-const ZapnoutPolohu: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyGeolocation, locationState }) => {
+const LocationAgreement: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyGeolocation, locationState }) => {
     const getUserGeolocation = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
                 handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
             },
-            positionError => console.log(positionError),
+            positionError => handleDenyGeolocation(),
         );
     };
 
@@ -44,4 +44,4 @@ const ZapnoutPolohu: FC<Props> = ({ visible, handleAllowGeolocation, handleDenyG
     return null;
 };
 
-export default ZapnoutPolohu;
+export default LocationAgreement;

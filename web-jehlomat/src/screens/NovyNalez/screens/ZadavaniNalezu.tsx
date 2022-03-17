@@ -15,10 +15,11 @@ import { white } from 'utils/colors';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemLabel } from 'utils/typography';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
-import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import PhotoUpload from 'screens/NovyNalez/components/PhotoUpload';
 import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
 
 const Container = styled.div`
     display: flex;
@@ -57,6 +58,7 @@ interface Props {
 
 const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, children, handleEditLocation }) => {
     const { info, datetime, count, lat, lng } = syringeInfo;
+    const isMobile = useMediaQuery(media.lte('mobile'));
     const currentTime = useMemo(() => dayjs(), []);
 
     return (
@@ -82,7 +84,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                                         toolbarTitle="Vyberte datum a čas nálezu"
                                         disabled={readOnly}
                                     />
-                                    <Icon src={event} readOnly={readOnly} />
+                                    {isMobile && <Icon src={event} readOnly={readOnly} />}
                                 </FormItem>
                                 {readOnly && (
                                     <>

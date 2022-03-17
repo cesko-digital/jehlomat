@@ -15,7 +15,8 @@ import { ChangeView } from './ChangeView';
 const FloatinButtonContainer = styled.div`
     position: absolute;
     bottom: calc(5vh + 86px);
-    left: calc(50vw - 87px);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 5;
 `;
 
@@ -34,7 +35,7 @@ interface IMapa {
     height: number;
 }
 
-const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
+const Map: FC<IMapa> = ({ handleStepChange, width, height }) => {
     const { position: userPosition } = useContext(MapContext);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [changePosition, setChangePosition] = useState<LatLngExpression>();
@@ -57,7 +58,6 @@ const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
 
     function handleMapCenterChange(map: L.Map, setMarkerPosition: any) {
         const { lat, lng } = map.getCenter();
-        console.log('Map center:', map.getCenter());
         setMarkerPosition([lat, lng]);
     }
 
@@ -70,20 +70,19 @@ const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
     };
 
     return (
-        <Box position="relative">
+        <Box position="relative" width="100%" height="100%">
             <MapControl />
             <MapContainer
                 center={userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
                 scrollWheelZoom={false}
-                style={{ width: `${width}px`, height: `${height}px`, zIndex: 1 }}
+                style={{ width: `100%`, height: `95%`, zIndex: 1 }}
                 whenCreated={map => {
                     handleMapCenterChange(map, setMarkerPosition);
                 }}
                 zoomControl={false}
                 preferCanvas
             >
-
                 <MapCustomEvents />
                 <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -98,4 +97,4 @@ const Mapa: FC<IMapa> = ({ handleStepChange, width, height }) => {
     );
 };
 
-export default Mapa;
+export default Map;
