@@ -1,18 +1,12 @@
-import React, { useState, FC } from 'react';
+import React, {useState, FC, useEffect} from 'react';
+import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-// import Card from './components/Card';
-// import styled from '@emotion/styled';
-// import { secondary } from '../../utils/colors';
-// import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-// import TextButton from '../../Components/Buttons/TextButton/TextButton';
-import { Header } from '../../Components/Header/Header';
-// import { Link } from 'react-router-dom';
-// import { LINKS } from '../../utils/links';
-import { useMediaQuery } from '@mui/material';
+import {ClickAwayListener, Popper, useMediaQuery} from '@mui/material';
 import {
+    Button,
+    Controls,
     TextHeader,
-    FilterLink,
     ListWrapper,
     ListHeader,
     ListHeaderItem,
@@ -24,22 +18,77 @@ import {
     TextMuted,
     TextMutedBold,
     TextGold,
-    TextHighlight,
+    TextHighlight, Links, ActionLink,
 } from './NalezyStyles';
-import { media } from '../../utils/media';
-import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
-import SearchInputDesktop from '../../Components/Inputs/SearchInput/SearchInputDesktop';
-import { syringeMock } from './syringeMock';
-import dayjs from 'dayjs';
+import { Header } from 'Components/Header/Header';
+import SearchInput from 'Components/Inputs/SearchInput/SearchInput';
+import SearchInputDesktop from 'Components/Inputs/SearchInput/SearchInputDesktop';
+import { media } from 'utils/media';
+import {IListSyringe, ISyringe, syringeMock} from './syringeMock';
+import { API } from "config/baseURL";
+import {AxiosResponse} from "axios";
 
 dayjs().format();
 
-interface Props {}
+type SortableColumn 
+    = "TOWN" 
+    | "CREATED_AT" 
+    | "CREATED_BY" 
+    | "DEMOLISHED_AT";
 
-const NavodLikvidace: FC<Props> = () => {
+interface Order {
+    column: SortableColumn;
+    direction: "ASC" | "DESC";
+}
+
+const swapOrder = (order: Order): Order => {
+    if (order.direction === "ASC") return { ...order, direction: "DESC" };
+
+    return { ...order, direction: "ASC" };
+};
+
+const NavodLikvidace: FC = () => {
+    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+    
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [syringes, setSyringes] = useState(syringeMock.syringeList);
+    const [order, setOrder] = useState<Array<Order>>([]);
+    const [selected, setSelected] = useState<Array<ISyringe>>([]);
+    const [edit, setEdit] = useState<ISyringe | null>();
+    
     let i = 1;
+    
+    useEffect(() => {
+        const load = async () => {
+            const response: AxiosResponse<IListSyringe> = await API.post('/api/v1/jehlomat/syringe/search', {
+                filter: {},
+                pageInfo: {
+                    index: 0,
+                    size: 20,
+                },
+                ordering: order,
+            });
+            if (response.status !== 200) throw new Error("Unable to load data");
+            
+            return response.data;
+        };
+        
+        load().then(data => console.log("Loaded!", data)).catch(e => console.warn(e));
+    }, [ order ]);
+    
+    const handleSort = (column: SortableColumn) => () => {
+        setOrder(state => {
+            const exists = state.find(o => o.column === column);
+            if (exists) return state.map(o => o.column === column ? swapOrder(o) : o);
+            
+            return [ ...state, ({ column: column, direction: "ASC" }) ];
+        });
+    };
+
+    const handleOpenActions = (syringe: ISyringe) => (event: React.MouseEvent<HTMLDivElement>) => {
+        setAnchorEl(event.currentTarget);
+        setEdit(syringe);
+    };
 
     return (
         <>
@@ -50,102 +99,59 @@ const NavodLikvidace: FC<Props> = () => {
                 <></>
             )}
 
-            <Box maxWidth={1300} width={1} ml="auto" mr="auto" minHeight={'100vh'} mt={8}>
-                {/* Nadpis & filter */}
+            <Box maxWidth={1300} width={1} ml="auto" mr="auto" mt={8} style={{ flexGrow: 1 }}>
                 <Grid container direction="row" alignItems="center" justifyContent="space-between">
                     <Box>
                         <TextHeader>Seznam zadaných nálezů</TextHeader>
                     </Box>
                     {isMobile && (
-                        // mobile komponenta
                         <Box>
                             <SearchInput placeholder="Hledat" />
                         </Box>
                     )}
-                    <Box>
+                    <Controls>
                         {!isMobile && (
-                            // desktop komponenta
                             <SearchInputDesktop placeholder="Hledat" onChange={e => setSyringes(syringeMock.syringeList.filter(item => item.id.includes(e.target.value)))} />
                         )}
-                        <FilterLink href="#">Filtrovat</FilterLink>
-                        <FilterLink href="#">Vybrat vše</FilterLink>
-                        <FilterLink href="#">Exportovat vybrané</FilterLink>
-                    </Box>
+                        <Button>Filtrovat</Button>
+                        <Button>Vybrat vše</Button>
+                        <Button>Exportovat vybrané</Button>
+                    </Controls>
                 </Grid>
                 <Box mt={2}>
                     <ListWrapper>
-                        {/* Sortable header */}
                         <thead>
                             <ListHeader>
                                 <ListHeaderItem />
                                 <ListHeaderItem />
-                                <ListHeaderItem>Město</ListHeaderItem>
+                                <ListHeaderItem onClick={handleSort("TOWN")}>Město</ListHeaderItem>
                                 <ListHeaderItem>Název</ListHeaderItem>
-                                <ListHeaderItem>Datum nálezu</ListHeaderItem>
-                                <ListHeaderItem>Datum likvidace</ListHeaderItem>
-                                <ListHeaderItem>Zadavatel</ListHeaderItem>
+                                <ListHeaderItem onClick={handleSort("CREATED_AT")}>Datum nálezu</ListHeaderItem>
+                                <ListHeaderItem onClick={handleSort("DEMOLISHED_AT")}>Datum likvidace</ListHeaderItem>
+                                <ListHeaderItem onClick={handleSort("CREATED_BY")}>Zadavatel</ListHeaderItem>
                                 <ListHeaderItem>Stav</ListHeaderItem>
                                 <ListHeaderItem />
                             </ListHeader>
                         </thead>
-
-                        {/* Items */}
                         <tbody>
                             {syringes.map(item => (
                                 <ListItem key={item.id}>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderLeft: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         {i++}
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         <SyringeIcon />
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         Benešov
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         Benešov - u hřiště
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         {dayjs(item.createdAt * 1000).format('D. M. YYYY')}
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         {item.demolishedAt && item.demolished === true ? (
                                             dayjs(item.demolishedAt * 1000).format('D. M. YYYY')
                                         ) : (
@@ -158,45 +164,35 @@ const NavodLikvidace: FC<Props> = () => {
                                             </>
                                         )}
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         Magdalena
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         {item.demolishedAt && item.demolished === true ? (
                                             <TextMutedBold>Zlikvidováno</TextMutedBold>
                                         ) : (
                                             <>{item.reservedTill ? <TextHighlight>Rezervováno TP</TextHighlight> : <TextGold>Čeká na likvidaci</TextGold>}</>
                                         )}
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        <EditIcon />
+                                    <ListItemCell syringe={item}>
+                                        <EditIcon onClick={handleOpenActions(item)} />
+                                        <Popper
+                                            open={Boolean(anchorEl)}
+                                            anchorEl={anchorEl}
+                                            placement="bottom"
+                                        >
+                                            <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+                                                <Links>
+                                                    <ul>
+                                                        <li><ActionLink to="/">Zlikvidovat nález</ActionLink></li>
+                                                        <li><ActionLink to="/">Upravit</ActionLink></li>
+                                                        <li><ActionLink to="/">Smazat</ActionLink></li>
+                                                    </ul>
+                                                </Links>
+                                            </ClickAwayListener>
+                                        </Popper>
                                     </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderRight: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
+                                    <ListItemCell syringe={item}>
                                         <CheckboxRadio type="checkbox" />
                                     </ListItemCell>
                                 </ListItem>

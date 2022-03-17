@@ -1,4 +1,4 @@
-﻿import styled from "@emotion/styled";
+import styled from "@emotion/styled";
 import {textSubTitles} from "utils/colors";
 import {fontFamilyRoboto} from "utils/typography";
 
