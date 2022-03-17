@@ -773,9 +773,6 @@ definitions:
       createdAt:
         type: integer
         example: 1637092279
-      createdBy:
-        type: integer
-        example: 123
       photo:
         type: string
         example: "nothing"
