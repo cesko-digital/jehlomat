@@ -31,11 +31,9 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 interface IMapa {
     handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
-    width: number;
-    height: number;
 }
 
-const Map: FC<IMapa> = ({ handleStepChange, width, height }) => {
+const Map: FC<IMapa> = ({ handleStepChange }) => {
     const { position: userPosition } = useContext(MapContext);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [changePosition, setChangePosition] = useState<LatLngExpression>();

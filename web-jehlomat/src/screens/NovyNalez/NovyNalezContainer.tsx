@@ -9,11 +9,13 @@ import Info from 'screens/NovyNalez/components/Info';
 import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
-import {API} from 'config/baseURL';
+import { API } from 'config/baseURL';
 
 import { primary } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
 // import Stepper from './Components/Stepper';
 
 export interface INovaJehla {
@@ -43,8 +45,15 @@ const StepsTitleMap = new Map<StepsEnum, string>([
 
 const NovyNalezContainer: FC = () => {
     const [currentStep, setCurrentStep] = useState<StepsEnum>(StepsEnum.Start);
-
+    const isMobile = useMediaQuery(media.lte('mobile'));
     const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: dayjs().unix(), count: undefined, photo: undefined });
+
+    useEffect(() => {
+        // skip first step on desktop
+        if (!isMobile && currentStep === StepsEnum.Start) {
+            setCurrentStep(StepsEnum.Mapa);
+        }
+    }, [isMobile, currentStep]);
 
     const handleStepChange = (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => {
         if (newInfo != null) {
@@ -93,7 +102,7 @@ const NovyNalezContainer: FC = () => {
 
     const handleEditLocation = useCallback(() => {
         setCurrentStep(StepsEnum.Mapa);
-    }, [])
+    }, []);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -118,7 +127,20 @@ const NovyNalezContainer: FC = () => {
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputChange, handleOnEdit, handleOnLocationChange, handleOnSave, handleOnSubmit, handleStepChange, handleGoToEdit, handleEditLocation }) => {
+const NovyNalez: FC<INovyNalez> = ({
+    currentStep,
+    newSyringeInfo,
+    handleInputChange,
+    handleOnEdit,
+    handleOnLocationChange,
+    handleOnSave,
+    handleOnSubmit,
+    handleStepChange,
+    handleGoToEdit,
+    handleEditLocation,
+}) => {
+    const isMobile = useMediaQuery(media.lte('mobile'));
+
     switch (currentStep) {
         case StepsEnum.Start:
             return <Info handleStepChange={handleStepChange} />;
@@ -126,7 +148,7 @@ const NovyNalez: FC<INovyNalez> = ({ currentStep, newSyringeInfo, handleInputCha
             return <ZadatNalezMapa handleStepChange={handleStepChange} userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />;
         case StepsEnum.Info:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} >
+                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
                     <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
                 </ZadavaniNalezu>
             );

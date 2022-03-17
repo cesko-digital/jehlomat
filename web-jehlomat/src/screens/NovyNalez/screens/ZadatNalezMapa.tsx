@@ -27,20 +27,15 @@ const StyledContainer = styled.div`
 
 export enum LocationState {
     CHECKING = 'CHECKING',
-
     GRANTED = 'GRANTED',
 }
 
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
     const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
-    const [mapSize, setMapSize] = useState<Record<'height' | 'width', number> | null>(null);
-
     const [locationState, setLocationState] = useState<LocationState>();
 
-    // Je potřeba zjistit, jak dlouho po odkliknutí povolit polohu v prohlížeči
-    // toto povolení vydrží a podle toho možná uložit cookie?
-    // Podle cookie potom řešit, zda se má modal vůbec ukázat?
+
     useEffect(() => {
         if (!!userSelectedLocation[0] && !!userSelectedLocation[1]) {
             setUserPosition(userSelectedLocation as LatLngExpression);
@@ -71,29 +66,6 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
         }
     }, [modalVisible, locationState]);
 
-    /**
-     * Získá aktuální velikost containeru.
-     */
-    const resizeMap = () => {
-        const contentContainer = document.getElementById('content-container');
-        if (contentContainer) {
-            setMapSize({ width: contentContainer.clientWidth, height: contentContainer.clientHeight * 0.95 });
-        }
-    };
-
-    /**
-     * Tohle nefunguje úplně jak by mělo, protože Leaflet componenta má immutable props, takže se při změně props nepřerendruje mapa, ale komponenta jako taková ano.
-     *
-     * Nechám to tady, když se nám podaří najít nějaký hack, tak abychom na to nezapomněli.
-     */
-    useEffect(() => {
-        resizeMap();
-        // window.addEventListener('resize', resizeMap);
-
-        // return () => {
-        //     window.removeEventListener('resize', resizeMap);
-        // };
-    }, []);
 
     const handleAllowGeolocation = useCallback(
         (lat: number, lng: number): void => {
@@ -111,7 +83,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ handleStepChange, userSelectedLoc
         <StyledContainer id="map-container">
             <MapContext.Provider value={{ position: userPosition, setPosition: setUserPosition }}>
                 <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
-                {mapSize && mapSize.width != 0 && mapSize.height != 0 && <Map handleStepChange={handleStepChange} width={mapSize.width} height={mapSize.height} />}
+                <Map handleStepChange={handleStepChange} />
             </MapContext.Provider>
         </StyledContainer>
     );
