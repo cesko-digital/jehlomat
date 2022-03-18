@@ -28,7 +28,7 @@ export const Input: FunctionComponent<HTMLAttributes<HTMLInputElement>> = ({ chi
     </Wrapper>
 );
 
-interface DatePickerProps extends HTMLAttributes<HTMLInputElement> {
+interface DatePickerProps extends React.ComponentPropsWithoutRef<"input"> {
     label?: string;
     helper?: string;
 }
@@ -89,11 +89,12 @@ export const Select: FunctionComponent<SelectProps> = ({ items, value, onSelect,
     const [anchorEl, setAnchorEl] = useState<HTMLLabelElement | null>(null);
     const handleClick = (event: React.MouseEvent<HTMLLabelElement>) => setAnchorEl(anchorEl ? null : event.currentTarget);
     const handleSelect = (item: SelectItem) => () => {
-        if (typeof onSelect === "function") {
+        if (typeof onSelect === 'function') {
             onSelect(item);
+            setAnchorEl(null);
         }
-    }
-    
+    };
+
     return (
         <>
             <Wrapper onClick={handleClick} active={Boolean(anchorEl)}>
@@ -192,12 +193,19 @@ const Title = styled('h3')({
 });
 
 const Reset = styled('div')({
-    fontSize: '0.615rem',
     textAlign: 'right',
     marginBottom: '8px',
 
-    '& > a': {
+    '& > button': {
+        background: 'transparent',
+        border: 'none',
+        borderRadius: '50%',
         color: GREEN,
+        fontSize: '0.75rem',
+        
+        '&:focus': {
+            outline: 'none',
+        },
     },
 });
 
@@ -231,12 +239,12 @@ export const Range = styled('div')({
 
 interface FilterProps {
     title: string;
+    onReset?: () => void;
 }
 
 export const FiltersContainer = styled('div')({
     display: 'flex',
     flexDirection: 'row',
-    // justifyContent: 'space-between',
 
     '& > *': {
         marginRight: 32,
@@ -257,12 +265,20 @@ const FilterControls = styled('div')({
     },
 });
 
-export const Filter: FunctionComponent<FilterProps> = ({ title, children }) => (
-    <FilterContent>
-        <Title>{title}</Title>
-        <Reset>
-            <a href="#">Zrušit filtr</a>
-        </Reset>
-        <FilterControls>{children}</FilterControls>
-    </FilterContent>
-);
+export const Filter: FunctionComponent<FilterProps> = ({ title, onReset, children }) => {
+    const handleReset = () => {
+        if (typeof onReset === "function") {
+            onReset();
+        }
+    };
+    
+    return (
+      <FilterContent>
+          <Title>{title}</Title>
+          <Reset>
+              <button onClick={handleReset}>Zrušit filtr</button>
+          </Reset>
+          <FilterControls>{children}</FilterControls>
+      </FilterContent>
+    );
+}
