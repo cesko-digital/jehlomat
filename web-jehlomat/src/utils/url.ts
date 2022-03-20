@@ -3,6 +3,6 @@ export function convertSearchParamsToString(params: Record<string, string>): str
     return searchStringParams === "" ? undefined : `?${searchStringParams}`;
 }
 
-export function convertSearchParamsToMap(params: string): URLSearchParams {
+export function convertSearchStringToMap(params: string): URLSearchParams {
   return new URLSearchParams(params);
 }
