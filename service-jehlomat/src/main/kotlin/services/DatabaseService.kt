@@ -14,11 +14,13 @@ import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
 import org.ktorm.expression.SqlFormatter
 import org.ktorm.schema.ColumnDeclaring
+import org.ktorm.schema.Table
 import org.ktorm.support.postgresql.PostgreSqlFormatter
 import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
+import java.lang.RuntimeException
 import kotlin.streams.toList
 
 
@@ -507,29 +509,6 @@ class DatabaseService(
         }
     }
 
-    private fun getLocationName(locationId: String, table: String): String {
-        val mapTableToColumnName = mapOf(
-            "sph_okres" to "nazev_lau1",
-            "sph_obec" to "nazev_lau2",
-            "sph_mc" to "nazev_mc"
-        )
-
-        val mapTableToId = mapOf(
-            "sph_okres" to "kod_lau1",
-            "sph_obec" to "kod_lau2",
-            "sph_mc" to "kod_mc"
-        )
-
-        return databaseInstance.useConnection { conn ->
-            val sql = "SELECT ${mapTableToColumnName[table]} FROM $table WHERE ${mapTableToId[table]} = '$locationId'"
-            conn.prepareStatement(sql).use { statement ->
-                statement.executeQuery().asIterable().map {
-                    it.getString(1)
-                }
-            }
-        }.first()
-    }
-
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
@@ -540,6 +519,30 @@ class DatabaseService(
             Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, -1, ""),
             Location(0, okres.id, okres.name, -1, "", -1, ""),
         )
+    }
+
+    /**
+     * @throws NumberFormatException id parameter is not parsable to integer
+     */
+    fun getLocationGeom(id: String, table: Table<Nothing>): String? {
+        val idColumn = when (table) {
+            OkresTable ->  OkresTable.kod_lau1.name
+            ObecTable -> ObecTable.kod_lau2.name
+            MCTable -> MCTable.kod_mc.name
+            else -> throw RuntimeException("Unsupported table ${table.tableName} for the geolocation")
+        }
+
+        return databaseInstance.useConnection { conn ->
+            val sql =
+                conn.prepareStatement("SELECT ST_AsGeoJSON(ST_GeomFromWKB(wkb_geometry)) FROM ${table.tableName} where $idColumn = ?")
+            when (table) {
+                OkresTable -> sql.setString(1, id)
+                ObecTable -> sql.setInt(1, id.toInt())
+                MCTable -> sql.setInt(1, id.toInt())
+                else -> throw RuntimeException("Unsupported table ${table.tableName} for the geolocation")
+            }
+            return sql.executeQuery().asIterable().map { it.getString(1) }.firstOrNull()
+        }
     }
 
     fun insertLocation(district: String, districtName:String, locality: Int, localityName: String, town: Int, townName: String): Location {
@@ -604,7 +607,12 @@ class DatabaseService(
             .where { TeamLocationTable.locationId eq location.id }
             .map { row -> row.getInt(1) }
             .toHashSet()
-        return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
+
+        if (teamIds.isNotEmpty()) {
+            return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
+        } else {
+            return emptySet()
+        }
     }
 
     fun cleanLocation(): Int {

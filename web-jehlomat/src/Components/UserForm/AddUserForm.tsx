@@ -1,18 +1,20 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import TextInput from 'Components/Inputs/TextInput';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import { authorizedAPI } from '../../config/baseURL';
+import { API } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
-import { LoginContext } from 'utils/login';
+import { useRecoilValue } from 'recoil';
+import { tokenState } from 'store/login';
 import apiURL from 'utils/api-url';
 
-interface Props { }
+interface Props {}
+
 interface Values {
     email: string;
 }
@@ -23,7 +25,7 @@ const validationSchema = yup.object({
 
 const PridatUzivatele: FC<Props> = () => {
     const history = useHistory();
-    const { token } = useContext(LoginContext);
+    const token = useRecoilValue(tokenState);
 
     return (
         <Formik
@@ -32,7 +34,7 @@ const PridatUzivatele: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await authorizedAPI(token).post(apiURL.user, values);
+                        const response: AxiosResponse<any> = await API.post(apiURL.user, values);
                         const status = response.status;
 
                         switch (true) {

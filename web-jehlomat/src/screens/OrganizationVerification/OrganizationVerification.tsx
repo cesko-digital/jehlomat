@@ -1,10 +1,9 @@
 import CheckCircle from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { secondary, darkGrey, greyLight } from '../../utils/colors';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Content } from './Content';
 import { AxiosResponse } from 'axios';
-import { authorizedAPI } from '../../config/baseURL';
 import {
   isStatusSuccess,
   isStatusNoPermission,
@@ -13,7 +12,9 @@ import {
 } from 'utils/payload-status';
 import { useHistory, useParams } from 'react-router';
 import apiURL from 'utils/api-url';
-import { LoginContext } from 'utils/login';
+import { useRecoilValue } from 'recoil';
+import { tokenState } from 'store/login';
+import API from 'config/baseURL';
 
 export interface IContentData {
   text: string,
@@ -67,12 +68,12 @@ const OrganizationVerification = () => {
     const [contentData, setContentData] = useState<IContentData | null>(null);
     const { orgId } = useParams<IRouteParams>();
     const history = useHistory();
-    const { token } = useContext(LoginContext);
+    const token = useRecoilValue(tokenState);
 
     const handleOrganizationConfirm = useCallback(async () => {
       if (token) {
         
-        const response: AxiosResponse = await authorizedAPI(token).get(apiURL.getOrganizationVerification(orgId));
+        const response: AxiosResponse = await API.get(apiURL.getOrganizationVerification(orgId));
         const status = response.status;
 
         let contentDataToSet = null

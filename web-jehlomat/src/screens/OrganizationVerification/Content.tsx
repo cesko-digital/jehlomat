@@ -1,6 +1,5 @@
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { IContentData } from './OrganizationVerification';
 import Container from '@mui/material/Container';

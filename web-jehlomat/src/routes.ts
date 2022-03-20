@@ -198,6 +198,8 @@ export const routesById = routes.reduce<Partial<Record<Routes, Route>>>((obj, ro
     return obj;
 }, {});
 
+// USE this to get url to some page
+// i.e. LINKS.LOGIN
 export const LINKS = Object.values(Routes).reduce<Record<Routes, string>>((obj, key) => {
     const route = routesById[key];
     if (route) {

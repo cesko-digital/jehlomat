@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextInput from 'Components/Inputs/TextInput';
+import { useSetRecoilState } from 'recoil';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
@@ -10,11 +11,11 @@ import * as yup from 'yup';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
-import { LoginContext } from 'utils/login';
 import { ModalContext } from 'Components/Navigator/Navigator';
 import { convertSearchParamsToMap } from 'utils/url';
 import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
+import { tokenState } from 'store/login';
 
 interface LoginFormProps {}
 
@@ -36,9 +37,8 @@ const validationSchema = yup.object({
 export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
     const { isModalVisible, closeModal } = useContext(ModalContext);
-    const { setToken } = useContext(LoginContext);
     const { search } = useLocation();
-    //const {setLogin} = useLogin();
+    const setToken = useSetRecoilState(tokenState);
 
     return (
         <>

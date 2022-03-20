@@ -1,21 +1,19 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC } from 'react';
 import Grid from '@mui/material/Grid';
 import TitleBar from '../../Components/Navigation/TitleBar';
-import jwt_decode from 'jwt-decode';
 import { useHistory } from 'react-router-dom';
-import { authorizedAPI } from '../../config/baseURL';
-import { AxiosResponse } from 'axios';
+import { useRecoilValue } from 'recoil';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-import { LoginContext } from 'utils/login';
-import apiURL from 'utils/api-url';
+import { tokenState } from 'store/login';
+import { userState } from 'store/user';
 
 const Login: FC<any> = () => {
     let history = useHistory();
-    const { token } = useContext(LoginContext);
+    const token = useRecoilValue(tokenState);
 
-    const [user, setUser] = useState('');
+    const user = useRecoilValue(userState);
 
     interface IResponse {
         id: number;
@@ -28,34 +26,6 @@ const Login: FC<any> = () => {
         verified?: boolean;
     }
 
-    interface IToken {
-        aud: string;
-        'user-id': string;
-        iss: string;
-        exp: string;
-    }
-
-    useEffect(() => {
-        const getMe = (token: string) => {
-            const decoded: IToken = jwt_decode(token);
-            return decoded['user-id'];
-        };
-        const getUser = async (token: string) => {
-            const response: AxiosResponse<IResponse> = await authorizedAPI(token).get(apiURL.getUser(getMe(token)));
-            return response.data.username;
-        };
-        if (token) {
-            getUser(token)
-                .then(user => {
-                    setUser(user);
-                    console.log(user);
-                })
-                .catch(error => {
-                    console.log(error); //should goes to the error page
-                });
-        }
-    }, [token]);
-
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>
             <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>
@@ -66,7 +36,7 @@ const Login: FC<any> = () => {
                     }}
                 ></TitleBar>
                 <Grid container direction="column" sx={{ height: '100%', width: '100%' }} justifyContent="start" alignItems="center">
-                    {user}
+                    {user?.username}
                 </Grid>
             </Grid>
         </Container>
