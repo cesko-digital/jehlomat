@@ -11,6 +11,7 @@ import { FormItem } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from 'store/login';
+import apiURL from 'utils/api-url';
 
 interface Props {}
 
@@ -33,7 +34,7 @@ const PridatUzivatele: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await API.post(apiURL.user, values);
                         const status = response.status;
 
                         switch (true) {

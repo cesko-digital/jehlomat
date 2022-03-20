@@ -1,5 +1,5 @@
 import { Box, useMediaQuery } from '@mui/material';
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { Header } from '../../Components/Header/Header';
 import { secondaryColorVariant } from '../../utils/colors';
 import PenIcon from '../../assets/icons/pen.svg';

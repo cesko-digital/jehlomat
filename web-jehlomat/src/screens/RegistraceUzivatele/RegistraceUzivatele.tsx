@@ -7,9 +7,10 @@ import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton'
 import { AxiosResponse } from 'axios';
 import * as yup from 'yup';
 import API from '../../config/baseURL';
-import React from 'react';
 import { Header } from '../../Components/Header/Header';
 import { useQuery } from '../../utils/location';
+import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
+import apiURL from 'utils/api-url';
 import {PASSWORD_COMPLEXITY} from 'utils/constants';
 
 interface Props {}
@@ -60,16 +61,16 @@ const RegistraceUzivatele: FC<Props> = () => {
                             username: values.jmeno,
                             code: query.get('code'),
                         };
-                        const response: AxiosResponse<any> = await API.post('/api/v1/jehlomat/verification/user', user);
+                        const response: AxiosResponse<any> = await API.post(apiURL.userVerification, user);
                         const status = response.status;
 
                         switch (true) {
-                            case /2[0-9][0-9]/g.test(status.toString()): {
+                            case isStatusGeneralSuccess(status): {
                                 //for all success response;
                                 history.push('/uzivatel/dekujeme');
                                 break;
                             }
-                            case status === 409: {
+                            case isStatusConflictError(status): {
                                 //for validation error;
                                 const fieldName = response.data.fieldName;
                                 setErrors({ [fieldName]: response.data.status });
