@@ -12,8 +12,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
 import { ModalContext } from 'Components/Navigator/Navigator';
-import { convertSearchParamsToMap } from 'utils/url';
-import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import { convertSearchStringToMap } from 'utils/url';
+import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import { tokenState } from 'store/login';
 
@@ -65,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                 }
                                 break;
                             }
-                            case isStatusValidationError(status): {
+                            case isStatusConflictError(status): {
                                 //for validation error;
                                 setErrors({ email: ' ', password: 'E-mail nebo heslo nejsou správne!' });
                                 break;
@@ -121,7 +121,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
 };
 
 function getRedirectionLink(search: string, defaultLink = LINKS.WELCOME) {
-    const searchMap = convertSearchParamsToMap(search);
+    const searchMap = convertSearchStringToMap(search);
     const fromLink = searchMap.get('from');
     return fromLink || defaultLink;
 }

@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import API from '../../config/baseURL';
 import { Header } from '../../Components/Header/Header';
 import { useQuery } from '../../utils/location';
-import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import {PASSWORD_COMPLEXITY} from 'utils/constants';
 
@@ -70,7 +70,7 @@ const RegistraceUzivatele: FC<Props> = () => {
                                 history.push('/uzivatel/dekujeme');
                                 break;
                             }
-                            case isStatusValidationError(status): {
+                            case isStatusConflictError(status): {
                                 //for validation error;
                                 const fieldName = response.data.fieldName;
                                 setErrors({ [fieldName]: response.data.status });

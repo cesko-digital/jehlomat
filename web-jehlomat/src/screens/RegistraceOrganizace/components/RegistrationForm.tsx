@@ -10,7 +10,7 @@ import { LINKS } from 'routes';
 import { media } from 'utils/media';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
-import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import {PASSWORD_COMPLEXITY} from 'utils/constants';
 
@@ -70,7 +70,7 @@ export default function RegistrationForm() {
                                 history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
                                 break;
                             }
-                            case isStatusValidationError(status): {
+                            case isStatusConflictError(status): {
                                 //for validation error;
                                 const fieldName = response.data.fieldName;
                                 setErrors({ [fieldName]: response.data.status });

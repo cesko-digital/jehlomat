@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
 import { STEPS, SyringeStateType } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 import API from '../../../config/baseURL';
-import { isStatusGeneralSuccess, isStatusValidationError } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 
 const validationSchema = yup.object({
@@ -67,7 +67,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                                             handleStepChange(STEPS.ZobraitStav);
                                             break;
                                         }
-                                        case isStatusValidationError(status): {
+                                        case isStatusConflictError(status): {
                                             const fieldName = response.data.fieldName;
                                             setErrors({ [fieldName]: response.data.status });
                                             break;
