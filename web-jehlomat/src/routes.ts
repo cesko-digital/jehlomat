@@ -21,6 +21,8 @@ const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/Trackovan
 const LandingPage = lazy(() => import('./screens/LandingPage'));
 const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
 const About = lazy(() => import('./screens/AboutPage'));
+const Contact = lazy(() => import('./screens/ContactPage'));
+const FAQPage = lazy(() => import('./screens/FAQ'));
 
 export enum Routes {
     HOME = 'HOME',
@@ -44,6 +46,8 @@ export enum Routes {
     POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
     ABOUT = 'ABOUT',
+    FAQ = 'FAQ',
+    CONTACT = 'CONTACT',
 }
 
 interface Route {
@@ -164,7 +168,17 @@ export const routes: Route[] = [
     {
         id: Routes.ABOUT,
         Component: About,
-        path: '/about',
+        path: '/o-jehlomatu',
+    },
+    {
+        id: Routes.FAQ,
+        Component: FAQPage,
+        path: '/faq',
+    },
+    {
+        id: Routes.CONTACT,
+        Component: Contact,
+        path: '/kontakt',
     },
     {
         id: Routes.HOME,
