@@ -45,7 +45,7 @@ export enum Routes {
     POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
     ABOUT = 'ABOUT',
-    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION'
+    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
 }
 
 interface Route {
@@ -122,7 +122,7 @@ export const routes: Route[] = [
         Component: OrganizationVerification,
         path: `/${ORGANIZATION_URL_PATH}/povoleni/:orgId?`,
         protectedRoute: true,
-        from: true
+        from: true,
     },
     {
         id: Routes.ORGANIZATION,

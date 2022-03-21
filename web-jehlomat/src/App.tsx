@@ -1,4 +1,4 @@
-import React, { FC, Suspense  } from 'react';
+import React, { FC, Suspense } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';

@@ -1,20 +1,20 @@
 class APIURL {
-  login = "/login"
-  organization = "/organization"
-  userVerification = "/verification/user"
-  user = "/user"
+    login = '/login';
+    organization = '/organization';
+    userVerification = '/verification/user';
+    user = '/user';
 
-  getSyringe(syringeId: string) {
-    return `/syringe/${syringeId}`;
-  }
+    getSyringe(syringeId: string) {
+        return `/syringe/${syringeId}`;
+    }
 
-  getOrganizationVerification(orgId: string) {
-    return `/verification/organization?orgId=${orgId}`;
-  }
+    getOrganizationVerification(orgId: string) {
+        return `/verification/organization?orgId=${orgId}`;
+    }
 
-  getUser(userId: string) {
-    return `${this.user}/${userId}`
-  }
+    getUser(userId: string) {
+        return `${this.user}/${userId}`;
+    }
 }
 
 const apiURL = new APIURL();

@@ -12,7 +12,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
-import {PASSWORD_COMPLEXITY} from 'utils/constants';
+import { PASSWORD_COMPLEXITY } from 'utils/constants';
 
 interface IValues {
     organizace: string;

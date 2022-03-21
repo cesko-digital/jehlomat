@@ -71,7 +71,7 @@ const DatumCasLikvidaceNalezu: FC<Props> = ({ onClose }) => {
                     </PrimaryButton>
                 </Box>
                 <Box mt={isMobile ? 3 : 4} mb={isMobile ? 0 : 6}>
-                    <TextButton fontSize="18px" onClick={onClose} style={{ color: `${primaryDark}` }} text="ZPĚT NA NÁLEZ" type="button" />
+                    <TextButton text="ZPĚT NA NÁLEZ" type="button" onClick={onClose} fontSize="18px" color={primaryDark} fontWeight="500" />
                 </Box>
             </Box>
         </Container>

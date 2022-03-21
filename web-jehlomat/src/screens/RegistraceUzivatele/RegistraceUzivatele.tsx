@@ -11,7 +11,7 @@ import { Header } from '../../Components/Header/Header';
 import { useQuery } from '../../utils/location';
 import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
-import {PASSWORD_COMPLEXITY} from 'utils/constants';
+import { PASSWORD_COMPLEXITY } from 'utils/constants';
 
 interface Props {}
 
