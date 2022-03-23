@@ -3,9 +3,11 @@ import { FC, useCallback, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 
+type THtmlText = string;
+
 interface IProps {
     title: string;
-    text: string; // could be HTML
+    text: THtmlText;
 }
 
 export const CollapsibleText: FC<IProps> = ({ title, text }) => {
@@ -14,7 +16,7 @@ export const CollapsibleText: FC<IProps> = ({ title, text }) => {
 
     const handleClick = useCallback(() => {
         setOpen(!open);
-    }, [open, setOpen]);
+    }, [open]);
 
     return (
         <S.Wrapper>
