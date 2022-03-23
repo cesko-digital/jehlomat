@@ -1,8 +1,8 @@
 import axios from 'axios';
-
+const API_V1 = "/api/v1/jehlomat"
 const HOST = process.env.REACT_APP_SERVER ?? "localhost";
 const PORT = process.env.REACT_APP_SERVER_PORT ?? 8082;
-const BASE_URL = `http://${HOST}:${PORT}`;
+const BASE_URL = `http://${HOST}:${PORT}${API_V1}`;
 
 const fetchClient = () => {
     const defaultOptions = {
@@ -12,7 +12,7 @@ const fetchClient = () => {
         },
     };
 
-    let instance = axios.create(defaultOptions);
+    const instance = axios.create(defaultOptions);
 
     instance.interceptors.response.use(
         function (response) {
@@ -27,12 +27,13 @@ const fetchClient = () => {
     return instance;
 };
 
-export default fetchClient();
+export const API = fetchClient();
 
-export const authorizedAPI = (jwt: string) => {
-    const client = fetchClient();
-    //const token = localStorage.getItem("auth");
-    client.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
+export const setApiToken = (jwt: string) => {
+    API.defaults.headers.common['Authorization'] = jwt ? `Bearer ${jwt}` : '';
 
-    return client;
+    return API;
 };
+
+
+export default API;

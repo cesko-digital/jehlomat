@@ -1,23 +1,37 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import { Redirect, Route, useLocation } from 'react-router';
-import { LoginContext } from 'utils/login';
+import { convertSearchParamsToString } from 'utils/url';
+import { LOGIN_URL_PATH } from 'routes';
+import { useRecoilValue } from 'recoil';
+import { isLoginValidState } from 'store/login';
 
-const PrivateRoute: FC<any> = (props) => {
+interface IRedirectSearchParams {
+  // specifies redirection URL after successfull login
+  from?: string
+}
 
+const PrivateRoute: FC<any> = ({ from, ...rest }) => {
     const location = useLocation();
-    const { token } = useContext(LoginContext);
-    console.log("authLogin", token);
-  
-    return token ? (
-      <Route {...props} />
-    ) : (
-      <Redirect
-        to={{
-          pathname: "/login",
-          state: { from: location }
-        }}
-      />
-    );
-  };
+    const isLoggedIn = useRecoilValue(isLoginValidState);
+    const searchParams: IRedirectSearchParams = {}
 
-  export default PrivateRoute;
+    if (from) {
+      searchParams.from = location.pathname
+    }
+
+    const search = convertSearchParamsToString(searchParams as Record<string, string>);
+
+    return isLoggedIn ? (
+        <Route {...rest} />
+    ) : (
+        <Redirect
+            to={{
+                pathname: `/${LOGIN_URL_PATH}`,
+                state: { from: location },
+                search
+            }}
+        />
+    );
+};
+
+export default PrivateRoute;

@@ -4,17 +4,21 @@ import TextInput from 'Components/Inputs/TextInput';
 import Box from '@mui/material/Box';
 import { Formik } from 'formik';
 import { AxiosResponse } from 'axios';
-import { authorizedAPI } from '../../config/baseURL';
+import { API } from '../../config/baseURL';
 import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemDescription, FormItemLabel } from 'utils/typography';
-import { LoginContext } from 'utils/login';
 import { media } from 'utils/media';
 import { useMediaQuery } from '@mui/material';
+import { useRecoilValue } from 'recoil';
+import { 
+  State } from 'store/login';
+import apiURL from 'utils/api-url';
 
-interface Props { }
+interface Props {}
+
 interface Values {
     email: string;
 }
@@ -29,8 +33,8 @@ const TextNewline = styled.br<{ mobile: boolean }>`
 
 const AddUserForm: FC<Props> = () => {
     const history = useHistory();
-    const { token } = useContext(LoginContext);
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const token = useRecoilValue(tokenState);
 
     return (
         <Formik
@@ -39,7 +43,7 @@ const AddUserForm: FC<Props> = () => {
             onSubmit={async (values: Values, { setErrors }) => {
                 if (token) {
                     try {
-                        const response: AxiosResponse<any> = await authorizedAPI(token).post('/api/v1/jehlomat/user', values);
+                        const response: AxiosResponse<any> = await API.post(apiURL.user, values);
                         const status = response.status;
 
                         switch (true) {

@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-//import { authorizedAPI } from 'config/baseURL';
+//import { API } from 'config/baseURL';
 //import { LoginContext } from 'utils/login';
 
 interface Props {}
@@ -10,7 +10,7 @@ const Organizace: FC<Props> = () => {
     useEffect(() => {
         /*async function fetchMyAPI() {
             if (token) {
-                const data = await authorizedAPI(token).get(`/api/v1/jehlomat/organization/${1}`);
+                const data = await API(token).get(`/api/v1/jehlomat/organization/${1}`);
                 console.log({ data });
                 if (data) {
                     // setOrg(data);
