@@ -89,6 +89,7 @@ export const routes: Route[] = [
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
         protectedRoute: true,
+        title: "Přidat uživatele"
     },
     {
         id: Routes.USER_VALIDATION,
@@ -110,6 +111,11 @@ export const routes: Route[] = [
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
         protectedRoute: true,
+    },
+    {
+        id: Routes.ORGANIZATION,
+        Component: Organizace,
+        path: `/${ORGANIZATION_URL_PATH}/`,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,

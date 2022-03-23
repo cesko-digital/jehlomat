@@ -10,7 +10,7 @@ import { ChevronLeft } from '@mui/icons-material';
 import { WithModal } from 'types';
 import AddUserForm from 'Components/UserForm/AddUserForm';
 
-const AddUser: FC<WithModal> = ({ inModal }) => {
+const PridatUzivatele: FC<WithModal> = ({ inModal }) => {
     let history = useHistory();
 
     const renderContent = (children: React.ReactNode) => {
@@ -24,7 +24,9 @@ const AddUser: FC<WithModal> = ({ inModal }) => {
                                 onIconClick={() => {
                                     history.goBack();
                                 }}
-                            />
+                            >
+                                Přidat uživatele
+                            </TitleBar>
                         </Box>
                         {children}
                     </Grid>
@@ -36,10 +38,10 @@ const AddUser: FC<WithModal> = ({ inModal }) => {
     };
 
     return renderContent(
-        <Grid container direction="column" sx={{ height: 'auto', width: '100%', paddingX: '20px' }} justifyContent="start" alignItems="center">
+        <Grid container direction="column" sx={{ height: 'auto', width: '100%', paddingX: '5px' }} justifyContent="start" alignItems="center">
             <AddUserForm />
         </Grid>,
     );
 };
 
-export default AddUser;
+export default PridatUzivatele;
