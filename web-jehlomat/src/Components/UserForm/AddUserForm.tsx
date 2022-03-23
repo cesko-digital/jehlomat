@@ -13,8 +13,7 @@ import { FormItemDescription, FormItemLabel } from 'utils/typography';
 import { media } from 'utils/media';
 import { useMediaQuery } from '@mui/material';
 import { useRecoilValue } from 'recoil';
-import { 
-  State } from 'store/login';
+import { tokenState } from 'store/login';
 import apiURL from 'utils/api-url';
 
 interface Props {}
