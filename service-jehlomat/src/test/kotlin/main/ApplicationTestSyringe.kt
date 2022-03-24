@@ -9,6 +9,9 @@ import io.mockk.verify
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.*
+import model.location.Location
+import model.location.LocationId
+import model.location.LocationType
 import model.pagination.OrderByDefinition
 import model.pagination.OrderByDirection
 import model.pagination.PageInfo
@@ -119,7 +122,7 @@ class ApplicationTestSyringe {
                 Json.encodeToString(
                     searchFilterRequest.copy(
                         filter = SyringeFilter(
-                            locationIds = setOf(defaultLocation.id),
+                            locationIds = setOf(LocationId(defaultLocation.mestkaCast.toString(), LocationType.MC)),
                             createdAt = DateInterval(
                                 from = 0,
                                 to = Long.MAX_VALUE
@@ -179,7 +182,7 @@ class ApplicationTestSyringe {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(SyringeFilter(
-                locationIds = setOf(defaultLocation.id),
+                locationIds = setOf(LocationId(defaultLocation.mestkaCast.toString(), LocationType.MC)),
                 createdAt = DateInterval(
                     from = 0,
                     to = 2
@@ -323,7 +326,7 @@ class ApplicationTestSyringe {
     fun testPostSyringeWithoutLocationAndUser() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = null, gps_coordinates = "0 0"))))
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = null, gps_coordinates = "13.416319 49.556095"))))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualSyringes = database.selectSyringes()

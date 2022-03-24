@@ -3,6 +3,8 @@ package services
 import api.SyringeTable
 import api.UserTable
 import model.DateInterval
+import model.location.LocationId
+import model.location.LocationType
 import model.syringe.SyringeFilter
 import model.syringe.SyringeFinder
 import model.syringe.SyringeFinderType
@@ -38,10 +40,10 @@ class SyringeFilterTransformerTest {
 
     @Test
     fun testFilterToDslLocationIds() {
-        val filter = emptyFilter.copy(locationIds = setOf(1, 2))
+        val filter = emptyFilter.copy(locationIds = setOf(LocationId("1", LocationType.OKRES), LocationId("2", LocationType.OBEC)))
         val sqlPair = generateSql(SyringeFilterTransformer.filterToDsl(filter, aliasedTable))
-        assertEquals("$sqlCommonPart (syringes.id is not null) and (syringes.location_id in (?, ?)) ", sqlPair.first)
-        assertEquals(1, sqlPair.second[0].value)
+        assertEquals("$sqlCommonPart (syringes.id is not null) and ((locations.okres = ?) or (locations.obec = ?)) ", sqlPair.first)
+        assertEquals("1", sqlPair.second[0].value)
         assertEquals(2, sqlPair.second[1].value)
     }
 
