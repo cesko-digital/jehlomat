@@ -82,7 +82,17 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
                     <Box sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px' }} display="flex" alignItems="flex-start">
                         {encodedFiles.map((photo, index) => (
                             <>
-                                <Box component="img" src={photo} width={isMobile ? 150 : 400} mr={2} onClick={() => openImageViewer(index)} sx={{ '&:hover': { transform: 'scale(1.1)' } }} />
+                                <Box
+                                    component="img"
+                                    src={photo}
+                                    width={isMobile ? 150 : 400}
+                                    mr={2}
+                                    onClick={() => openImageViewer(index)}
+                                    sx={{
+                                        transition: '.1s all',
+                                        '&:hover': { transform: 'scale(1.05)' , pointer: 'hover'},
+                                    }}
+                                />
                             </>
                         ))}
                     </Box>

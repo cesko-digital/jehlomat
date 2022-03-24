@@ -112,12 +112,12 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                     ) : (
                         <Container>
                             <Grid container spacing={2}>
-                                <Grid item md={6}>
+                                <Grid item sm={6}>
                                     <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
                                         <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
                                     </ZadavaniNalezu>
                                 </Grid>
-                                <Grid item md={6} maxHeight={700}>
+                                <Grid item sm={6} maxHeight={700}>
                                     <MapComponent locked>
                                         <FloatinButtonContainer>
                                             <SecondaryButton text="Editovat místo" onClick={handleEditLocation} />
@@ -150,7 +150,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item md={6} maxHeight={700}>
-                                    <ZadatNalezMapa userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />
+                                    <MapComponent locked />
                                 </Grid>
                             </Grid>
                         </Container>

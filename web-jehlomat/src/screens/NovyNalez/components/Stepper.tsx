@@ -23,6 +23,7 @@ const Container = styled.div`
 interface iCard {
     backgroundColor: string;
     active?: boolean;
+    lineActive?: boolean;
 }
 
 const ICON_WIDTH = '56px';
@@ -66,6 +67,7 @@ export const Card = styled.div<iCard>`
         }
     `}
 
+    // normal line between icons
     &:not(:last-child) ${IconWrapper}:after {
         content: '';
         display: block;
@@ -79,11 +81,27 @@ export const Card = styled.div<iCard>`
         z-index: 2;
     }
 
-    :nth-child(2) ${Icon},
-    :nth-child(3) ${Icon} {
+    // active yellow line and yellow icon
+    ${props =>
+        props.lineActive &&
+        `   
+            ${IconWrapper}:after {
+                background-color: ${secondary} !important;
+            }
+            
+            svg path {
+                fill: white;
+            }
+            
+            ${Icon} {
+                background-color: ${secondary};
+                border-color: white;
+            }
+       `}
+
+    :nth-child(2) ${Icon}, :nth-child(3) ${Icon} {
         z-index: 3;
     }
-
 `;
 
 const Title = styled.h6`
@@ -102,7 +120,7 @@ const Stepper: FC = ({ children }) => {
         <>
             <Box minHeight={isMobile ? '100vh' : 0}>
                 <Container>
-                    <Card backgroundColor="#BFE3E0" active={currentStep === StepsEnum.Mapa}>
+                    <Card backgroundColor="#BFE3E0" active={currentStep >= StepsEnum.Mapa} lineActive={currentStep >= StepsEnum.Info}>
                         <IconWrapper>
                             <Icon>
                                 <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
@@ -110,7 +128,7 @@ const Stepper: FC = ({ children }) => {
                         </IconWrapper>
                         <Title>Přidat do mapy</Title>
                     </Card>
-                    <Card backgroundColor="#CDEAE7" active={currentStep === StepsEnum.Info}>
+                    <Card backgroundColor="#CDEAE7" active={currentStep >= StepsEnum.Info} lineActive={currentStep >= StepsEnum.Potvrzeni}>
                         <IconWrapper>
                             <Icon>
                                 <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
@@ -118,7 +136,7 @@ const Stepper: FC = ({ children }) => {
                         </IconWrapper>
                         <Title>Podrobnosti o nálezu</Title>
                     </Card>
-                    <Card backgroundColor="#DEF1EF" active={currentStep === StepsEnum.Potvrzeni}>
+                    <Card backgroundColor="#DEF1EF" active={currentStep >= StepsEnum.Potvrzeni}>
                         <IconWrapper>
                             <Icon>
                                 <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />

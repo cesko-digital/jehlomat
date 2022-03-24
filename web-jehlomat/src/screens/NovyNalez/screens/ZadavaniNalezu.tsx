@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import syringe from 'assets/icons/syringe.svg';
 import event from 'assets/icons/event.svg';
 import create from 'assets/icons/create.svg';
+import marker from 'assets/icons/marker.svg';
 
 import { DateTimePicker } from 'Components/Inputs/DateTimePicker/DateTimePicker';
 
@@ -86,12 +87,14 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                     <>
                         <FormItem>
                             <FormItemLabel>Místo nálezu</FormItemLabel>
-                            <TextInput type="text" value={`${lat},${lng}`} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
-                            <Icon src={event} readOnly={readOnly} />
+                            <TextInput type="text" value={`${lat?.toFixed(4)}, ${lng?.toFixed(4)}`} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
+                            <Icon src={marker} readOnly={readOnly} />
                         </FormItem>
-                        <Box mt={2} mb={3}>
-                            <SecondaryButton text="Zobrazit a upravit na mapě" onClick={handleEditLocation} />
-                        </Box>
+                        {isMobile && (
+                            <Box mt={2} mb={3}>
+                                <SecondaryButton text="Zobrazit a upravit na mapě" onClick={handleEditLocation} />
+                            </Box>
+                        )}
                     </>
                 )}
                 <FormItem>
