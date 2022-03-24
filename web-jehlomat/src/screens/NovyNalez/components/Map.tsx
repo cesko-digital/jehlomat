@@ -5,12 +5,12 @@ import { MapContainer, Marker, TileLayer, useMapEvents, ZoomControl } from 'reac
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../constants';
 import icon from 'assets/icons/marker_orange.svg';
 import 'leaflet/dist/leaflet.css';
-import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+
 import styled from '@emotion/styled';
-import { INovaJehla, StepsEnum } from '../NovyNalezContainer';
-import MapControl from './MapControl';
-import { MapContext } from './MapContext';
+
+import { mapPositionState, mapUserPositionState, newSyringeStepState } from './store';
 import { ChangeView } from './ChangeView';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 const FloatinButtonContainer = styled.div`
     position: absolute;
@@ -30,11 +30,12 @@ L.Marker.prototype.options.icon = DefaultIcon;
 // ------------
 
 interface IMapa {
-    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
+    locked?: boolean;
 }
 
-const Map: FC<IMapa> = ({ handleStepChange }) => {
-    const { position: userPosition } = useContext(MapContext);
+const Map: FC<IMapa> = ({ children, locked }) => {
+    const userPosition = useRecoilValue(mapUserPositionState);
+    const setPosition = useSetRecoilState(mapPositionState);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [changePosition, setChangePosition] = useState<LatLngExpression>();
 
@@ -57,19 +58,11 @@ const Map: FC<IMapa> = ({ handleStepChange }) => {
     function handleMapCenterChange(map: L.Map, setMarkerPosition: any) {
         const { lat, lng } = map.getCenter();
         setMarkerPosition([lat, lng]);
+        setPosition([lat, lng]);
     }
-
-    const convertPositionToInfo = () => {
-        if (markerPosition != null) {
-            const [lat, lng] = markerPosition.toString().split(',');
-            return { lat: Number(lat), lng: Number(lng) };
-        }
-        return { lat: undefined, lng: undefined };
-    };
 
     return (
         <Box position="relative" width="100%" height="100%">
-            <MapControl />
             <MapContainer
                 center={userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
@@ -78,7 +71,10 @@ const Map: FC<IMapa> = ({ handleStepChange }) => {
                 whenCreated={map => {
                     handleMapCenterChange(map, setMarkerPosition);
                 }}
-                zoomControl={false}
+                zoomControl={locked !== undefined ? !locked : false}
+                dragging={!locked}
+                doubleClickZoom={!locked}
+                attributionControl={!locked}
                 preferCanvas
             >
                 <MapCustomEvents />
@@ -88,9 +84,7 @@ const Map: FC<IMapa> = ({ handleStepChange }) => {
                 {changePosition && <ChangeView center={changePosition} callback={() => setChangePosition(undefined)} />}
                 <ZoomControl position="bottomright" />
             </MapContainer>
-            <FloatinButtonContainer>
-                <PrimaryButton text="Vložit místo" onClick={() => handleStepChange(StepsEnum.Info, convertPositionToInfo())} />
-            </FloatinButtonContainer>
+            {children}
         </Box>
     );
 };

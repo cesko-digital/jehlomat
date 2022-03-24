@@ -1,24 +1,22 @@
-import {useMap} from "react-leaflet";
-import {useEffect} from "react";
-import {LatLngExpression} from "leaflet";
-
+import { useMap } from 'react-leaflet';
+import { useEffect } from 'react';
+import { LatLngExpression } from 'leaflet';
 
 export interface IChangeViewProps {
     center: LatLngExpression;
     zoom?: number;
     callback?: () => void;
-
 }
 
 export const ChangeView: React.FC<IChangeViewProps> = ({ center, zoom, callback }) => {
     const map = useMap();
-    const actualZoom = map.getZoom()
+    const actualZoom = map.getZoom();
     map.setView(center, zoom || actualZoom);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         callback && callback();
-    }, [])
+    }, []);
 
     return null;
-}
+};

@@ -28,3 +28,24 @@ export interface Address {
         country_code: string;
     };
 }
+
+
+export enum StepsEnum {
+    Start,
+    Mapa,
+    Info,
+    Nahled,
+    Potvrzeni,
+}
+
+
+export interface INovaJehla {
+    lat: number | undefined;
+    lng: number | undefined;
+    info: string | undefined;
+    datetime: number | undefined; // unix
+    count: number | undefined;
+    photo: string | undefined;
+}
+
+

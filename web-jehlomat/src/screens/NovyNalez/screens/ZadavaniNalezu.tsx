@@ -10,7 +10,7 @@ import create from 'assets/icons/create.svg';
 
 import { DateTimePicker } from 'Components/Inputs/DateTimePicker/DateTimePicker';
 
-import { INovaJehla } from 'screens/NovyNalez/NovyNalezContainer';
+import { INovaJehla } from 'screens/NovyNalez/components/types';
 import { white } from 'utils/colors';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemLabel } from 'utils/typography';
@@ -63,64 +63,50 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
 
     return (
         <>
-            <Box minHeight={'100vh'} pt={4}>
-                <Container>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                            <FormWrapper>
-                                <FormItem>
-                                    <FormItemLabel>Počet stříkaček</FormItemLabel>
-                                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
-                                    <Icon src={syringe} readOnly={readOnly} />
-                                </FormItem>
-                                <FormItem>
-                                    <FormItemLabel>Datum a čas nálezu</FormItemLabel>
-                                    <DateTimePicker
-                                        value={datetime || currentTime.unix()}
-                                        maxDateTime={currentTime}
-                                        onChange={newValue => {
-                                            newValue && onInputChange('datetime', newValue);
-                                        }}
-                                        toolbarTitle="Vyberte datum a čas nálezu"
-                                        disabled={readOnly}
-                                    />
-                                    {isMobile && <Icon src={event} readOnly={readOnly} />}
-                                </FormItem>
-                                {readOnly && (
-                                    <>
-                                        <FormItem>
-                                            <FormItemLabel>Místo nálezu</FormItemLabel>
-                                            <TextInput
-                                                type="text"
-                                                value={`${lat},${lng}`}
-                                                placeholder="Zadejte počet stříkaček"
-                                                onChange={e => onInputChange('count', e.target.value)}
-                                                disabled={readOnly}
-                                            />
-                                            <Icon src={event} readOnly={readOnly} />
-                                        </FormItem>
-                                        <Box mt={2} mb={3}>
-                                            <SecondaryButton text="Zobrazit a upravit na mapě " onClick={handleEditLocation} />
-                                        </Box>
-                                    </>
-                                )}
-                                <FormItem>
-                                    <FormItemLabel>Poznámky</FormItemLabel>
-                                    <TextArea value={info} placeholder="Rozšiřující informace" onChange={e => onInputChange('info', e.target.value)} minRows={2} maxRows={30} disabled={readOnly} />
-                                    <Icon src={create} readOnly={readOnly} />
-                                </FormItem>
-                                <FormItem>
-                                    <FormItemLabel>Foto z místa nálezu</FormItemLabel>
-                                    <PhotoUpload onChange={value => onInputChange('photo', value)} readOnly={readOnly} />
-                                </FormItem>
-                                <FormItem>
-                                    <ButtonContainer>{children}</ButtonContainer>
-                                </FormItem>
-                            </FormWrapper>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
+            <FormWrapper>
+                <FormItem>
+                    <FormItemLabel>Počet stříkaček</FormItemLabel>
+                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
+                    <Icon src={syringe} readOnly={readOnly} />
+                </FormItem>
+                <FormItem>
+                    <FormItemLabel>Datum a čas nálezu</FormItemLabel>
+                    <DateTimePicker
+                        value={datetime || currentTime.unix()}
+                        maxDateTime={currentTime}
+                        onChange={newValue => {
+                            newValue && onInputChange('datetime', newValue);
+                        }}
+                        toolbarTitle="Vyberte datum a čas nálezu"
+                        disabled={readOnly}
+                    />
+                    {isMobile && <Icon src={event} readOnly={readOnly} />}
+                </FormItem>
+                {readOnly && (
+                    <>
+                        <FormItem>
+                            <FormItemLabel>Místo nálezu</FormItemLabel>
+                            <TextInput type="text" value={`${lat},${lng}`} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
+                            <Icon src={event} readOnly={readOnly} />
+                        </FormItem>
+                        <Box mt={2} mb={3}>
+                            <SecondaryButton text="Zobrazit a upravit na mapě" onClick={handleEditLocation} />
+                        </Box>
+                    </>
+                )}
+                <FormItem>
+                    <FormItemLabel>Poznámky</FormItemLabel>
+                    <TextArea value={info} placeholder="Rozšiřující informace" onChange={e => onInputChange('info', e.target.value)} minRows={2} maxRows={30} disabled={readOnly} />
+                    <Icon src={create} readOnly={readOnly} />
+                </FormItem>
+                <FormItem>
+                    <FormItemLabel>Foto z místa nálezu</FormItemLabel>
+                    <PhotoUpload onChange={value => onInputChange('photo', value)} readOnly={readOnly} />
+                </FormItem>
+                <FormItem>
+                    <ButtonContainer>{children}</ButtonContainer>
+                </FormItem>
+            </FormWrapper>
         </>
     );
 };

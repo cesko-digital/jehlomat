@@ -10,26 +10,28 @@ import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
-import {INovaJehla, StepsEnum} from "screens/NovyNalez/NovyNalezContainer";
+import { INovaJehla, StepsEnum } from 'screens/NovyNalez/components/types';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { newSyringeStepState } from 'screens/NovyNalez/components/store';
 
-interface iInfo {
-    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
-}
+interface iInfo {}
 
 const Container = styled.div`
     display: flex;
     position: relative;
     flex-direction: column;
     height: 100%;
+
     @media (min-width: 700px) {
         flex-direction: row;
+        padding-bottom: 4rem;
     }
 `;
 interface iCard {
     backgroundColor: string;
 }
 
-const Card = styled.div<iCard>`
+export const Card = styled.div<iCard>`
     display: flex;
     position: relative;
     flex-direction: column;
@@ -38,6 +40,7 @@ const Card = styled.div<iCard>`
     background: ${props => props.backgroundColor};
     padding: 1rem 0rem;
     flex-grow: 1;
+
     @media (min-width: 700px) {
         padding: 1rem 0 0.5rem;
         &:last-child {
@@ -93,11 +96,13 @@ const Arrow = styled.img`
     }
 `;
 
-const Info: FC<iInfo> = ({ handleStepChange }) => {
+const Info: FC<iInfo> = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const setCurrentStep = useSetRecoilState(newSyringeStepState);
+
     return (
         <>
-            <Box minHeight={'100vh'}>
+            <Box minHeight={isMobile ? '100vh' : 0}>
                 <Container>
                     <Card backgroundColor="#BFE3E0">
                         <Icon>
@@ -122,13 +127,9 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                         <Title>Úspěšné vložení nálezu</Title>
                         <MutedText>Nález bude profesionálně zlikvidován</MutedText>
                     </Card>
-                    {isMobile && (
-                        <Card backgroundColor="#EEF8F7">
-                            <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(StepsEnum.Mapa)} />
-                        </Card>
-                    )}
-
-                    <Navigation></Navigation>
+                    <Card backgroundColor="#EEF8F7">
+                        <PrimaryButton text="Zadat nález do mapy" onClick={() => setCurrentStep(StepsEnum.Mapa)} />
+                    </Card>
                 </Container>
             </Box>
         </>

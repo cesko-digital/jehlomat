@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { LatLngExpression } from 'leaflet';
 import { useMap } from 'react-leaflet';
+import { useSetRecoilState } from 'recoil';
 import styled from '@emotion/styled';
 import { primary } from 'utils/colors';
 import searchIcon from 'assets/icons/search.svg';
@@ -9,7 +10,7 @@ import location from 'assets/icons/location.svg';
 import spinner from 'assets/icons/tail-spin.svg';
 import AddressSearch from '../../NovyNalez/components/AddressSearch';
 import { ChangeView } from '../../NovyNalez/components/ChangeView';
-import { MapContext } from './MapContext';
+import { mapUserPositionState } from './store';
 
 interface MapControlProps {
     // onSearchSubmit: (search: string) => void;
@@ -47,7 +48,7 @@ const StyledItem = styled.div<{ expanded?: boolean }>`
 export const MapControl: React.FC<MapControlProps> = ({}) => {
     const [searchShown, setSearchShown] = useState(false);
     const [checkingPosition, setCheckingPosition] = useState(false);
-    const { setPosition } = useContext(MapContext);
+    const setPosition = useSetRecoilState(mapUserPositionState);
 
     const getUserGeolocation = () => {
         setCheckingPosition(true);

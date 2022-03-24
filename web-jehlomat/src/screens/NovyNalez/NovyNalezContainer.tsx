@@ -1,39 +1,27 @@
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import dayjs from 'dayjs';
+import { FC, useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { FC, useContext, useState } from 'react';
-import dayjs from 'dayjs';
 
+import { INovaJehla, StepsEnum } from 'screens/NovyNalez/components/types';
 import { Header } from 'Components/Header/Header';
-import Info from 'screens/NovyNalez/components/Info';
+import Info, { Card } from 'screens/NovyNalez/components/Info';
 import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
 import { API } from 'config/baseURL';
-
 import { primary } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-// import Stepper from './Components/Stepper';
-
-export interface INovaJehla {
-    lat: number | undefined;
-    lng: number | undefined;
-    info: string | undefined;
-    datetime: number | undefined; // unix
-    count: number | undefined;
-    photo: string | undefined;
-}
-
-export enum StepsEnum {
-    Start,
-    Mapa,
-    Info,
-    Nahled,
-    Potvrzeni,
-}
+import Grid from '@mui/material/Grid';
+import { useRecoilState } from 'recoil';
+import { newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
+import MapComponent from 'screens/NovyNalez/components/Map';
+import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
+import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Start, 'Start přidání nálezu'],
@@ -44,9 +32,9 @@ const StepsTitleMap = new Map<StepsEnum, string>([
 ]);
 
 const NovyNalezContainer: FC = () => {
-    const [currentStep, setCurrentStep] = useState<StepsEnum>(StepsEnum.Start);
+    const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const isMobile = useMediaQuery(media.lte('mobile'));
-    const [newSyringeInfo, setNewSyringeInfo] = useState<INovaJehla>({ lat: undefined, lng: undefined, info: '', datetime: dayjs().unix(), count: undefined, photo: undefined });
+    const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
 
     useEffect(() => {
         // skip first step on desktop
@@ -55,19 +43,14 @@ const NovyNalezContainer: FC = () => {
         }
     }, [isMobile, currentStep]);
 
-    const handleStepChange = (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => {
-        if (newInfo != null) {
-            const { lat, lng } = newInfo;
-            setNewSyringeInfo({ ...newSyringeInfo, lat, lng });
-        }
-        setCurrentStep(newStep);
-    };
-
     const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
 
-    const handleOnSubmit = () => {
+    console.log({ newSyringeInfo });
+
+    const handleOnSubmit = useCallback(() => {
         setCurrentStep(StepsEnum.Nahled);
-    };
+        console.log('handle on submit', newSyringeInfo);
+    }, []);
 
     const handleOnSave = async () => {
         try {
@@ -83,7 +66,6 @@ const NovyNalezContainer: FC = () => {
 
             const data = await API.post('/api/v1/jehlomat/syringe', apiSyringe);
 
-            console.log('returned data', data);
             if (data.status === 200 || data.status === 201) {
                 setCurrentStep(StepsEnum.Potvrzeni);
             }
@@ -92,9 +74,6 @@ const NovyNalezContainer: FC = () => {
             console.log(error);
         }
     };
-
-    const handleOnEdit = () => setCurrentStep(StepsEnum.Info);
-    const handleOnLocationChange = () => setCurrentStep(StepsEnum.Mapa);
 
     const handleGoToEdit = useCallback(() => {
         setCurrentStep(StepsEnum.Info);
@@ -107,81 +86,116 @@ const NovyNalezContainer: FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
-            {/* If desktop show stepper */}
-            {/* {currentStep != 0 && <Stepper currentStep={currentStep} />} */}
-            <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
-                <NovyNalez
-                    currentStep={currentStep}
-                    newSyringeInfo={newSyringeInfo}
-                    handleStepChange={handleStepChange}
-                    handleInputChange={handleInputChange}
-                    handleOnSubmit={handleOnSubmit}
-                    handleOnEdit={handleOnEdit}
-                    handleOnLocationChange={handleOnLocationChange}
-                    handleOnSave={handleOnSave}
-                    handleGoToEdit={handleGoToEdit}
-                    handleEditLocation={handleEditLocation}
-                />
-            </Container>
+            <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation }} />
         </Box>
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({
-    currentStep,
-    newSyringeInfo,
-    handleInputChange,
-    handleOnEdit,
-    handleOnLocationChange,
-    handleOnSave,
-    handleOnSubmit,
-    handleStepChange,
-    handleGoToEdit,
-    handleEditLocation,
-}) => {
+const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation }) => {
+    const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     switch (currentStep) {
         case StepsEnum.Start:
-            return <Info handleStepChange={handleStepChange} />;
+            return <Info></Info>;
         case StepsEnum.Mapa:
-            return <ZadatNalezMapa handleStepChange={handleStepChange} userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />;
+            return (
+                <AddSyringeLayout>
+                    <ZadatNalezMapa userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />
+                </AddSyringeLayout>
+            );
         case StepsEnum.Info:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                    <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
-                </ZadavaniNalezu>
+                <AddSyringeLayout>
+                    {isMobile ? (
+                        <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
+                            <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                        </ZadavaniNalezu>
+                    ) : (
+                        <Container>
+                            <Grid container spacing={2}>
+                                <Grid item md={6}>
+                                    <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
+                                        <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                                    </ZadavaniNalezu>
+                                </Grid>
+                                <Grid item md={6} maxHeight={700}>
+                                    <MapComponent locked>
+                                        <FloatinButtonContainer>
+                                            <SecondaryButton text="Editovat místo" onClick={handleEditLocation} />
+                                        </FloatinButtonContainer>
+                                    </MapComponent>
+                                </Grid>
+                            </Grid>
+                        </Container>
+                    )}
+                </AddSyringeLayout>
             );
         case StepsEnum.Nahled:
             return (
-                <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
-                    <Box display="flex" justifyContent="center" flexDirection="column">
-                        <PrimaryButton text="Uložit" onClick={handleOnSave} />
-                        <Box display="flex" mt={3} justifyContent="center">
-                            <TextButton fontSize={18} color={primary} text="Editovat nález" onClick={handleGoToEdit} textTransform="uppercase" />
-                        </Box>
-                    </Box>
-                </ZadavaniNalezu>
+                <AddSyringeLayout>
+                    {isMobile ? (
+                        <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
+                            <Box display="flex" justifyContent="center" flexDirection="column">
+                                <PrimaryButton text="Uložit" onClick={handleOnSave} />
+                                <Box display="flex" mt={3} justifyContent="center">
+                                    <TextButton fontSize={18} color={primary} text="Editovat nález" onClick={handleGoToEdit} textTransform="uppercase" />
+                                </Box>
+                            </Box>
+                        </ZadavaniNalezu>
+                    ) : (
+                        <Container>
+                            <Grid container spacing={2}>
+                                <Grid item md={6}>
+                                    <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
+                                        <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                                    </ZadavaniNalezu>
+                                </Grid>
+                                <Grid item md={6} maxHeight={700}>
+                                    <ZadatNalezMapa userSelectedLocation={[newSyringeInfo.lat, newSyringeInfo.lng]} />
+                                </Grid>
+                            </Grid>
+                        </Container>
+                    )}
+                </AddSyringeLayout>
             );
 
         case StepsEnum.Potvrzeni:
             return <Potvrzeni />;
         default:
-            return <Info handleStepChange={handleStepChange} />;
+            return <Info />;
     }
 };
 
 interface INovyNalez {
-    currentStep: StepsEnum;
     newSyringeInfo: INovaJehla;
-    handleStepChange: (newStep: StepsEnum, newInfo?: Partial<INovaJehla>) => void;
     handleInputChange: (key: string, value: string | number) => void;
     handleOnSubmit: () => void;
     handleOnSave: () => void;
-    handleOnEdit: () => void;
-    handleOnLocationChange: () => void;
     handleGoToEdit: () => void;
     handleEditLocation: () => void;
 }
+
+export interface AddSyringeLayoutProps {}
+
+const AddSyringeLayout: FC<AddSyringeLayoutProps> = ({ children }) => {
+    const isMobile = useMediaQuery(media.lte('mobile'));
+
+    if (!isMobile) {
+        return (
+            <>
+                <Info />
+                <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
+                    {children}
+                </Container>
+            </>
+        );
+    }
+    return (
+        <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
+            {children}
+        </Container>
+    );
+};
 
 export default NovyNalezContainer;
