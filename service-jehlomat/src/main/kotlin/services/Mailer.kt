@@ -14,6 +14,7 @@ interface MailerService {
     fun sendOrganizationConfirmationEmail(organization: Organization, adminEmail: String)
     fun sendSyringeFindingConfirmation(email: String, syringeId: String)
     fun sendSyringeFinding(organization: Organization, email: String, syringeId: String)
+    fun sendPassResetEmail(email: String, resetUrlCode: String)
 }
 
 
@@ -33,6 +34,9 @@ class FakeMailer: MailerService {
     }
     override fun sendSyringeFinding(organization: Organization, email: String, syringeId: String) {
         println("sendSyringeFinding")
+    }
+    override fun sendPassResetEmail(email: String, resetUrlCode: String) {
+        println("sendPassResetEmail email: " + email + ", code: " + resetUrlCode)
     }
 }
 
@@ -163,5 +167,26 @@ class Mailer: MailerService {
 
         println(response.status)
         println(response.data)
+    }
+
+    @Throws(MailjetException::class)
+    override fun sendPassResetEmail(email: String, resetUrlCode: String) {
+        println("sendPassResetEmail TODO")
+        // TODO: update this
+
+        // val request = MailjetRequest(Emailv31.resource)
+        //     .property(
+        //         Emailv31.MESSAGES, prepareBodyWithLink(
+        //             3222932,
+        //             "Potvrzení zaznamenání nálezu",
+        //             "${publicUrl}api/v1/jehlomat/syringe/$syringeId/info",
+        //             email,
+        //             ""
+        //         )
+        //     )
+        // val response: MailjetResponse = client.post(request)
+
+        // println(response.status)
+        // println(response.data)
     }
 }

@@ -14,6 +14,7 @@ data class User(
     @AuthRole(Role.UserOwner) val password: String,
     @UnchangeableByPut val verified: Boolean,
     @UnchangeableByPut val verificationCode: String,
+    @UnchangeableByPut val passResetUrlCode: String,
     @UnchangeableByPut val organizationId: Int,
     @AuthRole(Role.OrgAdmin) val teamId: Int?,
     @AuthRole(Role.OrgAdmin) val isAdmin: Boolean

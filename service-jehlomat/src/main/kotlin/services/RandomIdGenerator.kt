@@ -4,6 +4,7 @@ import kotlin.random.Random
 
 private const val SYRINGE_ID_LENGTH = 8
 private const val REGISTRATION_CODE_LENGTH = 8
+private const val PASS_RESET_URL_CODE_LENGTH = 20
 
 class RandomIdGenerator {
 
@@ -16,6 +17,10 @@ class RandomIdGenerator {
 
         fun generateRegistrationCode(): String {
             return generateString(REGISTRATION_CODE_LENGTH)
+        }
+
+        fun generatePassResetUrlCode(): String {
+            return generateString(PASS_RESET_URL_CODE_LENGTH)
         }
 
         private fun generateString(stringLength: Int): String {

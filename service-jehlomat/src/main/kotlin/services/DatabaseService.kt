@@ -98,6 +98,7 @@ class DatabaseService(
             password = row[UserTable.password]!!,
             verified = row[UserTable.verified]!!,
             verificationCode = row[UserTable.verificationCode]!!,
+            passResetUrlCode = row[UserTable.passResetUrlCode]!!,
             organizationId = row[UserTable.organizationId]!!,
             teamId = row[UserTable.teamId],
             isAdmin = row[UserTable.isAdmin]!!
@@ -341,6 +342,7 @@ class DatabaseService(
         builder.set(it.username, user.username)
         builder.set(it.verified, user.verified)
         builder.set(it.verificationCode, user.verificationCode)
+        builder.set(it.passResetUrlCode, user.passResetUrlCode)
         builder.set(it.organizationId, user.organizationId)
         builder.set(it.teamId, user.teamId)
         builder.set(it.isAdmin, user.isAdmin)

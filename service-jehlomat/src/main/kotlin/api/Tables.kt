@@ -36,6 +36,7 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
     val password = varchar("password")
     val verified = boolean("verified")
     val verificationCode = varchar("verification_code")
+    val passResetUrlCode = varchar("pass_reset_url_code")
     val organizationId = int("organization_id")
     val teamId = int("team_id")
     val isAdmin = boolean("is_admin")
