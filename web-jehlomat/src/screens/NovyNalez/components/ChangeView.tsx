@@ -8,6 +8,13 @@ export interface IChangeViewProps {
     callback?: () => void;
 }
 
+/**
+ * Change map position, weird way but seems like the way.
+ * @param center
+ * @param zoom
+ * @param callback
+ * @constructor
+ */
 export const ChangeView: React.FC<IChangeViewProps> = ({ center, zoom, callback }) => {
     const map = useMap();
     const actualZoom = map.getZoom();

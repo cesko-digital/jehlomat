@@ -21,7 +21,7 @@ const StyledWrapper = styled.div`
     position: absolute;
     left: 1rem;
     top: 2rem;
-    z-index: 10003;
+    z-index: 100;
 `;
 
 const StyledItem = styled.div<{ expanded?: boolean }>`

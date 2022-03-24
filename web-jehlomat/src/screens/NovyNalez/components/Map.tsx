@@ -1,7 +1,7 @@
 import L, { LatLngExpression } from 'leaflet';
 import Box from '@mui/material/Box';
 import React, { FC, useEffect, useState, useContext } from 'react';
-import { MapContainer, Marker, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents, ZoomControl } from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../constants';
 import icon from 'assets/icons/marker_orange.svg';
 import 'leaflet/dist/leaflet.css';
@@ -11,14 +11,6 @@ import styled from '@emotion/styled';
 import { mapPositionState, mapUserPositionState, newSyringeStepState } from './store';
 import { ChangeView } from './ChangeView';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-
-const FloatinButtonContainer = styled.div`
-    position: absolute;
-    bottom: calc(5vh + 86px);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5;
-`;
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -34,15 +26,15 @@ interface IMapa {
 }
 
 const Map: FC<IMapa> = ({ children, locked }) => {
-    const userPosition = useRecoilValue(mapUserPositionState);
-    const setPosition = useSetRecoilState(mapPositionState);
+    const [userPosition, setUserPosition] = useRecoilState(mapUserPositionState);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
-    const [changePosition, setChangePosition] = useState<LatLngExpression>();
+    const [position, setPosition] = useRecoilState(mapPositionState);
+
 
     useEffect(() => {
         if (userPosition) {
             setMarkerPosition(userPosition);
-            setChangePosition(userPosition);
+            setPosition(userPosition);
         }
     }, [userPosition]);
 
@@ -61,10 +53,11 @@ const Map: FC<IMapa> = ({ children, locked }) => {
         setPosition([lat, lng]);
     }
 
+
     return (
         <Box position="relative" width="100%" height="100%">
             <MapContainer
-                center={userPosition || DEFAULT_POSITION}
+                center={position || userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
                 scrollWheelZoom={false}
                 style={{ width: `100%`, height: `95%`, zIndex: 1 }}
@@ -78,15 +71,25 @@ const Map: FC<IMapa> = ({ children, locked }) => {
                 preferCanvas
             >
                 <MapCustomEvents />
-                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
+                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"  />
                 {markerPosition && <Marker position={markerPosition} />}
-                {changePosition && <ChangeView center={changePosition} callback={() => setChangePosition(undefined)} />}
+                {userPosition && <ChangeView center={userPosition} callback={() => setUserPosition(null)} />}
+                <RealPositionContextProvider />
                 <ZoomControl position="bottomright" />
             </MapContainer>
             {children}
         </Box>
     );
+};
+
+const RealPositionContextProvider: FC = () => {
+    const map = useMap();
+    const center = map.getCenter();
+    const setPosition = useSetRecoilState(mapPositionState);
+
+    // setPosition(center);
+
+    return null;
 };
 
 export default Map;

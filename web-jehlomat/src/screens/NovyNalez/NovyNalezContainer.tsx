@@ -22,6 +22,7 @@ import { newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/comp
 import MapComponent from 'screens/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
+import Stepper from "screens/NovyNalez/components/Stepper";
 
 const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Start, 'Start přidání nálezu'],
@@ -45,12 +46,9 @@ const NovyNalezContainer: FC = () => {
 
     const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
 
-    console.log({ newSyringeInfo });
-
-    const handleOnSubmit = useCallback(() => {
+    const handleOnSubmit = () => {
         setCurrentStep(StepsEnum.Nahled);
-        console.log('handle on submit', newSyringeInfo);
-    }, []);
+    }
 
     const handleOnSave = async () => {
         try {
@@ -77,11 +75,11 @@ const NovyNalezContainer: FC = () => {
 
     const handleGoToEdit = useCallback(() => {
         setCurrentStep(StepsEnum.Info);
-    }, []);
+    }, [setCurrentStep]);
 
     const handleEditLocation = useCallback(() => {
         setCurrentStep(StepsEnum.Mapa);
-    }, []);
+    }, [setCurrentStep]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -109,7 +107,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                 <AddSyringeLayout>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                            <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                            <PrimaryButton text="Dokončit" onClick={handleOnSubmit} type="button" />
                         </ZadavaniNalezu>
                     ) : (
                         <Container>
@@ -147,8 +145,8 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                         <Container>
                             <Grid container spacing={2}>
                                 <Grid item md={6}>
-                                    <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                                        <PrimaryButton text="Dokončit" onClick={handleOnSubmit} />
+                                    <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} readOnly>
+                                        <PrimaryButton text="Dokončit" onClick={handleOnSave} type="button" />
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item md={6} maxHeight={700}>
@@ -184,7 +182,7 @@ const AddSyringeLayout: FC<AddSyringeLayoutProps> = ({ children }) => {
     if (!isMobile) {
         return (
             <>
-                <Info />
+                <Stepper />
                 <Container maxWidth="lg" sx={{ flexGrow: 1 }} id="content-container">
                     {children}
                 </Container>

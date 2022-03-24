@@ -5,8 +5,8 @@ import Map from 'screens/NovyNalez/components/Map';
 import { LatLngExpression } from 'leaflet';
 import { INovaJehla } from 'screens/NovyNalez/components/types';
 import { StepsEnum } from 'screens/NovyNalez/components/types';
-import { mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
+import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
 import MapControl from 'screens/NovyNalez/components/MapControl';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
@@ -41,6 +41,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     const [locationState, setLocationState] = useState<LocationState>();
     const setCurrentStep = useSetRecoilState(newSyringeStepState);
     const setNewSyringeInfo = useSetRecoilState(newSyringeInfoState);
+    const mapPosition = useRecoilValue(mapPositionState);
 
     useEffect(() => {
         if (!!userSelectedLocation[0] && !!userSelectedLocation[1]) {
@@ -85,27 +86,28 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     }, [setModalVisible]);
 
     const convertPositionToInfo = useCallback(() => {
-        if (userPosition != null) {
-            const [lat, lng] = userPosition.toString().split(',');
+        if (mapPosition != null) {
+            const [lat, lng] = mapPosition.toString().split(',');
             return { lat: Number(lat), lng: Number(lng) };
         }
         return { lat: undefined, lng: undefined };
-    }, [userPosition]);
+    }, [mapPosition]);
 
+    console.log({mapPosition})
     const onAddPlaceClick = useCallback(() => {
         setNewSyringeInfo((syringeInfo: INovaJehla) => {
             const info = convertPositionToInfo();
-            console.log({syringeInfo, info})
+            console.log({ syringeInfo, info });
 
-            return syringeInfo
+            return { ...syringeInfo, ...info };
         });
         setCurrentStep(StepsEnum.Info);
-    }, []);
+    }, [convertPositionToInfo, setNewSyringeInfo, setCurrentStep]);
 
     return (
         <StyledContainer id="map-container">
-            <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
             <Map>
+                <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
                 <MapControl />
                 <FloatinButtonContainer>
                     <PrimaryButton text="Vložit místo" onClick={onAddPlaceClick} />

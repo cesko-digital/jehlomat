@@ -27,7 +27,7 @@ export const FormItem = styled.div`
   
     @media (min-width: 420px) {
         align-items: center;
-        width: 50%;
+        width: 100%;
     }
     @media (min-width: 700px) {
         align-items: center;
