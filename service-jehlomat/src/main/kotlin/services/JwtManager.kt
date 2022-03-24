@@ -64,11 +64,14 @@ class JwtManager(
             .sign(Algorithm.RSA256(keyPair.public as RSAPublicKey, keyPair.private as RSAPrivateKey))
     }
 
-    fun getLoggedInUser(appCall: ApplicationCall, databaseService: DatabaseService): User {
-        val principal = appCall.principal<JWTPrincipal>()
-        val userId = principal!!.payload.getClaim(JWT_PAYLOAD_PROPERTY_NAME).asInt()
-        val user = databaseService.selectUserById(userId)
+    fun getLoggedInUserOptional(appCall: ApplicationCall, databaseService: DatabaseService): User? {
+        val principal = appCall.principal<JWTPrincipal>() ?: return null
+        val userId = principal.payload.getClaim(JWT_PAYLOAD_PROPERTY_NAME).asInt()
+        return databaseService.selectUserById(userId)
+    }
 
+    fun getLoggedInUser(appCall: ApplicationCall, databaseService: DatabaseService): User {
+        val user = getLoggedInUserOptional(appCall, databaseService)
         if (user != null) {
             return user
         } else {
