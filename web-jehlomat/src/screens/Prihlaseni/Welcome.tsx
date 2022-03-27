@@ -10,20 +10,9 @@ import { userState } from 'store/user';
 
 const Login: FC<any> = () => {
     let history = useHistory();
-    const token = useRecoilValue(tokenState);
 
     const user = useRecoilValue(userState);
 
-    interface IResponse {
-        id: number;
-        email?: string;
-        username: string;
-        password?: string;
-        organizationId: number;
-        teamId: number;
-        isAdmin?: boolean;
-        verified?: boolean;
-    }
 
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>

@@ -25,7 +25,6 @@ export const FormItem = styled.div`
     align-items: baseline;
     justify-content: center;
     text-align: left;
-    
     font-family: Roboto;
     margin: 15px 6px;
     position: relative;
