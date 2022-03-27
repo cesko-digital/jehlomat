@@ -6,7 +6,7 @@ import { LatLngExpression } from 'leaflet';
 import { INovaJehla } from 'screens/NovyNalez/components/types';
 import { StepsEnum } from 'screens/NovyNalez/components/types';
 import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
-import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import MapControl from 'screens/NovyNalez/components/MapControl';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
@@ -94,12 +94,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     }, [mapPosition]);
 
     const onAddPlaceClick = useCallback(() => {
-        setNewSyringeInfo((syringeInfo: INovaJehla) => {
-            const info = convertPositionToInfo();
-            console.log({ syringeInfo, info });
-
-            return { ...syringeInfo, ...info };
-        });
+        setNewSyringeInfo((syringeInfo: INovaJehla) => ({ ...syringeInfo, ...convertPositionToInfo() }));
         setCurrentStep(StepsEnum.Info);
     }, [convertPositionToInfo, setNewSyringeInfo, setCurrentStep]);
 

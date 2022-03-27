@@ -67,7 +67,6 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
         }
     }, [files, onChange]);
 
-    console.log({ encodedFiles });
     return (
         <>
             {!readOnly && <FileUpload value={files} onChange={setFiles} accept={'image/*'} maxFiles={3} />}
