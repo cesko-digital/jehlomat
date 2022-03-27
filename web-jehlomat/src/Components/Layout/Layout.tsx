@@ -9,11 +9,7 @@ const Layout: FC<Props> = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     if (isMobile) {
-        return (
-            <>
-                <Navigation />
-            </>
-        );
+        return <Navigation />;
     }
 
     return null;
