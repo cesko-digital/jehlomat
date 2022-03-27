@@ -1,6 +1,6 @@
 import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { primaryDark, white } from '../../../utils/colors';
@@ -9,8 +9,8 @@ import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
-import {  StepsEnum } from 'screens/NovyNalez/components/types';
-import {  useSetRecoilState } from 'recoil';
+import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { useRecoilState } from 'recoil';
 import { newSyringeStepState } from 'screens/NovyNalez/components/store';
 
 interface iInfo {}
@@ -97,7 +97,16 @@ const Arrow = styled.img`
 
 const Info: FC<iInfo> = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
-    const setCurrentStep = useSetRecoilState(newSyringeStepState);
+    const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
+    const [firstRun, setFirstRun] = useState(true);
+
+    useEffect(() => {
+        // skip first step on desktop
+        if (!firstRun && !isMobile && currentStep === StepsEnum.Start) {
+            setCurrentStep(StepsEnum.Mapa);
+        }
+        setFirstRun(false);
+    }, [isMobile, currentStep, setCurrentStep, firstRun]);
 
     return (
         <>

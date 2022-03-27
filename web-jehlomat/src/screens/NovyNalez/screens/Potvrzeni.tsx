@@ -6,7 +6,7 @@ import Link from 'Components/Link';
 
 import { primary, white } from 'utils/colors';
 import { H1, H4 } from 'utils/typography';
-import {LINKS} from "routes";
+import { LINKS } from 'routes';
 
 interface Props {}
 
@@ -17,10 +17,12 @@ const Container = styled.div`
     text-align: center;
     background-color: ${primary};
     padding: 1rem;
+    height: 75vh;
 
     @media (min-width: 700px) {
         background-color: ${white};
         padding: 3rem 1rem;
+        height: auto;
     }
 `;
 

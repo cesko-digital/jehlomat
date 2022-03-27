@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs';
 
 import syringe from 'assets/icons/syringe.svg';
@@ -12,7 +11,6 @@ import marker from 'assets/icons/marker.svg';
 import { DateTimePicker } from 'Components/Inputs/DateTimePicker/DateTimePicker';
 
 import { INovaJehla } from 'screens/NovyNalez/components/types';
-import { white } from 'utils/colors';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemLabel } from 'utils/typography';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
@@ -21,17 +19,9 @@ import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
 
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: center;
-    text-align: center;
-    background-color: ${white};
-`;
 
 const ButtonContainer = styled.div`
     display: flex;
@@ -101,7 +91,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                             <Icon src={marker} readOnly={readOnly} />
                         </FormItem>
                         {isMobile && (
-                            <Box mt={2} mb={3}>
+                            <Box mt={2} mb={3} textAlign="center">
                                 <SecondaryButton text="Zobrazit a upravit na mapě" onClick={handleEditLocation} />
                             </Box>
                         )}
