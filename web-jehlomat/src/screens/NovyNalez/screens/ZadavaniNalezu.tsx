@@ -21,6 +21,8 @@ import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
 
 const Container = styled.div`
     display: flex;
@@ -61,6 +63,8 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
     const { info, datetime, count, lat, lng } = syringeInfo;
     const isMobile = useMediaQuery(media.lte('mobile'));
     const currentTime = useMemo(() => dayjs(), []);
+    const { photo } = useRecoilValue(newSyringeInfoState);
+    const decodedFiles = useMemo(() => photo && JSON.parse(photo), [photo]);
 
     return (
         <>
@@ -87,7 +91,13 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                     <>
                         <FormItem>
                             <FormItemLabel>Místo nálezu</FormItemLabel>
-                            <TextInput type="text" value={`${lat?.toFixed(4)}, ${lng?.toFixed(4)}`} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
+                            <TextInput
+                                type="text"
+                                value={`${lat?.toFixed(4)}, ${lng?.toFixed(4)}`}
+                                placeholder="Zadejte počet stříkaček"
+                                onChange={e => onInputChange('count', e.target.value)}
+                                disabled={readOnly}
+                            />
                             <Icon src={marker} readOnly={readOnly} />
                         </FormItem>
                         {isMobile && (
@@ -104,7 +114,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Foto z místa nálezu</FormItemLabel>
-                    <PhotoUpload onChange={value => onInputChange('photo', value)} readOnly={readOnly} />
+                    <PhotoUpload onChange={value => onInputChange('photo', value)} readOnly={readOnly} value={decodedFiles} />
                 </FormItem>
                 <FormItem>
                     <ButtonContainer>{children}</ButtonContainer>

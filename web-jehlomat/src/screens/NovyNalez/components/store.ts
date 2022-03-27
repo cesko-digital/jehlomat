@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
 import { LatLngExpression } from 'leaflet';
 import dayjs from 'dayjs';
 import { INovaJehla } from 'screens/NovyNalez/components/types';

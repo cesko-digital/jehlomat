@@ -1,7 +1,7 @@
 import React from 'react';
 import MaterialUpload, { FileUploadProps as MaterialProps } from 'react-material-file-upload';
 import styled from '@emotion/styled';
-import { primary, primaryDark } from 'utils/colors';
+import {  primaryDark } from 'utils/colors';
 
 export interface FileUploadProps extends MaterialProps {}
 

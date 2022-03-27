@@ -21,8 +21,8 @@ export const ChangeView: React.FC<IChangeViewProps> = ({ center, zoom, callback 
     map.setView(center, zoom || actualZoom);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         callback && callback();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return null;

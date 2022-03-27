@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
-import { LatLngExpression } from 'leaflet';
-import { useMap } from 'react-leaflet';
+
 import { useSetRecoilState } from 'recoil';
 import styled from '@emotion/styled';
 import { primary } from 'utils/colors';
@@ -46,7 +45,6 @@ const StyledItem = styled.div<{ expanded?: boolean }>`
 `;
 
 export const MapControl: React.FC<MapControlProps> = ({}) => {
-    const [searchShown, setSearchShown] = useState(false);
     const [checkingPosition, setCheckingPosition] = useState(false);
     const setPosition = useSetRecoilState(mapUserPositionState);
 
@@ -66,10 +64,11 @@ export const MapControl: React.FC<MapControlProps> = ({}) => {
 
     return (
         <StyledWrapper>
-            <StyledItem onClick={() => !searchShown && setSearchShown(true)} expanded={searchShown}>
+            {/* Adress search
+             <StyledItem onClick={() => !searchShown && setSearchShown(true)} expanded={searchShown}>
                 <img src={searchIcon} alt="hledat" onClick={() => searchShown && setSearchShown(false)} />
                 {searchShown && <AddressSearch />}
-            </StyledItem>
+            </StyledItem>*/}
             <StyledItem>
                 <img src={questionMark} alt="help" />
             </StyledItem>

@@ -3,15 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import styled from '@emotion/styled';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import Navigation from '../../../Components/Navigation/Navigation';
 import { primaryDark, white } from '../../../utils/colors';
-import { Header } from '../../../Components/Header/Header';
+
 import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
-import { INovaJehla, StepsEnum } from 'screens/NovyNalez/components/types';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import {  StepsEnum } from 'screens/NovyNalez/components/types';
+import {  useSetRecoilState } from 'recoil';
 import { newSyringeStepState } from 'screens/NovyNalez/components/store';
 
 interface iInfo {}

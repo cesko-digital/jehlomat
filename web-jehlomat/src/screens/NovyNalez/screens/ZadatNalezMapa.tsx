@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
     width: 100%;
     height: 600px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 700px) {
         // compensate parent padding, nasty but easiest
         width: 100vw;
         transform: translateX(-16px);
@@ -93,7 +93,6 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
         return { lat: undefined, lng: undefined };
     }, [mapPosition]);
 
-    console.log({mapPosition})
     const onAddPlaceClick = useCallback(() => {
         setNewSyringeInfo((syringeInfo: INovaJehla) => {
             const info = convertPositionToInfo();

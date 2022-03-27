@@ -1,4 +1,4 @@
-﻿import React, {FunctionComponent} from "react";
+import React, {FunctionComponent} from "react";
 import {useHistory} from "react-router-dom";
 import {useMediaQuery} from "@mui/material";
 import {Formik, FormikHelpers} from "formik";

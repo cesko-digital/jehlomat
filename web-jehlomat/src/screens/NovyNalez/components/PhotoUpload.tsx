@@ -11,6 +11,7 @@ import { media } from 'utils/media';
 interface PhotoUploadProps extends Omit<FileUploadProps, 'onChange' | 'value'> {
     onChange: (value: string) => void;
     readOnly?: boolean;
+    value?: string[];
 }
 
 const resizeFile = (file: File) =>
@@ -29,10 +30,10 @@ const resizeFile = (file: File) =>
         );
     });
 
-export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) => {
+export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, value }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [filesResizing, setFilesResizing] = useState(false);
-    const [encodedFiles, setEncodedFiles] = useState<string[]>([]);
+    const [encodedFiles, setEncodedFiles] = useState<string[]>(value || []);
     const [currentImage, setCurrentImage] = useState(0);
     const [isViewerOpen, setIsViewerOpen] = useState(false);
 
@@ -66,6 +67,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
         }
     }, [files]);
 
+    console.log({ encodedFiles });
     return (
         <>
             {!readOnly && <FileUpload value={files} onChange={setFiles} accept={'image/*'} maxFiles={3} />}
@@ -90,7 +92,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
                                     onClick={() => openImageViewer(index)}
                                     sx={{
                                         transition: '.1s all',
-                                        '&:hover': { transform: 'scale(1.05)' , pointer: 'hover'},
+                                        '&:hover': { transform: 'scale(1.05)', cursor: 'pointer' },
                                     }}
                                 />
                             </>
@@ -99,7 +101,9 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly }) 
                 </Box>
             )}
 
-            {isViewerOpen && <ImageViewer src={encodedFiles} currentIndex={currentImage} disableScroll={false} closeOnClickOutside={true} onClose={closeImageViewer} />}
+            {isViewerOpen && (
+                <ImageViewer src={encodedFiles} currentIndex={currentImage} disableScroll={false} closeOnClickOutside={true} onClose={closeImageViewer} backgroundStyle={{ zIndex: 100 }} />
+            )}
         </>
     );
 };

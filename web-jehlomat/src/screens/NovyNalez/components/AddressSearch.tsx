@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Formik } from 'formik';
-import axios, { AxiosResponse } from 'axios';
+import axios  from 'axios';
 import styled from '@emotion/styled';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
 import { Address } from './types';
@@ -16,7 +16,7 @@ const StyledForm = styled.form`
 const RESULT_LIMIT = 10;
 
 export const AddressSearch: React.FC<AddressSearchProps> = props => {
-    const [lastSearch, setLastSearch] = useState<Dayjs>();
+//    const [lastSearch, setLastSearch] = useState<Dayjs>();
 
     const handleSubmit = useCallback(async values => {
         const { search } = values;
