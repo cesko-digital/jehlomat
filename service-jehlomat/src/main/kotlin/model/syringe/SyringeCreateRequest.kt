@@ -9,7 +9,6 @@ import model.user.UserInfo
 @Serializable
 data class SyringeCreateRequest (
     val createdAt: Long,
-    val createdBy: Int?,
     val photo: String?,
     val count: Int,
     val note: String,

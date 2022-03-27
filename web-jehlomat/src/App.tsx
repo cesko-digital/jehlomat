@@ -1,4 +1,4 @@
-import React, { FC, Suspense } from 'react';
+import React, { FC, Suspense  } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -16,11 +16,11 @@ import PrivateRoute from 'config/protectedRoute';
 const Router: FC = () => (
     <HashRouter>
         <Switch>
-            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute }) => {
+            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute, from }) => {
                 const stringPath = typeof path === 'string' ? path : path(0);
                 if (protectedRoute) {
                     return (
-                        <PrivateRoute path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                        <PrivateRoute from={from} path={typeof path === 'string' ? path : path(0)} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
                         </PrivateRoute>
@@ -30,6 +30,7 @@ const Router: FC = () => (
                         <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
+                            <Component exact={exact} />
                         </Route>
                     );
                 }

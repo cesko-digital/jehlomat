@@ -438,9 +438,13 @@ paths:
           type: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation
         '404':
           description: Organization not found
+        '204':
+          description: Empty orgId parameter
+        '403':
+          description: No permissions for the current user to perform such action
   /verification/user:
     post:
       summary: Verify and finish user registration
@@ -773,9 +777,6 @@ definitions:
       createdAt:
         type: integer
         example: 1637092279
-      createdBy:
-        type: integer
-        example: 123
       photo:
         type: string
         example: "nothing"

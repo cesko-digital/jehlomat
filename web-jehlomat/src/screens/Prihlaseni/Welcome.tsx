@@ -6,11 +6,11 @@ import { useRecoilValue } from 'recoil';
 import { Container } from '@mui/material';
 import { white } from '../../utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
-
 import { userState } from 'store/user';
 
 const Login: FC<any> = () => {
     let history = useHistory();
+    const token = useRecoilValue(tokenState);
 
     const user = useRecoilValue(userState);
 

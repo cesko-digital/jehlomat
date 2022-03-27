@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { media } from 'utils/media';
 
 export const Wrapper = styled.section`
     height: 100%;
@@ -12,6 +13,10 @@ export const FormWrapper = styled.form`
     align-items: stretch;
     flex-direction: column;
     width: 100%;
+
+    @media ${media.lte('mobile')} {
+        padding-top: 100px;
+    }
 `;
 
 export const FormItem = styled.div`
@@ -31,6 +36,9 @@ export const FormItem = styled.div`
     }
     @media (min-width: 700px) {
         align-items: center;
-        width: 340px;
+        width: 90%;
+    }
+    @media ${media.lte('mobile')} {
+        width: 100%;
     }
 `;
