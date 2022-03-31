@@ -1,6 +1,7 @@
 package model
 
 import kotlinx.serialization.Serializable
+import model.location.Location
 import model.syringe.SyringeStatus
 
 @Serializable

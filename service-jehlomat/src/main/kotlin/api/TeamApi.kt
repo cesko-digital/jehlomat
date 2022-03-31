@@ -7,6 +7,9 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
+import model.team.Team
+import model.team.TeamRequest
+import model.team.toRequest
 import services.*
 
 
@@ -27,42 +30,44 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
             }
 
             post {
-                val team = call.receive<Team>()
+                val teamRequest = call.receive<TeamRequest>()
                 when {
-                    databaseInstance.selectTeamByName(team.name) != null -> {
+                    databaseInstance.selectTeamByName(teamRequest.name) != null -> {
                         call.respond(HttpStatusCode.Conflict)
                     }
                     else -> {
                         val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
-                        val roles = PermissionService.determineRoles(loggedInUser, team)
+                        val roles = PermissionService.determineRoles(loggedInUser, teamRequest)
                         if (!roles.contains(Role.OrgAdmin)) {
                             call.respond(HttpStatusCode.Forbidden,"A team can be created only by the organization administrator.")
                             return@post
                         }
 
-                        databaseInstance.insertTeam(team)
+                        val locations = databaseInstance.resolveLocationIds(teamRequest.locationIds)
+                        databaseInstance.insertTeam(Team(teamRequest.id, teamRequest.name, locations, teamRequest.organizationId))
                         call.respond(HttpStatusCode.Created)
                     }
                 }
             }
 
             put {
-                val newTeam = call.receive<Team>()
-                val currentTeam = databaseInstance.selectTeamById(newTeam.id)
+                val teamRequest = call.receive<TeamRequest>()
+                val currentTeam = databaseInstance.selectTeamById(teamRequest.id)
 
                 when {
                     currentTeam == null -> {
                         call.respond(HttpStatusCode.NotFound)
                     }
-                    (newTeam.name != currentTeam.name && databaseInstance.selectTeamByName(newTeam.name) != null) -> {
+                    (teamRequest.name != currentTeam.name && databaseInstance.selectTeamByName(teamRequest.name) != null) -> {
                         call.respond(HttpStatusCode.Conflict)
                     }
                     else -> {
-                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, currentTeam, newTeam)) {
+                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, currentTeam.toRequest(), teamRequest)) {
                             return@put
                         }
 
-                        databaseInstance.updateTeam(newTeam)
+                        val locations = databaseInstance.resolveLocationIds(teamRequest.locationIds)
+                        databaseInstance.updateTeam(Team(teamRequest.id, teamRequest.name, locations, teamRequest.organizationId))
                         call.respond(HttpStatusCode.OK)
                     }
                 }

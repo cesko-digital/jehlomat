@@ -1,9 +1,12 @@
 package services
 
+import api.LocationTable
 import api.OrganizationTable
 import api.SyringeTable
 import api.UserTable
 import model.*
+import model.location.LocationId
+import model.location.LocationType
 import model.syringe.SyringeFilter
 import model.syringe.SyringeFinder
 import model.syringe.SyringeFinderType
@@ -33,12 +36,27 @@ class SyringeFilterTransformer {
 
         private fun transformLocationIds(
             filter: ColumnDeclaring<Boolean>,
-            locationIds: Set<Int>?
+            locationIds: Set<LocationId>?
         ): ColumnDeclaring<Boolean> {
             if (locationIds.isNullOrEmpty()) {
                 return filter
             }
-            return filter and (SyringeTable.locationId inList locationIds)
+
+            var filterLocation:ColumnDeclaring<Boolean>? = null
+            for (locationId in locationIds) {
+                val add = when (locationId.type) {
+                    LocationType.OKRES -> LocationTable.okres eq locationId.id
+                    LocationType.OBEC -> LocationTable.obec eq locationId.id.toInt()
+                    LocationType.MC -> LocationTable.mestka_cast eq locationId.id.toInt()
+                }
+                if (filterLocation != null) {
+                    filterLocation = filterLocation or add
+                } else {
+                    filterLocation =  add
+                }
+
+            }
+            return filter and (filterLocation!!)
         }
 
         private fun transformStatus(
@@ -117,7 +135,5 @@ class SyringeFilterTransformer {
             }
             return filter and (OrganizationTable.organizationId eq organizationId)
         }
-
-
     }
 }

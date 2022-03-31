@@ -2,7 +2,7 @@ package model.syringe
 
 import kotlinx.serialization.Serializable
 import model.Demolisher
-import model.Location
+import model.location.Location
 import model.Syringe
 import model.user.UserInfo
 

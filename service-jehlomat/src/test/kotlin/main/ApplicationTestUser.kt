@@ -7,9 +7,9 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import model.Location
+import model.location.Location
 import model.Organization
-import model.Team
+import model.team.Team
 import model.user.User
 import model.user.UserRegistrationRequest
 import org.junit.Test

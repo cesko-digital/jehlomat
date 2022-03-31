@@ -1,4 +1,4 @@
-package model
+package model.location
 
 data class LocationPart (
     val id: String,
