@@ -1,55 +1,22 @@
-﻿import React, { FunctionComponent, useEffect, useState } from 'react';
-import { ActiveFilter } from 'screens/Nalezy/types';
-import { FiltersContainer } from './Filter';
-import FilterPeriod, { KIND } from './FilterPeriod';
-import FilterState from './FilterState';
-import { Dayjs } from 'dayjs';
+﻿import React from 'react';
+import { styled } from '@mui/system';
+import {secondaryColorVariant} from "../../../utils/colors";
 
-interface FiltersProps {
-    onFilter: (filter: ActiveFilter) => void;
-}
+export const Filters = styled('div')(({ theme }) => ({
+    background: secondaryColorVariant('light'),
+    borderRadius: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'row',
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
 
-const Filters: FunctionComponent<FiltersProps> = ({ onFilter }) => {
-    const [filter, setFilter] = useState<ActiveFilter>({});
-    
-    useEffect(() => {
-        onFilter(filter);
-    }, [filter]);
-    
-    const handlePeriodFilter = (kind: string, from: Dayjs | null, to: Dayjs | null) => {
-        if (kind === KIND.RESET) {
-            setFilter(filter => ({ ...filter, createdAt: undefined, demolishedAt: undefined }));
-        }
-        
-        if (!from || !to) return;
-        if (kind === KIND.DEMOLISH) {
-            setFilter(filter => ({
-                ...filter, 
-                createdAt: undefined,
-                demolishedAt: { from: +from, to: +to },
-            }));
-        }
-        
-        if (kind === KIND.FINDING) {
-            setFilter(filter => ({
-                ...filter, 
-                demolishedAt: undefined,
-                createdAt: {from: +from, to: +to},
-            }));
-        }
-    };
-    const handleStateFilter = (state: string | undefined) => {
-        if (!state) setFilter(filter => ({ ...filter, status: undefined }));
-        
-        setFilter(filter => ({ ...filter, status: state }));
-    };
-    
-    return (
-        <FiltersContainer>
-            <FilterPeriod onFilter={handlePeriodFilter} />
-            <FilterState onFilter={handleStateFilter} />
-        </FiltersContainer>
-    );
-};
+    '& > *': {
+        marginRight: theme.spacing(2),
+
+        '&:last-child': {
+            marginRight: 0,
+        },
+    },
+}));
 
 export default Filters;
