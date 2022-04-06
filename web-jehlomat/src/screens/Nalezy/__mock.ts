@@ -1,39 +1,6 @@
-import { IUser as IPerson } from 'types';
+﻿import {SyringeReadModel} from "./types/SyringeReadModel";
 
-export interface IListSyringe {
-    syringeList: ISyringe[];
-    pageInfo: {
-        index: number;
-        size: number;
-        hasMore: boolean;
-    };
-}
-
-export interface ILocation {
-    id: number;
-    okres: string;
-    obec: number;
-    mestkaCast: number;
-}
-
-export interface ISyringe {
-    id: string;
-    createdAt: number;
-    createdBy: IPerson;
-    reservedTill?: number;
-    reservedBy?: IPerson;
-    demolishedAt?: number;
-    demolishedBy?: IPerson;
-    photo?: string;
-    count: number;
-    note: string;
-    demolisher: string;
-    gps_coordinates: string;
-    demolished: boolean;
-    location: ILocation;
-}
-
-export const syringeMock: IListSyringe = {
+export const mock: SyringeReadModel = {
     syringeList: [
         {
             id: 'R4YFD1AC',

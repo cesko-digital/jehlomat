@@ -1,192 +1,19 @@
-import React, { FunctionComponent, HTMLAttributes, useState } from 'react';
+import React, {FunctionComponent} from 'react';
 import { styled } from '@mui/system';
-import { ReactComponent as SvgZoomIcon } from 'assets/icons/zoom.svg';
-import { ReactComponent as SvgChevronDownIcon } from 'assets/icons/chevron-down.svg';
-import { Popper } from '@mui/material';
-import { Dropdown } from './Dropdown';
 
 const GRAY = 'rgba(217, 217, 217, 1)';
 const GREEN = 'rgba(14, 118, 108, 1)';
-const GREEN_LIGHT = 'rgba(14, 118, 108, 0.2)';
 
-export const ZoomIcon = styled(SvgZoomIcon)({
-    display: 'inline-block',
-    height: 16,
-    width: 16,
-});
-
-export const ChevronDownIcon = styled(SvgChevronDownIcon)({
-    display: 'inline-block',
-    height: 16,
-    width: 16,
-});
-
-export const Input: FunctionComponent<HTMLAttributes<HTMLInputElement>> = ({ children, ...rest }) => (
-    <Wrapper>
-        <BaseInput {...rest} />
-        {children}
-    </Wrapper>
-);
-
-interface DatePickerProps extends React.ComponentPropsWithoutRef<"input"> {
-    label?: string;
-    helper?: string;
+interface FilterProps {
+    title: string;
+    onReset?: () => void;
 }
-
-export const DatePicker: FunctionComponent<DatePickerProps> = ({ label, helper, children, ...rest }) => (
-    <Wrapper>
-        {label && <Label>{label}</Label>}
-        <BaseInput {...rest} type="date" />
-        {children}
-        {helper && <Helper>{helper}</Helper>}
-    </Wrapper>
-);
-
-export interface SelectItem {
-    text: string;
-    value: string | number;
-}
-
-interface SelectProps {
-    items: Array<SelectItem>;
-    value?: SelectItem;
-    onSelect?: (item: SelectItem) => void;
-}
-
-const Text = styled('div')({
-    alignItems: 'center',
-    color: 'rgba(120, 120, 120, 1)',
-    display: 'flex',
-    fontSize: '0.875rem',
-    height: '100%',
-    width: '100%',
-
-    '&:focus': {
-        outline: 'none',
-    },
-});
-
-const Option = styled('button')({
-    background: 'rgba(0, 0, 0, 0.07)',
-    border: 'none',
-    borderRadius: 16,
-    color: 'black',
-    display: 'block',
-    height: 32,
-    margin: '4px 16px',
-    padding: '0 16px',
-
-    '&:hover': {
-        background: 'rgba(47, 166, 154, 0.32)',
-    },
-
-    '&:focus': {
-        outline: 'none',
-    },
-});
-
-export const Select: FunctionComponent<SelectProps> = ({ items, value, onSelect, children, ...rest }) => {
-    const [anchorEl, setAnchorEl] = useState<HTMLLabelElement | null>(null);
-    const handleClick = (event: React.MouseEvent<HTMLLabelElement>) => setAnchorEl(anchorEl ? null : event.currentTarget);
-    const handleSelect = (item: SelectItem) => () => {
-        if (typeof onSelect === 'function') {
-            onSelect(item);
-            setAnchorEl(null);
-        }
-    };
-
-    return (
-        <>
-            <Wrapper onClick={handleClick} active={Boolean(anchorEl)}>
-                <Text tabIndex={0}>{value?.text}</Text>
-                <ChevronDownIcon />
-            </Wrapper>
-            <Dropdown open={Boolean(anchorEl)} anchorEl={anchorEl} onClickAway={() => setAnchorEl(null)}>
-                {items.map(item => (
-                    <Option key={item.value} onClick={handleSelect(item)}>
-                        {item.text}
-                    </Option>
-                ))}
-            </Dropdown>
-        </>
-    );
-};
-
-interface WrapperProps {
-    active?: boolean;
-}
-
-const Wrapper = styled('label', {
-    shouldForwardProp: prop => prop !== 'active',
-})<WrapperProps>(({ active }) => {
-    const highlighted = {
-        outline: 'none',
-        borderColor: GREEN,
-        boxShadow: `0 0 0 2px ${GREEN_LIGHT}`,
-    };
-
-    return {
-        alignItems: 'center',
-        display: 'inline-flex',
-        border: `1px solid ${GRAY}`,
-        borderRadius: 16,
-        boxSizing: 'border-box',
-        color: GREEN,
-        flexDirection: 'row',
-        height: 32,
-        lineHeight: 1,
-        paddingLeft: 12,
-        paddingRight: 12,
-        position: 'relative',
-        transition: 'all 300ms',
-        width: '100%',
-        ...(active ? highlighted : {}),
-
-        '&:focus-within': { ...highlighted },
-    };
-});
-
-const Label = styled('div')({
-    background: 'white',
-    position: 'absolute',
-    bottom: 'calc(100% - 6px)',
-    color: 'rgba(137, 138, 141, 1)',
-    fontSize: '0.75rem',
-    padding: '4px',
-});
-
-const Helper = styled('div')({
-    background: 'white',
-    position: 'absolute',
-    top: 'calc(100% - 6px)',
-    color: 'rgba(137, 138, 141, 1)',
-    fontSize: '0.75rem',
-    padding: '4px',
-});
-
-const BaseInput = styled('input')({
-    border: 'none',
-    color: '#000',
-    flexGrow: 1,
-    lineHeight: 1,
-    padding: 0,
-    margin: 0,
-    width: '100%',
-
-    '&[type="date"]::-webkit-calendar-picker-indicator': {
-        display: 'none',
-    },
-
-    '&:focus': {
-        outline: 'none',
-    },
-});
 
 const Title = styled('h3')({
     color: GREEN,
-    fontSize: '1.125rem',
-    fontWeight: 400,
-    letterSpacing: '1.25px',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    letterSpacing: 0.25,
     margin: 0,
     padding: 0,
     textTransform: 'uppercase',
@@ -201,8 +28,9 @@ const Reset = styled('div')({
         border: 'none',
         borderRadius: '50%',
         color: GREEN,
+        cursor: 'pointer',
         fontSize: '0.75rem',
-        
+
         '&:focus': {
             outline: 'none',
         },
@@ -237,26 +65,8 @@ export const Range = styled('div')({
     },
 });
 
-interface FilterProps {
-    title: string;
-    onReset?: () => void;
-}
-
-export const FiltersContainer = styled('div')({
-    display: 'flex',
-    flexDirection: 'row',
-
-    '& > *': {
-        marginRight: 32,
-
-        '&:last-child': {
-            marginRight: 0,
-        },
-    },
-});
-
 const FilterContent = styled('div')({
-    width: '25%',
+    width: '100%',
 });
 
 const FilterControls = styled('div')({
@@ -267,18 +77,18 @@ const FilterControls = styled('div')({
 
 export const Filter: FunctionComponent<FilterProps> = ({ title, onReset, children }) => {
     const handleReset = () => {
-        if (typeof onReset === "function") {
+        if (typeof onReset === 'function') {
             onReset();
         }
     };
-    
+
     return (
-      <FilterContent>
-          <Title>{title}</Title>
-          <Reset>
-              <button onClick={handleReset}>Zrušit filtr</button>
-          </Reset>
-          <FilterControls>{children}</FilterControls>
-      </FilterContent>
+        <FilterContent>
+            <Title>{title}</Title>
+            <Reset>
+                <button onClick={handleReset}>Zrušit filtr</button>
+            </Reset>
+            <FilterControls>{children}</FilterControls>
+        </FilterContent>
     );
-}
+};
