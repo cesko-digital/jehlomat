@@ -21,7 +21,7 @@ const ControlWrapper = styled('label', {
         alignItems: 'center',
         display: 'inline-flex',
         background: 'white',
-        border: `1px solid ${GRAY}`,
+        border: `1px solid white`,
         borderRadius: 16,
         boxSizing: 'border-box',
         color: GREEN,
@@ -34,6 +34,10 @@ const ControlWrapper = styled('label', {
         transition: 'all 300ms',
         width: '100%',
         ...(active ? highlighted : {}),
+
+        '&:hover': {
+            borderColor: GREEN,
+        },
 
         '&:focus-within': {...highlighted},
     };

@@ -1,4 +1,4 @@
-﻿import {SyringeReadModel} from "./types/SyringeReadModel";
+﻿import { SyringeReadModel } from './types/SyringeReadModel';
 
 export const mock: SyringeReadModel = {
     syringeList: [
@@ -24,7 +24,7 @@ export const mock: SyringeReadModel = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.22326399194605, 16.59743398061707',
             demolished: false,
             demolishedAt: 1639092279,
             demolishedBy: {
@@ -68,7 +68,7 @@ export const mock: SyringeReadModel = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.199025530527344, 16.606748383444558',
             demolished: true,
             demolishedAt: 1639092279,
             demolishedBy: {
@@ -102,7 +102,7 @@ export const mock: SyringeReadModel = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.204466102894855, 16.573198482117157',
             demolished: false,
             count: 1,
             note: 'note 1',

@@ -16,6 +16,14 @@ import Controls from './Components/Controls';
 import Button from './Components/Button';
 import TextHeader from './Components/TextHeader';
 import { mock } from './__mock';
+import Map from "./Components/Map";
+import {styled} from "@mui/system";
+
+const Page = styled(Container)({
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+});
 
 const Nalezy: FunctionComponent = () => {
     const [data, setData] = useState<SyringeReadModel>();
@@ -26,7 +34,7 @@ const Nalezy: FunctionComponent = () => {
 
     useEffect(() => {
         const load = async () => {
-            const response: AxiosResponse<SyringeReadModel> = await API.post('/api/v1/jehlomat/syringe/search', filter);
+            const response: AxiosResponse<SyringeReadModel> = await API.post('/syringe/search', filter);
             if (response.status !== 200) throw new Error('Unable to load data');
 
             return response.data;
@@ -47,15 +55,16 @@ const Nalezy: FunctionComponent = () => {
         <>
             <Header mobileTitle="Seznam zadaných nálezů" />
 
-            <Container sx={{ flexGrow: 1 }}>
+            <Page>
                 <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                     <Box>
                         <TextHeader>Seznam zadaných nálezů</TextHeader>
                     </Box>
                     <Controls>
-                        <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
                         <Button>Vybrat vše</Button>
                         <Button>Exportovat vybrané</Button>
+                        <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
+                        <Button>Mapa</Button>
                     </Controls>
                 </Box>
                 {filters && (
@@ -70,10 +79,10 @@ const Nalezy: FunctionComponent = () => {
                         <Table data={data} direction={direction} onSort={handleSort} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
-                        Map
+                        <Map data={data} />
                     </Route>
                 </Switch>
-            </Container>
+            </Page>
         </>
     );
 };

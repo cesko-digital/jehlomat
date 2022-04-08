@@ -1,20 +1,14 @@
 ﻿import React, { FunctionComponent, useState } from 'react';
-import { styled } from '@mui/system';
 import { Syringe } from '../types/Syringe';
 import dayjs from 'dayjs';
 import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
-import SyringeSvg from 'assets/images/syringe.svg';
+import { ReactComponent as SyringeIcon } from 'assets/icons/syringe-line.svg';
 import ListItemMenu from './ListItemMenu';
 import RoundButton from './RoundButton';
 import SyringeState from './SyringeState';
 import SyringeDemolishDate from './SyringeDemolishDate';
 import Row from './Row';
 
-export const SyringeIcon = styled('div')({
-    backgroundImage: `url(${SyringeSvg})`,
-    width: 15,
-    height: 27,
-});
 
 interface SyringeRowProps {
     syringe: Syringe;
