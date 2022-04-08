@@ -10,6 +10,7 @@ const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));
+const OrganizationVerification = lazy(() => import('./screens/OrganizationVerification/OrganizationVerification'));
 const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
 const SetNewPassword = lazy(() => import('./screens/SetNewPassword/SetNewPassword'));
 
@@ -21,6 +22,8 @@ const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/Trackovan
 const LandingPage = lazy(() => import('./screens/LandingPage'));
 const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
 const About = lazy(() => import('./screens/AboutPage'));
+const Contact = lazy(() => import('./screens/ContactPage'));
+const FAQPage = lazy(() => import('./screens/FAQ'));
 
 export enum Routes {
     HOME = 'HOME',
@@ -44,6 +47,9 @@ export enum Routes {
     POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
     ABOUT = 'ABOUT',
+    FAQ = 'FAQ',
+    CONTACT = 'CONTACT',
+    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION'
 }
 
 interface Route {
@@ -54,17 +60,24 @@ interface Route {
     protectedRoute?: boolean;
     exact?: boolean;
     title?: string;
+    /*
+     * In case of protectedRoute, remembers previous URL
+     * and redirects to it after successfull login
+     * Valid if protectedRoute is truthy
+     */
+    from?: boolean;
 }
 
 const USER_URL_PATH_ = 'uzivatel';
 const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
+export const LOGIN_URL_PATH = 'prihlaseni';
 
 export const routes: Route[] = [
     {
         id: Routes.LOGIN,
         Component: Prihlaseni,
-        path: '/prihlaseni',
+        path: `/${LOGIN_URL_PATH}`,
     },
     {
         id: Routes.USER_SET_NEW_PASSWORD,
@@ -76,6 +89,7 @@ export const routes: Route[] = [
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
         protectedRoute: true,
+        title: "Přidat uživatele"
     },
     {
         id: Routes.USER_VALIDATION,
@@ -99,6 +113,11 @@ export const routes: Route[] = [
         protectedRoute: true,
     },
     {
+        id: Routes.ORGANIZATION,
+        Component: Organizace,
+        path: `/${ORGANIZATION_URL_PATH}/`,
+    },
+    {
         id: Routes.ORGANIZATION_REGISTRATION,
         Component: RegistraceOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/registrace`,
@@ -107,6 +126,13 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_THANK_YOU,
         Component: DekujemeOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
+    },
+    {
+        id: Routes.ORGANIZATION_CONFIRMATION,
+        Component: OrganizationVerification,
+        path: `/${ORGANIZATION_URL_PATH}/povoleni/:orgId?`,
+        protectedRoute: true,
+        from: true
     },
     {
         id: Routes.ORGANIZATION,
@@ -164,7 +190,17 @@ export const routes: Route[] = [
     {
         id: Routes.ABOUT,
         Component: About,
-        path: '/about',
+        path: '/o-jehlomatu',
+    },
+    {
+        id: Routes.FAQ,
+        Component: FAQPage,
+        path: '/faq',
+    },
+    {
+        id: Routes.CONTACT,
+        Component: Contact,
+        path: '/kontakt',
     },
     {
         id: Routes.HOME,

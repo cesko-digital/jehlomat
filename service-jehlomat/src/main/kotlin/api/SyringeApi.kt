@@ -98,34 +98,35 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
             }
         }
 
-        post {
-            val syringeRequest = call.receive<SyringeCreateRequest>()
-            var userCreatedBy: User? = null
-            if (syringeRequest.createdBy != null) {
-                userCreatedBy = database.selectUserById(syringeRequest.createdBy)
-                if (userCreatedBy == null) {
-                    call.respond(HttpStatusCode.BadRequest, "The founder doesn't exist")
+        authenticate(JWT_CONFIG_NAME, optional = true) {
+            post {
+                val syringeRequest = call.receive<SyringeCreateRequest>()
+
+                val userCreatedBy = jwtManager.getLoggedInUserOptional(call, database)
+                val location = database.selectOrInsertLocation(syringeRequest.gps_coordinates)
+
+                val syringe = syringeRequest.toSyringe(location, userCreatedBy?.toUserInfo())
+                val syringeId = database.insertSyringe(syringe)
+                if (syringeId == null) {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        "A syringe cannot be created, please try again later"
+                    )
                     return@post
                 }
+
+                val teamsInLocation = database.resolveTeamsInLocation(syringeRequest.gps_coordinates)
+                teamsInLocation.forEach {
+                    val organization = database.selectOrganizationById(it.organizationId)
+                    val admin = database.findAdmin(organization!!)
+                    mailer.sendSyringeFinding(organization, admin.email, syringeId)
+                }
+
+                call.respond(
+                    HttpStatusCode.Created,
+                    SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty())
+                )
             }
-
-            val location = database.selectOrInsertLocation(syringeRequest.gps_coordinates)
-
-            val syringe = syringeRequest.toSyringe(location, userCreatedBy?.toUserInfo())
-            val syringeId = database.insertSyringe(syringe)
-            if (syringeId == null) {
-                call.respond(HttpStatusCode.InternalServerError, "A syringe cannot be created, please try again later")
-                return@post
-            }
-
-            val teamsInLocation = database.resolveTeamsInLocation(syringeRequest.gps_coordinates)
-            teamsInLocation.forEach {
-                val organization = database.selectOrganizationById(it.organizationId)
-                val admin = database.findAdmin(organization!!)
-                mailer.sendSyringeFinding(organization, admin.email, syringeId)
-            }
-
-            call.respond(HttpStatusCode.Created, SyringeCreateResponse(id = syringeId, teamAvailable = teamsInLocation.isNotEmpty()))
         }
 
         route("/{id}") {

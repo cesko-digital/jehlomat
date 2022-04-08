@@ -13,6 +13,7 @@ import io.ktor.jackson.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import model.exception.UnknownLocationException
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
@@ -57,11 +58,15 @@ fun Application.module(testing: Boolean = false) {
 
     install(StatusPages) {
         exception<MissingKotlinParameterException> { cause ->
-            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} is missing.")
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a?.fieldName?:"" }} is missing.")
         }
 
         exception<JsonMappingException> { cause ->
-            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a.fieldName }} has a wrong type.")
+            call.respond(HttpStatusCode.BadRequest, "The request parameter ${cause.path.joinToString(".") { a -> a?.fieldName?:"" }} has a wrong type.")
+        }
+
+        exception<UnknownLocationException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, cause.message!!)
         }
 
         exception<Throwable> { cause ->
