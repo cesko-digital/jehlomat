@@ -1,12 +1,12 @@
 ﻿import { useCallback, useState } from 'react';
-import { GridFilter } from '../types/GridFilter';
-import { SortableColumn } from '../../Nalezy/hooks/useSorting';
-import sort from './utils/sort';
-import { RangeKind } from '../types/RangeKind';
-import { Range } from '../types/Range';
-import { ReporterType } from '../types/ReporterType';
-import { SyringeState } from '../types/SyringeState';
-import { SortDirection } from '../types/SortDirection';
+import { GridFilter } from 'screens/Nalezy/types/GridFilter';
+import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
+import sort from 'screens/Nalezy/hooks/utils/sort';
+import { RangeKind } from 'screens/Nalezy/types/RangeKind';
+import { Range } from 'screens/Nalezy/types/Range';
+import { ReporterType } from 'screens/Nalezy/types/ReporterType';
+import { SyringeState } from 'screens/Nalezy/types/SyringeState';
+import { SortDirection } from 'screens/Nalezy/types/SortDirection';
 
 const useFindings = () => {
     const [filter, setFilter] = useState<GridFilter>({

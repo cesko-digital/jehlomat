@@ -35,6 +35,12 @@ const Row = styled('tr', {
         fontWeight: 'normal',
         transition: 'all 300ms',
 
+        '& > svg': {
+            fill: 'rgba(76, 78, 80, 1)',
+            position: 'relative',
+            top: 2,
+        },
+
         '&:first-of-type': {
             borderTopLeftRadius: 10,
             borderBottomLeftRadius: 10,

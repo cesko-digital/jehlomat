@@ -1,5 +1,5 @@
-﻿import {Order} from "../../types/Order";
-import {SortableColumn} from "../../../Nalezy/hooks/useSorting";
+﻿import { Order } from 'screens/Nalezy/types/Order';
+import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
 
 const sort = (ordering: Order[], column: SortableColumn): Order[] => {
     const exists = ordering.find(o => o.column === column);
