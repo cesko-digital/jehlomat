@@ -4,7 +4,7 @@ const Controls = styled('div')({
     display: 'flex',
 
     '& > *': {
-        marginRight: 16,
+        marginRight: 12,
 
         '&:last-of-type:not(div)': {
             marginRight: 0,

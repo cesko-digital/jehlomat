@@ -8,7 +8,7 @@ export const Button = styled('button')({
     cursor: 'pointer',
     fontSize: '1rem',
     height: 36,
-    minWidth: 160,
+    minWidth: 100,
     paddingLeft: 16,
     paddingRight: 16,
     transition: 'all 300ms',
