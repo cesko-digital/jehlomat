@@ -12,15 +12,15 @@ import 'leaflet/dist/leaflet.css';
 import gray from 'assets/pins/pin-gray.svg';
 import green from 'assets/pins/pin-green.svg';
 import yellow from 'assets/pins/pin-yellow.svg';
+import {Loader} from "../types/Loader";
 
 interface MapProps {
-    data: SyringeReadModel | undefined;
+    loader: Loader<SyringeReadModel>;
 }
 
 const LeafletMap = styled(MapContainer)({
     flexGrow: 1,
     outline: 'none',
-    marginBottom: 24,
 });
 
 const PopupMenu = styled(Popup)({
@@ -56,9 +56,13 @@ const map: Record<SyringeState, Icon> = {
     }),
 };
 
-const Map: FunctionComponent<MapProps> = ({ data }) => {
-    const items = data?.syringeList ?? [];
-    const coordinates = items.map((item: Syringe) => {
+const Map: FunctionComponent<MapProps> = ({ loader }) => {
+    const loading = loader.resp === undefined && loader.err === undefined;
+    const error = loader.resp === undefined && loader.err !== undefined;
+    const loaded = loader.resp !== undefined;
+    const data = loader.resp?.syringeList || [];
+
+    const coordinates = data.map((item: Syringe) => {
         const [lat, lng] = item.gps_coordinates.split(',').map(i => i.trim());
         const coordinate: LatLngTuple = [+lat, +lng];
 
@@ -81,7 +85,7 @@ const Map: FunctionComponent<MapProps> = ({ data }) => {
         return (
             <>
                 {coordinates.map((coordinates, i) => {
-                    const item = items[i];
+                    const item = data[i];
                     const state = deriveStateOf(item);
                     const icon = map[state];
                     const [lat, lng] = coordinates;
@@ -96,6 +100,7 @@ const Map: FunctionComponent<MapProps> = ({ data }) => {
             </>
         );
     };
+
     return (
         <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
             <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
