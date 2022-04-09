@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useState } from 'react';
+﻿import React, { FunctionComponent, useMemo, useState } from 'react';
 import { Syringe } from '../types/Syringe';
 import dayjs from 'dayjs';
 import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
@@ -8,56 +8,55 @@ import RoundButton from './RoundButton';
 import SyringeState from './SyringeState';
 import SyringeDemolishDate from './SyringeDemolishDate';
 import Row from './Row';
-
+import Checkbox from './Checkbox';
+import { styled } from '@mui/system';
 
 interface SyringeRowProps {
     syringe: Syringe;
+    selected: Syringe[];
+    onSelect: (syringe: Syringe) => void;
 }
 
-const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
+const Right = styled('td')({
+    textAlign: 'right',
+});
+
+const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, selected, onSelect }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [selected, setSelected] = useState<Array<Syringe>>([]);
     const [edit, setEdit] = useState<Syringe | null>();
 
+    const handleSelect = () => onSelect(syringe);
     const handleOpenActions = (syringe: Syringe) => (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
         setEdit(syringe);
     };
-    const handleSelect = (syringe: Syringe) => () => {
-        setSelected(state => {
-            const i = state.find(s => s.id === syringe.id);
-            if (i) return [...state.filter(s => s.id !== syringe.id)];
 
-            return [...state, syringe];
-        });
-    };
-
-    const isSelected = (syringe: Syringe) => selected.some(s => s.id === syringe.id);
+    const isSelected = useMemo(() => selected.some(s => s.id === syringe.id), [selected]);
 
     return (
         <Row syringe={syringe}>
             <td>
                 <SyringeIcon />
             </td>
-            <td>Benešov</td>
-            <td>Benešov - u hřiště</td>
+            <td>{syringe.location.obec}</td>
+            <td>{syringe.location.mestkaCast}</td>
             <td>{dayjs(syringe.createdAt * 1000).format('D. M. YYYY')}</td>
             <td>
                 <SyringeDemolishDate syringe={syringe} />
             </td>
-            <td>Magdalena</td>
+            <td>{syringe.createdBy.username}</td>
             <td>
                 <SyringeState syringe={syringe} />
             </td>
-            <td>
+            <Right>
                 <RoundButton onClick={handleOpenActions(syringe)}>
                     <EditIcon />
                 </RoundButton>
                 <ListItemMenu open={Boolean(anchorEl) && edit?.id === syringe.id} anchorEl={anchorEl!} onClickAway={() => setAnchorEl(null)} />
-            </td>
-            <td>
-                <input type="checkbox" checked={isSelected(syringe)} onChange={handleSelect(syringe)} />
-            </td>
+            </Right>
+            <Right>
+                <Checkbox checked={isSelected} onChange={handleSelect} size="small" />
+            </Right>
         </Row>
     );
 };

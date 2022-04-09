@@ -22,6 +22,7 @@ import { styled } from '@mui/system';
 import { Loader } from './types/Loader';
 import { DarkButton } from './Components/DarkButton';
 import { matchPath } from 'react-router';
+import { Syringe } from './types/Syringe';
 
 const Page = styled('div')({
     display: 'flex',
@@ -32,6 +33,7 @@ const Page = styled('div')({
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
     const [filters, setFilters] = useState(false);
+    const [selected, setSelected] = useState<Syringe[]>([]);
     const history = useHistory();
     const location = useLocation();
     const match = useRouteMatch();
@@ -63,6 +65,25 @@ const Nalezy: FunctionComponent = () => {
         filterByRange(kind, { from: +from, to: +to });
     }, []);
 
+    const handleSelect = useCallback(
+        (syringe: Syringe) =>
+            setSelected(state => {
+                const exists = state.find(({ id }) => id === syringe.id);
+                if (exists) {
+                    return state.filter(({ id }) => id !== syringe.id);
+                }
+
+                return [...state, syringe];
+            }),
+        [],
+    );
+
+    const handleSelectAll = useCallback(() => {
+        if (loader.resp && Array.isArray(loader.resp.syringeList)) {
+            setSelected([ ...loader.resp.syringeList ]);
+        }
+    }, [loader]);
+
     return (
         <>
             <Header mobileTitle="Seznam zadaných nálezů" />
@@ -74,7 +95,7 @@ const Nalezy: FunctionComponent = () => {
                             <TextHeader>Seznam zadaných nálezů</TextHeader>
                         </Box>
                         <Controls>
-                            <Button>Vybrat vše</Button>
+                            <Button onClick={handleSelectAll}>Vybrat vše</Button>
                             <Button>Exportovat vybrané</Button>
                             <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
                             {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
@@ -93,7 +114,7 @@ const Nalezy: FunctionComponent = () => {
                 )}
                 <Switch>
                     <Route path={`${match.path}/`} exact={true}>
-                        <Table loader={loader} direction={direction} onSort={handleSort} />
+                        <Table loader={loader} direction={direction} onSort={handleSort} selected={selected} onSelect={handleSelect} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
                         <Map loader={loader} />

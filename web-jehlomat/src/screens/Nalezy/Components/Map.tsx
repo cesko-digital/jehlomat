@@ -1,18 +1,20 @@
-﻿import React, { FunctionComponent } from 'react';
+﻿import React, { FunctionComponent, useEffect } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L, { Icon, LatLngTuple } from 'leaflet';
 import { styled } from '@mui/system';
 import { Syringe } from '../types/Syringe';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import {SyringeState} from "screens/Nalezy/types/SyringeState";
+import { SyringeState } from 'screens/Nalezy/types/SyringeState';
 import Links from './Links';
 
 import 'leaflet/dist/leaflet.css';
 import gray from 'assets/pins/pin-gray.svg';
 import green from 'assets/pins/pin-green.svg';
 import yellow from 'assets/pins/pin-yellow.svg';
-import {Loader} from "../types/Loader";
+import { Loader } from '../types/Loader';
+import Loading from './Loading';
+import PreviewSyringeState from './SyringeState';
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
@@ -24,9 +26,46 @@ const LeafletMap = styled(MapContainer)({
 });
 
 const PopupMenu = styled(Popup)({
+    '& > .leaflet-popup-content-wrapper': {
+        overflow: 'hidden',
+        padding: 0,
+    },
+
     '& > .leaflet-popup-content-wrapper > .leaflet-popup-content': {
         margin: 0,
+        overflow: 'hidden',
     },
+});
+
+const Info = styled('div')({
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '24px 24px',
+    background: 'rgba(47, 166, 154, 0.1)',
+});
+
+const Location = styled('div')({
+    alignSelf: 'end',
+    gridColumn: '1',
+    gridRow: '1',
+    justifySelf: 'start',
+    padding: '0 8px',
+});
+
+const Time = styled('div')({
+    alignSelf: 'end',
+    gridColumn: '2',
+    gridRow: '1',
+    justifySelf: 'end',
+    padding: '0 8px',
+});
+
+const State = styled('div')({
+    alignSelf: 'center',
+    gridColumn: '1 / span 2',
+    gridRow: '2',
+    justifySelf: 'start',
+    padding: '0 8px',
 });
 
 const deriveStateOf = (syringe: Syringe): SyringeState => {
@@ -59,8 +98,13 @@ const map: Record<SyringeState, Icon> = {
 const Map: FunctionComponent<MapProps> = ({ loader }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
-    const loaded = loader.resp !== undefined;
     const data = loader.resp?.syringeList || [];
+
+    useEffect(() => {
+        if (!error) return;
+
+        alert('Nastala chyba při načítání seznamu nálezů.');
+    }, [error]);
 
     const coordinates = data.map((item: Syringe) => {
         const [lat, lng] = item.gps_coordinates.split(',').map(i => i.trim());
@@ -91,7 +135,14 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
                     const [lat, lng] = coordinates;
                     return (
                         <Marker key={`${lat}-${lng}-${i}`} position={coordinates} icon={icon}>
-                            <PopupMenu closeButton={false} minWidth={180}>
+                            <PopupMenu closeButton={false} minWidth={220}>
+                                <Info>
+                                    <Location>Brno</Location>
+                                    <Time>9. 4. 2022</Time>
+                                    <State>
+                                        <PreviewSyringeState syringe={item} />
+                                    </State>
+                                </Info>
                                 <Links />
                             </PopupMenu>
                         </Marker>
@@ -102,11 +153,14 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
     };
 
     return (
-        <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
-            <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Bounds />
-            <Markers />
-        </LeafletMap>
+        <>
+            {loading && <Loading />}
+            <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
+                <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <Bounds />
+                <Markers />
+            </LeafletMap>
+        </>
     );
 };
 
