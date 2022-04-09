@@ -54,10 +54,12 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setLoader({ resp: mock });
-                // setData(mock);
+                setLoader({ resp: data });
             })
-            .catch(e => console.warn(e));
+            .catch(e => {
+                setLoader({ err: e });
+                console.warn(e);
+            });
     }, [filter]);
 
     const handleRangeFilter = useCallback((kind, from, to) => {
