@@ -63,8 +63,8 @@ const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selec
                 </thead>
                 <tbody>
                     {loading && <LoadingState />}
-                    {error && <ErrorState text="An error occured while loading data" />}
-                    {loaded && data.length === 0 && <EmptyState text="No data to show" description="No syringers are reported or filter combination returns no data" />}
+                    {error && <ErrorState text="Nastala chyba při načítání záznamů" />}
+                    {loaded && data.length === 0 && <EmptyState text="Žádná data" description="Nebyly nalezeny žádné nálezy nebo žádné záznamy nevyhovují aktuální kombinaci filtrů" />}
                     {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} selected={selected} onSelect={onSelect} onUpdate={onUpdate} />)}
                 </tbody>
             </Wrapper>

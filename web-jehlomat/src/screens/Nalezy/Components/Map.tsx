@@ -15,6 +15,7 @@ import 'leaflet/dist/leaflet.css';
 import gray from 'assets/pins/pin-gray.svg';
 import green from 'assets/pins/pin-green.svg';
 import yellow from 'assets/pins/pin-yellow.svg';
+import dayjs from "dayjs";
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
@@ -138,8 +139,8 @@ const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
                         <Marker key={`${lat}-${lng}-${i}`} position={coordinates} icon={icon}>
                             <PopupMenu closeButton={false} minWidth={220}>
                                 <Info>
-                                    <Location>Brno</Location>
-                                    <Time>9. 4. 2022</Time>
+                                    <Location>{item.location.obec}</Location>
+                                    <Time>{dayjs(item.createdAt * 1000).format('D. M. YYYY')}</Time>
                                     <State>
                                         <PreviewSyringeState syringe={item} />
                                     </State>
