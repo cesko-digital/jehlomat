@@ -6,9 +6,14 @@ import { SortableColumn } from '../types/SortableColumn';
 import { SortDirection } from '../types/SortDirection';
 import SyringeRow from './SyringeRow';
 import Heading from './Heading';
+import EmptyState from "./EmptyState";
+import {Button, Container} from "@mui/material";
+import LoadingState from "./LoadingState";
+import {Loader} from "../types/Loader";
+import ErrorState from "./ErrorState";
 
 interface TableProps {
-    data: SyringeReadModel | undefined;
+    loader: Loader<SyringeReadModel>;
     direction: (column: SortableColumn) => SortDirection;
     onSort: (column: SortableColumn) => () => void;
 }
@@ -23,35 +28,54 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ data, direction, onSort }) => {
+const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort }) => {
+    const loading = loader.resp === undefined && loader.err === undefined;
+    const error = loader.resp === undefined && loader.err !== undefined;
+    const loaded = loader.resp !== undefined;
+    const data = loader.resp?.syringeList || [];
+
     return (
-        <Wrapper>
-            <thead>
-                <Header>
-                    <Heading />
-                    <SortableHeading direction={direction('TOWN')} onClick={onSort('TOWN')}>
-                        Město
-                    </SortableHeading>
-                    <Heading>Název</Heading>
-                    <SortableHeading direction={direction('CREATED_AT')} onClick={onSort('CREATED_AT')}>
-                        Datum nálezu
-                    </SortableHeading>
-                    <SortableHeading direction={direction('DEMOLISHED_AT')} onClick={onSort('DEMOLISHED_AT')}>
-                        Datum likvidace
-                    </SortableHeading>
-                    <SortableHeading direction={direction('CREATED_BY')} onClick={onSort('CREATED_BY')}>
-                        Zadavatel
-                    </SortableHeading>
-                    <Heading>Stav</Heading>
-                    <Heading />
-                </Header>
-            </thead>
-            <tbody>
-                {data?.syringeList.map(item => (
-                    <SyringeRow key={item.id} syringe={item} />
-                ))}
-            </tbody>
-        </Wrapper>
+        <Container>
+            <Wrapper>
+                <thead>
+                    <Header>
+                        <Heading />
+                        <SortableHeading direction={direction('TOWN')} onClick={onSort('TOWN')}>
+                            Město
+                        </SortableHeading>
+                        <Heading>Název</Heading>
+                        <SortableHeading direction={direction('CREATED_AT')} onClick={onSort('CREATED_AT')}>
+                            Datum nálezu
+                        </SortableHeading>
+                        <SortableHeading direction={direction('DEMOLISHED_AT')} onClick={onSort('DEMOLISHED_AT')}>
+                            Datum likvidace
+                        </SortableHeading>
+                        <SortableHeading direction={direction('CREATED_BY')} onClick={onSort('CREATED_BY')}>
+                            Zadavatel
+                        </SortableHeading>
+                        <Heading>Stav</Heading>
+                        <Heading />
+                    </Header>
+                </thead>
+                <tbody>
+                    {loading && (
+                        <LoadingState />
+                    )}
+                    {error && (
+                        <ErrorState text="An error occured while loading data" />
+                    )}
+                    {(loaded && data.length === 0) && (
+                        <EmptyState
+                            text="No data to show"
+                            description="No syringers are reported or filter combination returns no data"
+                        />
+                    )}
+                    {(loaded && data.length > 0) && data.map(item => (
+                        <SyringeRow key={item.id} syringe={item} />
+                    ))}
+                </tbody>
+            </Wrapper>
+        </Container>
     );
 };
 

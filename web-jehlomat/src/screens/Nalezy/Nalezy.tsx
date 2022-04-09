@@ -1,7 +1,7 @@
 ﻿import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { Box, Container } from '@mui/material';
-import { useRouteMatch } from 'react-router';
-import { Switch, Route } from 'react-router-dom';
+import { useLocation, useRouteMatch } from 'react-router';
+import { Switch, Route, useHistory } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { API } from 'config/baseURL';
 import { SyringeReadModel } from './types/SyringeReadModel';
@@ -15,22 +15,33 @@ import Table from './Components/Table';
 import Controls from './Components/Controls';
 import Button from './Components/Button';
 import TextHeader from './Components/TextHeader';
+import HorizontalContainer from './Components/HorizontalContainer';
 import { mock } from './__mock';
-import Map from "./Components/Map";
-import {styled} from "@mui/system";
+import Map from './Components/Map';
+import { styled } from '@mui/system';
+import { Loader } from './types/Loader';
+import { DarkButton } from './Components/DarkButton';
+import { matchPath } from 'react-router';
 
-const Page = styled(Container)({
+const Page = styled('div')({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
 });
 
 const Nalezy: FunctionComponent = () => {
-    const [data, setData] = useState<SyringeReadModel>();
+    const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
     const [filters, setFilters] = useState(false);
-
+    const history = useHistory();
+    const location = useLocation();
     const match = useRouteMatch();
     const { direction, handleSort, filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState } = useFindingsFilter();
+
+    const isMapMatch = matchPath(location.pathname, '/nalezy/mapa');
+    const isTableMatch = matchPath(location.pathname, '/nalezy');
+
+    const isMap = isMapMatch?.isExact;
+    const isTable = isTableMatch?.isExact;
 
     useEffect(() => {
         const load = async () => {
@@ -42,7 +53,8 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setData(mock);
+                setLoader({ resp: mock });
+                // setData(mock);
             })
             .catch(e => console.warn(e));
     }, [filter]);
@@ -56,30 +68,35 @@ const Nalezy: FunctionComponent = () => {
             <Header mobileTitle="Seznam zadaných nálezů" />
 
             <Page>
-                <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
-                    <Box>
-                        <TextHeader>Seznam zadaných nálezů</TextHeader>
+                <Container>
+                    <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+                        <Box>
+                            <TextHeader>Seznam zadaných nálezů</TextHeader>
+                        </Box>
+                        <Controls>
+                            <Button>Vybrat vše</Button>
+                            <Button>Exportovat vybrané</Button>
+                            <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
+                            {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
+                            {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
+                        </Controls>
                     </Box>
-                    <Controls>
-                        <Button>Vybrat vše</Button>
-                        <Button>Exportovat vybrané</Button>
-                        <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
-                        <Button>Mapa</Button>
-                    </Controls>
-                </Box>
+                </Container>
                 {filters && (
                     <Filters>
-                        <FilterByRange onFilter={handleRangeFilter} onReset={resetByRange} />
-                        <FilterByReporter onFilter={filterByReporter} onReset={resetByReporter} />
-                        <FilterByState onFilter={filterByState} onReset={resetByState} />
+                        <HorizontalContainer>
+                            <FilterByRange onFilter={handleRangeFilter} onReset={resetByRange} />
+                            <FilterByReporter onFilter={filterByReporter} onReset={resetByReporter} />
+                            <FilterByState onFilter={filterByState} onReset={resetByState} />
+                        </HorizontalContainer>
                     </Filters>
                 )}
                 <Switch>
                     <Route path={`${match.path}/`} exact={true}>
-                        <Table data={data} direction={direction} onSort={handleSort} />
+                        <Table loader={loader} direction={direction} onSort={handleSort} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
-                        <Map data={data} />
+                        <Map loader={loader} />
                     </Route>
                 </Switch>
             </Page>

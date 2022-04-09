@@ -1,22 +1,13 @@
 ﻿import React from 'react';
 import { styled } from '@mui/system';
-import {secondaryColorVariant} from "../../../utils/colors";
+import { secondaryColorVariant } from '../../../utils/colors';
 
 export const Filters = styled('div')(({ theme }) => ({
-    background: secondaryColorVariant('light'),
-    borderRadius: theme.spacing(2),
+    background: 'rgba(47, 166, 154, 0.1)',
     display: 'flex',
     flexDirection: 'row',
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
-
-    '& > *': {
-        marginRight: theme.spacing(2),
-
-        '&:last-child': {
-            marginRight: 0,
-        },
-    },
 }));
 
 export default Filters;
