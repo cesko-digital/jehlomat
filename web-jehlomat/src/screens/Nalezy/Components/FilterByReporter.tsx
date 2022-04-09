@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 import { userState } from 'store/user';
 import { Filter } from './Filter';
 import Select from './Select';
-import loadUsers, {User} from "./utils/loadUsers";
-import loadTeams, {Team} from "./utils/loadTeams";
-import {ReporterType} from "../types/ReporterType";
+import loadUsers, { User } from './utils/loadUsers';
+import loadTeams, { Team } from './utils/loadTeams';
+import { ReporterType } from '../types/ReporterType';
 
 interface SelectData {
     users: Array<User>;
@@ -27,10 +27,7 @@ const FilterByReporter: FunctionComponent<FilterReporterProps> = ({ onFilter, on
     useEffect(() => {
         if (!user || !user.isAdmin) return;
 
-        Promise.all([
-            loadUsers(user.organizationId),
-            loadTeams(user.organizationId),
-        ]).then(
+        Promise.all([loadUsers(user.organizationId), loadTeams(user.organizationId)]).then(
             ([users, teams]) => setItems({ users, teams }),
             () => console.warn('Loading failed'),
         );

@@ -1,17 +1,17 @@
 ﻿import React, { FunctionComponent } from 'react';
-import { SyringeReadModel } from '../types/SyringeReadModel';
+import { Container } from '@mui/material';
 import { styled } from '@mui/system';
-import SortableHeading from './SortableHeading';
-import { SortableColumn } from '../types/SortableColumn';
-import { SortDirection } from '../types/SortDirection';
-import SyringeRow from './SyringeRow';
-import Heading from './Heading';
-import EmptyState from "./EmptyState";
-import {Button, Container} from "@mui/material";
-import LoadingState from "./LoadingState";
-import {Loader} from "../types/Loader";
-import ErrorState from "./ErrorState";
-import {Syringe} from "../types/Syringe";
+import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
+import { SortDirection } from 'screens/Nalezy/types/SortDirection';
+import { Loader } from 'screens/Nalezy/types/Loader';
+import SortableHeading from 'screens/Nalezy/Components/SortableHeading';
+import SyringeRow from 'screens/Nalezy/Components/SyringeRow';
+import Heading from 'screens/Nalezy/Components/Heading';
+import EmptyState from 'screens/Nalezy/Components/EmptyState';
+import LoadingState from 'screens/Nalezy/Components/LoadingState';
+import ErrorState from 'screens/Nalezy/Components/ErrorState';
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
@@ -19,6 +19,7 @@ interface TableProps {
     onSort: (column: SortableColumn) => () => void;
     selected: Syringe[];
     onSelect: (syringe: Syringe) => void;
+    onUpdate: () => void;
 }
 
 const Wrapper = styled('table')({
@@ -31,7 +32,7 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selected, onSelect }) => {
+const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selected, onSelect, onUpdate }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
@@ -61,21 +62,10 @@ const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selec
                     </Header>
                 </thead>
                 <tbody>
-                    {loading && (
-                        <LoadingState />
-                    )}
-                    {error && (
-                        <ErrorState text="An error occured while loading data" />
-                    )}
-                    {(loaded && data.length === 0) && (
-                        <EmptyState
-                            text="No data to show"
-                            description="No syringers are reported or filter combination returns no data"
-                        />
-                    )}
-                    {(loaded && data.length > 0) && data.map(item => (
-                        <SyringeRow key={item.id} syringe={item} selected={selected} onSelect={onSelect} />
-                    ))}
+                    {loading && <LoadingState />}
+                    {error && <ErrorState text="An error occured while loading data" />}
+                    {loaded && data.length === 0 && <EmptyState text="No data to show" description="No syringers are reported or filter combination returns no data" />}
+                    {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} selected={selected} onSelect={onSelect} onUpdate={onUpdate} />)}
                 </tbody>
             </Wrapper>
         </Container>

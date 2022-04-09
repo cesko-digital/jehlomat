@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import React, { FunctionComponent } from 'react';
 import { styled } from '@mui/system';
 
 const GRAY = 'rgba(217, 217, 217, 1)';

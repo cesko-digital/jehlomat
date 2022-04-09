@@ -7,7 +7,7 @@ export interface Team {
 }
 
 const loadTeams = async (organizationId: number) => {
-    const url = `/api/v1/jehlomat/organization/${organizationId}/teams`;
+    const url = `/organization/${organizationId}/teams`;
     const users: AxiosResponse<Array<Team>> = await API.get(url);
     if (users.status !== 200) throw new Error('Unable to load data');
 

@@ -1,6 +1,5 @@
-﻿import {styled} from "@mui/system";
+﻿import { styled } from '@mui/system';
 
-const GRAY = 'rgba(217, 217, 217, 1)';
 const GREEN = 'rgba(14, 118, 108, 1)';
 const GREEN_LIGHT = 'rgba(14, 118, 108, 0.2)';
 
@@ -10,7 +9,7 @@ interface WrapperProps {
 
 const ControlWrapper = styled('label', {
     shouldForwardProp: prop => prop !== 'active',
-})<WrapperProps>(({active}) => {
+})<WrapperProps>(({ active }) => {
     const highlighted = {
         outline: 'none',
         borderColor: GREEN,
@@ -39,7 +38,7 @@ const ControlWrapper = styled('label', {
             borderColor: GREEN,
         },
 
-        '&:focus-within': {...highlighted},
+        '&:focus-within': { ...highlighted },
     };
 });
 

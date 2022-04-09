@@ -1,7 +1,7 @@
 ﻿import { useCallback, useState } from 'react';
+import sort from 'screens/Nalezy/hooks/utils/sort';
 import { GridFilter } from 'screens/Nalezy/types/GridFilter';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
-import sort from 'screens/Nalezy/hooks/utils/sort';
 import { RangeKind } from 'screens/Nalezy/types/RangeKind';
 import { Range } from 'screens/Nalezy/types/Range';
 import { ReporterType } from 'screens/Nalezy/types/ReporterType';
@@ -27,7 +27,7 @@ const useFindings = () => {
             setFilter(state => {
                 const ordering = sort(state.ordering, column);
 
-                console.log(">>> handle sort", ordering, state);
+                console.log('>>> handle sort', ordering, state);
                 return { ...state, ordering };
             });
         },
@@ -111,6 +111,10 @@ const useFindings = () => {
         });
     }, []);
 
+    const reload = useCallback(() => {
+        setFilter(state => ({ ...state }));
+    }, []);
+
     return {
         filter,
         handleSort,
@@ -120,6 +124,7 @@ const useFindings = () => {
         resetByReporter,
         filterByState,
         resetByState,
+        reload,
         direction,
     };
 };
