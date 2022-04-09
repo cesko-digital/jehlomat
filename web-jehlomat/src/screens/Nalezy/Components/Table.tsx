@@ -11,11 +11,14 @@ import {Button, Container} from "@mui/material";
 import LoadingState from "./LoadingState";
 import {Loader} from "../types/Loader";
 import ErrorState from "./ErrorState";
+import {Syringe} from "../types/Syringe";
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
     direction: (column: SortableColumn) => SortDirection;
     onSort: (column: SortableColumn) => () => void;
+    selected: Syringe[];
+    onSelect: (syringe: Syringe) => void;
 }
 
 const Wrapper = styled('table')({
@@ -28,7 +31,7 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort }) => {
+const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selected, onSelect }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
@@ -71,7 +74,7 @@ const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort }) => 
                         />
                     )}
                     {(loaded && data.length > 0) && data.map(item => (
-                        <SyringeRow key={item.id} syringe={item} />
+                        <SyringeRow key={item.id} syringe={item} selected={selected} onSelect={onSelect} />
                     ))}
                 </tbody>
             </Wrapper>
