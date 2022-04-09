@@ -1,6 +1,6 @@
 ﻿import React, { FunctionComponent } from 'react';
-import { Syringe } from '../types/Syringe';
-import { TextGold, TextHighlight, TextMuted } from './Text';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import { TextGold, TextHighlight, TextMuted } from 'screens/Nalezy/Components/Text';
 
 interface SyringeStateProps {
     syringe: Syringe;

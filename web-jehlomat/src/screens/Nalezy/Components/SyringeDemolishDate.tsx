@@ -1,7 +1,7 @@
 ﻿import React, { FunctionComponent } from 'react';
-import { Syringe } from '../types/Syringe';
 import dayjs from 'dayjs';
-import { TextMuted } from './Text';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import { TextMuted } from 'screens/Nalezy/Components/Text';
 
 interface SyringeDemolishDateProps {
     syringe: Syringe;

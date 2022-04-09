@@ -1,5 +1,5 @@
 ﻿import React, { FunctionComponent, useEffect, useState } from 'react';
-import {SyringeState} from "../types/SyringeState";
+import { SyringeState } from '../types/SyringeState';
 import { Filter } from './Filter';
 import Select from './Select';
 
@@ -17,8 +17,7 @@ const FilterByState: FunctionComponent<FilterStateProps> = ({ onFilter, onReset 
         onFilter(state);
     }, [state]);
 
-    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) =>
-        setState(e.target.value as SyringeState);
+    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value as SyringeState);
     const handleReset = () => {
         setState('');
         onReset();

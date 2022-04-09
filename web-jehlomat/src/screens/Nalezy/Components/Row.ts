@@ -1,7 +1,7 @@
-﻿import { Syringe } from '../types/Syringe';
-import { styled } from '@mui/system';
-import bg from './utils/bg';
-import highlight from './utils/highlight';
+﻿import { styled } from '@mui/system';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import bg from 'screens/Nalezy/Components/utils/bg';
+import highlight from 'screens/Nalezy/Components/utils/highlight';
 
 interface RowProps {
     syringe: Syringe;

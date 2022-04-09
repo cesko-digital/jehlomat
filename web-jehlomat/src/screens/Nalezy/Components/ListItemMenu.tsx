@@ -1,13 +1,16 @@
 ﻿import React, { FunctionComponent } from 'react';
-import { ClickAwayListener, Popper } from '@mui/material';
 import { VirtualElement } from '@popperjs/core';
-import Links from "./Links";
-import {styled} from "@mui/system";
+import { ClickAwayListener, Popper } from '@mui/material';
+import { styled } from '@mui/system';
+import Links from 'screens/Nalezy/Components/Links';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
 
 interface ListItemMenuProps {
     open: boolean;
     anchorEl: VirtualElement;
     onClickAway: () => void;
+    syringe: Syringe;
+    onUpdate: () => void;
 }
 
 const Menu = styled('nav')({
@@ -21,11 +24,11 @@ const Menu = styled('nav')({
     overflow: 'hidden',
 });
 
-const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickAway, open }) => (
+const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickAway, open, syringe, onUpdate }) => (
     <Popper open={open} anchorEl={anchorEl} placement="bottom">
         <ClickAwayListener onClickAway={onClickAway}>
             <Menu>
-                <Links />
+                <Links syringe={syringe} onUpdate={onUpdate} />
             </Menu>
         </ClickAwayListener>
     </Popper>

@@ -1,6 +1,6 @@
 ﻿import { styled } from '@mui/system';
 
-export const DarkButton = styled('button')({
+const DarkButton = styled('button')({
     background: 'rgba(14, 118, 108, 1)',
     border: '1px solid rgba(14, 118, 108, 1)',
     borderRadius: 18,

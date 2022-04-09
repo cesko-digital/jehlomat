@@ -1,6 +1,6 @@
 ﻿import React, { FunctionComponent } from 'react';
 import { styled } from '@mui/system';
-import ControlWrapper from './ControlWrapper';
+import ControlWrapper from 'screens/Nalezy/Components/ControlWrapper';
 
 const GREEN = 'rgba(14, 118, 108, 1)';
 

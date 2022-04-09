@@ -4,14 +4,7 @@ import { Container } from '@mui/material';
 const HorizontalContainer = styled(Container)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'row',
-
-    '& > *': {
-        marginRight: theme.spacing(2),
-
-        '&:last-child': {
-            marginRight: 0,
-        },
-    },
+    gap: theme.spacing(2),
 }));
 
 export default HorizontalContainer;

@@ -1,6 +1,5 @@
 ﻿import React from 'react';
 import { styled } from '@mui/system';
-import { secondaryColorVariant } from '../../../utils/colors';
 
 export const Filters = styled('div')(({ theme }) => ({
     background: 'rgba(47, 166, 154, 0.1)',

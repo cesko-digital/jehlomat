@@ -2,22 +2,23 @@
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L, { Icon, LatLngTuple } from 'leaflet';
 import { styled } from '@mui/system';
-import { Syringe } from '../types/Syringe';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { SyringeState } from 'screens/Nalezy/types/SyringeState';
-import Links from './Links';
+import { Loader } from 'screens/Nalezy/types/Loader';
+import Loading from 'screens/Nalezy/Components/Loading';
+import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
+import Links from 'screens/Nalezy/Components/Links';
 
 import 'leaflet/dist/leaflet.css';
 import gray from 'assets/pins/pin-gray.svg';
 import green from 'assets/pins/pin-green.svg';
 import yellow from 'assets/pins/pin-yellow.svg';
-import { Loader } from '../types/Loader';
-import Loading from './Loading';
-import PreviewSyringeState from './SyringeState';
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
+    onUpdate: () => void;
 }
 
 const LeafletMap = styled(MapContainer)({
@@ -95,7 +96,7 @@ const map: Record<SyringeState, Icon> = {
     }),
 };
 
-const Map: FunctionComponent<MapProps> = ({ loader }) => {
+const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const data = loader.resp?.syringeList || [];
@@ -143,7 +144,7 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
                                         <PreviewSyringeState syringe={item} />
                                     </State>
                                 </Info>
-                                <Links />
+                                <Links syringe={item} onUpdate={onUpdate} />
                             </PopupMenu>
                         </Marker>
                     );
