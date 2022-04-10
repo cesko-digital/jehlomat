@@ -11,7 +11,7 @@ data class User(
     @UnchangeableByPut val id: Int,
     @AuthRole(Role.UserOwner) val email: String,
     @AuthRole(Role.UserOwner) val username: String,
-    @AuthRole(Role.UserOwner, FieldComparisonType.PASSWORD) val password: String,
+    @AuthRole(Role.UserOwner) val password: String,
     @UnchangeableByPut val verified: Boolean,
     @UnchangeableByPut val verificationCode: String,
     @UnchangeableByPut val organizationId: Int,
