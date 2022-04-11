@@ -12,6 +12,7 @@ import model.syringe.SyringeFilter
 import model.syringe.OrderBySyringeColumn
 import model.team.Team
 import model.user.User
+import model.user.UserChangeRequest
 import model.user.UserInfo
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
@@ -310,6 +311,26 @@ class DatabaseService(
             updateUserRecord(this, it, user)
             where {
                 it.userId eq user.id
+            }
+        }
+    }
+
+    fun updateUserAttributes(id: Int, attributes: UserChangeRequest) {
+        databaseInstance.update(UserTable) {
+            set(it.username, attributes.username)
+            set(it.email, attributes.email)
+            set(it.teamId, attributes.teamId)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
+    fun updateUserPassword(id: Int, password: String) {
+        databaseInstance.update(UserTable) {
+            set(it.password, password.hashPassword())
+            where {
+                it.userId eq id
             }
         }
     }

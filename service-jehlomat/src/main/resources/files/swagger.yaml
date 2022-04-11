@@ -408,19 +408,49 @@ paths:
           description: Created
         '409':
           description: Conflict
+  /user/{id}/attributes:
     put:
-      summary: Update an existing user
+      summary: Update attributes of an existing user
       consumes:
         - application/json
       security:
         - Bearer: []
       parameters:
+        - name: id
+          in: path
+          description: Id of user to change
+          required: true
+          type: integer
         - in: body
           name: body
           description: User object that needs to be changed
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserAttr'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: User not found
+  /user/{id}/password:
+    put:
+      summary: Update password of an existing user
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of user to change
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: User object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/UserPassword'
       responses:
         '200':
           description: Success
@@ -576,6 +606,27 @@ definitions:
       verified:
         type: boolean
         default: false
+  UserAttr:
+    type: object
+    properties:
+      email:
+        type: string
+        example: example@example-user.org
+      username:
+        type: string
+        example: FrantaPepa1
+      teamId:
+        type: integer
+        example: 0
+  UserPassword:
+    type: object
+    properties:
+      oldPassword:
+        type: string
+        example: Abcde123
+      newPassword:
+        type: string
+        example: Abcde123
   Organization:
     type: object
     properties:
