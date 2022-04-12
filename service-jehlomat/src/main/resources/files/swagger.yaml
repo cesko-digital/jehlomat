@@ -383,10 +383,22 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserInfo'
         '404':
           description: User not found
   /user:
+    get:
+      summary: Get a detail about a current user
+      description: Returns a logged in user
+      produces:
+        - application/json
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UserDetail'
     post:
       summary: Add a new user
       consumes:
@@ -579,7 +591,7 @@ definitions:
         type: integer
       isAdmin:
         type: boolean
-  User:
+  UserDetail:
     type: object
     properties:
       id:
@@ -591,9 +603,9 @@ definitions:
       username:
         type: string
         example: FrantaPepa1
-      password:
-        type: string
-        example: Abcde123.
+      verified:
+        type: boolean
+        default: false
       organizationId:
         type: integer
         example: 0
@@ -603,9 +615,6 @@ definitions:
       isAdmin:
         type: boolean
         example: true
-      verified:
-        type: boolean
-        default: false
   UserAttr:
     type: object
     properties:

@@ -85,6 +85,37 @@ class ApplicationTest {
     }
 
     @Test
+    fun testGetLoggedInUser() = withTestApplication(Application::module) {
+        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Get, API_PATH) {
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(
+                """{
+  "id" : """ + userId + """,
+  "email" : """" + USER.email + """",
+  "username" : """" + USER.username + """",
+  "verified" : """ + USER.verified + """,
+  "organizationId" : """ + defaultOrgId + """,
+  "teamId" : """ + defaultTeamId + """,
+  "isAdmin" : false
+}""",
+                response.content
+            )
+        }
+    }
+
+    @Test
+    fun testGetLoggedInUserNotLogged() = withTestApplication(Application::module) {
+        database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        with(handleRequest(HttpMethod.Get, API_PATH)) {
+            assertEquals(HttpStatusCode.Unauthorized, response.status())
+        }
+    }
+
+    @Test
     fun testGetUser() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(USER.email, USER.password)

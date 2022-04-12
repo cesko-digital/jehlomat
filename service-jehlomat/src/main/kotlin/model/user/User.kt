@@ -26,3 +26,7 @@ fun User.toUserInfo() = UserInfo(
     teamId = teamId,
     isAdmin = isAdmin
 )
+
+fun User.toUserDetail() = UserDetail(
+    id, email, username, verified, organizationId, teamId, isAdmin
+)
