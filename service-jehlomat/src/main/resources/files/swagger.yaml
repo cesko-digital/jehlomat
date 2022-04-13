@@ -383,10 +383,22 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserInfo'
         '404':
           description: User not found
   /user:
+    get:
+      summary: Get a detail about a current user
+      description: Returns a logged in user
+      produces:
+        - application/json
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UserDetail'
     post:
       summary: Add a new user
       consumes:
@@ -408,19 +420,49 @@ paths:
           description: Created
         '409':
           description: Conflict
+  /user/{id}/attributes:
     put:
-      summary: Update an existing user
+      summary: Update attributes of an existing user
       consumes:
         - application/json
       security:
         - Bearer: []
       parameters:
+        - name: id
+          in: path
+          description: Id of user to change
+          required: true
+          type: integer
         - in: body
           name: body
           description: User object that needs to be changed
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserAttr'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: User not found
+  /user/{id}/password:
+    put:
+      summary: Update password of an existing user
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of user to change
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: User object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/UserPassword'
       responses:
         '200':
           description: Success
@@ -549,7 +591,7 @@ definitions:
         type: integer
       isAdmin:
         type: boolean
-  User:
+  UserDetail:
     type: object
     properties:
       id:
@@ -561,9 +603,9 @@ definitions:
       username:
         type: string
         example: FrantaPepa1
-      password:
-        type: string
-        example: Abcde123.
+      verified:
+        type: boolean
+        default: false
       organizationId:
         type: integer
         example: 0
@@ -573,9 +615,27 @@ definitions:
       isAdmin:
         type: boolean
         example: true
-      verified:
-        type: boolean
-        default: false
+  UserAttr:
+    type: object
+    properties:
+      email:
+        type: string
+        example: example@example-user.org
+      username:
+        type: string
+        example: FrantaPepa1
+      teamId:
+        type: integer
+        example: 0
+  UserPassword:
+    type: object
+    properties:
+      oldPassword:
+        type: string
+        example: Abcde123
+      newPassword:
+        type: string
+        example: Abcde123
   Organization:
     type: object
     properties:

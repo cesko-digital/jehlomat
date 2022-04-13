@@ -58,7 +58,7 @@ fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Ro
                 }
                 else -> {
                     var isUserNameUnique = false
-                    synchronized(this) {
+                    synchronized(database) {
                         if (database.selectUserByUsername(request.username) == null) {
                             database.updateUser(user.copy(
                                 verified = true,
