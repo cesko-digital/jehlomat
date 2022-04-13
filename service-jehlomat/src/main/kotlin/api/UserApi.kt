@@ -18,6 +18,11 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
 
     return route("") {
         authenticate(JWT_CONFIG_NAME) {
+            get {
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                call.respond(HttpStatusCode.OK, loggedInUser.toUserDetail())
+            }
+
             get("/{id}") {
                 val id = call.parameters["id"]?.toIntOrNull()
                 val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
