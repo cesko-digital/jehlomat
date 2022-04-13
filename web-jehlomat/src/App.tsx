@@ -1,4 +1,4 @@
-import React, { FC, Suspense  } from 'react';
+import React, { FC, Suspense, useRef } from 'react';
 import { Box } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -8,6 +8,8 @@ import { Footer } from 'Components/Footer/Footer';
 import PrivateRoute from 'config/protectedRoute';
 import { LoginAlert } from 'Components/Login/LoginAlert';
 import { SetLogin } from 'Components/Login/SetLogin';
+import ConfirmationModal from 'Components/ConfirmationModal';
+import { ConfirmationModalProvider } from 'providers/ConfirmationModalProvider';
 
 const Router: FC = () => (
     <HashRouter>
@@ -35,17 +37,19 @@ const Router: FC = () => (
     </HashRouter>
 );
 
-const Providers: FC = ({ children }) => <RecoilRoot>{children}</RecoilRoot>;
-
 const App: FC = ({ children }) => {
+    const modalRef = useRef<ConfirmationModal | null>(null);
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <Providers>
-                    <LoginAlert />
-                    <Router />
-                    <SetLogin />
-                </Providers>
+                <RecoilRoot>
+                    <ConfirmationModalProvider modalRef={modalRef}>
+                        <LoginAlert />
+                        <Router />
+                        <SetLogin />
+                        <ConfirmationModal ref={modalRef} />
+                    </ConfirmationModalProvider>
+                </RecoilRoot>
             </Box>
         </Suspense>
     );

@@ -12,8 +12,16 @@ class APIURL {
     return `/verification/organization?orgId=${orgId}`;
   }
 
-  getUser(userId: string) {
+  getUser(userId: string | number) {
     return `${this.user}/${userId}`
+  }
+
+  getUsersInOrganization(orgId: string | number) {
+    return `${this.organization}/${orgId}/users`
+  }
+
+  getOrganization(orgId?: string | number) {
+    return `${this.organization}/${orgId}`;
   }
 }
 
