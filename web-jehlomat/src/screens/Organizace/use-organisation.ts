@@ -5,41 +5,41 @@ import { IUser } from 'types';
 import apiURL from 'utils/api-url';
 import { isStatusNotFound, isStatusSuccess } from 'utils/payload-status';
 
-export type TErrorCallback = (type: 'error' | 'not-found') => void;
+export type TErrorCallback = (type: 'error' | 'not-found' | 'not-admin') => void;
 export interface IOrgData {
-  verified: boolean;
-  id: number;
-  name: string;
+    verified: boolean;
+    id: number;
+    name: string;
 }
 
 export interface IData {
-  user: IUser,
-  organisation: IOrgData
+    user: IUser;
+    organisation: IOrgData;
 }
 
-type IUsersData = IUser[];
-
 export const useOrganisation = (onError?: TErrorCallback) => {
-    return useCallback(async (orgId?: string) => {
-        const orgResponse: AxiosResponse<IOrgData> = await API.get(apiURL.getOrganization(orgId));
-        if (isStatusSuccess(orgResponse.status)) {
-            const usersResponse: AxiosResponse<IUsersData> = await API.get(apiURL.getUsersInOrganization(orgResponse.data.id));
-            const admin = usersResponse.data.find(({ isAdmin }) => isAdmin);
-            if (admin) {
-                return {
-                  organisation: orgResponse.data,
-                  user: {
-                    ...admin,
-                    email: 'magda@gmail.com' // TODO: remove hardcode
-                  }
-                };
+    return useCallback(
+        async (orgId?: string) => {
+            const userResponse: AxiosResponse<IUser> = await API.get(apiURL.user);
+            if (isStatusSuccess(userResponse.status)) {
+                const orgResponse: AxiosResponse<IOrgData> = await API.get(apiURL.getOrganization(orgId));
+                if (isStatusSuccess(orgResponse.status)) {
+                    if (userResponse.data.organizationId.toString() !== orgId?.toString() || !userResponse.data.isAdmin) {
+                        return onError?.('not-admin');
+                    }
+                    return {
+                        organisation: { ...orgResponse.data },
+                        user: { ...userResponse.data },
+                    };
+                } else if (isStatusNotFound(orgResponse.status)) {
+                    onError?.('not-found');
+                } else {
+                    onError?.('error');
+                }
             } else {
-              onError?.("error");
+                onError?.('not-admin');
             }
-        } else if (isStatusNotFound(orgResponse.status)) {
-          onError?.("not-found");
-        } else {
-          onError?.("error");
-        }
-    }, [onError]);
+        },
+        [onError],
+    );
 };

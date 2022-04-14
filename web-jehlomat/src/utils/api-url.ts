@@ -3,6 +3,14 @@ class APIURL {
   organization = "/organization"
   userVerification = "/verification/user"
   user = "/user"
+  
+  getUserPassword(userId: string | number) {
+    return `${this.user}/${userId}/password`
+  }
+
+  getUserAttributes(userId: string | number) {
+    return `${this.user}/${userId}/attributes`
+  }
 
   getSyringe(syringeId: string) {
     return `/syringe/${syringeId}`;

@@ -32,8 +32,10 @@ interface IState {
     cancelText: string;
 }
 
+type TPayload = 'confirm' | 'cancel'
+
 interface IPromiseInfo {
-    resolve: (payload: 'confirm' | 'cancel') => void;
+    resolve: (payload: TPayload) => void;
 }
 
 interface IShowParams {
@@ -55,7 +57,7 @@ class ConfirmationModal extends Component<IProps, IState> {
         };
     }
 
-    show = async ({ title, confirmText, cancelText }: IShowParams) => {
+    show = async ({ title, confirmText, cancelText }: IShowParams): Promise<TPayload> => {
         return new Promise(resolve => {
             this.promiseInfo = {
                 resolve,

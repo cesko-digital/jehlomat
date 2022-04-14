@@ -5,13 +5,14 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { media } from 'utils/media';
 import { IData, IOrgData } from 'screens/Organizace/use-organisation';
-import { FC, useCallback, useContext, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
-import { ConfirmationModalContext } from 'context/confirmation-modal-context';
+import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import { IUser } from 'types';
+import { isStatusSuccess } from 'utils/payload-status';
 
 interface IProps {
     data: IData;
@@ -39,12 +40,14 @@ const confirmationModalParams = {
 
 export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
-    const confirmationModal = useContext(ConfirmationModalContext);
+    const confirmationModal = useConfirmationModalContext();
+    const [requestError, setRequestError] = useState('');
+
 
     const handleSubmit = useCallback(
-        async (values: IValues, { setErrors }) => {
-            const confirmResult = await (confirmationModal.current as any).show(confirmationModalParams);
-            if (confirmResult === 'cancel') {
+        async (values: IValues) => {
+            const confirmResult = await confirmationModal?.show(confirmationModalParams);
+            if (!confirmResult || confirmResult === 'cancel') {
                 return;
             }
 
@@ -52,14 +55,22 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
                 ...organisation,
                 name: values.name,
             };
-            const response: AxiosResponse<IOrgData> = await API.put(apiURL.organization, newOrganisation);
-            // TODO:
-            // put email to user
+            const orgResponse: AxiosResponse<IOrgData | string> = await API.put(apiURL.organization, newOrganisation);
+
+            if (!isStatusSuccess(orgResponse.status) && typeof orgResponse.data === "string") {
+                return setRequestError(orgResponse.data)
+            }
+
             const newUser = {
-                ...user,
                 email: values.email,
+                username: user.username
             };
-            const r: AxiosResponse<IUser> = await API.put(apiURL.user, newUser);
+
+            const userResponse: AxiosResponse<IUser | string> = await API.put(apiURL.getUserAttributes(user.id), newUser);
+
+            if (!isStatusSuccess(userResponse.status) && typeof userResponse.data === "string") {
+                return setRequestError(userResponse.data)
+            }
         },
         [organisation, confirmationModal, user],
     );
@@ -105,6 +116,14 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
                                 error={touched.email && Boolean(errors.email) ? errors.email : undefined}
                             />
                         </Box>
+
+{requestError ? (
+    <Box marginBottom={2}>
+        <Typography color="#D32F2F" align="center" variant="body2">
+            {requestError}
+        </Typography>
+    </Box>
+) : null}
 
                         <Box display="flex" flexDirection="column" alignItems="center">
                             {isMobile ? <PrimaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} /> : <SecondaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} />}

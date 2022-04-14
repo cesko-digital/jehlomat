@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { ORGANIZATION_URL_PATH } from 'routes';
 import { tokenState } from 'store/login';
 import { media } from 'utils/media';
+import { AccessDenied } from './403';
 import { OrganisationNotFound } from './404';
 import { DesktopContent } from './DesktopContent';
 import { MobileContent } from './MobileContent';
@@ -16,17 +17,22 @@ interface IRouteParams {
 
 const Organizace: FC = () => {
     const [notFound, setNotFound] = useState(false);
+    const [noPermission, setNoPermission] = useState(false);
     const [data, setData] = useState<IData>();
     const token = useRecoilValue(tokenState);
     const history = useHistory();
     const isMobile = useMediaQuery(media.lte('mobile'));
     const { orgId } = useParams<IRouteParams>();
 
-    const handleError: TErrorCallback = useCallback((errorType) => {
-        if (errorType === "not-found") {
+    const handleError: TErrorCallback = useCallback(errorType => {
+        if (errorType === 'not-found') {
             setNotFound(true);
+        } else if (errorType === 'not-admin') {
+            setNoPermission(true);
+        } else {
+            history.push('/error');
         }
-    }, []);
+    }, [history]);
 
     const getOrganisation = useOrganisation(handleError);
 
@@ -34,7 +40,11 @@ const Organizace: FC = () => {
         async function fetchMyAPI() {
             if (token) {
                 const newData = await getOrganisation(orgId);
-                setData(newData);
+                if (newData) {
+                    setData(newData);
+                }
+            } else {
+                setNoPermission(true);
             }
         }
         fetchMyAPI();
@@ -45,7 +55,11 @@ const Organizace: FC = () => {
     }, [history, data]);
 
     if (notFound) {
-        return <OrganisationNotFound/>
+        return <OrganisationNotFound />;
+    }
+
+    if (noPermission) {
+        return <AccessDenied/>
     }
 
     if (!data) {

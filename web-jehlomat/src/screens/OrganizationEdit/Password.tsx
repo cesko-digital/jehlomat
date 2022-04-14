@@ -5,21 +5,22 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { media } from 'utils/media';
 import { Form, Formik } from 'formik';
-import { FC, useCallback, useContext } from 'react';
+import { FC, useCallback, useState } from 'react';
 import * as yup from 'yup';
 import { PASSWORD_COMPLEXITY } from 'utils/constants';
-import { ConfirmationModalContext } from 'context/confirmation-modal-context';
+import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import { AxiosResponse } from 'axios';
 import API from 'config/baseURL';
 import { IData } from 'screens/Organizace/use-organisation';
 import apiURL from 'utils/api-url';
-import { IUser } from 'types';
+import { isStatusSuccess } from 'utils/payload-status';
 
 interface IProps {
     data: IData;
 }
 
 interface IValues {
+    oldPassword: string;
     newPassword: string;
     passwordConfirm: string;
 }
@@ -35,31 +36,39 @@ const confirmationModalParams = {
 };
 
 const initialValues: IValues = {
+    oldPassword: '',
     newPassword: '',
     passwordConfirm: '',
 };
 
 const validationSchema = yup.object({
+    oldPassword: yup.string().required('Staré heslo je povinné pole'),
     newPassword: yup.string().matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno').min(8, 'Heslo musí být 8 znaků dlouhé').required('Heslo je povinné pole'),
     passwordConfirm: yup.string().oneOf([yup.ref('newPassword'), null], 'Hesla musí být stejná'),
 });
 
 export const Password: FC<IProps> = ({ data: { user } }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
-    const confirmationModal = useContext(ConfirmationModalContext);
+    const confirmationModal = useConfirmationModalContext();
+    const [requestError, setRequestError] = useState('');
 
     const handleSubmit = useCallback(
-        async (values: IValues) => {
-            const confirmResult = await (confirmationModal.current as any).show(confirmationModalParams);
-            if (confirmResult === 'cancel') {
+        async (values: IValues, { resetForm }) => {
+            setRequestError("");
+            const confirmResult = await confirmationModal?.show(confirmationModalParams);
+            if (!confirmResult || confirmResult === 'cancel') {
                 return;
             }
 
-            const newUser = {
-                ...user,
-                password: values.newPassword,
+            const passwordBody = {
+                oldPassword: values.oldPassword,
+                newPassword: values.newPassword,
             };
-            const response: AxiosResponse<IUser> = await API.put(apiURL.user, newUser);
+            const response: AxiosResponse<string> = await API.put(apiURL.getUserPassword(user.id), passwordBody);
+            if (!isStatusSuccess(response.status)) {
+                return setRequestError(response.data)
+            }
+            resetForm();
         },
         [confirmationModal, user],
     );
@@ -73,6 +82,17 @@ export const Password: FC<IProps> = ({ data: { user } }) => {
                 {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => (
                     <Form onSubmit={handleSubmit}>
                         <Box display="flex" flexDirection="column" gap={2} mb={5}>
+                            <STextInput
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.oldPassword}
+                                type="password"
+                                name="oldPassword"
+                                placeholder="Staré heslo"
+                                label="Staré heslo *"
+                                required={true}
+                                error={touched.oldPassword && Boolean(errors.oldPassword) ? errors.oldPassword : undefined}
+                            />
                             <STextInput
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -96,6 +116,14 @@ export const Password: FC<IProps> = ({ data: { user } }) => {
                                 error={touched.passwordConfirm && Boolean(errors.passwordConfirm) ? errors.passwordConfirm : undefined}
                             />
                         </Box>
+
+                        {requestError ? (
+                            <Box marginBottom={2}>
+                                <Typography color="#D32F2F" align="center" variant="body2">
+                                    {requestError}
+                                </Typography>
+                            </Box>
+                        ) : null}
 
                         <Box display="flex" flexDirection="column" alignItems="center">
                             {isMobile ? <PrimaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} /> : <SecondaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} />}

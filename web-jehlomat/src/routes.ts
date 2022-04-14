@@ -135,11 +135,15 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_EDIT,
         Component: OrganizationEdit,
         path: `/${ORGANIZATION_URL_PATH}/edit/:orgId?`,
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.ORGANIZATION,
         Component: Organizace,
         path: `/${ORGANIZATION_URL_PATH}/:orgId?`,
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.PROFILE,

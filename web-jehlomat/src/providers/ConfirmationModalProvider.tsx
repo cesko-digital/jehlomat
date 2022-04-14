@@ -3,7 +3,7 @@ import { ConfirmationModalContext } from 'context/confirmation-modal-context';
 import { ReactNode, RefObject } from 'react';
 
 interface IProps {
-    modalRef: RefObject<ConfirmationModal | unknown>;
+    modalRef: RefObject<ConfirmationModal>;
     children: ReactNode;
 }
 

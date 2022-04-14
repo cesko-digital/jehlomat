@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
-import { Box, Container as MUIContainer, Grid, Typography } from '@mui/material';
+import { Box, Container as MUIContainer, Typography } from '@mui/material';
 import { Header } from 'Components/Header/Header';
 import { useState, useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useRecoilValue } from 'recoil';
+import { AccessDenied } from 'screens/Organizace/403';
 import { OrganisationNotFound } from 'screens/Organizace/404';
 import { IData, TErrorCallback, useOrganisation } from 'screens/Organizace/use-organisation';
 import { tokenState } from 'store/login';
@@ -31,6 +32,7 @@ const PAGE_TITLE = 'Úprava organizace';
 
 const OrganizationEdit = () => {
     const [notFound, setNotFound] = useState(false);
+    const [noPermission, setNoPermission] = useState(false);
     const [data, setData] = useState<IData>();
     const token = useRecoilValue(tokenState);
     const history = useHistory();
@@ -39,6 +41,8 @@ const OrganizationEdit = () => {
     const handleError: TErrorCallback = useCallback((errorType) => {
         if (errorType === "not-found") {
             setNotFound(true);
+        } else if (errorType === "not-admin") {
+            setNoPermission(true);
         } else {
             history.push('/error');
         }
@@ -50,7 +54,11 @@ const OrganizationEdit = () => {
         async function fetchMyAPI() {
             if (token) {
                 const newData = await getOrganisation(orgId);
-                setData(newData);
+                if (newData) {
+                    setData(newData);
+                }
+            } else {
+                setNoPermission(true);
             }
         }
         fetchMyAPI();
@@ -58,6 +66,10 @@ const OrganizationEdit = () => {
     
     if (notFound) {
         return <OrganisationNotFound/>
+    }
+
+    if (noPermission) {
+        return <AccessDenied/>
     }
 
     return (
