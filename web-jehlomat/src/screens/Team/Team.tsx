@@ -8,11 +8,12 @@ import { Formik, Form } from 'formik';
 import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
-import API, { authorizedAPI } from '../../config/baseURL';
+import {API} from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
 import { getUser } from '../../config/user';
-import { getToken } from 'utils/login';
+import { tokenState } from 'store/login';
+import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 
@@ -37,6 +38,8 @@ const Team = () => {
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
+    const token = useRecoilValue(tokenState);
+    console.log("TOKEN", token);
 
     const removeLocation = (item: any)=>{
         const data = selectedLocation;
@@ -57,14 +60,14 @@ const Team = () => {
 
     useEffect(() => {
         const getLocation = async () => {
-            const response: AxiosResponse<any> = await API.get('/api/v1/jehlomat/location/all');
+            const response: AxiosResponse<any> = await API.get('/location/all');
             return response.data;
         }
         const getMember = async (token: string) => {
 
             return getUser(token)
                 .then(async (user) => {
-                    const response: AxiosResponse<any> = await authorizedAPI.get(`/api/v1/jehlomat/organization/${user.organizationId}/users`);
+                    const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
                     return response.data;
                 })
                 .catch((error) => {
@@ -78,7 +81,6 @@ const Team = () => {
         }).catch((error) => {
             console.log(error) //should redirect to Error page
         });
-        const token = getToken();
         if (token) {
             getMember(token).then((data) => {
                 setMembers(data)
@@ -87,7 +89,7 @@ const Team = () => {
             });
         }
         console.log(selectedMembers)
-    }, [selectedLocation, selectedMembers]);
+    }, [selectedLocation, selectedMembers, token]);
 
     return (
         <>

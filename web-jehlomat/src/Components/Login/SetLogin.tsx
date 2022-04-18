@@ -26,7 +26,7 @@ export const SetLogin: FC = () => {
             };
 
             // fetch user and save to store
-            getUser(token)
+            getUser()
                 .then(user => {
                     setUser(user);
                 })
