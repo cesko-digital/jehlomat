@@ -58,7 +58,7 @@ const NovyNalezContainer: FC = () => {
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-            const data = await API.post('/api/v1/jehlomat/syringe', apiSyringe);
+            const data = await API.post('/syringe', apiSyringe);
 
             if (data.status === 200 || data.status === 201) {
                 setCurrentStep(StepsEnum.Potvrzeni);

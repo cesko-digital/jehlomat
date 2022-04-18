@@ -24,8 +24,6 @@ export const AddressSearch: React.FC<AddressSearchProps> = props => {
         if (!search) return;
 
         const geoCode = await axios.get<Address>(`https://nominatim.openstreetmap.org/?addressdetails=1&q=${encodeURIComponent(search)}&format=json&limit=${RESULT_LIMIT}`);
-
-        console.log({ geoCode });
     }, []);
 
     return (

@@ -90,13 +90,13 @@ const Potvrzeni: FC<Props> = () => {
             <TextContainer>
                 <TopText>Děkujeme za vložení nálezu!</TopText>
                 <Title>jehlomat</Title>
-                <SecondaryText>nález bude zlikvidován terénním pracovníkem.</SecondaryText>
+                <SecondaryText>Nález bude zlikvidován terénním pracovníkem.</SecondaryText>
             </TextContainer>
             <Box>
                 <SecondaryButton text="ULOŽIT NÁZEV" />
             </Box>
             <LinksContainer>
-                <StyledLink>Chci zaslat potvrzení o likvidaci nález</StyledLink>
+                <StyledLink>Chci zaslat potvrzení o likvidaci nálezu</StyledLink>
                 <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
             </LinksContainer>
         </Container>
