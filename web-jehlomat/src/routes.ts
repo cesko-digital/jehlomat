@@ -15,7 +15,7 @@ const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/Reg
 const OrganizationVerification = lazy(() => import('./screens/OrganizationVerification/OrganizationVerification'));
 const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
 const SetNewPassword = lazy(() => import('./screens/SetNewPassword/SetNewPassword'));
-
+const Team = lazy(() => import('./screens/Team/Team'));
 const DekujemeUzivatel = lazy(() => import('./screens/RegistraceUzivatele/Dekujeme'));
 const SeznamUzivatelu = lazy(() => import('./screens/SeznamUzivatelu/SeznamUzivatelu'));
 const PridatUzivatele = lazy(() => import('./screens/RegistraceUzivatele/PridatUzivatele'));
@@ -54,6 +54,7 @@ export enum Routes {
     CONTACT = 'CONTACT',
     ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
     ORGANIZATION_EDIT = 'ORGANIZATION_EDIT',
+    TEAM = 'TEAM'
 }
 
 interface Route {
@@ -146,6 +147,11 @@ export const routes: Route[] = [
         path: `/${ORGANIZATION_URL_PATH}/:orgId?`,
         protectedRoute: true,
         from: true,
+    },
+    {
+        id: Routes.TEAM,
+        Component: Team,
+        path: '/team/novy',
     },
     {
         id: Routes.PROFILE,
