@@ -6,6 +6,7 @@ const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welc
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalezContainer'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
+const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/OrganizationEdit'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
 const NahlasitNalezPolicii = lazy(() => import('./screens/NovyNalez/screens/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
@@ -51,7 +52,8 @@ export enum Routes {
     ABOUT = 'ABOUT',
     FAQ = 'FAQ',
     CONTACT = 'CONTACT',
-    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION'
+    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
+    ORGANIZATION_EDIT = 'ORGANIZATION_EDIT',
 }
 
 interface Route {
@@ -71,7 +73,7 @@ interface Route {
 }
 
 const USER_URL_PATH_ = 'uzivatel';
-const ORGANIZATION_URL_PATH = 'organizace';
+export const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
 export const LOGIN_URL_PATH = 'prihlaseni';
 
@@ -91,7 +93,7 @@ export const routes: Route[] = [
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
         protectedRoute: true,
-        title: "Přidat uživatele"
+        title: 'Přidat uživatele',
     },
     {
         id: Routes.USER_VALIDATION,
@@ -115,11 +117,6 @@ export const routes: Route[] = [
         protectedRoute: true,
     },
     {
-        id: Routes.ORGANIZATION,
-        Component: Organizace,
-        path: `/${ORGANIZATION_URL_PATH}/`,
-    },
-    {
         id: Routes.ORGANIZATION_REGISTRATION,
         Component: RegistraceOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/registrace`,
@@ -134,12 +131,21 @@ export const routes: Route[] = [
         Component: OrganizationVerification,
         path: `/${ORGANIZATION_URL_PATH}/povoleni/:orgId?`,
         protectedRoute: true,
-        from: true
+        from: true,
+    },
+    {
+        id: Routes.ORGANIZATION_EDIT,
+        Component: OrganizationEdit,
+        path: `/${ORGANIZATION_URL_PATH}/edit/:orgId?`,
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.ORGANIZATION,
         Component: Organizace,
-        path: `/${ORGANIZATION_URL_PATH}/`,
+        path: `/${ORGANIZATION_URL_PATH}/:orgId?`,
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.PROFILE,

@@ -98,7 +98,7 @@ const OrganizationVerification = () => {
 
     useEffect(() => {
       handleOrganizationConfirm();
-    })
+    }, [])
 
     return <Content contentData={contentData} />;
 };

@@ -23,6 +23,7 @@ const ModalWrapper = styled.div<{ mobile?: boolean }>`
         !props.mobile &&
         `
         width: 600px;
+        max-height: 531px;
         height: auto;
         padding-bottom: 20px;
         border-radius: 10px;
