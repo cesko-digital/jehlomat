@@ -33,6 +33,14 @@ class APIURL {
     getOrganization(orgId?: string | number) {
         return `${this.organization}/${orgId}`;
     }
+
+    getTeamsInOrganization(orgId?: string | number) {
+        return `${this.organization}/${orgId}/teams`;
+    }
+
+    putUser(userId: string | number) {
+        return `${this.user}/${userId}/attributes`;
+    }
 }
 
 const apiURL = new APIURL();
