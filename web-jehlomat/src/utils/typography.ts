@@ -53,6 +53,8 @@ export const FormItemLabel = styled.label<{ disableUppercase?: boolean }>`
     text-transform: ${props => (props.disableUppercase ? 'none' : 'uppercase')};
     padding-bottom: 15px;
     color: grey;
+    padding-bottom: 5px;
+  
     @media (min-width: 420px) {
         align-self: flex-start;
     }

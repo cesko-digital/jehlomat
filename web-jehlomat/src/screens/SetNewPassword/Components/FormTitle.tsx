@@ -1,4 +1,4 @@
-﻿import {styled} from "@mui/material";
+import {styled} from "@mui/material";
 import {size} from "utils/spacing";
 import Heading from "./Heading";
 

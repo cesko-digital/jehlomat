@@ -1,212 +1,129 @@
-import React, { useState, FC } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-// import Card from './components/Card';
-// import styled from '@emotion/styled';
-// import { secondary } from '../../utils/colors';
-// import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
-// import TextButton from '../../Components/Buttons/TextButton/TextButton';
-import { Header } from '../../Components/Header/Header';
-// import { Link } from 'react-router-dom';
-// import { LINKS } from '../../utils/links';
-import { useMediaQuery } from '@mui/material';
-import {
-    TextHeader,
-    FilterLink,
-    ListWrapper,
-    ListHeader,
-    ListHeaderItem,
-    ListItem,
-    ListItemCell,
-    SyringeIcon,
-    EditIcon,
-    CheckboxRadio,
-    TextMuted,
-    TextMutedBold,
-    TextGold,
-    TextHighlight,
-} from './NalezyStyles';
-import { media } from '../../utils/media';
-import SearchInput from '../../Components/Inputs/SearchInput/SearchInput';
-import SearchInputDesktop from '../../Components/Inputs/SearchInput/SearchInputDesktop';
-import { syringeMock } from './syringeMock';
-import dayjs from 'dayjs';
+﻿import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { Switch, Route, useHistory } from 'react-router-dom';
+import { useLocation, matchPath, useRouteMatch } from 'react-router';
+import { Box, Container } from '@mui/material';
+import { styled } from '@mui/system';
+import { AxiosResponse } from 'axios';
+import { API } from 'config/baseURL';
+import { Header } from 'Components/Header/Header';
+import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
+import { Loader } from 'screens/Nalezy/types/Loader';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import useFindingsFilter from 'screens/Nalezy/hooks/useFindingsFilter';
+import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
+import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
+import FilterByState from 'screens/Nalezy/Components/FilterByState';
+import Table from 'screens/Nalezy/Components/Table';
+import Controls from 'screens/Nalezy/Components/Controls';
+import Button from 'screens/Nalezy/Components/Button';
+import TextHeader from 'screens/Nalezy/Components/TextHeader';
+import Map from 'screens/Nalezy/Components/Map';
+import DarkButton from 'screens/Nalezy/Components/DarkButton';
+import Filters from 'screens/Nalezy/Components/Filters';
+import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
+import { mock } from 'screens/Nalezy/__mock';
 
-dayjs().format();
+const Page = styled('div')({
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+});
 
-interface Props {}
+const Nalezy: FunctionComponent = () => {
+    const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
+    const [filters, setFilters] = useState(false);
+    const [selected, setSelected] = useState<Syringe[]>([]);
+    const history = useHistory();
+    const location = useLocation();
+    const match = useRouteMatch();
+    const { direction, handleSort, filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState, reload } = useFindingsFilter();
 
-const NavodLikvidace: FC<Props> = () => {
-    const isMobile = useMediaQuery(media.lte('mobile'));
-    const [syringes, setSyringes] = useState(syringeMock.syringeList);
-    let i = 1;
+    const isMapMatch = matchPath(location.pathname, '/nalezy/mapa');
+    const isTableMatch = matchPath(location.pathname, '/nalezy');
+
+    const isMap = isMapMatch?.isExact;
+    const isTable = isTableMatch?.isExact;
+
+    useEffect(() => {
+        const load = async () => {
+            const response: AxiosResponse<SyringeReadModel> = await API.post('/syringe/search', filter);
+            if (response.status !== 200) throw new Error('Unable to load data');
+
+            return response.data;
+        };
+
+        load()
+            .then(data => {
+                setLoader({ resp: data });
+            })
+            .catch(e => {
+                setLoader({ err: e });
+                console.warn(e);
+            });
+    }, [filter]);
+
+    const handleRangeFilter = useCallback((kind, from, to) => {
+        filterByRange(kind, { from: +from, to: +to });
+    }, []);
+
+    const handleSelect = useCallback(
+        (syringe: Syringe) =>
+            setSelected(state => {
+                const exists = state.find(({ id }) => id === syringe.id);
+                if (exists) {
+                    return state.filter(({ id }) => id !== syringe.id);
+                }
+
+                return [...state, syringe];
+            }),
+        [],
+    );
+
+    const handleSelectAll = useCallback(() => {
+        if (loader.resp && Array.isArray(loader.resp.syringeList)) {
+            setSelected([ ...loader.resp.syringeList ]);
+        }
+    }, [loader]);
 
     return (
         <>
             <Header mobileTitle="Seznam zadaných nálezů" />
 
-            {!isMobile && (
-                // mobilne komponenty
-                <></>
-            )}
-
-            <Box maxWidth={1300} width={1} ml="auto" mr="auto" minHeight={'100vh'} mt={8}>
-                {/* Nadpis & filter */}
-                <Grid container direction="row" alignItems="center" justifyContent="space-between">
-                    <Box>
-                        <TextHeader>Seznam zadaných nálezů</TextHeader>
-                    </Box>
-                    {isMobile && (
-                        // mobile komponenta
+            <Page>
+                <Container>
+                    <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                         <Box>
-                            <SearchInput placeholder="Hledat" />
+                            <TextHeader>Seznam zadaných nálezů</TextHeader>
                         </Box>
-                    )}
-                    <Box>
-                        {!isMobile && (
-                            // desktop komponenta
-                            <SearchInputDesktop placeholder="Hledat" onChange={e => setSyringes(syringeMock.syringeList.filter(item => item.id.includes(e.target.value)))} />
-                        )}
-                        <FilterLink href="#">Filtrovat</FilterLink>
-                        <FilterLink href="#">Vybrat vše</FilterLink>
-                        <FilterLink href="#">Exportovat vybrané</FilterLink>
+                        <Controls>
+                            <Button onClick={handleSelectAll}>Vybrat vše</Button>
+                            <Button>Exportovat vybrané</Button>
+                            <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
+                            {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
+                            {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
+                        </Controls>
                     </Box>
-                </Grid>
-                <Box mt={2}>
-                    <ListWrapper>
-                        {/* Sortable header */}
-                        <thead>
-                            <ListHeader>
-                                <ListHeaderItem />
-                                <ListHeaderItem />
-                                <ListHeaderItem>Město</ListHeaderItem>
-                                <ListHeaderItem>Název</ListHeaderItem>
-                                <ListHeaderItem>Datum nálezu</ListHeaderItem>
-                                <ListHeaderItem>Datum likvidace</ListHeaderItem>
-                                <ListHeaderItem>Zadavatel</ListHeaderItem>
-                                <ListHeaderItem>Stav</ListHeaderItem>
-                                <ListHeaderItem />
-                            </ListHeader>
-                        </thead>
-
-                        {/* Items */}
-                        <tbody>
-                            {syringes.map(item => (
-                                <ListItem key={item.id}>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderLeft: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        {i++}
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        <SyringeIcon />
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        Benešov
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        Benešov - u hřiště
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        {dayjs(item.createdAt * 1000).format('D. M. YYYY')}
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        {item.demolishedAt && item.demolished === true ? (
-                                            dayjs(item.demolishedAt * 1000).format('D. M. YYYY')
-                                        ) : (
-                                            <>
-                                                {item.reservedTill ? (
-                                                    <TextMuted>rezervace do {dayjs(item.reservedTill * 1000).format('D. M. YYYY')}</TextMuted>
-                                                ) : (
-                                                    <TextMuted>zatím nezlikvidováno</TextMuted>
-                                                )}
-                                            </>
-                                        )}
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        Magdalena
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        {item.demolishedAt && item.demolished === true ? (
-                                            <TextMutedBold>Zlikvidováno</TextMutedBold>
-                                        ) : (
-                                            <>{item.reservedTill ? <TextHighlight>Rezervováno TP</TextHighlight> : <TextGold>Čeká na likvidaci</TextGold>}</>
-                                        )}
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        <EditIcon />
-                                    </ListItemCell>
-                                    <ListItemCell
-                                        style={{
-                                            paddingLeft: '14px',
-                                            borderTop: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderBottom: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                            borderRight: item.demolished === false && !item.reservedTill ? '2px solid #FEAB0D' : '',
-                                        }}
-                                    >
-                                        <CheckboxRadio type="checkbox" />
-                                    </ListItemCell>
-                                </ListItem>
-                            ))}
-                        </tbody>
-                    </ListWrapper>
-                </Box>
-            </Box>
+                </Container>
+                {filters && (
+                    <Filters>
+                        <HorizontalContainer>
+                            <FilterByRange onFilter={handleRangeFilter} onReset={resetByRange} />
+                            <FilterByReporter onFilter={filterByReporter} onReset={resetByReporter} />
+                            <FilterByState onFilter={filterByState} onReset={resetByState} />
+                        </HorizontalContainer>
+                    </Filters>
+                )}
+                <Switch>
+                    <Route path={`${match.path}/`} exact={true}>
+                        <Table loader={loader} direction={direction} onSort={handleSort} selected={selected} onSelect={handleSelect} onUpdate={reload} />
+                    </Route>
+                    <Route path={`${match.path}/mapa/`} exact={true}>
+                        <Map loader={loader} onUpdate={reload} />
+                    </Route>
+                </Switch>
+            </Page>
         </>
     );
 };
 
-export default NavodLikvidace;
+export default Nalezy;

@@ -1,4 +1,4 @@
-﻿import {styled} from "@mui/material";
+import {styled} from "@mui/material";
 import {Form} from "formik";
 import {size} from "utils/spacing";
 

@@ -40,7 +40,7 @@ const Login: FC<WithModal> = ({ inModal }) => {
     return renderContent(
         <Grid container direction="column" sx={{ height: 'auto', width: '100%', paddingX: '20px' }} justifyContent="start" alignItems="center">
             <LoginForm />
-            <div style={{ marginTop: 30 }}>
+            <div style={{ marginTop: 24, marginBottom: 16 }}>
                 <Link to={LINKS.FORGOTTEN_PASSWORD}> Zapomněli jste heslo? </Link>
             </div>
         </Grid>,

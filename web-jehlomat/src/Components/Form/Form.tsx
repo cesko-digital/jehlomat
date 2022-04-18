@@ -10,7 +10,7 @@ export const Wrapper = styled.section`
 
 export const FormWrapper = styled.form`
     display: flex;
-    align-items: center;
+    align-items: stretch;
     flex-direction: column;
     width: 100%;
 
@@ -25,12 +25,13 @@ export const FormItem = styled.div`
     align-items: baseline;
     justify-content: center;
     text-align: left;
-    width: 80%;
     font-family: Roboto;
-    margin: 10px;
+    margin: 15px 6px;
+    position: relative;
+  
     @media (min-width: 420px) {
         align-items: center;
-        width: 50%;
+        width: 100%;
     }
     @media (min-width: 700px) {
         align-items: center;
