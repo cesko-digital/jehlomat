@@ -11,7 +11,7 @@ data class User(
     @UnchangeableByPut val id: Int,
     @AuthRole(Role.UserOwner) val email: String,
     @AuthRole(Role.UserOwner) val username: String,
-    @AuthRole(Role.UserOwner, FieldComparisonType.PASSWORD) val password: String,
+    @AuthRole(Role.UserOwner) val password: String,
     @UnchangeableByPut val verified: Boolean,
     @UnchangeableByPut val verificationCode: String,
     @UnchangeableByPut val organizationId: Int,
@@ -25,4 +25,8 @@ fun User.toUserInfo() = UserInfo(
     organizationId = organizationId,
     teamId = teamId,
     isAdmin = isAdmin
+)
+
+fun User.toUserDetail() = UserDetail(
+    id, email, username, verified, organizationId, teamId, isAdmin
 )

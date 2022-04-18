@@ -22,6 +22,8 @@ const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/Trackovan
 const LandingPage = lazy(() => import('./screens/LandingPage'));
 const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
 const About = lazy(() => import('./screens/AboutPage'));
+const Contact = lazy(() => import('./screens/ContactPage'));
+const FAQPage = lazy(() => import('./screens/FAQ'));
 
 export enum Routes {
     HOME = 'HOME',
@@ -45,7 +47,9 @@ export enum Routes {
     POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
     ABOUT = 'ABOUT',
-    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
+    FAQ = 'FAQ',
+    CONTACT = 'CONTACT',
+    ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION'
 }
 
 interface Route {
@@ -85,6 +89,7 @@ export const routes: Route[] = [
         Component: PridatUzivatele,
         path: `/${USER_URL_PATH_}/novy`,
         protectedRoute: true,
+        title: "Přidat uživatele"
     },
     {
         id: Routes.USER_VALIDATION,
@@ -106,6 +111,11 @@ export const routes: Route[] = [
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
         protectedRoute: true,
+    },
+    {
+        id: Routes.ORGANIZATION,
+        Component: Organizace,
+        path: `/${ORGANIZATION_URL_PATH}/`,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
@@ -180,7 +190,17 @@ export const routes: Route[] = [
     {
         id: Routes.ABOUT,
         Component: About,
-        path: '/about',
+        path: '/o-jehlomatu',
+    },
+    {
+        id: Routes.FAQ,
+        Component: FAQPage,
+        path: '/faq',
+    },
+    {
+        id: Routes.CONTACT,
+        Component: Contact,
+        path: '/kontakt',
     },
     {
         id: Routes.HOME,

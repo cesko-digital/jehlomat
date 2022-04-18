@@ -1,6 +1,8 @@
 package services
 
 import model.*
+import model.team.Team
+import model.team.TeamRequest
 import model.user.User
 import utils.AuthRole
 import kotlin.reflect.full.findAnnotation
@@ -17,8 +19,9 @@ class PermissionService {
         fun <T> determineRoles(loggedIdUser: User, targetObj: T?): Set<Role> {
             return when(targetObj) {
                 is User -> return determineUserRoles(loggedIdUser, targetObj)
-                is Organization -> return determineOrgRoles(loggedIdUser, targetObj)
-                is Team -> return determineTeamRoles(loggedIdUser, targetObj)
+                is Organization -> return determineRolesByOrgId(loggedIdUser, targetObj.id)
+                is Team -> return determineRolesByOrgId(loggedIdUser, targetObj.organizationId)
+                is TeamRequest -> return determineRolesByOrgId(loggedIdUser, targetObj.organizationId)
                 else -> determineSuperAdmin(loggedIdUser)
             }
         }
@@ -47,24 +50,10 @@ class PermissionService {
             return roles
         }
 
-        private fun determineTeamRoles(loggedIdUser: User, targetTeam: Team): Set<Role> {
+        private fun determineRolesByOrgId(loggedIdUser: User, orgId: Int): Set<Role> {
             val roles = mutableSetOf<Role>()
 
-            if (loggedIdUser.organizationId == targetTeam.organizationId && loggedIdUser.isAdmin) {
-                roles.add(Role.OrgAdmin)
-            }
-
-            if (isUserSuperAdmin(loggedIdUser)) {
-                roles.add(Role.SuperAdmin)
-            }
-
-            return roles
-        }
-
-        private fun determineOrgRoles(loggedIdUser: User, targetOrg: Organization): Set<Role> {
-            val roles = mutableSetOf<Role>()
-
-            if (loggedIdUser.organizationId == targetOrg.id && loggedIdUser.isAdmin) {
+            if (loggedIdUser.organizationId == orgId && loggedIdUser.isAdmin) {
                 roles.add(Role.OrgAdmin)
             }
 

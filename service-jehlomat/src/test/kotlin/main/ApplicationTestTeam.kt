@@ -7,9 +7,12 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import model.Location
+import model.location.Location
 import model.Organization
-import model.Team
+import model.location.LocationId
+import model.location.LocationType
+import model.team.Team
+import model.team.TeamRequest
 import org.junit.Test
 import services.DatabaseService
 import kotlin.test.AfterTest
@@ -18,14 +21,22 @@ import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
-val LOCATION1 = Location(0,"CZ123456", "Tyn nad Vltavou okres", 10, "Tyn nad Vltavou obec",11, "Tyn nad Vltavou mc")
+val LOCATION1 = Location(0,"CZ0634", "Třebíč", null, null,null, null)
 val LOCATION2 = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=559199, mestkaCastName = "Plzeň 9-Malesice")
 val LOCATION3 = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")
+val LOCATION4 = Location(0,"CZ0634", "Třebíč", 591939, "Výčapy",null, null)
 
 val TEAM = Team(
     0,
     name ="ceska jehlova",
-    locations = listOf(LOCATION1, LOCATION2),
+    locations = listOf(LOCATION1,LOCATION2),
+    organizationId = 1
+)
+
+val TEAM_REQUEST = TeamRequest(
+    0,
+    name ="ceska jehlova",
+    locationIds = listOf(LocationId(LOCATION1.okres, LocationType.OKRES), LocationId(LOCATION2.mestkaCast.toString(), LocationType.MC)),
     organizationId = 1
 )
 
@@ -69,9 +80,9 @@ class TeamTest {
     "okres" : """" + LOCATION1.okres + """",
     "okresName" : """" + LOCATION1.okresName + """",
     "obec" : """ + LOCATION1.obec + """,
-    "obecName" : """" + LOCATION1.obecName + """",
+    "obecName" : """ + LOCATION1.obecName + """,
     "mestkaCast" : """ + LOCATION1.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION1.mestkaCastName + """"
+    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
   }, {
     "id" : """ + locationId2 + """,
     "okres" : """" + LOCATION2.okres + """",
@@ -106,7 +117,7 @@ class TeamTest {
         with(handleRequest(HttpMethod.Post, TEAM_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(TEAM.copy(organizationId = defaultOrgId)))
+            setBody(Json.encodeToString(TEAM_REQUEST.copy(organizationId = defaultOrgId)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualTeam = database.selectTeams()[0]
@@ -128,7 +139,7 @@ class TeamTest {
         with(handleRequest(HttpMethod.Post, TEAM_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(TEAM.copy(organizationId = newOrg)))
+            setBody(Json.encodeToString(TEAM_REQUEST.copy(organizationId = newOrg)))
         }) {
             assertEquals(HttpStatusCode.Forbidden, response.status())
         }
@@ -142,7 +153,7 @@ class TeamTest {
             database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(TEAM))
+            setBody(Json.encodeToString(TEAM_REQUEST))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
         }
@@ -155,7 +166,7 @@ class TeamTest {
         with(handleRequest(HttpMethod.Put, TEAM_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(TEAM))
+            setBody(Json.encodeToString(TEAM_REQUEST))
         }) {
             assertEquals(HttpStatusCode.NotFound, response.status())
         }
@@ -165,11 +176,11 @@ class TeamTest {
     @Test
     fun testPutTeamOk() = withTestApplication(Application::module) {
         val teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
-        val newTeam = TEAM.copy(
+        val newTeam = TEAM_REQUEST.copy(
             id = teamId,
             name = "new name",
             organizationId = defaultOrgId,
-            locations = listOf(LOCATION2, LOCATION3)
+            locationIds = listOf(LocationId(LOCATION2.mestkaCast.toString(), LocationType.MC), LocationId(LOCATION3.mestkaCast.toString(), LocationType.MC))
         )
         val token = loginUser(USER.email, USER.password)
 
@@ -184,16 +195,12 @@ class TeamTest {
             val actualLocationId2 = actualTeams[0].locations[1].id
 
             assertEquals(1, actualTeams.size)
-            assertEquals(
-                listOf(
-                    newTeam.copy(
-                        locations = listOf(
-                            LOCATION2.copy(id = actualLocationId1),
-                            LOCATION3.copy(id = actualLocationId2)
-                        )
-                    )
-                ), actualTeams
-            )
+            assertEquals(listOf(Team(
+                id = newTeam.id,
+                name = newTeam.name,
+                organizationId = newTeam.organizationId,
+                locations = listOf(LOCATION2.copy(id=actualLocationId1), LOCATION3.copy(actualLocationId2))
+            )), actualTeams)
         }
     }
 
@@ -201,7 +208,7 @@ class TeamTest {
     @Test
     fun testPutTeamForbidden() = withTestApplication(Application::module) {
         val newOrg = database.insertOrganization(Organization(0, "different org", true))
-        val newTeam = TEAM.copy(name = "new name", organizationId = newOrg)
+        val newTeam = TEAM_REQUEST.copy(name = "new name", organizationId = newOrg)
         val teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
         val token = loginUser(USER.email, USER.password)
 
@@ -217,8 +224,8 @@ class TeamTest {
     @ExperimentalSerializationApi
     @Test
     fun testPutTeamNewLocation() = withTestApplication(Application::module) {
-        val newTeam = TEAM.copy(organizationId = defaultOrgId,locations = listOf(
-            Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")
+        val newTeam = TEAM_REQUEST.copy(organizationId = defaultOrgId,locationIds = listOf(
+            LocationId("546003", LocationType.MC)
         ))
         var teamId = 0
         val token = loginUser(USER.email, USER.password)
@@ -233,7 +240,11 @@ class TeamTest {
             val actualTeams = database.selectTeams()
             val actualLocationId = actualTeams[0].locations.first().id
             assertEquals(1, actualTeams.size)
-            assertEquals(listOf(newTeam.copy(id = teamId, locations = listOf(newTeam.locations.first().copy(id=actualLocationId)))), actualTeams)
+            assertEquals(listOf(TEAM.copy(
+                id = teamId,
+                organizationId = defaultOrgId,
+                locations = listOf(Location(id=actualLocationId, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")))
+            ), actualTeams)
         }
     }
 }

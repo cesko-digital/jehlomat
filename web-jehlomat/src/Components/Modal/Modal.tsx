@@ -5,7 +5,6 @@ import { white } from '../../utils/colors';
 import { media } from '../../utils/media';
 import MuiModal, { ModalProps } from '@mui/material/Modal';
 import TitleBar from '../../Components/Navigation/TitleBar';
-import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import CloseIcon from '@mui/icons-material/Close';
 
 type CloseFunction = () => void;
@@ -48,7 +47,7 @@ const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
             >
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
-                        icon={isMobile ? <ChevronLeft sx={{ color: white, fontSize: 40 }} /> : <CloseIcon sx={{ color: white, fontSize: 40 }} />}
+                        icon={<CloseIcon sx={{ color: white, fontSize: 25 }} />}
                         onIconClick={() => {
                             onClose();
                         }}

@@ -2,14 +2,13 @@ package model.syringe
 
 import kotlinx.serialization.Serializable
 import model.Demolisher
-import model.Location
+import model.location.Location
 import model.Syringe
 import model.user.UserInfo
 
 @Serializable
 data class SyringeCreateRequest (
     val createdAt: Long,
-    val createdBy: Int?,
     val photo: String?,
     val count: Int,
     val note: String,

@@ -181,9 +181,9 @@ class OrganizationTest {
     "okres" : """" + LOCATION1.okres + """",
     "okresName" : """" + LOCATION1.okresName + """",
     "obec" : """ + LOCATION1.obec + """,
-    "obecName" : """" + LOCATION1.obecName + """",
+    "obecName" : """ + LOCATION1.obecName + """,
     "mestkaCast" : """ + LOCATION1.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION1.mestkaCastName + """"
+    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
   }, {
     "id" : """ + team1.locations[1].id + """,
     "okres" : """" + LOCATION2.okres + """",
@@ -202,9 +202,9 @@ class OrganizationTest {
     "okres" : """" + LOCATION1.okres + """",
     "okresName" : """" + LOCATION1.okresName + """",
     "obec" : """ + LOCATION1.obec + """,
-    "obecName" : """" + LOCATION1.obecName + """",
+    "obecName" : """ + LOCATION1.obecName + """,
     "mestkaCast" : """ + LOCATION1.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION1.mestkaCastName + """"
+    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
   }, {
     "id" : """ + team1.locations[1].id + """,
     "okres" : """" + LOCATION2.okres + """",

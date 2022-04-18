@@ -1,17 +1,38 @@
-import React, { FC } from 'react';
 import { SContainer, SLinkContainer } from './FooterStyles';
 import { FooterLogo } from './FooterLogo/FooterLogo';
 import { FooterLink, FooterLinkType } from './FooterLink/FooterLink';
 import { LINKS } from 'routes';
 
-export const Footer: FC = () => {
+const JEHLOMAT_FACEBOOK_LINK = 'https://www.facebook.com/jehlomat.cz';
+
+const FOOTER_LINKS = [
+    {
+        type: FooterLinkType.About,
+        route: LINKS.ABOUT,
+    },
+    {
+        type: FooterLinkType.FAQ,
+        route: LINKS.FAQ,
+    },
+    {
+        type: FooterLinkType.Contact,
+        route: LINKS.CONTACT,
+    },
+    {
+        type: FooterLinkType.Facebook,
+        route: JEHLOMAT_FACEBOOK_LINK,
+        external: true,
+    },
+];
+
+export const Footer = () => {
     return (
         <SContainer>
             <FooterLogo />
             <SLinkContainer>
-                <FooterLink type={FooterLinkType.AboutApp} route={LINKS.ABOUT} />
-                <FooterLink type={FooterLinkType.AboutJehlomat} route={'/'} />
-                <FooterLink type={FooterLinkType.Contact} route={'/'} />
+                {FOOTER_LINKS.map(data => (
+                    <FooterLink key={data.type} {...data} />
+                ))}
             </SLinkContainer>
         </SContainer>
     );

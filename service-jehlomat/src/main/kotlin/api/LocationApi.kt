@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.*
 import services.DatabaseService
 import utils.isValidCoordinates
 
@@ -29,10 +30,10 @@ fun Route.locationApi(database: DatabaseService): Route {
                 return@get
             }
 
-            val table = when (type) {
-                "obec" -> ObecTable
-                "okres" -> OkresTable
-                "mc" -> MCTable
+            val table = when (type.toUpperCase()) {
+                "OBEC" -> ObecTable
+                "OKRES" -> OkresTable
+                "MC" -> MCTable
                 else -> {
                     call.respond(HttpStatusCode.BadRequest, "Unknown type ${type}.")
                     return@get

@@ -1,13 +1,18 @@
 package services
 
 import api.*
+import kotlinx.html.ThScope
 import model.*
+import model.exception.UnknownLocationException
+import model.location.*
 import model.pagination.OrderByDefinition
 import model.pagination.PageInfo
 import model.pagination.toDsl
 import model.syringe.SyringeFilter
 import model.syringe.OrderBySyringeColumn
+import model.team.Team
 import model.user.User
+import model.user.UserChangeRequest
 import model.user.UserInfo
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
@@ -20,7 +25,7 @@ import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
-import java.lang.RuntimeException
+import kotlin.RuntimeException
 import kotlin.streams.toList
 
 
@@ -223,12 +228,12 @@ class DatabaseService(
     private val mapLocationRow: (row: QueryRowSet) -> Location = { row ->
         Location(
             id = row[LocationTable.id]!!,
-            obec = row[LocationTable.obec]!!,
-            obecName = row[LocationTable.obec_name]!!,
             okres = row[LocationTable.okres]!!,
             okresName = row[LocationTable.okres_name]!!,
-            mestkaCast = row[LocationTable.mestka_cast]!!,
-            mestkaCastName = row[LocationTable.mestka_cast_name]!!,
+            obec = wrapFakeNull(row[LocationTable.obec]),
+            obecName = wrapFakeNull(row[LocationTable.obec_name]),
+            mestkaCast = wrapFakeNull(row[LocationTable.mestka_cast]),
+            mestkaCastName = wrapFakeNull(row[LocationTable.mestka_cast_name]),
         )
     }
 
@@ -239,6 +244,20 @@ class DatabaseService(
             organizationId = row[TeamTable.organization_id]!!,
             locations = listOf(mapLocationRow(row))
         )
+    }
+
+    private fun wrapFakeNull(value: Int?): Int? {
+        return if (value != Int.MIN_VALUE) {
+            value
+        } else {
+            null
+        }
+    }
+
+    private fun wrapFakeNull(value: String?): String? {
+        return value?.ifEmpty {
+            null
+        }
     }
 
     fun selectTeams(): List<Team> {
@@ -292,6 +311,26 @@ class DatabaseService(
             updateUserRecord(this, it, user)
             where {
                 it.userId eq user.id
+            }
+        }
+    }
+
+    fun updateUserAttributes(id: Int, attributes: UserChangeRequest) {
+        databaseInstance.update(UserTable) {
+            set(it.username, attributes.username)
+            set(it.email, attributes.email)
+            set(it.teamId, attributes.teamId)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
+    fun updateUserPassword(id: Int, password: String) {
+        databaseInstance.update(UserTable) {
+            set(it.password, password.hashPassword())
+            where {
+                it.userId eq id
             }
         }
     }
@@ -435,19 +474,11 @@ class DatabaseService(
     }
 
     private fun getLocationId(location: Location): Int {
-        with(location) {
-            insertLocation(okres, okresName, mestkaCast, mestkaCastName, obec, obecName)
+        return if (location.id > 0) {
+            location.id
+        } else {
+            insertLocation(location).id
         }
-
-        return databaseInstance
-            .from(LocationTable)
-            .select()
-            .where(
-                (LocationTable.mestka_cast eq location.mestkaCast)
-                        and (LocationTable.obec eq location.obec)
-                        and (LocationTable.okres eq location.okres)
-            )
-            .map { it.getInt("location_id") }.first()
     }
 
     fun deleteSyringe(id: String) {
@@ -458,8 +489,8 @@ class DatabaseService(
         databaseInstance.delete(TeamTable) { it.name eq name }
     }
 
-    private fun postgisLocation(table: String, gpsCoordinates: String, idColumn: String, nameColumn: String): LocationPart {
-        val names = databaseInstance.useConnection { conn ->
+    private fun postgisLocation(table: String, gpsCoordinates: String, idColumn: String, nameColumn: String): LocationPart? {
+        return databaseInstance.useConnection { conn ->
             val sql =
                 "SELECT $idColumn, $nameColumn FROM $table WHERE ST_Within('POINT( $gpsCoordinates )'::geometry, $table.wkb_geometry)"
 
@@ -468,29 +499,25 @@ class DatabaseService(
                     it.getString(1), it.getString(2)
                 ) }
             }
-        }
-
-        return names.firstOrNull() ?:
-            if (table == "sph_okres") LocationPart("", "")
-            else LocationPart("-1", "")
+        }.firstOrNull()
     }
 
-    fun getObec(gpsCoordinates: String): LocationPart {
+    fun getObec(gpsCoordinates: String): LocationPart? {
         return postgisLocation("sph_obec", gpsCoordinates, "kod_lau2", "nazev_lau2")
     }
 
-    fun getMC(gpsCoordinates: String): LocationPart {
+    fun getMC(gpsCoordinates: String): LocationPart? {
         return postgisLocation("sph_mc", gpsCoordinates, "kod_mc", "nazev_mc")
     }
 
-    fun getOkres(gpsCoordinates: String): LocationPart {
+    fun getOkres(gpsCoordinates: String): LocationPart? {
         return postgisLocation("sph_okres", gpsCoordinates, "kod_lau1", "nazev_lau1")
     }
 
     fun getLocations(): List<Map<String, String>> {
-        val okres = getLocations("kod_lau1", "nazev_lau1", "sph_okres", "okres")
-        val obce = getLocations("kod_lau2", "nazev_lau2", "sph_obec", "obec")
-        val mc = getLocations("kod_mc", "nazev_mc", "sph_mc", "mc")
+        val okres = getLocations("kod_lau1", "nazev_lau1", "sph_okres", "OKRES")
+        val obce = getLocations("kod_lau2", "nazev_lau2", "sph_obec", "OBEC")
+        val mc = getLocations("kod_mc", "nazev_mc", "sph_mc", "MC")
         return okres + obce + mc
     }
 
@@ -510,15 +537,23 @@ class DatabaseService(
     }
 
     fun getLocationCombinations(gpsCoordinates: String): List<Location> {
+        val okres = getOkres(gpsCoordinates)
         val obec = getObec(gpsCoordinates)
         val mc = getMC(gpsCoordinates)
-        val okres = getOkres(gpsCoordinates)
 
-        return listOfNotNull(
-            Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, mc.id.toInt(), mc.name),
-            Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, -1, ""),
-            Location(0, okres.id, okres.name, -1, "", -1, ""),
-        )
+        val locations = mutableListOf<Location>()
+
+        if (okres != null) {
+            locations.add(Location(0, okres.id, okres.name, null, null, null, null))
+            if (obec != null) {
+                locations.add(Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, null, null))
+                if (mc != null) {
+                    locations.add(Location(0, okres.id, okres.name, obec.id.toInt(), obec.name, mc.id.toInt(), mc.name))
+                }
+            }
+        }
+
+        return locations
     }
 
     /**
@@ -545,21 +580,21 @@ class DatabaseService(
         }
     }
 
-    fun insertLocation(district: String, districtName:String, locality: Int, localityName: String, town: Int, townName: String): Location {
+    private fun insertLocation(location:Location): Location {
         val id = databaseInstance.insertOrUpdateReturning(LocationTable, LocationTable.id) {
-            set(it.mestka_cast, locality)
-            set(it.mestka_cast_name, localityName)
-            set(it.okres, district)
-            set(it.okres_name, districtName)
-            set(it.obec, town)
-            set(it.obec_name, townName)
-            onConflict(it.mestka_cast, it.okres, it.obec) { doNothing() }
+            set(it.okres, location.okres)
+            set(it.okres_name, location.okresName)
+            set(it.obec, location.obec?: Int.MIN_VALUE)
+            set(it.obec_name, location.obecName?: "")
+            set(it.mestka_cast, location.mestkaCast?: Int.MIN_VALUE)
+            set(it.mestka_cast_name, location.mestkaCastName?: "")
+            onConflict(it.okres, it.obec, it.mestka_cast) { doNothing() }
         }
 
         return if (id != null) {
             selectLocationInner(LocationTable.id eq id)!!
         } else {
-            selectLocation(district, locality, town)!!
+            selectLocation(location.okres, location.obec, location.mestkaCast)!!
         }
     }
 
@@ -568,13 +603,29 @@ class DatabaseService(
         val locality = getMC(gpsCoordinates)
         val district = getOkres(gpsCoordinates)
 
-        return selectLocation(district.id, locality.id.toInt(), town.id.toInt())
+        return selectLocation(district?.id, town?.id?.toInt(), locality?.id?.toInt())
     }
 
-    private fun selectLocation(district: String, locality: Int, town: Int): Location? {
-        return (selectLocationInner((LocationTable.mestka_cast eq locality) and (LocationTable.obec eq town) and (LocationTable.okres eq district))
-            ?: run { selectLocationInner((LocationTable.obec eq town) and (LocationTable.okres eq district)) }
-            ?: run { selectLocationInner(LocationTable.okres eq district) })
+    private fun selectLocation(okres: String?, obec: Int?, mc: Int?): Location? {
+        if (okres == null) {
+            return null
+        }
+
+        var filter = (LocationTable.okres eq okres)
+
+        if (obec != null) {
+            filter = filter and (LocationTable.obec eq obec)
+        } else {
+            filter = filter and (LocationTable.obec eq Int.MIN_VALUE)
+        }
+
+        if (mc != null) {
+            filter = filter and (LocationTable.mestka_cast eq mc)
+        } else {
+            filter = filter and (LocationTable.mestka_cast eq Int.MIN_VALUE)
+        }
+
+        return selectLocationInner(filter)
     }
 
     private fun selectLocationInner(condition: ColumnDeclaring<Boolean>): Location? {
@@ -586,12 +637,94 @@ class DatabaseService(
     }
 
     fun selectOrInsertLocation(gpsCoordinates: String): Location {
-        val town = getObec(gpsCoordinates)
-        val locality = getMC(gpsCoordinates)
-        val district = getOkres(gpsCoordinates)
+        val okres = getOkres(gpsCoordinates) ?: throw UnknownLocationException("GPS coordinates not found.")
+        val obec = getObec(gpsCoordinates)
+        val mc = getMC(gpsCoordinates)
 
-        return selectLocation(district.id, locality.id.toInt(), town.id.toInt())
-            ?: insertLocation(district.id, district.name, locality.id.toInt(), locality.name, town.id.toInt(), town.name)
+        return selectLocation(okres.id, obec?.id?.toInt(), mc?.id?.toInt())
+            ?: insertLocation(Location(
+                0,
+                okres.id,
+                okres.name,
+                obec?.id?.toInt(),
+                obec?.name,
+                mc?.id?.toInt(),
+                mc?.name
+            ))
+    }
+
+    fun resolveLocationIds(ids: List<LocationId>): List<Location> {
+        return ids.map { id -> resolveLocationId(id) }.toList()
+    }
+
+    private fun resolveLocationId(locationId: LocationId): Location {
+        val ruianIdTriplet = when (locationId.type) {
+            LocationType.OKRES -> resolveRuianOkres(locationId.id)
+            LocationType.OBEC -> resolveRuianObec(locationId.id.toInt())
+            LocationType.MC -> resolveRuianMC(locationId.id.toInt())
+        }
+
+        return selectLocation(ruianIdTriplet.okres, ruianIdTriplet.obec, ruianIdTriplet.mc)
+            ?: resolveRuianNames(ruianIdTriplet)
+    }
+
+    private fun resolveRuianNames(ruianIdTriplet: RuianIdTriplet): Location {
+        return Location(
+            0,
+            ruianIdTriplet.okres,
+            selectRuianName(LocationType.OKRES, ruianIdTriplet.okres)!!,
+            ruianIdTriplet.obec,
+            selectRuianName(LocationType.OBEC, ruianIdTriplet.obec),
+            ruianIdTriplet.mc,
+            selectRuianName(LocationType.MC, ruianIdTriplet.mc)
+        )
+    }
+
+    private fun resolveRuianOkres(id: String): RuianIdTriplet {
+        return RuianIdTriplet(id, null, null)
+    }
+
+    private fun resolveRuianObec(id: Int): RuianIdTriplet {
+        return databaseInstance.from(ObecTable)
+            .select(ObecTable.kod_lau1)
+            .where { ObecTable.kod_lau2 eq id }
+            .map { row -> RuianIdTriplet(
+                row.getString(1)!!,
+                id,
+                null
+                )}
+            .firstOrNull() ?: throw UnknownLocationException("Unknown RUIAN location OBEC:${id}.")
+    }
+
+    private fun resolveRuianMC(id: Int): RuianIdTriplet {
+        return databaseInstance.from(MCTable)
+            .select(MCTable.kod_lau1, MCTable.kod_lau2)
+            .where { MCTable.kod_mc eq id }
+            .map { row -> RuianIdTriplet(
+                row.getString(1)!!,
+                row.getInt(2),
+                id
+            )}
+            .firstOrNull() ?: throw UnknownLocationException("Unknown RUIAN location MC:${id}.")
+    }
+
+    private fun selectRuianName(type: LocationType, id: Any?): String? {
+        if (id == null) {
+            return null
+        }
+
+        val dbTriple = when (type) {
+            LocationType.OKRES ->  Triple(OkresTable, OkresTable.nazev_lau1, (OkresTable.kod_lau1 eq id.toString()))
+            LocationType.OBEC -> Triple(ObecTable, ObecTable.nazev_lau2, (ObecTable.kod_lau2 eq id.toString().toInt()))
+            LocationType.MC -> Triple(MCTable, MCTable.nazev_mc, (MCTable.kod_mc eq id.toString().toInt()))
+        }
+
+        return databaseInstance
+            .from(dbTriple.first)
+            .select(dbTriple.second)
+            .where(dbTriple.third)
+            .map { row -> row.getString(1)}
+            .firstOrNull()
     }
 
     fun resolveNearestTeam(gpsCoordinates: String): Team? {

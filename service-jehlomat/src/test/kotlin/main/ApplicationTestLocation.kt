@@ -25,26 +25,26 @@ class LocationTest {
   "id" : 0,
   "okres" : "CZ0323",
   "okresName" : "Plzeň-město",
+  "obec" : null,
+  "obecName" : null,
+  "mestkaCast" : null,
+  "mestkaCastName" : null
+}, {
+  "id" : 0,
+  "okres" : "CZ0323",
+  "okresName" : "Plzeň-město",
+  "obec" : 554791,
+  "obecName" : "Plzeň",
+  "mestkaCast" : null,
+  "mestkaCastName" : null
+}, {
+  "id" : 0,
+  "okres" : "CZ0323",
+  "okresName" : "Plzeň-město",
   "obec" : 554791,
   "obecName" : "Plzeň",
   "mestkaCast" : 546003,
   "mestkaCastName" : "Plzeň 3"
-}, {
-  "id" : 0,
-  "okres" : "CZ0323",
-  "okresName" : "Plzeň-město",
-  "obec" : 554791,
-  "obecName" : "Plzeň",
-  "mestkaCast" : -1,
-  "mestkaCastName" : ""
-}, {
-  "id" : 0,
-  "okres" : "CZ0323",
-  "okresName" : "Plzeň-město",
-  "obec" : -1,
-  "obecName" : "",
-  "mestkaCast" : -1,
-  "mestkaCastName" : ""
 } ]""",
                 response.content
             )
@@ -68,67 +68,67 @@ class LocationTest {
                 [ {
                   "id" : "CZ0323",
                   "name" : "Plzeň-město",
-                  "type" : "okres"
+                  "type" : "OKRES"
                 }, {
                   "id" : "CZ0324",
                   "name" : "Plzeň-jih",
-                  "type" : "okres"
+                  "type" : "OKRES"
                 }, {
                   "id" : "CZ0325",
                   "name" : "Plzeň-sever",
-                  "type" : "okres"
+                  "type" : "OKRES"
                 }, {
                   "id" : "500852",
                   "name" : "Bohuňovice",
-                  "type" : "obec"
+                  "type" : "OBEC"
                 }, {
                   "id" : "591939",
                   "name" : "Výčapy",
-                  "type" : "obec"
+                  "type" : "OBEC"
                 }, {
                   "id" : "591319",
                   "name" : "Opatov",
-                  "type" : "obec"
+                  "type" : "OBEC"
                 }, {
                   "id" : "550001",
                   "name" : "Vrcovice",
-                  "type" : "obec"
+                  "type" : "OBEC"
                 }, {
                   "id" : "554791",
                   "name" : "Plzeň",
-                  "type" : "obec"
+                  "type" : "OBEC"
                 }, {
                   "id" : "545970",
                   "name" : "Plzeň 1",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "545988",
                   "name" : "Plzeň 2-Slovany",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "546003",
                   "name" : "Plzeň 3",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "546208",
                   "name" : "Plzeň 4",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "559199",
                   "name" : "Plzeň 9-Malesice",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "554731",
                   "name" : "Plzeň 5-Křimice",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "554758",
                   "name" : "Plzeň 6-Litice",
-                  "type" : "mc"
+                  "type" : "MC"
                 }, {
                   "id" : "554766",
                   "name" : "Plzeň 7-Radčice",
-                  "type" : "mc"
+                  "type" : "MC"
                 } ]
             """.trimIndent(), response.content)
         }

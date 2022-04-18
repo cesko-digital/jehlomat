@@ -9,6 +9,9 @@ import io.mockk.verify
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.*
+import model.location.Location
+import model.location.LocationId
+import model.location.LocationType
 import model.pagination.OrderByDefinition
 import model.pagination.OrderByDirection
 import model.pagination.PageInfo
@@ -119,7 +122,7 @@ class ApplicationTestSyringe {
                 Json.encodeToString(
                     searchFilterRequest.copy(
                         filter = SyringeFilter(
-                            locationIds = setOf(defaultLocation.id),
+                            locationIds = setOf(LocationId(defaultLocation.mestkaCast.toString(), LocationType.MC)),
                             createdAt = DateInterval(
                                 from = 0,
                                 to = Long.MAX_VALUE
@@ -179,7 +182,7 @@ class ApplicationTestSyringe {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(SyringeFilter(
-                locationIds = setOf(defaultLocation.id),
+                locationIds = setOf(LocationId(defaultLocation.mestkaCast.toString(), LocationType.MC)),
                 createdAt = DateInterval(
                     from = 0,
                     to = 2
@@ -303,10 +306,10 @@ class ApplicationTestSyringe {
     }
 
     @Test
-    fun testPostSyringe() = withTestApplication({ module(testing = true) }) {
+    fun testPostSyringeAnonymous() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = defaultUser))))
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualSyringes = database.selectSyringes()
@@ -315,11 +318,7 @@ class ApplicationTestSyringe {
   "id" : """" + actualSyringes[0].id + """",
   "teamAvailable" : true
 }""", response.content)
-            assertEquals(listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser)), actualSyringes)
-
-            val org = database.selectOrganizationById(defaultOrgId)
-            val user = database.selectUserById(defaultUserId)
-            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, user?.email!!, actualSyringes[0].id) }
+            assertEquals(listOf(defaultSyringe.copy(id=actualSyringes[0].id)), actualSyringes)
         }
     }
 
@@ -327,7 +326,7 @@ class ApplicationTestSyringe {
     fun testPostSyringeWithoutLocationAndUser() = withTestApplication({ module(testing = true) }) {
         with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = null, gps_coordinates = "0 0"))))
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = null, gps_coordinates = "13.416319 49.556095"))))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
             val actualSyringes = database.selectSyringes()
@@ -340,15 +339,24 @@ class ApplicationTestSyringe {
     }
 
     @Test
-    fun testPostSyringeWithWrongUser() = withTestApplication({ module(testing = true) }) {
+    fun testPostSyringeAsUser() = withTestApplication({ module(testing = true) }) {
+        val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Post, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
-            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe.copy(createdBy = UserInfo(
-                id = 0, "", 0, null, false
-            )
-            ))))
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(createRequestFromDbObject(defaultSyringe)))
         }) {
-            assertEquals(HttpStatusCode.BadRequest, response.status())
+            assertEquals(HttpStatusCode.Created, response.status())
+            val actualSyringes = database.selectSyringes()
+            assertEquals(
+                """{
+  "id" : """" + actualSyringes[0].id + """",
+  "teamAvailable" : true
+}""", response.content)
+            assertEquals(listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser)), actualSyringes)
+
+            val org = database.selectOrganizationById(defaultOrgId)
+            verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, USER.email, actualSyringes[0].id) }
         }
     }
 
@@ -367,7 +375,6 @@ class ApplicationTestSyringe {
     fun createRequestFromDbObject(original: Syringe): SyringeCreateRequest{
         return SyringeCreateRequest(
             createdAt = original.createdAt,
-            createdBy = original.createdBy?.id,
             photo = original.photo,
             count = original.count,
             note = original.note,
