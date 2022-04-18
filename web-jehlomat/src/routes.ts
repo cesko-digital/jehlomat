@@ -4,9 +4,10 @@ import { lazy, ComponentType, LazyExoticComponent } from 'react';
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Profil = lazy(() => import('./screens/Profil/Profil'));
-const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalez'));
+const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalezContainer'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
+const NahlasitNalezPolicii = lazy(() => import('./screens/NovyNalez/screens/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));
@@ -40,6 +41,7 @@ export enum Routes {
     PROFILE = 'PROFILE',
     NEW_FIND = 'NEW_FIND',
     FINDINGS = 'FINDINGS',
+    FINDINGS_NOTIFY_POLICE = 'FINDINGS_NOTIFY_POLICE',
     ERROR = 'ERROR',
     TRACKING_FIND = 'TRACKING_FIND',
     WELCOME = 'WELCOME',
@@ -157,6 +159,12 @@ export const routes: Route[] = [
         AdditionalComponents: Layout,
     },
     {
+        id: Routes.FINDINGS_NOTIFY_POLICE,
+        Component: NahlasitNalezPolicii,
+        path: `/${FINDINGS_URL_PATH}/nahlasit-nalez-policii`,
+        AdditionalComponents: Layout,
+    },
+    {
         id: Routes.FINDINGS,
         Component: Nalezy,
         path: `/${FINDINGS_URL_PATH}/`,
@@ -172,11 +180,7 @@ export const routes: Route[] = [
         Component: NavodLikvidace,
         path: '/navod-likvidace',
     },
-    {
-        id: Routes.POLICE_ASSISTANCE,
-        Component: LandingPage,
-        path: '/ohlasit-nalez-policii',
-    },
+
     {
         id: Routes.FORGOTTEN_PASSWORD,
         Component: LandingPage,

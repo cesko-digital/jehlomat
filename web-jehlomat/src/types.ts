@@ -18,3 +18,4 @@ export interface IUser {
     teamId: number;
     isAdmin: boolean;
 }
+

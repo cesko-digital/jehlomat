@@ -1,12 +1,12 @@
 import { FC, InputHTMLAttributes, useState } from 'react';
-import { grey } from '../../../utils/colors';
-import { default as MInput } from '@mui/material/TextField';
+import { default as MInput, TextFieldProps } from '@mui/material/TextField';
 import styled from '@emotion/styled';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconWrapper } from './TextInput.style';
+import { Label } from '../shared';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLInputElement>, Pick<TextFieldProps, 'multiline' | 'rows' | 'maxRows'> {
     label?: string;
     error?: string | undefined;
     fullWidth?: boolean;
@@ -14,24 +14,13 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
     width?: string;
 }
 
-const Label = styled.label`
-     {
-        color: ${grey};
-        display: block;
-        padding-bottom: 5px;
-        font-weight: bold;
-        font-family: 'Roboto';
-        font-size: 10pt;
-    }
-`;
-
 const Container = styled.div`
     width: 100%;
     position: relative;
 `;
 
 const TextInput: FC<Props> = props => {
-    const { type: propType, className } = props;
+    const { type: propType, className, multiline, rows, maxRows } = props;
     const [type, setType] = useState(propType || 'text');
 
     return (
@@ -56,6 +45,9 @@ const TextInput: FC<Props> = props => {
                         width: props.width,
                     },
                 }}
+                multiline={multiline}
+                rows={rows}
+                maxRows={maxRows}
             />
             {propType === 'password' && (
                 <IconWrapper onClick={() => setType(type === 'text' ? 'password' : 'text')}>

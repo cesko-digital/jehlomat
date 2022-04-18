@@ -1,9 +1,9 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
 import { white } from '../../../utils/colors';
-import Typography from '@mui/material/Typography/Typography';
+import Typography, { TypographyProps } from '@mui/material/Typography/Typography';
 
-interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement>, Pick<TypographyProps, 'fontSize' | 'textTransform'> {
     text: String;
 }
 
@@ -19,10 +19,12 @@ const Button = styled.button`
     margin-bottom: 10px;
 `;
 
-const TextButton: FC<ITextButton> = ({ text, ...props }) => {
+const TextButton: FC<ITextButton> = ({ text, color, fontSize,textTransform, ...props }) => {
     return (
         <Button {...props}>
-            <Typography sx={{ fontWeight: 'bold', lineHeight: '18px' }}>{text}</Typography>
+            <Typography
+                {...{fontSize, textTransform}}
+                sx={{ fontWeight: 'bold', lineHeight: '18px', color: color }}>{text}</Typography>
         </Button>
     );
 };

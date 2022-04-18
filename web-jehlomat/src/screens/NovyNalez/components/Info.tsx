@@ -1,35 +1,36 @@
 import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import Navigation from '../../../Components/Navigation/Navigation';
 import { primaryDark, white } from '../../../utils/colors';
-import { Header } from '../../../Components/Header/Header';
-import { STEPS } from '../NovyNalez';
-import whiteArrow from '../../../../src/assets/images/white-arrow.png';
+
+import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
+import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { useRecoilState } from 'recoil';
+import { newSyringeStepState } from 'screens/NovyNalez/components/store';
 
-interface iInfo {
-    handleStepChange: (newStep: STEPS) => void;
-}
+interface iInfo {}
 
 const Container = styled.div`
     display: flex;
     position: relative;
     flex-direction: column;
     height: 100%;
+
     @media (min-width: 700px) {
         flex-direction: row;
+        padding-bottom: 4rem;
     }
 `;
 interface iCard {
     backgroundColor: string;
 }
 
-const Card = styled.div<iCard>`
+export const Card = styled.div<iCard>`
     display: flex;
     position: relative;
     flex-direction: column;
@@ -38,6 +39,7 @@ const Card = styled.div<iCard>`
     background: ${props => props.backgroundColor};
     padding: 1rem 0rem;
     flex-grow: 1;
+
     @media (min-width: 700px) {
         padding: 1rem 0 0.5rem;
         &:last-child {
@@ -93,12 +95,22 @@ const Arrow = styled.img`
     }
 `;
 
-const Info: FC<iInfo> = ({ handleStepChange }) => {
+const Info: FC<iInfo> = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
+    const [firstRun, setFirstRun] = useState(true);
+
+    useEffect(() => {
+        // skip first step on desktop
+        if (!firstRun && !isMobile && currentStep === StepsEnum.Start) {
+            setCurrentStep(StepsEnum.Mapa);
+        }
+        setFirstRun(false);
+    }, [isMobile, currentStep, setCurrentStep, firstRun]);
+
     return (
         <>
-            <Header mobileTitle="Zadávaní nálezu" />
-            <Box minHeight={'100vh'}>
+            <Box minHeight={isMobile ? '100vh' : 0}>
                 <Container>
                     <Card backgroundColor="#BFE3E0">
                         <Icon>
@@ -123,13 +135,9 @@ const Info: FC<iInfo> = ({ handleStepChange }) => {
                         <Title>Úspěšné vložení nálezu</Title>
                         <MutedText>Nález bude profesionálně zlikvidován</MutedText>
                     </Card>
-                    {isMobile && (
-                        <Card backgroundColor="#EEF8F7">
-                            <PrimaryButton text="Zadat nález do mapy" onClick={() => handleStepChange(STEPS.Mapa)} />
-                        </Card>
-                    )}
-
-                    <Navigation></Navigation>
+                    <Card backgroundColor="#EEF8F7">
+                        <PrimaryButton text="Zadat nález do mapy" onClick={() => setCurrentStep(StepsEnum.Mapa)} />
+                    </Card>
                 </Container>
             </Box>
         </>

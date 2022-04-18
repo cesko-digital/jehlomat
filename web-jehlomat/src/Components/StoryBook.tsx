@@ -14,12 +14,12 @@ const Layout = styled.div`
     gap: 20px;
 `;
 
-const StoryBook: FC<StoryBook> = ({}) => {
+const StoryBook: FC<StoryBook> = () => {
     return (
         <Layout>
             <PrimaryButton onClick={_ => alert('PrimaryButton')} text="Primary" />
             <SecondaryButton onClick={_ => alert('SecondaryButton')} text="Secondary" />
-            <AddButton onClick={_ => alert('AddButton')} />
+            <AddButton onClick={() => alert('AddButton')} />
             <TextInput onChange={e => console.log(e.target.value)} />
             <SearchInput onChange={e => console.log(e.target.value)} />
         </Layout>

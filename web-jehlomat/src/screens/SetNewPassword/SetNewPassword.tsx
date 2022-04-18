@@ -1,4 +1,4 @@
-﻿import React, {FunctionComponent} from "react";
+import React, {FunctionComponent} from "react";
 import {useHistory} from "react-router-dom";
 import {useMediaQuery} from "@mui/material";
 import {Formik, FormikHelpers} from "formik";
@@ -49,40 +49,40 @@ const schema = yup.object({
 const ResetPassword: FunctionComponent = () => {
   const isDesktop = useMediaQuery(media.gt('mobile'));
   const history = useHistory();
-  
+
   const handleSubmit = async (values: ResetPasswordFormProps, { setErrors }: FormikHelpers<ResetPasswordFormProps>) => {
     try {
       const response: AxiosResponse = await API.post('/api/v1/jehlomat/change-password', values);
 
       const status = response.status;
       const isSuccess = status >= 200 && status < 300;
-      
+
       if (isSuccess) {
         history.push('/');
         return;
       }
 
-      if (response.data && 
-        typeof response.data === "object" && 
-        hasOwnProperty(response.data, "fieldName") && 
+      if (response.data &&
+        typeof response.data === "object" &&
+        hasOwnProperty(response.data, "fieldName") &&
         hasOwnProperty(response.data, "status")
       ) {
         const fieldName = response.data.fieldName as string;
-        setErrors({ 
+        setErrors({
           [fieldName]: response.data.status,
         });
-        
+
         return;
       }
 
       history.push('/');
     } catch (error: unknown) {
       console.warn("Unable to set a new password", error);
-      
+
       history.push('/error');
     }
   };
-  
+
   return (
     <>
       <Header mobileTitle={texts.MOBILE_TITLE} />
@@ -109,8 +109,8 @@ const ResetPassword: FunctionComponent = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.password}
-                    type="password"
                     name="password"
+                    type="password"
                     placeholder={texts.INPUT__PASS__PLACEHOLDER}
                     label={texts.INPUT__PASS__LABEL}
                     required={true}
