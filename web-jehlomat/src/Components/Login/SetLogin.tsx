@@ -19,13 +19,13 @@ export const SetLogin: FC = () => {
             // set token to authorized instance
             setApiToken(token);
 
-            const getUser = async (token: string) => {
-                const response: AxiosResponse<IUser> = await API.get('/api/v1/jehlomat/user/' + userId);
+            const getUser = async () => {
+                const response: AxiosResponse<IUser> = await API.get('/user/' + userId);
                 return response.data;
             };
 
             // fetch user and save to store
-            getUser(token)
+            getUser()
                 .then(user => {
                     setUser(user);
                 })
