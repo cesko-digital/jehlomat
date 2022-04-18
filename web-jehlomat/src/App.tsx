@@ -32,7 +32,6 @@ const Router: FC = () => (
                         <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
-                            <Component exact={exact} />
                         </Route>
                     );
                 }
