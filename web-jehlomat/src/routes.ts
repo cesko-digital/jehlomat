@@ -167,7 +167,7 @@ export const routes: Route[] = [
     {
         id: Routes.FINDINGS,
         Component: Nalezy,
-        path: `/${FINDINGS_URL_PATH}/`,
+        path: `/${FINDINGS_URL_PATH}`,
         AdditionalComponents: Layout,
     },
     {

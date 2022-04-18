@@ -9,7 +9,7 @@ export const Container = styled.div`
     position: relative;
     height: 60px;
     display: flex;
-    
+
     @media ${media.lte('mobile')} {
         height: 56px;
         width: 100%;
@@ -30,7 +30,7 @@ export const NavIcon = styled.div`
     width: 56px;
     position: absolute;
     right: 5px;
-    top: 0;
+    top: 10px;
 
     :hover {
         cursor: pointer;

@@ -1,39 +1,6 @@
-import { IUser as IPerson } from 'types';
+﻿import { SyringeReadModel } from './types/SyringeReadModel';
 
-export interface IListSyringe {
-    syringeList: ISyringe[];
-    pageInfo: {
-        index: number;
-        size: number;
-        hasMore: boolean;
-    };
-}
-
-export interface ILocation {
-    id: number;
-    okres: string;
-    obec: number;
-    mestkaCast: number;
-}
-
-export interface ISyringe {
-    id: string;
-    createdAt: number;
-    createdBy: IPerson;
-    reservedTill?: number;
-    reservedBy?: IPerson;
-    demolishedAt?: number;
-    demolishedBy?: IPerson;
-    photo?: string;
-    count: number;
-    note: string;
-    demolisher: string;
-    gps_coordinates: string;
-    demolished: boolean;
-    location: ILocation;
-}
-
-export const syringeMock: IListSyringe = {
+export const mock: SyringeReadModel = {
     syringeList: [
         {
             id: 'R4YFD1AC',
@@ -57,7 +24,7 @@ export const syringeMock: IListSyringe = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.22326399194605, 16.59743398061707',
             demolished: false,
             demolishedAt: 1639092279,
             demolishedBy: {
@@ -101,7 +68,7 @@ export const syringeMock: IListSyringe = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.199025530527344, 16.606748383444558',
             demolished: true,
             demolishedAt: 1639092279,
             demolishedBy: {
@@ -135,7 +102,7 @@ export const syringeMock: IListSyringe = {
                 teamId: 1,
                 isAdmin: true,
             },
-            gps_coordinates: '25.326,-31.265',
+            gps_coordinates: '49.204466102894855, 16.573198482117157',
             demolished: false,
             count: 1,
             note: 'note 1',
