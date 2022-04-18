@@ -18,6 +18,7 @@ const SetNewPassword = lazy(() => import('./screens/SetNewPassword/SetNewPasswor
 const Team = lazy(() => import('./screens/Team/Team'));
 const DekujemeUzivatel = lazy(() => import('./screens/RegistraceUzivatele/Dekujeme'));
 const SeznamUzivatelu = lazy(() => import('./screens/SeznamUzivatelu/SeznamUzivatelu'));
+const EditaceUzivatele = lazy(() => import('./screens/EditaceUzivatele/EditaceUzivatele'));
 const PridatUzivatele = lazy(() => import('./screens/RegistraceUzivatele/PridatUzivatele'));
 const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
@@ -32,6 +33,7 @@ export enum Routes {
     LOGIN = 'LOGIN',
     USER = 'USER',
     USER_NEW = 'USER_NEW',
+    USER_EDIT = 'USER_EDIT',
     USER_VALIDATION = 'USER_VALIDATION',
     USER_REGISTRATION = 'USER_REGISTRATION',
     USER_THANK_YOU = 'USER_THANK_YOU',
@@ -98,6 +100,13 @@ export const routes: Route[] = [
         title: 'Přidat uživatele',
     },
     {
+        id: Routes.USER_EDIT,
+        Component: EditaceUzivatele,
+        path: `/${USER_URL_PATH_}/upravit/:userId`,
+        protectedRoute: true,
+        title: 'Editace uživatele',
+    },
+    {
         id: Routes.USER_VALIDATION,
         Component: OvereniEmailu,
         path: `/${USER_URL_PATH_}/validace`,
@@ -106,8 +115,8 @@ export const routes: Route[] = [
         id: Routes.USER_REGISTRATION,
         Component: RegistraceUzivatele,
         path: `/${USER_URL_PATH_}/registrace`,
-        protectedRoute:true,
-        from: true
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.USER_THANK_YOU,
