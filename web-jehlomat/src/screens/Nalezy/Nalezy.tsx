@@ -13,12 +13,11 @@ import {
     ListItem,
     ListItemCell,
     SyringeIcon,
-    EditIcon,
     CheckboxRadio,
     TextMuted,
     TextMutedBold,
     TextGold,
-    TextHighlight, Links, ActionLink,
+    TextHighlight, Links, ActionLink, RoundButton, SortableListHeaderItem
 } from './NalezyStyles';
 import { Header } from 'Components/Header/Header';
 import SearchInput from 'Components/Inputs/SearchInput/SearchInput';
@@ -27,6 +26,10 @@ import { media } from 'utils/media';
 import {IListSyringe, ISyringe, syringeMock} from './syringeMock';
 import { API } from "config/baseURL";
 import {AxiosResponse} from "axios";
+import { ReactComponent as SyringeCrossedIcon } from 'assets/icons/crossed-syringe.svg';
+import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
+import { ReactComponent as DeleteIcon } from 'assets/icons/delete.svg';
+import {ZoomIcon, Input, Select, Filter, Filters} from "./Components/Filter";
 
 dayjs().format();
 
@@ -41,14 +44,8 @@ interface Order {
     direction: "ASC" | "DESC";
 }
 
-const swapOrder = (order: Order): Order => {
-    if (order.direction === "ASC") return { ...order, direction: "DESC" };
-
-    return { ...order, direction: "ASC" };
-};
-
 const NavodLikvidace: FC = () => {
-    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [syringes, setSyringes] = useState(syringeMock.syringeList);
@@ -76,18 +73,43 @@ const NavodLikvidace: FC = () => {
         load().then(data => console.log("Loaded!", data)).catch(e => console.warn(e));
     }, [ order ]);
     
+    useEffect(() => { console.log(selected); }, [ selected ]);
+    
     const handleSort = (column: SortableColumn) => () => {
+        // Order by order: void -> ASC -> DESC -> void
         setOrder(state => {
             const exists = state.find(o => o.column === column);
-            if (exists) return state.map(o => o.column === column ? swapOrder(o) : o);
+            console.log(exists, state);
+            if (exists) {
+                const filtered = [ ...state.filter(o => o.column !== column) ];
+                if (exists.direction === "ASC") {
+                    return [ ...filtered, ({ column: column, direction: "DESC" }) ];
+                }
+                
+                return filtered;
+            }
             
             return [ ...state, ({ column: column, direction: "ASC" }) ];
         });
     };
 
-    const handleOpenActions = (syringe: ISyringe) => (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleOpenActions = (syringe: ISyringe) => (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
         setEdit(syringe);
+    };
+    
+    const handleSelect = (syringe: ISyringe) => () => setSelected(state => {
+        const i = state.find(s => s.id === syringe.id);
+        if (i) return [ ...state.filter(s => s.id !== syringe.id) ];
+        
+        return [ ...state, syringe ];
+    });
+    
+    const direction = (column: SortableColumn): "ASC" | "DESC" | undefined => {
+        const current = order.find(o => o.column === column);
+        if (!current) return undefined;
+        
+        return current.direction;
     };
 
     return (
@@ -118,17 +140,35 @@ const NavodLikvidace: FC = () => {
                         <Button>Exportovat vybrané</Button>
                     </Controls>
                 </Grid>
+                <Filters>
+                    <Filter title="Lokalita">
+                        <Input><ZoomIcon /></Input>
+                    </Filter>
+                    <Filter title="Období">
+                        <Input><ZoomIcon /></Input>
+                    </Filter>
+                    <Filter title="Zadavatel nálezu">
+                        <Input><ZoomIcon /></Input>
+                    </Filter>
+                    <Filter title="Stav">
+                        <Select>
+                            <option>Zlikvidováno</option>
+                            <option>Čeká na likvidaci</option>
+                            <option>Rezervováno TP</option>
+                        </Select>
+                    </Filter>
+                </Filters>
                 <Box mt={2}>
                     <ListWrapper>
                         <thead>
                             <ListHeader>
                                 <ListHeaderItem />
                                 <ListHeaderItem />
-                                <ListHeaderItem onClick={handleSort("TOWN")}>Město</ListHeaderItem>
+                                <SortableListHeaderItem direction={direction("TOWN")} onClick={handleSort("TOWN")}>Město</SortableListHeaderItem>
                                 <ListHeaderItem>Název</ListHeaderItem>
-                                <ListHeaderItem onClick={handleSort("CREATED_AT")}>Datum nálezu</ListHeaderItem>
-                                <ListHeaderItem onClick={handleSort("DEMOLISHED_AT")}>Datum likvidace</ListHeaderItem>
-                                <ListHeaderItem onClick={handleSort("CREATED_BY")}>Zadavatel</ListHeaderItem>
+                                <SortableListHeaderItem direction={direction("CREATED_AT")} onClick={handleSort("CREATED_AT")}>Datum nálezu</SortableListHeaderItem>
+                                <SortableListHeaderItem direction={direction("DEMOLISHED_AT")} onClick={handleSort("DEMOLISHED_AT")}>Datum likvidace</SortableListHeaderItem>
+                                <SortableListHeaderItem direction={direction("CREATED_BY")} onClick={handleSort("CREATED_BY")}>Zadavatel</SortableListHeaderItem>
                                 <ListHeaderItem>Stav</ListHeaderItem>
                                 <ListHeaderItem />
                             </ListHeader>
@@ -175,7 +215,9 @@ const NavodLikvidace: FC = () => {
                                         )}
                                     </ListItemCell>
                                     <ListItemCell syringe={item}>
-                                        <EditIcon onClick={handleOpenActions(item)} />
+                                        <RoundButton onClick={handleOpenActions(item)}>
+                                            <EditIcon />
+                                        </RoundButton>
                                         <Popper
                                             open={Boolean(anchorEl)}
                                             anchorEl={anchorEl}
@@ -184,16 +226,31 @@ const NavodLikvidace: FC = () => {
                                             <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
                                                 <Links>
                                                     <ul>
-                                                        <li><ActionLink to="/">Zlikvidovat nález</ActionLink></li>
-                                                        <li><ActionLink to="/">Upravit</ActionLink></li>
-                                                        <li><ActionLink to="/">Smazat</ActionLink></li>
+                                                        <li>
+                                                            <ActionLink to="/">
+                                                                <span>Zlikvidovat nález</span>
+                                                                <SyringeCrossedIcon style={{ width: "24px", height: "24px" }} />
+                                                            </ActionLink>
+                                                        </li>
+                                                        <li>
+                                                            <ActionLink to="/">
+                                                                <span>Upravit</span>
+                                                                <EditIcon style={{ width: "20px", height: "20px" }} />
+                                                            </ActionLink>
+                                                        </li>
+                                                        <li>
+                                                            <ActionLink to="/">
+                                                                <span>Smazat</span>
+                                                                <DeleteIcon style={{ width: "24px", height: "24px" }} />
+                                                            </ActionLink>
+                                                        </li>
                                                     </ul>
                                                 </Links>
                                             </ClickAwayListener>
                                         </Popper>
                                     </ListItemCell>
                                     <ListItemCell syringe={item}>
-                                        <CheckboxRadio type="checkbox" />
+                                        <CheckboxRadio type="checkbox" onChange={handleSelect(item)} />
                                     </ListItemCell>
                                 </ListItem>
                             ))}

@@ -1,0 +1,11 @@
+﻿<svg width="24" height="27" viewBox="0 0 24 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15.8066 8.81799V20.7569H8.38255V8.81799C8.38255 8.46639 8.52857 8.12919 8.78848 7.88057C9.0484 7.63194 9.40092 7.49227 9.76849 7.49227H14.4051C14.5884 7.4903 14.7703 7.52314 14.9403 7.58888C15.1102 7.65462 15.2649 7.75196 15.3952 7.87526C15.5256 7.99856 15.6291 8.14537 15.6997 8.3072C15.7703 8.46902 15.8067 8.64263 15.8066 8.81799Z" fill="white" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M13.8711 7.49601V3.854H10.5153V7.49601H13.8711Z" fill="white" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M12.1396 0V3.85427" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M18.2048 20.772H6" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M16.0278 25.7358H8.37793" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M13.813 20.772H10.4883V25.736H13.813V20.772Z" fill="white" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M11.652 16.501H8.37793" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M11.9167 12.2593H8.37793" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+    <line x1="0.681559" y1="22.6145" x2="23.6816" y2="3.61452" stroke="currentColor"/>
+</svg>

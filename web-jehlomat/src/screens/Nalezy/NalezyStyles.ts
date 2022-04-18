@@ -10,7 +10,6 @@ import {
     textGold,
 } from '../../utils/colors';
 import Syringe from '../../assets/images/syringe.svg';
-import Edit from '../../assets/images/edit.svg';
 import {ISyringe} from "./syringeMock";
 import {NavLink} from "react-router-dom";
 
@@ -37,7 +36,7 @@ export const Button = styled.button`
     
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 4px rgba(14, 118, 108, 0.2);
+        box-shadow: 0 0 0 2px rgba(14, 118, 108, 0.2);
     }
 `;
 
@@ -59,6 +58,7 @@ export const Links = styled.nav`
     box-shadow: 0 6px 12px rgb(0 0 0 / 10%);
     margin: 0;
     padding: 0;
+    width: 192px;
     
     & > ul {
         margin: 0;
@@ -96,13 +96,19 @@ export const ActionLink = styled(NavLink)`
     color: rgba(76, 78, 80, 1);
     display: flex;
     height: 44px;
-    padding: 0 12px;
+    justify-content: space-between;
     margin: 0;
+    padding: 0 12px;
     text-decoration: none;
+    transition: all 300ms;
     
     &:hover {
         background: rgba(218, 218, 218, 0.5);
         color: rgba(76, 78, 80, 0.7);
+    }
+    
+    svg {
+        display: inline-block;
     }
 `;
 
@@ -136,6 +142,41 @@ export const ListHeaderItem = styled.th`
     letter-spacing: 0.15px;
     color: #808285;
     text-align: left;
+    padding-right: 12px;
+    position: relative;
+`;
+
+interface SortableProps {
+    direction?: "ASC" | "DESC";
+}
+
+const order = (props: SortableProps) => {
+    if (props.direction === "ASC") {
+        return "PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDYgMTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zIDBMNS41OTgwOCA0LjVIMC40MDE5MjRMMyAwWiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KPHBhdGggZD0iTTMgMTNMMC40MDE5MjQgOC41SDUuNTk4MDhMMyAxM1oiIGZpbGw9IiMwRTc2NkMiLz4KPC9zdmc+";
+    }
+    
+    if (props.direction === "DESC") {
+        return "PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDYgMTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zIDBMNS41OTgwOCA0LjVIMC40MDE5MjRMMyAwWiIgZmlsbD0iIzBFNzY2QyIvPgo8cGF0aCBkPSJNMyAxM0wwLjQwMTkyNCA4LjVINS41OTgwOEwzIDEzWiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KPC9zdmc+";
+    }
+    
+    return "PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDYgMTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zIDBMNS41OTgwOCA0LjVIMC40MDE5MjRMMyAwWiIgZmlsbD0iIzBFNzY2QyIvPgo8cGF0aCBkPSJNMyAxM0wwLjQwMTkyNCA4LjVINS41OTgwOEwzIDEzWiIgZmlsbD0iIzBFNzY2QyIvPgo8L3N2Zz4=";
+};
+
+export const SortableListHeaderItem = styled(ListHeaderItem)<SortableProps>`
+    cursor: pointer;
+    user-select: none;
+    
+    &:after {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 14px;
+        position: relative;
+        top: 4px;
+        left: 4px;
+        background-image: url('data:image/svg+xml;base64,${order}');
+        background-repeat: no-repeat;
+    }
 `;
 
 export const ListItem = styled.tr`
@@ -201,11 +242,23 @@ export const SyringeIcon = styled.div`
     height: 27px;
 `;
 
-export const EditIcon = styled.div`
-    background-image: url(${Edit});
-    width: 18px;
-    height: 18px;
+export const RoundButton = styled.button`
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: rgba(128, 130, 133, 1);
+    display: inline-flex;
+    height: 32px;
+    justify-content: center;
+    outline: none;
+    width: 32px;
+    
+    &:focus {
+        outline: none;
+    }
 `;
+
 export const TextMuted = styled.span`
     color: ${darkGrey};
 `;
