@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS public.syringes CASCADE;
 DROP TABLE IF EXISTS public.team_locations CASCADE;
+DROP TABLE IF EXISTS public.password_resets CASCADE;
 DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.organizations CASCADE;
@@ -62,6 +63,18 @@ CREATE TABLE public.users(
         REFERENCES organizations(organization_id),
     CONSTRAINT fk_team FOREIGN KEY(team_id)
         REFERENCES teams(team_id)
+);
+
+CREATE TABLE public.password_resets(
+    password_reset_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    code TEXT,
+    caller_ip TEXT,
+    request_time BIGINT,
+    status INT,
+
+    CONSTRAINT fk_reset_user FOREIGN KEY(user_id)
+        REFERENCES users(user_id)
 );
 
 CREATE TABLE public.syringes(

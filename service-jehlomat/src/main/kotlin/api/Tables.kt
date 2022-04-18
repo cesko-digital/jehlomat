@@ -1,6 +1,8 @@
 package api
 
 import model.*
+import model.password.PasswordReset
+import model.password.PasswordResetStatus
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.*
 
@@ -36,7 +38,6 @@ open class UserTable(alias: String?) : Table<Nothing>("users", alias) {
     val password = varchar("password")
     val verified = boolean("verified")
     val verificationCode = varchar("verification_code")
-    val passResetUrlCode = varchar("pass_reset_url_code")
     val organizationId = int("organization_id")
     val teamId = int("team_id")
     val isAdmin = boolean("is_admin")
@@ -79,6 +80,23 @@ object TeamLocationTable: Table<Nothing>("team_locations") {
     val locationId = int("location_id")
 }
 
+object PasswordResetTable: BaseTable<PasswordReset>("password_resets") {
+    val passwordResetId = int("password_reset_id").primaryKey()
+    val userId = int("user_id")
+    val code = varchar("code")
+    val callerIp = varchar("caller_ip")
+    val requestTime = long("request_time")
+    val status = int("status")
+
+    override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = PasswordReset(
+        id = row[passwordResetId]!!,
+        userId = row[userId]!!,
+        code = row[code]!!,
+        callerIp = row[callerIp]!!,
+        requestTime = row[requestTime]!!,
+        status = PasswordResetStatus.valueOf(row[status]!!)
+    )
+}
 
 object MCTable: Table<Nothing>("sph_mc") {
     val ogc_fid = int("ogc_fid").primaryKey()

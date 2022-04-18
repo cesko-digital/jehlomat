@@ -57,7 +57,6 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                             password = "",
                             verified = false,
                             verificationCode = verificationCode,
-                            passResetUrlCode = "",
                             organizationId = loggedInUser.organizationId,
                             teamId = null,
                             isAdmin = false

@@ -1,4 +1,5 @@
 package services
+import api.UserTable.Companion.verificationCode
 import com.mailjet.client.errors.MailjetException
 import com.mailjet.client.MailjetClient
 import com.mailjet.client.MailjetRequest
@@ -36,7 +37,7 @@ class FakeMailer: MailerService {
         println("sendSyringeFinding")
     }
     override fun sendPassResetEmail(email: String, resetUrlCode: String) {
-        println("sendPassResetEmail email: " + email + ", code: " + resetUrlCode)
+        println("sendPassResetEmail email: $email, code: $resetUrlCode")
     }
 }
 
@@ -171,22 +172,16 @@ class Mailer: MailerService {
 
     @Throws(MailjetException::class)
     override fun sendPassResetEmail(email: String, resetUrlCode: String) {
-        println("sendPassResetEmail TODO")
-        // TODO: update this
-
-        // val request = MailjetRequest(Emailv31.resource)
-        //     .property(
-        //         Emailv31.MESSAGES, prepareBodyWithLink(
-        //             3222932,
-        //             "Potvrzení zaznamenání nálezu",
-        //             "${publicUrl}api/v1/jehlomat/syringe/$syringeId/info",
-        //             email,
-        //             ""
-        //         )
-        //     )
-        // val response: MailjetResponse = client.post(request)
-
-        // println(response.status)
-        // println(response.data)
+         val request = MailjetRequest(Emailv31.resource)
+             .property(
+                 Emailv31.MESSAGES, prepareBodyWithLink(
+                     3222932, // TODO template id
+                     "Požadavek na reset hesla",
+                     "${publicUrl}uzivatel/heslo/?email=${email}&code=${resetUrlCode}",
+                     email,
+                     ""
+                 )
+             )
+         client.post(request)
     }
 }

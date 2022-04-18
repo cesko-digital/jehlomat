@@ -1,13 +1,14 @@
 package services
 
 import api.*
-import kotlinx.html.ThScope
 import model.*
 import model.exception.UnknownLocationException
 import model.location.*
 import model.pagination.OrderByDefinition
 import model.pagination.PageInfo
 import model.pagination.toDsl
+import model.password.PasswordReset
+import model.password.PasswordResetStatus
 import model.syringe.SyringeFilter
 import model.syringe.OrderBySyringeColumn
 import model.team.Team
@@ -98,7 +99,6 @@ class DatabaseService(
             password = row[UserTable.password]!!,
             verified = row[UserTable.verified]!!,
             verificationCode = row[UserTable.verificationCode]!!,
-            passResetUrlCode = row[UserTable.passResetUrlCode]!!,
             organizationId = row[UserTable.organizationId]!!,
             teamId = row[UserTable.teamId],
             isAdmin = row[UserTable.isAdmin]!!
@@ -342,10 +342,46 @@ class DatabaseService(
         builder.set(it.username, user.username)
         builder.set(it.verified, user.verified)
         builder.set(it.verificationCode, user.verificationCode)
-        builder.set(it.passResetUrlCode, user.passResetUrlCode)
         builder.set(it.organizationId, user.organizationId)
         builder.set(it.teamId, user.teamId)
         builder.set(it.isAdmin, user.isAdmin)
+    }
+
+    fun insertPasswordReset(passwordReset: PasswordReset): Int {
+        return databaseInstance.insertAndGenerateKey(PasswordResetTable) {
+            set(it.userId, passwordReset.userId)
+            set(it.code, passwordReset.code)
+            set(it.callerIp, passwordReset.callerIp)
+            set(it.requestTime, passwordReset.requestTime)
+            set(it.status, passwordReset.status.code)
+        } as Int
+    }
+
+    fun invalidateOldPassResets(userId: Int) {
+        databaseInstance.update(PasswordResetTable) {
+            set(it.status, PasswordResetStatus.OLDER.code)
+            where {
+                (it.status eq PasswordResetStatus.NEW.code) and (it.userId eq userId)
+            }
+        }
+    }
+
+    fun updatePasswordResetStatus(id: Int, status: PasswordResetStatus) {
+        databaseInstance.update(PasswordResetTable) {
+            set(it.status, status.code)
+            where {
+                it.passwordResetId eq id
+            }
+        }
+    }
+
+    fun selectPasswordReset(code: String): PasswordReset? {
+        return databaseInstance
+            .from(PasswordResetTable)
+            .select()
+            .where { PasswordResetTable.code eq code }
+            .map { row -> PasswordResetTable.createEntity(row) }
+            .firstOrNull()
     }
 
     fun selectOrganizationById(id: Int): Organization? {
