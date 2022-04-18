@@ -39,7 +39,6 @@ const Team = () => {
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
     const token = useRecoilValue(tokenState);
-    console.log("TOKEN", token);
 
     const removeLocation = (item: any)=>{
         const data = selectedLocation;
@@ -56,6 +55,12 @@ const Team = () => {
         });
         setSelectedMembers([...data]);
     }
+
+    function knock(arr: Array<any>,val: any){ 
+        _.pull(arr,val);
+        arr.push(val)
+        return arr;
+     }
 
 
     useEffect(() => {
@@ -130,10 +135,8 @@ const Team = () => {
                                         name="location"
                                         value={values.location}
                                         onChange={(event) => {
-                                            console.log(event.target.value)
                                             handleChange(event);
-                                            const data = selectedLocation;
-                                            data.push(event.target.value);
+                                            const data = knock(selectedLocation, event.target.value);
                                             setSelectedLocation(data);
                                         }}
                                     >
@@ -156,8 +159,7 @@ const Team = () => {
                                         label="Vyberte členy týmu"
                                         onChange={(event) => {
                                             handleChange(event);
-                                            const data = selectedMembers;
-                                            data.push(event.target.value);
+                                            const data = knock(selectedMembers, event.target.value);
                                             setSelectedMembers(data);
                                         }}
                                     >
