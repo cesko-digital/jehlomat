@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { LinearProgress } from '@mui/material';
 
 const Loading = styled(LinearProgress)({

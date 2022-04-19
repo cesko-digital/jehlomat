@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L, { Icon, LatLngTuple } from 'leaflet';
 import { styled } from '@mui/system';

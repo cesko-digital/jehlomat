@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { ReactComponent as Empty } from 'assets/images/empty-state.svg';
 import { styled } from '@mui/system';
 import { Bold, TextHighlight, TextMuted } from './Text';

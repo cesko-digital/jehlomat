@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { Container } from '@mui/material';
 
 const HorizontalContainer = styled(Container)(({ theme }) => ({

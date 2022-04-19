@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useCallback, useState } from 'react';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { styled } from '@mui/system';
 import { Box } from '@mui/material';
 import { AxiosResponse } from 'axios';
@@ -57,7 +57,7 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe, onDelete }) => {
                 onDelete();
             })
             .catch(e => console.warn(e));
-    }, [syringe]);
+    }, [syringe, onDelete]);
 
     return (
         <>

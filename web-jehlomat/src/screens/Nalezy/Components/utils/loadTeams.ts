@@ -1,4 +1,4 @@
-﻿import {AxiosResponse} from "axios";
+import {AxiosResponse} from "axios";
 import {API} from 'config/baseURL';
 
 export interface Team {

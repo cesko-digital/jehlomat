@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { TextGold, TextHighlight, TextMuted } from 'screens/Nalezy/Components/Text';
 

@@ -1,14 +1,14 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { SortDirection } from 'screens/Nalezy/types/SortDirection';
 import Heading from 'screens/Nalezy/Components/Heading';
 
-interface SortableHeading {
+interface SortableHeadingProps {
     direction?: SortDirection;
 }
 
 const SortableHeading = styled(Heading, {
     shouldForwardProp: prop => prop !== 'direction',
-})<SortableHeading>(props => ({
+})<SortableHeadingProps>(props => ({
     cursor: 'pointer',
     userSelect: 'none',
 
@@ -25,7 +25,7 @@ const SortableHeading = styled(Heading, {
     },
 }));
 
-const order = (props: SortableHeading) => {
+const order = (props: SortableHeadingProps) => {
     if (props.direction === 'ASC') {
         return 'PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDYgMTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zIDBMNS41OTgwOCA0LjVIMC40MDE5MjRMMyAwWiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KPHBhdGggZD0iTTMgMTNMMC40MDE5MjQgOC41SDUuNTk4MDhMMyAxM1oiIGZpbGw9IiMwRTc2NkMiLz4KPC9zdmc+';
     }

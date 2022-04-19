@@ -1,4 +1,4 @@
-﻿import { Range } from './Range';
+import { Range } from './Range';
 import { ReporterType } from './ReporterType';
 
 export interface Filtering {

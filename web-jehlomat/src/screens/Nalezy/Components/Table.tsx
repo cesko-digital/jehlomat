@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Container } from '@mui/material';
 import { styled } from '@mui/system';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
