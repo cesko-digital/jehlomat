@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import useFindingsFilter from 'screens/Nalezy/hooks/useFindingsFilter';
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
