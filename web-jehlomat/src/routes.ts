@@ -154,6 +154,7 @@ export const routes: Route[] = [
         id: Routes.TEAM,
         Component: Team,
         path: '/team/novy',
+        protectedRoute: true,
     },
     {
         id: Routes.PROFILE,
