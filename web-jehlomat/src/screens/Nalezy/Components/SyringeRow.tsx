@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { styled } from '@mui/system';
 import { Syringe } from 'screens/Nalezy/types/Syringe';

@@ -1,4 +1,4 @@
-﻿import { SyringeReadModel } from './types/SyringeReadModel';
+import { SyringeReadModel } from './types/SyringeReadModel';
 
 export const mock: SyringeReadModel = {
     syringeList: [

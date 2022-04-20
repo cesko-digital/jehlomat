@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState } from 'store/user';
 import { Filter } from './Filter';

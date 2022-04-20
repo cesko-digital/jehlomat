@@ -1,4 +1,4 @@
-﻿import { Syringe } from './Syringe';
+import { Syringe } from './Syringe';
 
 export interface SyringeReadModel {
     syringeList: Syringe[];

@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import Loading from './Loading';
 
 const LoadingState: FunctionComponent = () => (

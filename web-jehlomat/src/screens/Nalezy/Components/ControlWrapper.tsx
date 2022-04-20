@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 
 const GREEN = 'rgba(14, 118, 108, 1)';
 const GREEN_LIGHT = 'rgba(14, 118, 108, 0.2)';

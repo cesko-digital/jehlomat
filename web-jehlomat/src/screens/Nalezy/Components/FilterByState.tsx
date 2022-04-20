@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { SyringeState } from '../types/SyringeState';
 import { Filter } from './Filter';
 import Select from './Select';

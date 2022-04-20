@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 
 const DarkButton = styled('button')({
     background: 'rgba(14, 118, 108, 1)',
