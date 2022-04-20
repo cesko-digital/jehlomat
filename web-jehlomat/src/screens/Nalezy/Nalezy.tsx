@@ -2,7 +2,6 @@
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
-import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
@@ -21,13 +20,8 @@ import Map from 'screens/Nalezy/Components/Map';
 import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
+import Page from 'screens/Nalezy/Components/Page';
 import { mock } from 'screens/Nalezy/__mock';
-
-const Page = styled('div')({
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-});
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});

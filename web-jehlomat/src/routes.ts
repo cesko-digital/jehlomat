@@ -8,6 +8,7 @@ const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalezContainer'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/OrganizationEdit'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
+const Detail = lazy(() => import('./screens/Nalezy/Detail'));
 const NahlasitNalezPolicii = lazy(() => import('./screens/NovyNalez/screens/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
@@ -42,6 +43,7 @@ export enum Routes {
     PROFILE = 'PROFILE',
     NEW_FIND = 'NEW_FIND',
     FINDINGS = 'FINDINGS',
+    FINDING_DETAILS = 'FINDING_DETAILS',
     FINDINGS_NOTIFY_POLICE = 'FINDINGS_NOTIFY_POLICE',
     ERROR = 'ERROR',
     TRACKING_FIND = 'TRACKING_FIND',
@@ -168,6 +170,13 @@ export const routes: Route[] = [
         id: Routes.FINDINGS_NOTIFY_POLICE,
         Component: NahlasitNalezPolicii,
         path: `/${FINDINGS_URL_PATH}/nahlasit-nalez-policii`,
+        AdditionalComponents: Layout,
+    },
+    {
+        id: Routes.FINDING_DETAILS,
+        Component: Detail,
+        path: `/${FINDINGS_URL_PATH}/:id`,
+        exact: true,
         AdditionalComponents: Layout,
     },
     {

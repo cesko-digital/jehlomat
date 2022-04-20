@@ -1,5 +1,5 @@
 ﻿import React, { FunctionComponent, useEffect } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L, { Icon, LatLngTuple } from 'leaflet';
 import { styled } from '@mui/system';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
@@ -10,6 +10,7 @@ import { Loader } from 'screens/Nalezy/types/Loader';
 import Loading from 'screens/Nalezy/Components/Loading';
 import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';
+import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 
 import 'leaflet/dist/leaflet.css';
 import gray from 'assets/pins/pin-gray.svg';
@@ -21,11 +22,6 @@ interface MapProps {
     loader: Loader<SyringeReadModel>;
     onUpdate: () => void;
 }
-
-const LeafletMap = styled(MapContainer)({
-    flexGrow: 1,
-    outline: 'none',
-});
 
 const PopupMenu = styled(Popup)({
     '& > .leaflet-popup-content-wrapper': {
