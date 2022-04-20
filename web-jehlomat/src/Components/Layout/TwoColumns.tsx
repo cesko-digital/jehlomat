@@ -9,7 +9,6 @@ export interface TwoColumnsProps {
 const StretchedContainer = styled(Container)({
     display: 'flex',
     flexGrow: 1,
-    background: 'greenyellow',
 });
 
 const TwoColumns: FunctionComponent<TwoColumnsProps> = ({ left, right }) => {
