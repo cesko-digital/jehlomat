@@ -41,19 +41,33 @@ const Router: FC = () => (
     </HashRouter>
 );
 
-const App: FC = ({ children }) => {
+const Providers: FC = ({ children }) => {
     const modalRef = useRef<ConfirmationModal | null>(null);
+    return (
+        <RecoilRoot>
+            <ConfirmationModalProvider modalRef={modalRef}>
+                <ThemeProvider theme={theme}>
+                    <LocalizationProvider dateAdapter={DateAdapter} locale={csLocale}>
+                        <RecoilRoot>
+                            {children}
+                            <ConfirmationModal ref={modalRef} />
+                        </RecoilRoot>
+                    </LocalizationProvider>
+                </ThemeProvider>
+            </ConfirmationModalProvider>
+        </RecoilRoot>
+    );
+};
+
+const App: FC = ({ children }) => {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <RecoilRoot>
-                    <ConfirmationModalProvider modalRef={modalRef}>
-                        <LoginAlert />
-                        <Router />
-                        <SetLogin />
-                        <ConfirmationModal ref={modalRef} />
-                    </ConfirmationModalProvider>
-                </RecoilRoot>
+                <Providers>
+                    <LoginAlert />
+                    <Router />
+                    <SetLogin />
+                </Providers>
             </Box>
         </Suspense>
     );

@@ -65,7 +65,8 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
         if (files.length) {
             resizeFiles();
         }
-    }, [files, onChange]);
+
+    }, [files]);
 
     return (
         <>
