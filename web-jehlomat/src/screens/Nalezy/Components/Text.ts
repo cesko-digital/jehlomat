@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { darkGrey, primaryDark, textGold } from 'utils/colors';
 
 export const TextMuted = styled('span')({

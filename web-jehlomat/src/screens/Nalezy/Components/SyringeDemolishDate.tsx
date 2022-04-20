@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import dayjs from 'dayjs';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { TextMuted } from 'screens/Nalezy/Components/Text';

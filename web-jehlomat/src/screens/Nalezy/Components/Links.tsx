@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { styled } from '@mui/system';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import ActionLink from 'screens/Nalezy/Components/ActionLink';

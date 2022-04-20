@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import bg from 'screens/Nalezy/Components/utils/bg';
 import highlight from 'screens/Nalezy/Components/utils/highlight';

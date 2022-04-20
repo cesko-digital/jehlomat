@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { Checkbox as MuiCheckbox } from '@mui/material';
 
 const Checkbox = styled(MuiCheckbox)({
