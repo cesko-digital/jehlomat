@@ -128,6 +128,32 @@ class TeamTest {
                 id = actualTeam.id,
                 locations = listOf(LOCATION1.copy(id = actualLocationId1), LOCATION2.copy(id = actualLocationId2))
             ), actualTeam)
+
+            assertEquals(
+                """{
+  "id" : """ + actualTeam.id + """,
+  "name" : "ceska jehlova",
+  "locations" : [ {
+    "id" : """ + actualLocationId1 + """,
+    "okres" : """" + LOCATION1.okres + """",
+    "okresName" : """" + LOCATION1.okresName + """",
+    "obec" : """ + LOCATION1.obec + """,
+    "obecName" : """ + LOCATION1.obecName + """,
+    "mestkaCast" : """ + LOCATION1.mestkaCast + """,
+    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
+  }, {
+    "id" : """ + actualLocationId2 + """,
+    "okres" : """" + LOCATION2.okres + """",
+    "okresName" : """" + LOCATION2.okresName + """",
+    "obec" : """ + LOCATION2.obec + """,
+    "obecName" : """" + LOCATION2.obecName + """",
+    "mestkaCast" : """ + LOCATION2.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION2.mestkaCastName + """"
+  } ],
+  "organizationId" : """ + defaultOrgId + """
+}""",
+                response.content
+            )
         }
     }
 
