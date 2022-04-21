@@ -15,7 +15,7 @@ interface MailerService {
     fun sendOrganizationConfirmationEmail(organization: Organization, adminEmail: String)
     fun sendSyringeFindingConfirmation(email: String, syringeId: String)
     fun sendSyringeFinding(organization: Organization, email: String, syringeId: String)
-    fun sendPassResetEmail(email: String, resetUrlCode: String)
+    fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String)
 }
 
 
@@ -36,8 +36,8 @@ class FakeMailer: MailerService {
     override fun sendSyringeFinding(organization: Organization, email: String, syringeId: String) {
         println("sendSyringeFinding")
     }
-    override fun sendPassResetEmail(email: String, resetUrlCode: String) {
-        println("sendPassResetEmail email: $email, code: $resetUrlCode")
+    override fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String) {
+        println("sendPassResetEmail email: $email, id: $userId, code: $resetUrlCode")
     }
 }
 
@@ -171,13 +171,13 @@ class Mailer: MailerService {
     }
 
     @Throws(MailjetException::class)
-    override fun sendPassResetEmail(email: String, resetUrlCode: String) {
+    override fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String) {
          val request = MailjetRequest(Emailv31.resource)
              .property(
                  Emailv31.MESSAGES, prepareBodyWithLink(
-                     3222932, // TODO template id
+                     3884047,
                      "Požadavek na reset hesla",
-                     "${publicUrl}uzivatel/heslo/?email=${email}&code=${resetUrlCode}",
+                     "${publicUrl}uzivatel/heslo/?userId=${userId}&code=${resetUrlCode}",
                      email,
                      ""
                  )

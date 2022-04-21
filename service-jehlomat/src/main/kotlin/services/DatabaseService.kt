@@ -384,6 +384,14 @@ class DatabaseService(
             .firstOrNull()
     }
 
+    fun selectPasswordResets(): List<PasswordReset> {
+        return databaseInstance
+            .from(PasswordResetTable)
+            .select()
+            .orderBy(PasswordResetTable.passwordResetId.asc())
+            .map{ row -> PasswordResetTable.createEntity(row) }
+    }
+
     fun selectOrganizationById(id: Int): Organization? {
         return databaseInstance
             .from(OrganizationTable)
@@ -762,7 +770,7 @@ class DatabaseService(
             .select(dbTriple.second)
             .where(dbTriple.third)
             .map { row -> row.getString(1)}
-            .firstOrNull()
+            .firstOrNull()?: throw UnknownLocationException("Unknown RUIAN location ${type}:${id}.")
     }
 
     fun resolveNearestTeam(gpsCoordinates: String): Team? {
@@ -797,6 +805,10 @@ class DatabaseService(
 
     fun cleanUsers(): Int {
         return databaseInstance.deleteAll(UserTable)
+    }
+
+    fun cleanPasswordResets(): Int {
+        return databaseInstance.deleteAll(PasswordResetTable)
     }
 
     fun cleanOrganizations(): Int {

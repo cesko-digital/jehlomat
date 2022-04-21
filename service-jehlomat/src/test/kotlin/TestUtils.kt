@@ -23,6 +23,7 @@ class TestUtils {
             every { mailer.sendOrganizationConfirmationEmail(any(), any()) } returns Unit
             every { mailer.sendSyringeFindingConfirmation(any(), any()) } returns Unit
             every { mailer.sendSyringeFinding(any(), any(), any()) } returns Unit
+            every { mailer.sendPassResetEmail(any(), any(), any()) } returns Unit
 
             return mailer
         }

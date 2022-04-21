@@ -43,23 +43,66 @@ paths:
                 type: string
         '401':
           description: Name or password is wrong
-  /password-reset/get-code/{email}:
-    get:
-      summary: Obtain a password reset code
-      description: Returns a password reset code if user found.
-      produces:
-        - application/json
+  /password-reset/send-code:
+    post:
+      summary: Initiate a password reset
+      description: Send a reset email to the user
       parameters:
-        - name: email
-          in: path
-          description: Email of user to be reset
+        - in: body
+          name: body
           required: true
-          type: string
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
       responses:
-        '200':
-          description: "TODO: document urlCode"
+        '204':
+          description: Email sent
         '404':
-          description: User with this email not found
+          description: User with sent email not found
+  /password-reset/test-code:
+    post:
+      summary: Test a password reset code
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              code:
+                type: string
+      responses:
+        '204':
+          description: The code is valid
+        '404':
+          description: The code doesn't exist or isn't valid
+  /password-reset/save:
+    post:
+      summary: Set a new password for specific user
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              code:
+                type: string
+              password:
+                type: string
+      responses:
+        '204':
+          description: The password is set
+        '400':
+          description: The password doesn't met criteria
+        '404':
+          description: The reset code isn't valid
   /organization/{id}:
     get:
       summary: Find organization by id

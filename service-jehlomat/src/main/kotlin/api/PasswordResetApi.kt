@@ -40,7 +40,7 @@ fun Route.passwordResetApi(database: DatabaseService, mailer: MailerService): Ro
                         callerIp = call.request.origin.remoteHost,
                         status = PasswordResetStatus.NEW
                     ))
-                    mailer.sendPassResetEmail(userToChange.email, resetUrlCode)
+                    mailer.sendPassResetEmail(userToChange.email, userToChange.id, resetUrlCode)
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -49,17 +49,17 @@ fun Route.passwordResetApi(database: DatabaseService, mailer: MailerService): Ro
         post("/test-code") {
             val request = call.receive<PasswordResetTestRequest>()
             val passwordReset = database.selectPasswordReset(request.code)
-            val user = database.selectUserByEmail(request.email)
+            val user = database.selectUserById(request.userId)
 
             if(validatePasswordResetRequest(call, passwordReset, user)) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.NoContent)
             }
         }
 
         post("/save") {
             val request = call.receive<PasswordResetSaveRequest>()
             val passwordReset = database.selectPasswordReset(request.code)
-            val user = database.selectUserByEmail(request.email)
+            val user = database.selectUserById(request.userId)
 
             if (!validatePasswordResetRequest(call, passwordReset, user)) {
                 return@post
