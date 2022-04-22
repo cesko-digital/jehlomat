@@ -9,7 +9,7 @@ interface IToken {
     "exp": string;
 }
 
-interface IResponse {
+export interface IResponse {
     id: number;
     email?: string;
     username: string;
