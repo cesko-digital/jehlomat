@@ -28,16 +28,13 @@ export const NavIcon = styled.div`
     justify-content: center;
     align-items: center;
     width: 56px;
+    height: 56px;
     position: absolute;
-    right: 5px;
-    top: 10px;
-
     :hover {
         cursor: pointer;
     }
 
     @media ${media.lte('mobile')} {
-        left: 5px;
         right: auto;
     }}
 `;
