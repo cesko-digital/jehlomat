@@ -44,8 +44,8 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
                         }
 
                         val locations = databaseInstance.resolveLocationIds(teamRequest.locationIds)
-                        databaseInstance.insertTeam(Team(teamRequest.id, teamRequest.name, locations, teamRequest.organizationId))
-                        call.respond(HttpStatusCode.Created)
+                        val teamId = databaseInstance.insertTeam(Team(teamRequest.id, teamRequest.name, locations, teamRequest.organizationId))
+                        call.respond(HttpStatusCode.Created, databaseInstance.selectTeamById(teamId)!!)
                     }
                 }
             }
