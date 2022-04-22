@@ -1,4 +1,5 @@
 package services
+import api.UserTable.Companion.verificationCode
 import com.mailjet.client.errors.MailjetException
 import com.mailjet.client.MailjetClient
 import com.mailjet.client.MailjetRequest
@@ -14,6 +15,7 @@ interface MailerService {
     fun sendOrganizationConfirmationEmail(organization: Organization, adminEmail: String)
     fun sendSyringeFindingConfirmation(email: String, syringeId: String)
     fun sendSyringeFinding(organization: Organization, email: String, syringeId: String)
+    fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String)
 }
 
 
@@ -33,6 +35,9 @@ class FakeMailer: MailerService {
     }
     override fun sendSyringeFinding(organization: Organization, email: String, syringeId: String) {
         println("sendSyringeFinding")
+    }
+    override fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String) {
+        println("sendPassResetEmail email: $email, id: $userId, code: $resetUrlCode")
     }
 }
 
@@ -163,5 +168,20 @@ class Mailer: MailerService {
 
         println(response.status)
         println(response.data)
+    }
+
+    @Throws(MailjetException::class)
+    override fun sendPassResetEmail(email: String, userId: Int, resetUrlCode: String) {
+         val request = MailjetRequest(Emailv31.resource)
+             .property(
+                 Emailv31.MESSAGES, prepareBodyWithLink(
+                     3884047,
+                     "Požadavek na reset hesla",
+                     "${publicUrl}uzivatel/heslo/?userId=${userId}&code=${resetUrlCode}",
+                     email,
+                     ""
+                 )
+             )
+         client.post(request)
     }
 }
