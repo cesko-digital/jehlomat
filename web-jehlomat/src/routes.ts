@@ -77,6 +77,7 @@ const USER_URL_PATH_ = 'uzivatel';
 export const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
 export const LOGIN_URL_PATH = 'prihlaseni';
+export const TEAM_URL_PATH = 'team'
 
 export const routes: Route[] = [
     {
@@ -153,8 +154,16 @@ export const routes: Route[] = [
     {
         id: Routes.TEAM,
         Component: Team,
-        path: '/team/novy',
+        path: `/${TEAM_URL_PATH}/novy`,
         protectedRoute: true,
+        from: true,
+    },
+    {
+        id: Routes.TEAM,
+        Component: Team,
+        path: `/${TEAM_URL_PATH}/edit/:teamId?`,
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.PROFILE,

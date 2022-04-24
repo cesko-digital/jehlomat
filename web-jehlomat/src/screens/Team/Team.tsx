@@ -1,4 +1,4 @@
-import { Typography, Grid, Container, useMediaQuery, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Typography, Grid, Container, useMediaQuery, FormControl, InputLabel, Select, MenuItem, touchRippleClasses, FormHelperText } from '@mui/material';
 import { Header } from '../../Components/Header/Header';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
@@ -23,6 +23,10 @@ import { primary } from 'utils/colors';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import MapModal from './components/MapModal';
 import { LINKS } from 'routes';
+import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-status';
+import { useHistory, useLocation, useParams } from 'react-router';
+import { IUser } from 'types';
+import ConfirmModal from './components/ConfirmModal';
 
 interface ILocation {
     id: string,
@@ -33,6 +37,9 @@ interface ITeam {
     name: string,
     locationIds: ILocation[],
     organizationId: number
+}
+interface IRouteParams {
+    teamId?: string;
 }
 
 const Map = styled.div`
@@ -86,7 +93,7 @@ const validationSchema = yup.object({
     name: yup.string().required('Název Teamu je povinné pole'),
 });
 
-const Team = () => {
+const Team = (props: any) => {
     const [logUser, setUser]: any = useState()
     const [location, setLocation] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
@@ -96,9 +103,19 @@ const Team = () => {
     const token = useRecoilValue(tokenState);
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [showModal, setShowModal] = useState(false);
+    const [confirmModal, setConfirmModal] = useState(false);
     const hideModal = useCallback(() => {
         setShowModal(false);
     }, []);
+    const { teamId } = useParams<IRouteParams>();
+    const path = useLocation();  
+    const isEdit: boolean = path.pathname.includes('edit')?true:false
+
+    const titleText = path.pathname.includes('edit')?'Editace teamu':'Přidat nový tým';
+
+    const history = useHistory();
+    
+    console.log(teamId, path)
 
     const getGeometry = async (type: string, id: string) => {
         const response: AxiosResponse<any> = await API.get(`/location/geometry?type=${type}&id=${id}`);
@@ -122,14 +139,20 @@ const Team = () => {
     }
 
     function knock(arr: Array<any>, val: any) {
-        var data = _.remove(arr, function(n) {
+        var data = _.remove(arr, function (n) {
             return n.id !== val.id;
-          });
+        });
 
-        console.log(arr, data)
         data.push(val)
         return data;
     }
+    useEffect(() => {
+        if(isEdit){
+            API.get(`/team/${teamId}`).then((response:AxiosResponse)=>{
+                console.log(response.data)
+            });
+        }
+    }, [isEdit])
 
     useEffect(() => {
         const selectedGeometry: any[] = []
@@ -161,7 +184,7 @@ const Team = () => {
                     return response.data;
                 })
                 .catch((error) => {
-                    console.log(error) //should goes to the error page history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
+                    history.push(LINKS.ERROR);
                 });
 
         }
@@ -169,13 +192,13 @@ const Team = () => {
         getLocation().then((data) => {
             setLocation(data)
         }).catch((error) => {
-            console.log(error) //should redirect to Error page
+            history.push(LINKS.ERROR);
         });
         if (token) {
             getMember(token).then((data) => {
                 setMembers(data)
             }).catch((error) => {
-                console.log(error) //should redirect to Error page
+                history.push(LINKS.LOGIN);
             });
         }
     }, [selectedLocation, selectedMembers, token]);
@@ -219,10 +242,10 @@ const Team = () => {
 
     return (
         <>
-            <Header mobileTitle="Přidat nový tým" backRoute={LINKS.HOME} />
+            <Header mobileTitle={titleText} backRoute={LINKS.HOME} />
             <Container sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', width: '100%', height: '100%' }}>
                 <Typography display={['none', 'flex']} mb={4} variant="h6" textAlign="center" sx={{ color: primary, fontWeight: 400, padding: '2em 1em 1em 2em', margin: 0 }}>
-                    Přidat nový tým
+                    {titleText}
                 </Typography>
                 <Container sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', padding: '1em 0 1em 0', width: '100%', height: '100%' }}>
                     <FormContainer>
@@ -231,21 +254,47 @@ const Team = () => {
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
+
+                                    const geoLocation = _.cloneDeep(selectedLocation);
                                     const team: ITeam = {
                                         name: values.name,
-                                        locationIds: selectedLocation.map((element:ILocation) => {
+                                        locationIds: geoLocation.map((element: ILocation) => {
                                             delete element.name;
                                             return element;
                                         }),
                                         organizationId: logUser.organizationId
                                     }
                                     const teamResponse: AxiosResponse<any> = await API.post(`/team`, team);
-                                    console.log("team", teamResponse);
-
+                                    switch (true) {
+                                        case isStatusGeneralSuccess(teamResponse.status): {
+                                            console.log("team", teamResponse.data);
+                                            selectedMembers.map(async (user: IUser) => {
+                                                if (teamResponse.data && teamResponse.data.id) {
+                                                    user.teamId = teamResponse.data.id
+                                                    setConfirmModal(true);
+                                                    //const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, user);
+                                                    //console.log(userResponse);
+                                                }
+                                            })
+                                            break;
+                                        }
+                                        case isStatusConflictError(teamResponse.status): {
+                                            //for validation error;
+                                            setErrors({ 'name': 'Zvolte jiný název teamu. Název teamu již existuje!' });
+                                            break;
+                                        }
+                                        default: {
+                                            if (geoLocation.length === 0) {
+                                                //location empty validation error
+                                                setErrors({ 'location': { id: '', name: 'Zvolte jiný název teamu. Název teamu již existuje!', type: '' } });
+                                            } else {
+                                                history.push(LINKS.ERROR);
+                                            }
+                                            break;
+                                        }
+                                    }
                                     console.log(selectedMembers, selectedLocation);
                                     const response: AxiosResponse<any> = await API.get(`/organization/${logUser.organizationId}`);
-                                    console.log(response.data);
-                                    console.log()
                                 } catch (error: any) {
                                     //link to error page
                                 }
@@ -279,16 +328,20 @@ const Team = () => {
                                                     const data = knock(selectedLocation, event.target.value);
                                                     setSelectedLocation([...data]);
                                                 }}
+                                                error={touched.location && Boolean(errors.location)}
                                             >
                                                 {location.map((place: any) => {
                                                     return (<MenuItem key={place.id} id={place.id} value={place}>{`${place.type} - ${place.name}`}</MenuItem>)
                                                 })}
                                             </Select>
+                                            <FormHelperText error={true}>
+                                                {touched.location && errors.location ? errors.location.name : undefined}
+                                            </FormHelperText>
                                         </StyledFormControl>
                                         {isMobile ? <SecondaryButton id="submit" text="Lokalita na mapě" type="button" style={{ fontWeight: 100 }} onClick={() => { setShowModal(true) }} /> : null}
                                         <SelectList>
                                             {selectedLocation.map((place: any, id: number) => {
-                                                return (<Item key={id} id={place.id} name={`${place.type} - ${place.name}`} remove={removeLocation}/>)
+                                                return (<Item key={id} id={place.id} name={`${place.type} - ${place.name}`} remove={removeLocation} />)
                                             })}
                                         </SelectList>
                                         <StyledFormControl fullWidth>
@@ -326,6 +379,25 @@ const Team = () => {
             <MapModal open={showModal} close={hideModal}>
                 <BasicMap borderRadius='0px' display={true} />
             </MapModal>
+            <ConfirmModal open={confirmModal} close={setConfirmModal}>
+                <Container sx={{ flexGrow: 1, 
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                height: '100%',
+                                padding: 0
+                                }}>
+                    <div style={{width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center'}}>Založení teamu probehlo úspěšně</div>
+                    <PrimaryButton text="ok" 
+                        onClick={()=>{
+                            setConfirmModal(false);
+                            history.goBack()
+                        }}
+                    />
+                </Container>
+            </ConfirmModal>
         </>
     )
 }
