@@ -39,6 +39,8 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, selected, onS
 
     const isSelected = useMemo(() => selected.some(s => s.id === syringe.id), [selected]);
 
+    const username = syringe.createdBy ? syringe.createdBy.username : "-";
+
     return (
         <Row syringe={syringe}>
             <td>
@@ -50,7 +52,7 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, selected, onS
             <td>
                 <SyringeDemolishDate syringe={syringe} />
             </td>
-            <td>{syringe.createdBy.username}</td>
+            <td>{username}</td>
             <td>
                 <SyringeState syringe={syringe} />
             </td>
