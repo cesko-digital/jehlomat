@@ -10,6 +10,7 @@ import model.*
 import model.team.Team
 import model.team.TeamRequest
 import model.team.toRequest
+import model.user.toUserInfo
 import services.*
 
 
@@ -27,6 +28,29 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
+            }
+
+            get("/{id}/users") {
+                val id = call.parameters["id"]?.toIntOrNull()
+
+                val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
+                if (team == null) {
+                    call.respond(HttpStatusCode.NotFound, "Team not found")
+                    return@get
+                }
+
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                val roles = PermissionService.determineRoles(loggedInUser, team)
+                if (loggedInUser.teamId != id && !roles.contains(Role.OrgAdmin)) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        "Only a member of the team or organization admin can view its members."
+                    )
+                    return@get
+                }
+
+                val users = databaseInstance.selectUsersByTeam(id)
+                call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo(roles.contains(Role.OrgAdmin)) })
             }
 
             post {

@@ -388,6 +388,29 @@ paths:
             $ref: '#/definitions/Team'
         '404':
           description: Team not found
+  /team/{id}/users:
+    get:
+      summary: Get team users
+      description: Returns a list of users in the requested team
+      produces:
+        - application/json
+      security:
+        - Bearer: [ ]
+      parameters:
+        - name: id
+          in: path
+          description: Id of team
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserInfo'
+        '404':
+          description: Team not found
   /team:
     post:
       summary: Add a new team
@@ -651,6 +674,9 @@ definitions:
         type: integer
       teamId:
         type: integer
+      email:
+        type: string
+        description: Provided only in specific cases
       isAdmin:
         type: boolean
   UserDetail:
