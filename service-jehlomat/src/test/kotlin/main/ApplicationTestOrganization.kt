@@ -110,12 +110,14 @@ class OrganizationTest {
   "id" : """ + userId1 + """,
   "username" : "Franta Pepa 1",
   "organizationId" : """ + orgId + """,
+  "email" : "---",
   "teamId" : null,
   "isAdmin" : false
 }, {
   "id" : """ + userId2 + """,
   "username" : "Tomas Novak",
   "organizationId" : """ + orgId + """,
+  "email" : "---",
   "teamId" : null,
   "isAdmin" : false
 } ]""",

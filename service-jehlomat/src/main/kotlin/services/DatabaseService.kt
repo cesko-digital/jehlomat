@@ -83,6 +83,7 @@ class DatabaseService(
                 id = row[table.userId]!!,
                 username = row[table.username]!!,
                 organizationId = row[table.organizationId]!!,
+                email = "---",
                 teamId = row[table.teamId],
                 isAdmin = row[table.isAdmin]!!
             )
@@ -212,6 +213,16 @@ class DatabaseService(
             .from(UserTable)
             .select()
             .where { (UserTable.organizationId eq organizationId) and (UserTable.verified eq true) }
+            .orderBy(UserTable.username.asc())
+            .map(mapUserRow)
+            .toList()
+    }
+
+    fun selectUsersByTeam(teamId: Int): List<User> {
+        return databaseInstance
+            .from(UserTable)
+            .select()
+            .where { (UserTable.teamId eq teamId) and (UserTable.verified eq true) }
             .orderBy(UserTable.username.asc())
             .map(mapUserRow)
             .toList()
