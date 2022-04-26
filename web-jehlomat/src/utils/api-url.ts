@@ -4,6 +4,7 @@ class APIURL {
     userVerification = '/verification/user';
     user = '/user';
     setNewPassword = '/password-reset/save';
+    testResetPassword = '/password-reset/test-code';
 
     getUserPassword(userId: string | number) {
         return `${this.user}/${userId}/password`;

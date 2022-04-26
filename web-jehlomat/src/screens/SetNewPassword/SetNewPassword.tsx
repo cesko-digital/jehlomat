@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -10,20 +10,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TwoColumns from 'Components/Layout/TwoColumns';
 import { Input, Inputs, FormTitle, TransparentForm, ButtonsContainer, Illustration } from './Components';
 import useSetNewPassword, { SetPasswordFormProps } from "./hooks/useSetNewPassword";
-
-const texts = {
-    TITLE: 'Nové heslo',
-    MOBILE_TITLE: 'Nové heslo',
-    INPUT__PASS__LABEL: 'Nové heslo',
-    INPUT__PASS__PLACEHOLDER: 'Snadno zapomatovatelné, těžce uhodnutelné',
-    INPUT__RE_PASS__LABEL: 'Kontrola hesla',
-    INPUT__RE_PASS__PLACEHOLDER: 'Zadejte stejné heslo',
-    VALIDATIONS__REQUIRED: 'Povinná položka',
-    VALIDATIONS__SYMBOLS: 'Heslo musí obsahovat číslo, velké a malé písmeno',
-    VALIDATIONS__MIN_LENGTH: 'Heslo musí být 8 znaků dlouhé',
-    VALIDATIONS__MATCH: 'Hesla musí být stejná',
-    BUTTONS__SEND: 'Nastav heslo',
-};
+import { texts } from "./SetNewPassword.texts";
 
 const schema = yup.object({
     password: yup.string().matches(PASSWORD_COMPLEXITY, texts.VALIDATIONS__SYMBOLS).min(8, texts.VALIDATIONS__MIN_LENGTH).required(texts.VALIDATIONS__REQUIRED),
