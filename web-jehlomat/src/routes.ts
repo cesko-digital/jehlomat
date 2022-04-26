@@ -175,7 +175,7 @@ export const routes: Route[] = [
     {
         id: Routes.FINDING_DETAILS,
         Component: Detail,
-        path: `/${FINDINGS_URL_PATH}/:id`,
+        path: `/${FINDINGS_URL_PATH}/detail/:id`,
         exact: true,
         AdditionalComponents: Layout,
     },
