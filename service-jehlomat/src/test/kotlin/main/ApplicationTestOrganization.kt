@@ -110,12 +110,56 @@ class OrganizationTest {
   "id" : """ + userId1 + """,
   "username" : "Franta Pepa 1",
   "organizationId" : """ + orgId + """,
+  "email" : "---",
   "teamId" : null,
   "isAdmin" : false
 }, {
   "id" : """ + userId2 + """,
   "username" : "Tomas Novak",
   "organizationId" : """ + orgId + """,
+  "email" : "---",
+  "teamId" : null,
+  "isAdmin" : false
+} ]""",
+                response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersOrgAdminOk() = withTestApplication(Application::module) {
+        val orgId = database.insertOrganization(ORGANIZATION)
+
+        val userId1 = database.insertUser(USER.copy(organizationId = orgId, teamId = null))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", organizationId = orgId, teamId = null))
+
+        val orgAdminId = database.insertUser(USER.copy(username = "org admin", email = "orgAdminEmail", organizationId = orgId, teamId = null, isAdmin = true))
+        val token = loginUser("orgAdminEmail", USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            assertEquals(
+                """[ {
+  "id" : """ + userId1 + """,
+  "username" : "Franta Pepa 1",
+  "organizationId" : """ + orgId + """,
+  "email" : "email@example.org",
+  "teamId" : null,
+  "isAdmin" : false
+}, {
+  "id" : """ + orgAdminId + """,
+  "username" : "org admin",
+  "organizationId" : """ + orgId + """,
+  "email" : "orgAdminEmail",
+  "teamId" : null,
+  "isAdmin" : true
+}, {
+  "id" : """ + userId2 + """,
+  "username" : "Tomas Novak",
+  "organizationId" : """ + orgId + """,
+  "email" : "email2",
   "teamId" : null,
   "isAdmin" : false
 } ]""",
@@ -253,7 +297,7 @@ class OrganizationTest {
     @Test
     fun testPostOrganization(): Unit = withTestApplication({ module(testing = true) }) {
         val registration = OrganizationRegistration("orgName", "email@email.cz", "aaBB11aa")
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(registration))
         }) {
@@ -277,7 +321,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPostAlreadyExistingOrganization() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration(ORGANIZATION.name, "email@email.cz", "aaAA11aa")))
@@ -290,7 +334,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             val orgId = database.insertOrganization(ORGANIZATION)
             database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",false, "", orgId, null, false))
             addHeader("Content-Type", "application/json")
@@ -304,7 +348,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPostWrongEmail() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email", "aaAA11aa")))
@@ -317,7 +361,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPostWrongName() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("", "email", "aaAA11aa")))
         }) {
@@ -329,7 +373,7 @@ class OrganizationTest {
     @ExperimentalSerializationApi
     @Test
     fun testPostWrongPassword() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             database.insertOrganization(ORGANIZATION)
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email@email.cz", "aa")))
@@ -363,7 +407,7 @@ class OrganizationTest {
         val token = loginUser(USER.email, USER.password)
         val newOrganization = ORGANIZATION.copy(name="different name")
 
-        with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Put, ORGANIZATION_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(newOrganization.copy(id = orgId)))
@@ -382,7 +426,7 @@ class OrganizationTest {
         val token = loginUser(USER.email, USER.password)
         val newOrganization = ORGANIZATION.copy(name="different name")
 
-        with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Put, ORGANIZATION_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
             setBody(Json.encodeToString(newOrganization.copy(id = orgId)))

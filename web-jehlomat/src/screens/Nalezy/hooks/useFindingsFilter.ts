@@ -1,4 +1,4 @@
-﻿import { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import sort from 'screens/Nalezy/hooks/utils/sort';
 import { GridFilter } from 'screens/Nalezy/types/GridFilter';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';

@@ -1,4 +1,4 @@
-﻿import { Filtering } from './Filtering';
+import { Filtering } from './Filtering';
 import { PageInfo } from './PageInfo';
 import { Order } from './Order';
 

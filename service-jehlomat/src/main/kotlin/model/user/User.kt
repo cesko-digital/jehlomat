@@ -19,11 +19,15 @@ data class User(
     @AuthRole(Role.OrgAdmin) val isAdmin: Boolean
 )
 
-fun User.toUserInfo() = UserInfo(
+fun User.toUserInfo(includeEmail: Boolean = false) = UserInfo(
     id = id,
     username = username,
     organizationId = organizationId,
     teamId = teamId,
+    email = when (includeEmail) {
+        true -> email
+        else -> "---"
+    },
     isAdmin = isAdmin
 )
 

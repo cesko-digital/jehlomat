@@ -1,4 +1,4 @@
-﻿import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { Filter, Range } from './Filter';
 import Select from './Select';

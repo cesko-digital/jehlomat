@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { styled } from '@mui/system';
 
 export const Filters = styled('div')(({ theme }) => ({

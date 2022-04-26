@@ -128,6 +128,7 @@ class ApplicationTest {
   "id" : """ + userId + """,
   "username" : "Franta Pepa 1",
   "organizationId" : """ + defaultOrgId + """,
+  "email" : "---",
   "teamId" : """ + defaultTeamId + """,
   "isAdmin" : false
 }""",

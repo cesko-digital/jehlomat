@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 
 export const Button = styled('button')({
     background: 'white',

@@ -1,4 +1,4 @@
-﻿import { Order } from 'screens/Nalezy/types/Order';
+import { Order } from 'screens/Nalezy/types/Order';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
 
 const sort = (ordering: Order[], column: SortableColumn): Order[] => {

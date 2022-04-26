@@ -1,10 +1,10 @@
-﻿import {IUser as Person} from "../../../types";
+import {IUser as Person} from "../../../types";
 import {Location} from "./Location";
 
 export interface Syringe {
     id: string;
     createdAt: number;
-    createdBy: Person;
+    createdBy?: Person;
     reservedTill?: number;
     reservedBy?: Person;
     demolishedAt?: number;

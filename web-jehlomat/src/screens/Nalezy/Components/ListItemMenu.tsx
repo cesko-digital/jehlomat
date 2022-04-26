@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { VirtualElement } from '@popperjs/core';
 import { ClickAwayListener, Popper } from '@mui/material';
 import { styled } from '@mui/system';

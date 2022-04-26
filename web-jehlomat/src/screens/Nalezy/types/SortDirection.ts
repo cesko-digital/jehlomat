@@ -1,1 +1,1 @@
-﻿export type SortDirection = "ASC" | "DESC" | undefined;
+export type SortDirection = "ASC" | "DESC" | undefined;

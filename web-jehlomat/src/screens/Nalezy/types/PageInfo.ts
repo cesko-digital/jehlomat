@@ -1,4 +1,4 @@
-﻿export interface PageInfo {
+export interface PageInfo {
     index: number;
     size: number;
 }

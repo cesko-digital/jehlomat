@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { primaryDark } from 'utils/colors';
 
 const TextHeader = styled('h1')({
