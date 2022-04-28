@@ -5,7 +5,7 @@ import { media } from '../../utils/media';
 import { Formik, Form } from 'formik';
 import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import * as yup from 'yup';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { API } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
@@ -25,7 +25,7 @@ import MapModal from './components/MapModal';
 import { LINKS } from 'routes';
 import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-status';
 import { useHistory, useLocation, useParams } from 'react-router';
-import { IUser } from 'types';
+import { IUser , IUserEdited} from 'types';
 import ConfirmModal from './components/ConfirmModal';
 
 interface ILocation {
@@ -33,9 +33,25 @@ interface ILocation {
     type: string,
     name?: string
 }
+
+interface ILocationResponse {
+    id: 0,
+    okres: string,
+    okresName: string,
+    obec: string,
+    obecName: string,
+    mestkaCast: string,
+    mestkaCastName: string
+}
 interface ITeam {
     name: string,
     locationIds: ILocation[],
+    organizationId: number
+}
+interface ITeamResponse {
+    id: number,
+    name: string,
+    locations: ILocation[],
     organizationId: number
 }
 interface IRouteParams {
@@ -97,6 +113,7 @@ const Team = (props: any) => {
     const [logUser, setUser]: any = useState()
     const [location, setLocation] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
+    const [teamName, setTeamName] = useState('')
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
@@ -115,7 +132,7 @@ const Team = (props: any) => {
 
     const history = useHistory();
     
-    console.log(teamId, path)
+    //console.log(teamId, path)
 
     const getGeometry = async (type: string, id: string) => {
         const response: AxiosResponse<any> = await API.get(`/location/geometry?type=${type}&id=${id}`);
@@ -148,11 +165,23 @@ const Team = (props: any) => {
     }
     useEffect(() => {
         if(isEdit){
-            API.get(`/team/${teamId}`).then((response:AxiosResponse)=>{
-                console.log(response.data)
+            API.get<ITeamResponse>(`/team/${teamId}`).then((response)=>{
+                if(isStatusGeneralSuccess(response.status)){
+                    const team = response.data;
+                    setTeamName(team.name);
+                    console.log(team.name, teamName);
+                    setSelectedLocation(team.locations);
+                } else {
+                    history.push(LINKS.ERROR);
+                }
+                
+            });
+            API.get<IUser>(`/team/${teamId}/users`).then((response)=>{
+                const users = response.data;
+                setSelectedMembers(users)
             });
         }
-    }, [isEdit])
+    }, [isEdit, teamName])
 
     useEffect(() => {
         const selectedGeometry: any[] = []
@@ -240,6 +269,11 @@ const Team = (props: any) => {
         )
     }
 
+    const initialValues = useMemo(
+        () => ({ name: teamName, location: { id: '', name: '', type: '' }, member: '' }),
+        [teamName],
+    );
+
     return (
         <>
             <Header mobileTitle={titleText} backRoute={LINKS.HOME} />
@@ -250,7 +284,8 @@ const Team = (props: any) => {
                 <Container sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', padding: '1em 0 1em 0', width: '100%', height: '100%' }}>
                     <FormContainer>
                         <Formik
-                            initialValues={{ name: '', location: { id: '', name: '', type: '' }, member: '' }}
+                            enableReinitialize
+                            initialValues={initialValues}
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
@@ -270,10 +305,17 @@ const Team = (props: any) => {
                                             console.log("team", teamResponse.data);
                                             selectedMembers.map(async (user: IUser) => {
                                                 if (teamResponse.data && teamResponse.data.id) {
-                                                    user.teamId = teamResponse.data.id
-                                                    setConfirmModal(true);
-                                                    //const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, user);
-                                                    //console.log(userResponse);
+                                                    let userEdited:IUserEdited = _.cloneDeep(user);
+                                                    userEdited.teamId = teamResponse.data.id;
+                                                    delete userEdited.id;
+                                                    delete userEdited.organizationId;
+                                                    delete userEdited.isAdmin;
+                                                    delete userEdited.verified;
+
+                                                    console.log(userEdited)
+                                                    //delete userEdited.id;
+                                                    const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                    isStatusGeneralSuccess(userResponse.status)?setConfirmModal(true):history.push(LINKS.ERROR);
                                                 }
                                             })
                                             break;
