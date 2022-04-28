@@ -17,8 +17,6 @@ interface TableProps {
     loader: Loader<SyringeReadModel>;
     direction: (column: SortableColumn) => SortDirection;
     onSort: (column: SortableColumn) => () => void;
-    selected: Syringe[];
-    onSelect: (syringe: Syringe) => void;
     onUpdate: () => void;
 }
 
@@ -32,7 +30,7 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selected, onSelect, onUpdate }) => {
+const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, onUpdate }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
@@ -58,14 +56,13 @@ const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, selec
                             Zadavatel
                         </SortableHeading>
                         <Heading>Stav</Heading>
-                        <Heading />
                     </Header>
                 </thead>
                 <tbody>
                     {loading && <LoadingState />}
                     {error && <ErrorState text="Nastala chyba při načítání záznamů" />}
                     {loaded && data.length === 0 && <EmptyState text="Žádná data" description="Nebyly nalezeny žádné nálezy nebo žádné záznamy nevyhovují aktuální kombinaci filtrů" />}
-                    {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} selected={selected} onSelect={onSelect} onUpdate={onUpdate} />)}
+                    {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} onUpdate={onUpdate} />)}
                 </tbody>
             </Wrapper>
         </Container>

@@ -14,6 +14,7 @@ const Row = styled('tr', {
     border: '2px solid white',
     boxSizing: 'border-box',
     borderRadius: 8,
+    cursor: 'pointer',
     minHeight: 50,
     height: 50,
     marginBottom: 10,

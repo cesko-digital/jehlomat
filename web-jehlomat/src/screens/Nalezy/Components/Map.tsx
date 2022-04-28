@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-import L, { Icon, LatLngTuple } from 'leaflet';
+import L, { LatLngTuple } from 'leaflet';
 import { styled } from '@mui/system';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
@@ -13,10 +13,9 @@ import Links from 'screens/Nalezy/Components/Links';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 
 import 'leaflet/dist/leaflet.css';
-import gray from 'assets/pins/pin-gray.svg';
-import green from 'assets/pins/pin-green.svg';
-import yellow from 'assets/pins/pin-yellow.svg';
-import dayjs from "dayjs";
+
+import dayjs from 'dayjs';
+import pin from './utils/pin';
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
@@ -66,33 +65,6 @@ const State = styled('div')({
     padding: '0 8px',
 });
 
-const deriveStateOf = (syringe: Syringe): SyringeState => {
-    if (syringe.demolishedAt && syringe.demolished) {
-        return 'DEMOLISHED';
-    }
-
-    if (syringe.reservedTill) {
-        return 'RESERVED';
-    }
-
-    return 'WAITING';
-};
-
-const map: Record<SyringeState, Icon> = {
-    RESERVED: L.icon({
-        iconUrl: green,
-        iconAnchor: [30, 60],
-    }),
-    DEMOLISHED: L.icon({
-        iconUrl: gray,
-        iconAnchor: [30, 60],
-    }),
-    WAITING: L.icon({
-        iconUrl: yellow,
-        iconAnchor: [30, 60],
-    }),
-};
-
 const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
@@ -128,8 +100,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
             <>
                 {coordinates.map((coordinates, i) => {
                     const item = data[i];
-                    const state = deriveStateOf(item);
-                    const icon = map[state];
+                    const icon = pin(item);
                     const [lat, lng] = coordinates;
                     return (
                         <Marker key={`${lat}-${lng}-${i}`} position={coordinates} icon={icon}>
