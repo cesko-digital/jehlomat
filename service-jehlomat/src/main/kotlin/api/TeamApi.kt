@@ -24,7 +24,7 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
                 val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
 
                 if (team != null ) {
-                    call.respond(HttpStatusCode.OK, team)
+                    call.respond(HttpStatusCode.OK, team.toRequest())
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
