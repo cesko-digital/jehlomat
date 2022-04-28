@@ -41,6 +41,30 @@ resource "aws_ecr_repository" "service-jehlomat" {
   }
 }
 
+resource "aws_ecr_lifecycle_policy" "backend-expire-old" {
+  repository = aws_ecr_repository.service-jehlomat.name
+
+  policy = <<EOF
+  {
+      "rules": [
+          {
+              "rulePriority": 1,
+              "description": "Expire images older than 14 days",
+              "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 14
+              },
+              "action": {
+                  "type": "expire"
+              }
+          }
+      ]
+  }
+  EOF
+}
+
 # -------------
 # IAM roles
 # -------------
