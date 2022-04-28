@@ -7,7 +7,7 @@ on:
     paths:
       - 'infrastructure/aws/**'
 env:
-  tf_version: '0.15.4'
+  tf_version: '1.1.9'
   tf_working_dir: 'infrastructure/aws'
   TF_VAR_development-domain-certificate-arn: ${{ secrets.DEVELOPMENT_DOMAIN_CERTIFICATE_ARN }}
   TF_VAR_development-public-domain: ${{ secrets.DEVELOPMENT_PUBLIC_DOMAIN }}

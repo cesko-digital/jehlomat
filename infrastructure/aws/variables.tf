@@ -16,15 +16,15 @@ variable "codename-domain" {
 }
 
 variable "development-frontend-bucket-name" {
-  type    = string
+  type = string
 }
 
 variable "development-domain-certificate-arn" {
-  type    = string
+  type = string
 }
 
 variable "development-public-domain" {
-  type    = string
+  type = string
 }
 
 variable "database-username" {
@@ -33,10 +33,19 @@ variable "database-username" {
 
 variable "database-password" {
   type = string
+
+  sensitive = true
+
+  validation {
+    condition     = length(var.database-password) >= 12
+    error_message = "The password must be at least 12 character long."
+  }
 }
 
 variable "super-admin-email" {
   type = string
+
+  sensitive = true
 }
 
 variable "jwt-issuer" {

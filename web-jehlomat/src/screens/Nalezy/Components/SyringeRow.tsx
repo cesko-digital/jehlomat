@@ -50,7 +50,7 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, onUpdate }) =
             <td>
                 <SyringeDemolishDate syringe={syringe} />
             </td>
-            <td>{syringe.createdBy.username}</td>
+            <td>{syringe.createdBy?.username ?? "-"}</td>
             <td>
                 <SyringeState syringe={syringe} />
             </td>

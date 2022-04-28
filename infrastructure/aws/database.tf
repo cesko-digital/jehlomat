@@ -20,7 +20,7 @@ resource "aws_db_instance" "database" {
   max_allocated_storage   = 100
   storage_type            = "gp2"
   engine                  = "postgres"
-  engine_version          = "13.3"
+  engine_version          = "13.4"
   instance_class          = "db.t3.micro"
   db_name                 = "${var.codename}development"
   backup_retention_period = 7
@@ -31,9 +31,9 @@ resource "aws_db_instance" "database" {
   vpc_security_group_ids = [
     aws_security_group.private-default-sg.id
   ]
-  db_subnet_group_name   = aws_db_subnet_group.database.name
-  publicly_accessible    = false
-  availability_zone      = "${var.aws-region}a"
+  db_subnet_group_name = aws_db_subnet_group.database.name
+  publicly_accessible  = false
+  availability_zone    = "${var.aws-region}a"
 
   storage_encrypted   = true
   kms_key_id          = aws_kms_key.db_enc_key.arn
@@ -56,6 +56,7 @@ resource "aws_db_subnet_group" "database" {
 # DNS record for database
 resource "aws_route53_record" "database" {
   zone_id = aws_route53_zone.private.zone_id
+
   name    = "database"
   type    = "CNAME"
   ttl     = "300"

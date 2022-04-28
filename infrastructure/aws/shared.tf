@@ -1,21 +1,3 @@
-terraform {
-  required_version = ">= 0.15.4"
-
-  required_providers {
-    aws = ">= 3.28.0"
-  }
-
-  backend "s3" {
-    bucket = "jehlomat-terraform-backend"
-    key    = "terraform.tfstate"
-    region = "eu-central-1"
-  }
-}
-
-provider "aws" {
-  region = var.aws-region
-}
-
 # ----------------
 # VPC
 # ----------------

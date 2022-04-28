@@ -43,6 +43,66 @@ paths:
                 type: string
         '401':
           description: Name or password is wrong
+  /password-reset/send-code:
+    post:
+      summary: Initiate a password reset
+      description: Send a reset email to the user
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        '204':
+          description: Email sent
+        '404':
+          description: User with sent email not found
+  /password-reset/test-code:
+    post:
+      summary: Test a password reset code
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              code:
+                type: string
+      responses:
+        '204':
+          description: The code is valid
+        '404':
+          description: The code doesn't exist or isn't valid
+  /password-reset/save:
+    post:
+      summary: Set a new password for specific user
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              code:
+                type: string
+              password:
+                type: string
+      responses:
+        '204':
+          description: The password is set
+        '400':
+          description: The password doesn't met criteria
+        '404':
+          description: The reset code isn't valid
   /organization/{id}:
     get:
       summary: Find organization by id
@@ -325,7 +385,30 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Team'
+            $ref: '#/definitions/TeamRequest'
+        '404':
+          description: Team not found
+  /team/{id}/users:
+    get:
+      summary: Get team users
+      description: Returns a list of users in the requested team
+      produces:
+        - application/json
+      security:
+        - Bearer: [ ]
+      parameters:
+        - name: id
+          in: path
+          description: Id of team
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserInfo'
         '404':
           description: Team not found
   /team:
@@ -345,6 +428,8 @@ paths:
       responses:
         '201':
           description: Created
+          schema:
+            $ref: '#/definitions/Team'
         '409':
           description: Conflict
     put:
@@ -589,6 +674,9 @@ definitions:
         type: integer
       teamId:
         type: integer
+      email:
+        type: string
+        description: Provided only in specific cases
       isAdmin:
         type: boolean
   UserDetail:

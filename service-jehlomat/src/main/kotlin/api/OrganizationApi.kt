@@ -43,7 +43,7 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
                         val orgId = database.insertOrganization(organization)
 
                         //todo: check if username should be filled in for organization different than organization name
-                        val user = User(0, registration.email, registration.name, registration.password,false, "", orgId, null, true)
+                        val user = User(0, registration.email, registration.name, registration.password, false, "", orgId, null, true)
                         database.insertUser(user)
 
                         mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId), registration.email)
@@ -74,7 +74,12 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
                 val id = call.parameters["id"]?.toIntOrNull()
                 if (validateOrganizationRequest(call, jwtManager, database, id)) {
                     val users = database.selectUsersByOrganization(id!!)
-                    call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo() })
+
+                    val organization = id.let { it1 -> database.selectOrganizationById(it1) }
+                    val loggedInUser = jwtManager.getLoggedInUser(call, database)
+                    val roles = PermissionService.determineRoles(loggedInUser, organization)
+
+                    call.respond(HttpStatusCode.OK, users.map { user -> user.toUserInfo(roles.contains(Role.OrgAdmin)) })
                 }
             }
 

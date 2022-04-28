@@ -1,6 +1,7 @@
 package main
 
 import TestUtils.Companion.loginUser
+import api.LocationTable.okres
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -68,29 +69,19 @@ class TeamTest {
         with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$newTeamId") {
             addHeader("Authorization", "Bearer $token")
         }) {
-            val locationId1 = database.selectTeams().first().locations[0].id
-            val locationId2 = database.selectTeams().first().locations[1].id
+            database.selectTeams().first().locations[0].id
+            database.selectTeams().first().locations[1].id
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(
                 """{
   "id" : """ + newTeamId + """,
   "name" : "ceska jehlova",
-  "locations" : [ {
-    "id" : """ + locationId1 + """,
-    "okres" : """" + LOCATION1.okres + """",
-    "okresName" : """" + LOCATION1.okresName + """",
-    "obec" : """ + LOCATION1.obec + """,
-    "obecName" : """ + LOCATION1.obecName + """,
-    "mestkaCast" : """ + LOCATION1.mestkaCast + """,
-    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
+  "locationIds" : [ {
+    "id" : """" + LOCATION1.okres + """",
+    "type" : """" + LocationType.OKRES + """"
   }, {
-    "id" : """ + locationId2 + """,
-    "okres" : """" + LOCATION2.okres + """",
-    "okresName" : """" + LOCATION2.okresName + """",
-    "obec" : """ + LOCATION2.obec + """,
-    "obecName" : """" + LOCATION2.obecName + """",
-    "mestkaCast" : """ + LOCATION2.mestkaCast + """,
-    "mestkaCastName" : """" + LOCATION2.mestkaCastName + """"
+    "id" : """" + LOCATION2.mestkaCast + """",
+    "type" : """" + LocationType.MC + """"
   } ],
   "organizationId" : """ + defaultOrgId + """
 }""",
@@ -128,6 +119,32 @@ class TeamTest {
                 id = actualTeam.id,
                 locations = listOf(LOCATION1.copy(id = actualLocationId1), LOCATION2.copy(id = actualLocationId2))
             ), actualTeam)
+
+            assertEquals(
+                """{
+  "id" : """ + actualTeam.id + """,
+  "name" : "ceska jehlova",
+  "locations" : [ {
+    "id" : """ + actualLocationId1 + """,
+    "okres" : """" + LOCATION1.okres + """",
+    "okresName" : """" + LOCATION1.okresName + """",
+    "obec" : """ + LOCATION1.obec + """,
+    "obecName" : """ + LOCATION1.obecName + """,
+    "mestkaCast" : """ + LOCATION1.mestkaCast + """,
+    "mestkaCastName" : """ + LOCATION1.mestkaCastName + """
+  }, {
+    "id" : """ + actualLocationId2 + """,
+    "okres" : """" + LOCATION2.okres + """",
+    "okresName" : """" + LOCATION2.okresName + """",
+    "obec" : """ + LOCATION2.obec + """,
+    "obecName" : """" + LOCATION2.obecName + """",
+    "mestkaCast" : """ + LOCATION2.mestkaCast + """,
+    "mestkaCastName" : """" + LOCATION2.mestkaCastName + """"
+  } ],
+  "organizationId" : """ + defaultOrgId + """
+}""",
+                response.content
+            )
         }
     }
 
@@ -245,6 +262,100 @@ class TeamTest {
                 organizationId = defaultOrgId,
                 locations = listOf(Location(id=actualLocationId, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")))
             ), actualTeams)
+        }
+    }
+
+    @Test
+    fun testGetUsersOk() = withTestApplication(Application::module) {
+        val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        val teamId2 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId, name = "team2"))
+
+        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = teamId1))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = defaultOrgId, teamId = teamId1))
+        database.insertUser(USER.copy(email = "email3",verified = true, organizationId = defaultOrgId, teamId = teamId2))
+        val token = loginUser( "email1", USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$teamId1/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            assertEquals(
+                """[ {
+  "id" : """ + userId1 + """,
+  "username" : "Lucie Modra",
+  "organizationId" : """ + defaultOrgId + """,
+  "email" : "---",
+  "teamId" : """ + teamId1 + """,
+  "isAdmin" : false
+}, {
+  "id" : """ + userId2 + """,
+  "username" : "Tomas Novak",
+  "organizationId" : """ + defaultOrgId + """,
+  "email" : "---",
+  "teamId" : """ + teamId1 + """,
+  "isAdmin" : false
+} ]""",
+                response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersOrgAdminOk() = withTestApplication(Application::module) {
+        val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = teamId1))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = defaultOrgId, teamId = teamId1))
+
+        val orgAdminId = database.insertUser(USER.copy(username = "Org Admin", email = "email3", verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true))
+        val token = loginUser( "email3", USER.password)
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$teamId1/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            assertEquals(
+                """[ {
+  "id" : """ + userId1 + """,
+  "username" : "Lucie Modra",
+  "organizationId" : """ + defaultOrgId + """,
+  "email" : "email1",
+  "teamId" : """ + teamId1 + """,
+  "isAdmin" : false
+}, {
+  "id" : """ + userId2 + """,
+  "username" : "Tomas Novak",
+  "organizationId" : """ + defaultOrgId + """,
+  "email" : "email2",
+  "teamId" : """ + teamId1 + """,
+  "isAdmin" : false
+} ]""",
+                response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersTeamNotFound() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/differentTeam/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals("Team not found", response.content)
+        }
+    }
+
+    @Test
+    fun testGetUsersNotAllowed() = withTestApplication(Application::module) {
+        database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = null))
+        val token = loginUser("email1", USER.password)
+
+        val teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+
+        with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/${teamId}/users"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.Forbidden, response.status())
         }
     }
 }

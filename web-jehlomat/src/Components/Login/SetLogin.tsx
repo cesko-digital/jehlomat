@@ -7,6 +7,7 @@ import { IUser } from 'types';
 import { AxiosResponse } from 'axios';
 import { API, setApiToken } from 'config/baseURL';
 import { LINKS } from 'routes';
+import apiURL from 'utils/api-url';
 
 export const SetLogin: FC = () => {
     const token = useRecoilValue(tokenState);
@@ -20,7 +21,7 @@ export const SetLogin: FC = () => {
             setApiToken(token);
 
             const getUser = async (token: string) => {
-                const response: AxiosResponse<IUser> = await API.get('/api/v1/jehlomat/user/' + userId);
+                const response: AxiosResponse<IUser> = await API.get(apiURL.getUser(userId));
                 return response.data;
             };
 

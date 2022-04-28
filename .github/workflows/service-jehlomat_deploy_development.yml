@@ -1,5 +1,6 @@
 name: 'Deploy service-jehlomat to ECS'
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
