@@ -1,4 +1,4 @@
-﻿import L, { Icon } from 'leaflet';
+import L, { Icon } from 'leaflet';
 import { SyringeState } from 'screens/Nalezy/types/SyringeState';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import gray from 'assets/pins/pin-gray.svg';

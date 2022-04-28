@@ -7,7 +7,6 @@ import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { Loader } from 'screens/Nalezy/types/Loader';
-import { Syringe } from 'screens/Nalezy/types/Syringe';
 import useFindingsFilter from 'screens/Nalezy/hooks/useFindingsFilter';
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
 import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
@@ -21,7 +20,6 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
-import { mock } from 'screens/Nalezy/__mock';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
@@ -47,8 +45,7 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setLoader({ resp: mock });
-                // setLoader({ resp: data });
+                setLoader({ resp: data });
             })
             .catch(e => {
                 setLoader({ err: e });
@@ -58,6 +55,8 @@ const Nalezy: FunctionComponent = () => {
 
     const handleRangeFilter = useCallback((kind, from, to) => {
         filterByRange(kind, { from: +from, to: +to });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { LatLngTuple } from 'leaflet';
 import { Marker, useMap } from 'react-leaflet';
 import { Syringe } from 'screens/Nalezy/types/Syringe';

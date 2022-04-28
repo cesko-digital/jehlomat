@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Container, Grid, styled } from '@mui/material';
 
 export interface TwoColumnsProps {

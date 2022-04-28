@@ -58,7 +58,11 @@ const Detail = () => {
         );
     }, [id]);
 
-    const handleGetBack = useCallback(() => history.push('/nalezy'), []);
+    const handleGetBack = useCallback(() => {
+        history.push('/nalezy');
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
