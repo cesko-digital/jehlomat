@@ -1,12 +1,9 @@
 import { useCallback, useState } from 'react';
-import sort from 'screens/Nalezy/hooks/utils/sort';
 import { GridFilter } from 'screens/Nalezy/types/GridFilter';
-import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
 import { RangeKind } from 'screens/Nalezy/types/RangeKind';
 import { Range } from 'screens/Nalezy/types/Range';
 import { ReporterType } from 'screens/Nalezy/types/ReporterType';
 import { SyringeState } from 'screens/Nalezy/types/SyringeState';
-import { SortDirection } from 'screens/Nalezy/types/SortDirection';
 
 const useFindings = () => {
     const [filter, setFilter] = useState<GridFilter>({
@@ -14,25 +11,6 @@ const useFindings = () => {
         pageInfo: { index: 0, size: 20 },
         filter: {},
     });
-
-    const direction = (column: SortableColumn): SortDirection => {
-        const current = filter.ordering.find(o => o.column === column);
-        if (!current) return undefined;
-
-        return current.direction;
-    };
-
-    const handleSort = useCallback(
-        (column: SortableColumn) => () => {
-            setFilter(state => {
-                const ordering = sort(state.ordering, column);
-
-                console.log('>>> handle sort', ordering, state);
-                return { ...state, ordering };
-            });
-        },
-        [],
-    );
 
     const filterByRange = useCallback((kind: RangeKind, range: Range) => {
         setFilter((state: GridFilter) => {
@@ -117,7 +95,6 @@ const useFindings = () => {
 
     return {
         filter,
-        handleSort,
         filterByRange,
         resetByRange,
         filterByReporter,
@@ -125,7 +102,6 @@ const useFindings = () => {
         filterByState,
         resetByState,
         reload,
-        direction,
     };
 };
 

@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Container } from '@mui/material';
 import { styled } from '@mui/system';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
-import { SortDirection } from 'screens/Nalezy/types/SortDirection';
 import { Loader } from 'screens/Nalezy/types/Loader';
 import SortableHeading from 'screens/Nalezy/Components/SortableHeading';
 import SyringeRow from 'screens/Nalezy/Components/SyringeRow';
@@ -11,11 +11,12 @@ import Heading from 'screens/Nalezy/Components/Heading';
 import EmptyState from 'screens/Nalezy/Components/EmptyState';
 import LoadingState from 'screens/Nalezy/Components/LoadingState';
 import ErrorState from 'screens/Nalezy/Components/ErrorState';
+import { columnSortingDirection, sortingState } from 'screens/Nalezy/store';
+import texts from 'screens/Nalezy/texts';
+import sort from 'screens/Nalezy/hooks/utils/sort';
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
-    direction: (column: SortableColumn) => SortDirection;
-    onSort: (column: SortableColumn) => () => void;
     onUpdate: () => void;
 }
 
@@ -29,11 +30,15 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, onUpdate }) => {
+const Table: FunctionComponent<TableProps> = ({ loader, onUpdate }) => {
+    const setSort = useSetRecoilState(sortingState);
+
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
     const data = loader.resp?.syringeList || [];
+
+    const handleSort = (column: SortableColumn) => () => setSort(state => sort(state, column));
 
     return (
         <Container>
@@ -41,26 +46,26 @@ const Table: FunctionComponent<TableProps> = ({ loader, direction, onSort, onUpd
                 <thead>
                     <Header>
                         <Heading />
-                        <SortableHeading direction={direction('TOWN')} onClick={onSort('TOWN')}>
-                            Město
+                        <SortableHeading direction={useRecoilValue(columnSortingDirection('TOWN'))} onClick={handleSort('TOWN')}>
+                            {texts.TABLE__COLUMNS__CITY}
                         </SortableHeading>
-                        <Heading>Název</Heading>
-                        <SortableHeading direction={direction('CREATED_AT')} onClick={onSort('CREATED_AT')}>
-                            Datum nálezu
+                        <Heading>{texts.TABLE__COLUMNS__NAME}</Heading>
+                        <SortableHeading direction={useRecoilValue(columnSortingDirection('CREATED_AT'))} onClick={handleSort('CREATED_AT')}>
+                            {texts.TABLE__COLUMNS__CREATED_AT}
                         </SortableHeading>
-                        <SortableHeading direction={direction('DEMOLISHED_AT')} onClick={onSort('DEMOLISHED_AT')}>
-                            Datum likvidace
+                        <SortableHeading direction={useRecoilValue(columnSortingDirection('DEMOLISHED_AT'))} onClick={handleSort('DEMOLISHED_AT')}>
+                            {texts.TABLE__COLUMNS__DEMOLISHED_AT}
                         </SortableHeading>
-                        <SortableHeading direction={direction('CREATED_BY')} onClick={onSort('CREATED_BY')}>
-                            Zadavatel
+                        <SortableHeading direction={useRecoilValue(columnSortingDirection('CREATED_BY'))} onClick={handleSort('CREATED_BY')}>
+                            {texts.TABLE__COLUMNS__CREATED_BY}
                         </SortableHeading>
-                        <Heading>Stav</Heading>
+                        <Heading>{texts.TABLE__COLUMNS__STATE}</Heading>
                     </Header>
                 </thead>
                 <tbody>
                     {loading && <LoadingState />}
-                    {error && <ErrorState text="Nastala chyba při načítání záznamů" />}
-                    {loaded && data.length === 0 && <EmptyState text="Žádná data" description="Nebyly nalezeny žádné nálezy nebo žádné záznamy nevyhovují aktuální kombinaci filtrů" />}
+                    {error && <ErrorState text={texts.TABLE__ERROR} />}
+                    {loaded && data.length === 0 && <EmptyState text={texts.TABLE__NO_RECORDS__TITLE} description={texts.TABLE__NO_RECORDS__DESCRIPTION} />}
                     {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} onUpdate={onUpdate} />)}
                 </tbody>
             </Wrapper>

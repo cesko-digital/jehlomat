@@ -20,6 +20,9 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
+import { mock } from './__mock';
+import { sortingState } from './store';
+import { useRecoilValue } from 'recoil';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
@@ -27,7 +30,9 @@ const Nalezy: FunctionComponent = () => {
     const history = useHistory();
     const location = useLocation();
     const match = useRouteMatch();
-    const { direction, handleSort, filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState, reload } = useFindingsFilter();
+
+    const sorting = useRecoilValue(sortingState);
+    const { filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState, reload } = useFindingsFilter();
 
     const isMapMatch = matchPath(location.pathname, '/nalezy/mapa');
     const isTableMatch = matchPath(location.pathname, '/nalezy');
@@ -36,6 +41,9 @@ const Nalezy: FunctionComponent = () => {
     const isTable = isTableMatch?.isExact;
 
     useEffect(() => {
+        const f = { ordering: sorting };
+
+        console.log('>>> effect', f);
         const load = async () => {
             const response: AxiosResponse<SyringeReadModel> = await API.post('/syringe/search', filter);
             if (response.status !== 200) throw new Error('Unable to load data');
@@ -45,13 +53,14 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setLoader({ resp: data });
+                setLoader({ resp: mock });
+                // setLoader({ resp: data });
             })
             .catch(e => {
                 setLoader({ err: e });
                 console.warn(e);
             });
-    }, [filter]);
+    }, [filter, sorting]);
 
     const handleRangeFilter = useCallback((kind, from, to) => {
         filterByRange(kind, { from: +from, to: +to });
@@ -88,7 +97,7 @@ const Nalezy: FunctionComponent = () => {
                 )}
                 <Switch>
                     <Route path={`${match.path}/`} exact={true}>
-                        <Table loader={loader} direction={direction} onSort={handleSort} onUpdate={reload} />
+                        <Table loader={loader} onUpdate={reload} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
                         <Map loader={loader} onUpdate={reload} />
