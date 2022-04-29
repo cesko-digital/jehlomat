@@ -28,7 +28,10 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
 
                 if (user != null ) {
-                    call.respond(HttpStatusCode.OK, user.toUserInfo())
+                    val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                    val roles = PermissionService.determineRoles(loggedInUser, user)
+
+                    call.respond(HttpStatusCode.OK, user.toUserInfo(roles.contains(Role.OrgAdmin)))
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
@@ -101,10 +104,25 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                         }
 
                         var isUserNameUnique = false
-                        synchronized(databaseInstance) {
-                            if (newUser.username == userToChange.username || databaseInstance.selectUserByUsername(newUser.username) == null) {
-                                databaseInstance.updateUserAttributes(id, newUser)
-                                isUserNameUnique = true
+
+                        databaseInstance.useTransaction {
+                            synchronized(databaseInstance) {
+                                if (newUser.username == userToChange.username || databaseInstance.selectUserByUsername(newUser.username) == null) {
+                                    databaseInstance.updateUserAttributes(id, newUser)
+                                    isUserNameUnique = true
+                                }
+                            }
+
+                            if (newUser.email != userToChange.email) {
+                                val verificationCode = RandomIdGenerator.generateRegistrationCode()
+                                val organization = databaseInstance.selectOrganizationById(userToChange.organizationId)
+
+                                databaseInstance.updateUserEmail(id, newUser.email, verificationCode)
+                                mailer.sendRegistrationConfirmationEmail(
+                                    organization!!,
+                                    newUser.email,
+                                    verificationCode
+                                )
                             }
                         }
 

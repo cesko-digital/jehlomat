@@ -330,8 +330,18 @@ class DatabaseService(
     fun updateUserAttributes(id: Int, attributes: UserChangeRequest) {
         databaseInstance.update(UserTable) {
             set(it.username, attributes.username)
-            set(it.email, attributes.email)
             set(it.teamId, attributes.teamId)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
+    fun updateUserEmail(id: Int, email: String, code: String) {
+        databaseInstance.update(UserTable) {
+            set(it.email, email)
+            set(it.verificationCode, code)
+            set(it.verified, false)
             where {
                 it.userId eq id
             }
