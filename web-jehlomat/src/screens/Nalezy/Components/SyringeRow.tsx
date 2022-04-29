@@ -15,14 +15,13 @@ import { ReactComponent as SyringeIcon } from 'assets/icons/syringe-line.svg';
 
 interface SyringeRowProps {
     syringe: Syringe;
-    onUpdate: () => void;
 }
 
 const Right = styled('td')({
     textAlign: 'right',
 });
 
-const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, onUpdate }) => {
+const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [edit, setEdit] = useState<Syringe | null>();
 
@@ -33,10 +32,6 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, onUpdate }) =
 
         setAnchorEl(event.currentTarget);
         setEdit(syringe);
-    };
-    const handleUpdate = () => {
-        onUpdate();
-        setAnchorEl(null);
     };
 
     return (
@@ -50,7 +45,7 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, onUpdate }) =
             <td>
                 <SyringeDemolishDate syringe={syringe} />
             </td>
-            <td>{syringe.createdBy?.username ?? "-"}</td>
+            <td>{syringe.createdBy?.username ?? '-'}</td>
             <td>
                 <SyringeState syringe={syringe} />
             </td>
@@ -59,7 +54,7 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe, onUpdate }) =
                     <RoundButton onClick={handleOpenActions(syringe)}>
                         <EditIcon />
                     </RoundButton>
-                    <ListItemMenu open={Boolean(anchorEl) && edit?.id === syringe.id} anchorEl={anchorEl!} onClickAway={() => setAnchorEl(null)} syringe={syringe} onUpdate={handleUpdate} />
+                    <ListItemMenu open={Boolean(anchorEl) && edit?.id === syringe.id} anchorEl={anchorEl!} onClickAway={() => setAnchorEl(null)} syringe={syringe} />
                 </Box>
             </Right>
         </Row>

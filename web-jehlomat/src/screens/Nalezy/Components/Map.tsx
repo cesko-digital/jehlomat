@@ -18,7 +18,6 @@ import pin from './utils/pin';
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
-    onUpdate: () => void;
 }
 
 const PopupMenu = styled(Popup)({
@@ -64,7 +63,7 @@ const State = styled('div')({
     padding: '0 8px',
 });
 
-const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
+const Map: FunctionComponent<MapProps> = ({ loader }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const data = loader.resp?.syringeList || [];
@@ -111,7 +110,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
                                         <PreviewSyringeState syringe={item} />
                                     </State>
                                 </Info>
-                                <Links syringe={item} onUpdate={onUpdate} />
+                                <Links syringe={item} />
                             </PopupMenu>
                         </Marker>
                     );

@@ -1,28 +1,38 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userState } from 'store/user';
 import { Filter } from './Filter';
 import Select from './Select';
 import loadUsers, { User } from './utils/loadUsers';
 import loadTeams, { Team } from './utils/loadTeams';
 import { ReporterType } from '../types/ReporterType';
+import { filteringState } from '../store';
+import { Filtering } from '../types/Filtering';
 
 interface SelectData {
     users: Array<User>;
     teams: Array<Team>;
 }
 
-interface FilterReporterProps {
-    onFilter: (type: ReporterType, id: number) => void;
-    onReset: () => void;
-}
-
-const FilterByReporter: FunctionComponent<FilterReporterProps> = ({ onFilter, onReset }) => {
+const FilterByReporter: FunctionComponent = () => {
     const [items, setItems] = useState<SelectData>({ users: [], teams: [] });
     const [type, setType] = useState<ReporterType | ''>('');
     const [id, setId] = useState<number | undefined>();
 
     const user = useRecoilValue(userState);
+    const setFilter = useSetRecoilState(filteringState);
+
+    const filters = useCallback((type: ReporterType, id: number) => {
+        setFilter((state: Filtering) => ({ ...state, createdBy: { type, id } }));
+    }, []);
+    const reset = useCallback(() => {
+        setFilter(state => {
+            const filter = { ...state };
+            delete filter.createdBy;
+
+            return filter;
+        });
+    }, []);
 
     useEffect(() => {
         if (!user || !user.isAdmin) return;
@@ -36,14 +46,14 @@ const FilterByReporter: FunctionComponent<FilterReporterProps> = ({ onFilter, on
     useEffect(() => {
         if (!type || !id) return;
 
-        onFilter(type as ReporterType, id);
+        filters(type as ReporterType, id);
     }, [type, id]);
 
     const handleReset = () => {
         setType('');
         setId(undefined);
 
-        onReset();
+        reset();
     };
 
     if (user && !user.isAdmin) {

@@ -25,10 +25,9 @@ const List = styled('ul')({
 
 interface LinksProps {
     syringe: Syringe;
-    onUpdate: () => void;
 }
 
-const Links: FunctionComponent<LinksProps> = ({ syringe, onUpdate }) => (
+const Links: FunctionComponent<LinksProps> = ({ syringe }) => (
     <List>
         <li>
             <ActionLink to="/">
@@ -43,7 +42,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onUpdate }) => (
             </ActionLink>
         </li>
         <li>
-            <Delete syringe={syringe} onDelete={onUpdate} />
+            <Delete syringe={syringe} />
         </li>
     </List>
 );

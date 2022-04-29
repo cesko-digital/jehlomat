@@ -21,7 +21,7 @@ import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
 import { mock } from './__mock';
-import { sortingState } from './store';
+import { filteringState, paginationState, sortingState } from './store';
 import { useRecoilValue } from 'recoil';
 
 const Nalezy: FunctionComponent = () => {
@@ -32,7 +32,8 @@ const Nalezy: FunctionComponent = () => {
     const match = useRouteMatch();
 
     const sorting = useRecoilValue(sortingState);
-    const { filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState, reload } = useFindingsFilter();
+    const filtering = useRecoilValue(filteringState);
+    const paging = useRecoilValue(paginationState);
 
     const isMapMatch = matchPath(location.pathname, '/nalezy/mapa');
     const isTableMatch = matchPath(location.pathname, '/nalezy');
@@ -41,9 +42,12 @@ const Nalezy: FunctionComponent = () => {
     const isTable = isTableMatch?.isExact;
 
     useEffect(() => {
-        const f = { ordering: sorting };
+        const filter = {
+            ordering: sorting,
+            filter: filtering,
+            pageInfo: paging,
+        };
 
-        console.log('>>> effect', f);
         const load = async () => {
             const response: AxiosResponse<SyringeReadModel> = await API.post('/syringe/search', filter);
             if (response.status !== 200) throw new Error('Unable to load data');
@@ -53,20 +57,14 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setLoader({ resp: mock });
-                // setLoader({ resp: data });
+                // setLoader({ resp: mock });
+                setLoader({ resp: data });
             })
             .catch(e => {
                 setLoader({ err: e });
                 console.warn(e);
             });
-    }, [filter, sorting]);
-
-    const handleRangeFilter = useCallback((kind, from, to) => {
-        filterByRange(kind, { from: +from, to: +to });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [sorting, filtering, paging]);
 
     return (
         <>
@@ -89,18 +87,18 @@ const Nalezy: FunctionComponent = () => {
                 {filters && (
                     <Filters>
                         <HorizontalContainer>
-                            <FilterByRange onFilter={handleRangeFilter} onReset={resetByRange} />
-                            <FilterByReporter onFilter={filterByReporter} onReset={resetByReporter} />
-                            <FilterByState onFilter={filterByState} onReset={resetByState} />
+                            <FilterByRange />
+                            <FilterByReporter />
+                            <FilterByState />
                         </HorizontalContainer>
                     </Filters>
                 )}
                 <Switch>
                     <Route path={`${match.path}/`} exact={true}>
-                        <Table loader={loader} onUpdate={reload} />
+                        <Table loader={loader} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
-                        <Map loader={loader} onUpdate={reload} />
+                        <Map loader={loader} />
                     </Route>
                 </Switch>
             </Page>

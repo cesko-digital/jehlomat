@@ -8,6 +8,8 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 
 import { ReactComponent as DeleteIcon } from 'assets/icons/delete-bin-line.svg';
+import { useSetRecoilState } from 'recoil';
+import { filteringState } from '../store';
 
 const Link = styled('a')({
     alignItems: 'center',
@@ -42,11 +44,12 @@ const DangerButton = styled(PrimaryButton)({
 
 interface DeleteProps {
     syringe: Syringe;
-    onDelete: () => void;
 }
 
-const Delete: FunctionComponent<DeleteProps> = ({ syringe, onDelete }) => {
+const Delete: FunctionComponent<DeleteProps> = ({ syringe }) => {
     const [open, setOpen] = useState(false);
+
+    const setFilter = useSetRecoilState(filteringState);
 
     const handleConfirm = useCallback(() => {
         API.delete(`/syringe/${syringe.id}`)
@@ -54,10 +57,10 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe, onDelete }) => {
                 if (response.status !== 200) throw new Error('Unable to delete syringe');
 
                 setOpen(false);
-                onDelete();
+                setFilter(state => ({ ...state }));
             })
             .catch(e => console.warn(e));
-    }, [syringe, onDelete]);
+    }, [syringe]);
 
     return (
         <>

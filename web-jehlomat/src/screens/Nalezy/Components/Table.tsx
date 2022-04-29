@@ -17,7 +17,6 @@ import sort from 'screens/Nalezy/hooks/utils/sort';
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
-    onUpdate: () => void;
 }
 
 const Wrapper = styled('table')({
@@ -30,7 +29,7 @@ const Header = styled('tr')({
     width: '100%',
 });
 
-const Table: FunctionComponent<TableProps> = ({ loader, onUpdate }) => {
+const Table: FunctionComponent<TableProps> = ({ loader }) => {
     const setSort = useSetRecoilState(sortingState);
 
     const loading = loader.resp === undefined && loader.err === undefined;
@@ -66,7 +65,7 @@ const Table: FunctionComponent<TableProps> = ({ loader, onUpdate }) => {
                     {loading && <LoadingState />}
                     {error && <ErrorState text={texts.TABLE__ERROR} />}
                     {loaded && data.length === 0 && <EmptyState text={texts.TABLE__NO_RECORDS__TITLE} description={texts.TABLE__NO_RECORDS__DESCRIPTION} />}
-                    {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} onUpdate={onUpdate} />)}
+                    {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} />)}
                 </tbody>
             </Wrapper>
         </Container>

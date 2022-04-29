@@ -1,24 +1,47 @@
-import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import dayjs from 'dayjs';
+import { RangeKind } from 'screens/Nalezy/types/RangeKind';
+import { Range as DateRange } from 'screens/Nalezy/types/Range';
+import { Filtering } from 'screens/Nalezy/types/Filtering';
+import { filteringState } from 'screens/Nalezy/store';
 import { Filter, Range } from './Filter';
-import Select from './Select';
 import { DatePicker } from './Input';
-import { RangeKind } from '../types/RangeKind';
+import Select from './Select';
 
-interface FilterPeriodProps {
-    onFilter: (kind: RangeKind, from: Dayjs | null, to: Dayjs | null) => void;
-    onReset: () => void;
-}
-
-const FilterByRange: FunctionComponent<FilterPeriodProps> = ({ onFilter, onReset }) => {
+const FilterByRange: FunctionComponent = () => {
     const [kind, setKind] = useState<RangeKind | ''>('');
     const [from, setFrom] = useState<string>('');
     const [to, setTo] = useState<string>('');
+    const setFilter = useSetRecoilState(filteringState);
+
+    const filtering = useCallback((kind: RangeKind, range: DateRange) => {
+        setFilter((state: Filtering) => {
+            const filter = { ...state };
+            delete filter.createdAt;
+            delete filter.demolishedAt;
+
+            if (kind === 'DEMOLISH') return { ...filter, demolishedAt: range };
+            if (kind === 'FIND') return { ...filter, createdAt: range };
+
+            return filter;
+        });
+    }, []);
+    const reset = useCallback(() => {
+        setFilter(state => {
+            const filter = { ...state };
+            delete filter.createdAt;
+            delete filter.demolishedAt;
+
+            return filter;
+        });
+    }, []);
 
     useEffect(() => {
-        if (!kind || !from || !to) return;
+        const leave = !kind || !from || !to;
+        if (leave) return;
 
-        onFilter(kind, dayjs(from), dayjs(to));
+        filtering(kind, { from: +dayjs(from), to: +dayjs(to) });
     }, [kind, from, to]);
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setKind(e.target.value as RangeKind);
@@ -29,7 +52,7 @@ const FilterByRange: FunctionComponent<FilterPeriodProps> = ({ onFilter, onReset
         setTo('');
         setKind('');
 
-        onReset();
+        reset();
     };
 
     return (
@@ -37,7 +60,7 @@ const FilterByRange: FunctionComponent<FilterPeriodProps> = ({ onFilter, onReset
             <Select onChange={handleSelect}>
                 <option value="">&nbsp;</option>
                 <option value="DEMOLISH">Období likvidace</option>
-                <option value="FINDING">Období nálezu</option>
+                <option value="FIND">Období nálezu</option>
             </Select>
             <Range>
                 <DatePicker label="Období od" value={from} onChange={handleFrom} />

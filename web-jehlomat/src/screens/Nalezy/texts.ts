@@ -1,4 +1,4 @@
-﻿const texts = {
+const texts = {
     TITLE: 'Nové heslo',
     MOBILE_TITLE: 'Nové heslo',
     TABLE__COLUMNS__CITY: 'Město',
