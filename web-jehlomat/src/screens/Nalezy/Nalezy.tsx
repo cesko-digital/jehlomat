@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
@@ -7,7 +7,6 @@ import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { Loader } from 'screens/Nalezy/types/Loader';
-import useFindingsFilter from 'screens/Nalezy/hooks/useFindingsFilter';
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
 import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
 import FilterByState from 'screens/Nalezy/Components/FilterByState';

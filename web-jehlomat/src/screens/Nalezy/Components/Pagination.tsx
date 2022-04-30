@@ -1,4 +1,4 @@
-﻿import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import cx from 'classnames';
 import { styled } from '@mui/system';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';

@@ -26,7 +26,7 @@ const FilterByRange: FunctionComponent = () => {
 
             return filter;
         });
-    }, []);
+    }, [setFilter]);
     const reset = useCallback(() => {
         setFilter(state => {
             const filter = { ...state };
@@ -35,14 +35,14 @@ const FilterByRange: FunctionComponent = () => {
 
             return filter;
         });
-    }, []);
+    }, [setFilter]);
 
     useEffect(() => {
         const leave = !kind || !from || !to;
         if (leave) return;
 
         filtering(kind, { from: +dayjs(from), to: +dayjs(to) });
-    }, [kind, from, to]);
+    }, [filtering, kind, from, to]);
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setKind(e.target.value as RangeKind);
     const handleFrom = (e: ChangeEvent<HTMLInputElement>) => setFrom(e.target.value);

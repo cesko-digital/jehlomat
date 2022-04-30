@@ -41,7 +41,6 @@ const Table: FunctionComponent<TableProps> = ({ loader }) => {
 
     const handleSort = (column: SortableColumn) => () => setSort(state => sort(state, column));
 
-    console.log(">>> page info", loader.resp?.pageInfo);
     return (
         <Container>
             <Wrapper>

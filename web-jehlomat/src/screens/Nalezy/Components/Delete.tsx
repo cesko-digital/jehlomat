@@ -60,7 +60,7 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe }) => {
                 setFilter(state => ({ ...state }));
             })
             .catch(e => console.warn(e));
-    }, [syringe]);
+    }, [setFilter, syringe]);
 
     return (
         <>

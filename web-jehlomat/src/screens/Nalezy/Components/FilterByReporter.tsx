@@ -24,7 +24,7 @@ const FilterByReporter: FunctionComponent = () => {
 
     const filters = useCallback((type: ReporterType, id: number) => {
         setFilter((state: Filtering) => ({ ...state, createdBy: { type, id } }));
-    }, []);
+    }, [setFilter]);
     const reset = useCallback(() => {
         setFilter(state => {
             const filter = { ...state };
@@ -32,7 +32,7 @@ const FilterByReporter: FunctionComponent = () => {
 
             return filter;
         });
-    }, []);
+    }, [setFilter]);
 
     useEffect(() => {
         if (!user || !user.isAdmin) return;
@@ -47,7 +47,7 @@ const FilterByReporter: FunctionComponent = () => {
         if (!type || !id) return;
 
         filters(type as ReporterType, id);
-    }, [type, id]);
+    }, [filters, type, id]);
 
     const handleReset = () => {
         setType('');

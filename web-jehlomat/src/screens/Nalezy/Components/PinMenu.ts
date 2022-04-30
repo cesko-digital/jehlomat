@@ -1,4 +1,4 @@
-﻿import { styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { Popup } from 'react-leaflet';
 
 export const PinMenu = styled(Popup)({
