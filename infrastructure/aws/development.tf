@@ -113,7 +113,8 @@ resource "aws_ecs_task_definition" "service-jehlomat" {
     jwt-audience        = var.jwt-audience,
     jwt-realm           = var.jwt-realm,
     mailjet-public-key  = var.mailjet-public-key,
-    mailjet-private-key = var.mailjet-private-key
+    mailjet-private-key = var.mailjet-private-key,
+    frontend-url        = var.frontend-url
   })
   network_mode          = "awsvpc"
   execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
