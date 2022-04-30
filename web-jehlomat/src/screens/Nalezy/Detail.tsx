@@ -21,6 +21,11 @@ import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
+import { mock } from './__mock';
+import { Info, Location, PinMenu, State, Time } from './Components/PinMenu';
+import dayjs from 'dayjs';
+import PreviewSyringeState from './Components/SyringeState';
+import Links from './Components/Links';
 
 const Details = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(2),
@@ -47,12 +52,13 @@ const Detail = () => {
     useEffect(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
             resp => {
-                if (!isStatusSuccess(resp.status)) {
-                    setLoader({ err: 'Unable load details' });
-                    return;
-                }
+                // if (!isStatusSuccess(resp.status)) {
+                //     setLoader({ err: 'Unable load details' });
+                //     return;
+                // }
 
-                setLoader({ resp: resp.data });
+                setLoader({ resp: mock.syringeList[1] });
+                // setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
         );
@@ -109,7 +115,20 @@ const Detail = () => {
                             right={
                                 <Box height={443} borderRadius={2} overflow="hidden">
                                     <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
-                                        {data && <Pin syringe={data} />}
+                                        {data && (
+                                            <Pin syringe={data}>
+                                                <PinMenu closeButton={false} minWidth={220}>
+                                                    <Info>
+                                                        <Location>{data.location.obec}</Location>
+                                                        <Time>{dayjs(data.createdAt * 1000).format('D. M. YYYY')}</Time>
+                                                        <State>
+                                                            <PreviewSyringeState syringe={data} />
+                                                        </State>
+                                                    </Info>
+                                                    <Links syringe={data} />
+                                                </PinMenu>
+                                            </Pin>
+                                        )}
                                         <TileLayer
                                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

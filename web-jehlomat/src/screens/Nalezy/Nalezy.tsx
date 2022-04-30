@@ -57,8 +57,8 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                // setLoader({ resp: mock });
-                setLoader({ resp: data });
+                setLoader({ resp: mock });
+                // setLoader({ resp: data });
             })
             .catch(e => {
                 setLoader({ err: e });

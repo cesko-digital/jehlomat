@@ -14,6 +14,7 @@ import ErrorState from 'screens/Nalezy/Components/ErrorState';
 import { columnSortingDirection, sortingState } from 'screens/Nalezy/store';
 import texts from 'screens/Nalezy/texts';
 import sort from 'screens/Nalezy/hooks/utils/sort';
+import Pagination from './Pagination';
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
@@ -36,9 +37,11 @@ const Table: FunctionComponent<TableProps> = ({ loader }) => {
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
     const data = loader.resp?.syringeList || [];
+    const pageInfo = loader.resp?.pageInfo || { size:0, index: 0 };
 
     const handleSort = (column: SortableColumn) => () => setSort(state => sort(state, column));
 
+    console.log(">>> page info", loader.resp?.pageInfo);
     return (
         <Container>
             <Wrapper>
@@ -68,6 +71,7 @@ const Table: FunctionComponent<TableProps> = ({ loader }) => {
                     {loaded && data.length > 0 && data.map(item => <SyringeRow key={item.id} syringe={item} />)}
                 </tbody>
             </Wrapper>
+            {loaded && <Pagination paging={pageInfo} />}
         </Container>
     );
 };
