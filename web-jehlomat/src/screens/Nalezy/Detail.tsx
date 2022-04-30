@@ -52,13 +52,13 @@ const Detail = () => {
     useEffect(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
             resp => {
-                // if (!isStatusSuccess(resp.status)) {
-                //     setLoader({ err: 'Unable load details' });
-                //     return;
-                // }
+                if (!isStatusSuccess(resp.status)) {
+                    setLoader({ err: 'Unable load details' });
+                    return;
+                }
 
-                setLoader({ resp: mock.syringeList[1] });
-                // setLoader({ resp: resp.data });
+                // setLoader({ resp: mock.syringeList[1] });
+                setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
         );

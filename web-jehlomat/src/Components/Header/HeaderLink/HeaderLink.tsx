@@ -7,6 +7,7 @@ export enum HeaderLinkType {
     AboutApp,
     CreateOrgAccount,
     Watch,
+    Findings,
     Login,
 }
 
@@ -41,6 +42,8 @@ function titleForType(type: HeaderLinkType): string {
             return 'Založit organizaci';
         case HeaderLinkType.Watch:
             return 'Sledovat nález';
+        case HeaderLinkType.Findings:
+            return 'Nálezy'
         case HeaderLinkType.Login:
             return 'Přihlásit se';
     }

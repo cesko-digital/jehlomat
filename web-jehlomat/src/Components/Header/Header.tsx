@@ -52,6 +52,7 @@ export const Header = (props: Props) => {
                 <SLinkContainer>
                     <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
                     <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
+                    <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
                     {renderLoginLogout()}
                 </SLinkContainer>
             </SContainer>
