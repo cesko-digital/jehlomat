@@ -15,7 +15,7 @@ const Pin: FunctionComponent<PinProps> = ({ syringe, children }) => {
         return null;
     }
 
-    const [lat, lng] = syringe.gps_coordinates.split(',').map(i => i.trim());
+    const [lat, lng] = syringe.gps_coordinates.split(' ').map(i => i.trim());
     const coordinates: LatLngTuple = [+lat, +lng];
 
     map.flyTo(coordinates);

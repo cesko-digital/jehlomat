@@ -27,7 +27,7 @@ const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickA
     <Popper open={open} anchorEl={anchorEl} placement="bottom">
         <ClickAwayListener onClickAway={onClickAway}>
             <Menu>
-                <Links syringe={syringe} />
+                <Links onClose={onClickAway} syringe={syringe} />
             </Menu>
         </ClickAwayListener>
     </Popper>

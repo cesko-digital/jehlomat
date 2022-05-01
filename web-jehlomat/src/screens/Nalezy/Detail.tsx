@@ -49,20 +49,25 @@ const Detail = () => {
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
 
-    useEffect(() => {
+    const load = useCallback(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
             resp => {
-                if (!isStatusSuccess(resp.status)) {
-                    setLoader({ err: 'Unable load details' });
-                    return;
-                }
+                // if (!isStatusSuccess(resp.status)) {
+                //     setLoader({ err: 'Unable load details' });
+                //     return;
+                // }
 
-                // setLoader({ resp: mock.syringeList[1] });
-                setLoader({ resp: resp.data });
+                setLoader({ resp: mock.syringeList[1] });
+                // setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
         );
     }, [id]);
+
+    useEffect(() => {
+        load();
+
+    }, [load]);
 
     const handleGetBack = useCallback(() => {
         history.push('/nalezy');
@@ -125,7 +130,7 @@ const Detail = () => {
                                                             <PreviewSyringeState syringe={data} />
                                                         </State>
                                                     </Info>
-                                                    <Links syringe={data} />
+                                                    <Links onClose={load} syringe={data} />
                                                 </PinMenu>
                                             </Pin>
                                         )}

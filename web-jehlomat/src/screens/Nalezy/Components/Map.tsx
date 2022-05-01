@@ -32,7 +32,7 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
     }, [error]);
 
     const coordinates = data.map((item: Syringe) => {
-        const [lat, lng] = item.gps_coordinates.split(',').map(i => i.trim());
+        const [lat, lng] = item.gps_coordinates.split(' ').map(i => i.trim());
         const coordinate: LatLngTuple = [+lat, +lng];
 
         return coordinate;
