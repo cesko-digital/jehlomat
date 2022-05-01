@@ -41,6 +41,7 @@ export JWT_REALM=jehlomat_local_realm
 export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
 export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
 export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
+export FRONTEND_URL=http://localhost:3000/#/
 ```
 6) `cd service-jehlomat` 
 7) `../gradlew shadowJar` 

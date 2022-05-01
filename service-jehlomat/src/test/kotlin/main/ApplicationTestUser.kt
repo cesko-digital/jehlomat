@@ -18,10 +18,7 @@ import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
 import services.MailerService
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 
 const val API_PATH = "/api/v1/jehlomat/user"
@@ -138,6 +135,30 @@ class ApplicationTest {
     }
 
     @Test
+    fun testGetUserByOrgAdmin() = withTestApplication(Application::module) {
+        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        database.insertUser(USER.copy(username = "orgAdmin", email = "orgAdminEmail", organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = true))
+
+        val token = loginUser("orgAdminEmail", USER.password)
+        with(handleRequest(HttpMethod.Get, "$API_PATH/$userId") {
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(
+                """{
+  "id" : """ + userId + """,
+  "username" : "Franta Pepa 1",
+  "organizationId" : """ + defaultOrgId + """,
+  "email" : """" + USER.email + """",
+  "teamId" : """ + defaultTeamId + """,
+  "isAdmin" : false
+}""",
+                response.content
+            )
+        }
+    }
+
+    @Test
     fun testGetUserNotFound() = withTestApplication(Application::module) {
         database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
@@ -150,7 +171,7 @@ class ApplicationTest {
     }
 
     @Test
-    fun testPutUserAttr() = withTestApplication(Application::module) {
+    fun testPutUserAttr() = withTestApplication({ module(testing = true) }) {
         val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(USER.email, USER.password)
         val newEmail = "new@email.cz"
@@ -166,6 +187,45 @@ class ApplicationTest {
             assertEquals(newEmail, user.email)
             assertEquals("new name", user.username)
             assertEquals(defaultTeamId, user.teamId)
+            assertEquals(false, user.verified)
+            assertNotEquals(USER.verificationCode, user.verificationCode)
+
+            io.mockk.verify(exactly = 1) {
+                mailerMock.sendRegistrationConfirmationEmail(
+                    organization.copy(id=defaultOrgId, name="defaultOrgName"),
+                    newEmail,
+                    user.verificationCode
+                )
+            }
+        }
+    }
+
+    @Test
+    fun testPutUserAttrWithSameEmail() = withTestApplication({ module(testing = true) }) {
+        val userId = database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Put, "$API_PATH/$userId/attributes") {
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(UserChangeRequest(teamId = defaultTeamId, username = "new name", email = USER.email)))
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            val user = database.selectUserByEmail(USER.email)
+            assertNotNull(user)
+            assertEquals(USER.email, user.email)
+            assertEquals("new name", user.username)
+            assertEquals(defaultTeamId, user.teamId)
+            assertEquals(true, user.verified)
+            assertEquals(USER.verificationCode, user.verificationCode)
+
+            io.mockk.verify(exactly = 0) {
+                mailerMock.sendRegistrationConfirmationEmail(
+                    organization.copy(id=defaultOrgId, name="defaultOrgName"),
+                    USER.email,
+                    user.verificationCode
+                )
+            }
         }
     }
 

@@ -21,7 +21,7 @@ const Button = styled.button`
 const PrimaryButton: FC<Props> = ({ text, ...props }) => {
     return (
         <Button {...props}>
-            <Typography variant="button" sx={{ fontSize: '20px', lineHeight: '16px', fontWeight: '400' }}>
+            <Typography variant="button" sx={{ fontSize: '20px', lineHeight: '20px', fontWeight: '400' }}>
                 {text}
             </Typography>
         </Button>

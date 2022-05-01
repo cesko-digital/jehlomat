@@ -4,7 +4,7 @@ import L, { LatLngTuple } from 'leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import Loading from 'screens/Nalezy/Components/Loading';
 import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';

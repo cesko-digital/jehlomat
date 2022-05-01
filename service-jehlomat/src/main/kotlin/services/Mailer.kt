@@ -43,7 +43,7 @@ class FakeMailer: MailerService {
 
 
 class Mailer: MailerService {
-    private val publicUrl = System.getenv("JWT_ISSUER")
+    private val publicUrl = System.getenv("FRONTEND_URL")
     private val client = MailjetClient(
         ClientOptions.builder()
             .apiKey(System.getenv("MAILJET_PUBLIC_KEY"))

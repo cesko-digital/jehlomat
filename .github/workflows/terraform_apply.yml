@@ -20,6 +20,7 @@ env:
   TF_VAR_jwt-realm: ${{ secrets.JWT_REALM }}
   TF_VAR_mailjet-public-key: ${{ secrets.MAILJET_PUBLIC_KEY }}
   TF_VAR_mailjet-private-key: ${{ secrets.MAILJET_PRIVATE_KEY }}
+  TF_VAR_frontend-url: ${{secrets.FRONTEND_URL}}
 jobs:
   terraform:
     name: 'Terraform'
