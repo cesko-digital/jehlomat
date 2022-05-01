@@ -1,36 +1,38 @@
 class APIURL {
-  login = "/login"
-  organization = "/organization"
-  userVerification = "/verification/user"
-  user = "/user"
-  
-  getUserPassword(userId: string | number) {
-    return `${this.user}/${userId}/password`
-  }
+    login = '/login';
+    organization = '/organization';
+    userVerification = '/verification/user';
+    user = '/user';
+    setNewPassword = '/password-reset/save';
+    testResetPassword = '/password-reset/test-code';
 
-  getUserAttributes(userId: string | number) {
-    return `${this.user}/${userId}/attributes`
-  }
+    getUserPassword(userId: string | number) {
+        return `${this.user}/${userId}/password`;
+    }
 
-  getSyringe(syringeId: string) {
-    return `/syringe/${syringeId}`;
-  }
+    getUserAttributes(userId: string | number) {
+        return `${this.user}/${userId}/attributes`;
+    }
 
-  getOrganizationVerification(orgId: string) {
-    return `/verification/organization?orgId=${orgId}`;
-  }
+    getSyringe(syringeId: string) {
+        return `/syringe/${syringeId}`;
+    }
 
-  getUser(userId: string | number) {
-    return `${this.user}/${userId}`
-  }
+    getOrganizationVerification(orgId: string) {
+        return `/verification/organization?orgId=${orgId}`;
+    }
 
-  getUsersInOrganization(orgId: string | number) {
-    return `${this.organization}/${orgId}/users`
-  }
+    getUser(userId: string | number) {
+        return `${this.user}/${userId}`;
+    }
 
-  getOrganization(orgId?: string | number) {
-    return `${this.organization}/${orgId}`;
-  }
+    getUsersInOrganization(orgId: string | number) {
+        return `${this.organization}/${orgId}/users`;
+    }
+
+    getOrganization(orgId?: string | number) {
+        return `${this.organization}/${orgId}`;
+    }
 }
 
 const apiURL = new APIURL();
