@@ -17,7 +17,8 @@ const PrivateRoute: FC<any> = ({ from, ...rest }) => {
     const searchParams: IRedirectSearchParams = {}
 
     if (from) {
-      searchParams.from = location.pathname
+        const query = location.search?location.search:null;
+        searchParams.from = location.pathname+query;
     }
 
     const search = convertSearchParamsToString(searchParams as Record<string, string>);

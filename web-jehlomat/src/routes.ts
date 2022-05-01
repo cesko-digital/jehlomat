@@ -104,6 +104,8 @@ export const routes: Route[] = [
         id: Routes.USER_REGISTRATION,
         Component: RegistraceUzivatele,
         path: `/${USER_URL_PATH_}/registrace`,
+        protectedRoute:true,
+        from: true
     },
     {
         id: Routes.USER_THANK_YOU,

@@ -67,3 +67,7 @@ variable "mailjet-public-key" {
 variable "mailjet-private-key" {
   type = string
 }
+
+variable "frontend-url" {
+  type = string
+}
