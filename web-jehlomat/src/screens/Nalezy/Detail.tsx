@@ -12,7 +12,7 @@ import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
@@ -26,6 +26,7 @@ import { Info, Location, PinMenu, State, Time } from './Components/PinMenu';
 import dayjs from 'dayjs';
 import PreviewSyringeState from './Components/SyringeState';
 import Links from './Components/Links';
+import texts from './texts';
 
 const Details = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(2),
@@ -66,7 +67,6 @@ const Detail = () => {
 
     useEffect(() => {
         load();
-
     }, [load]);
 
     const handleGetBack = useCallback(() => {
@@ -83,12 +83,12 @@ const Detail = () => {
 
     return (
         <>
-            <Header mobileTitle="Detail nálezu" />
+            <Header mobileTitle={texts.DETAIL__TITLE} />
 
             <Page>
                 <Container sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <Box mt={5} mb={2}>
-                        <TextHeader>Detail nálezu</TextHeader>
+                        <TextHeader>{texts.DETAIL__TITLE}</TextHeader>
                         <RoundButton filled={true} onClick={handleGetBack}>
                             <BackIcon />
                         </RoundButton>
@@ -104,16 +104,16 @@ const Detail = () => {
                                 <Details>
                                     {error && (
                                         <Box>
-                                            <Alert severity="error">Zadaný nález nebyl nalezen</Alert>
+                                            <Alert severity="error">{texts.DETAIL__NOT_FOUND}</Alert>
                                         </Box>
                                     )}
-                                    <TextInput label="Počet jehel" value={data?.count} disabled />
-                                    <TextInput label="Datum a čas nálezu" value={foundAt} disabled />
-                                    <TextInput label="Místo nálezu" value={data?.location?.obec} disabled />
-                                    <TextInput label="Poznámka" value={data?.note} disabled />
-                                    <TextInput label="Stav nálezu" value={state(data)} disabled />
+                                    <TextInput label={texts.DETAIL__SYRINGES_COUNT} value={data?.count} disabled />
+                                    <TextInput label={texts.DETAIL__DATETIME} value={foundAt} disabled />
+                                    <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
+                                    <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
+                                    <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
                                     <Box display="flex" alignItems="center" flexDirection="column" py={2}>
-                                        <SecondaryButton onClick={handleGetBack} text="Zpět na seznam" />
+                                        <SecondaryButton onClick={handleGetBack} text={texts.DETAIL__BACK} />
                                     </Box>
                                 </Details>
                             }
