@@ -53,7 +53,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
 
             API.put(`/syringe`, payload)
                 .then((response: AxiosResponse) => {
-                    if (response.status !== 200) throw new Error('Unable to delete syringe');
+                    if (response.status !== 200) throw new Error('Unable to update syringe finding');
 
                     setPaging(state => ({ ...state }));
                 })
@@ -69,7 +69,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
                     if (typeof onClose === 'function') onClose();
                 });
         },
-        [syringe],
+        [auth, confirmationModal, onClose, setPaging, syringe],
     );
 
     return (

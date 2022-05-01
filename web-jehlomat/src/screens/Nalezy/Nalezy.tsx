@@ -3,6 +3,7 @@ import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
 import { AxiosResponse } from 'axios';
+import { useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
@@ -19,9 +20,7 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
-import { mock } from './__mock';
-import { filteringState, paginationState, sortingState } from './store';
-import { useRecoilValue } from 'recoil';
+import { filteringState, paginationState, sortingState } from 'screens/Nalezy/store';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
@@ -56,8 +55,8 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                setLoader({ resp: mock });
-                // setLoader({ resp: data });
+                // setLoader({ resp: mock });
+                setLoader({ resp: data });
             })
             .catch(e => {
                 setLoader({ err: e });

@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { TileLayer } from 'react-leaflet';
 import { Alert, Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
+import dayjs from 'dayjs';
 import Page from 'screens/Nalezy/Components/Page';
 import { Header } from 'Components/Header/Header';
 import TwoColumns from 'Components/Layout/TwoColumns';
@@ -17,16 +18,14 @@ import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
+import PreviewSyringeState from 'screens/Nalezy//Components/SyringeState';
+import Links from 'screens/Nalezy/Components/Links';
+import texts from 'screens/Nalezy/texts';
+import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/PinMenu';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
-import { mock } from './__mock';
-import { Info, Location, PinMenu, State, Time } from './Components/PinMenu';
-import dayjs from 'dayjs';
-import PreviewSyringeState from './Components/SyringeState';
-import Links from './Components/Links';
-import texts from './texts';
 
 const Details = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(2),
@@ -53,13 +52,13 @@ const Detail = () => {
     const load = useCallback(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
             resp => {
-                // if (!isStatusSuccess(resp.status)) {
-                //     setLoader({ err: 'Unable load details' });
-                //     return;
-                // }
+                if (!isStatusSuccess(resp.status)) {
+                    setLoader({ err: 'Unable load details' });
+                    return;
+                }
 
-                setLoader({ resp: mock.syringeList[1] });
-                // setLoader({ resp: resp.data });
+                // setLoader({ resp: mock.syringeList[1] });
+                setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
         );
