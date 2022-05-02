@@ -25,7 +25,7 @@ export interface IUserEdited {
     username: string;
     verified?: boolean;
     organizationId?: number;
-    teamId: number;
+    teamId: number|string;
     isAdmin?: boolean;
 }
 
