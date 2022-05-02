@@ -1,4 +1,4 @@
-import { Typography, Grid, Container, useMediaQuery, FormControl, InputLabel, Select, MenuItem, touchRippleClasses, FormHelperText } from '@mui/material';
+import { Typography, Container, useMediaQuery, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import { Header } from '../../Components/Header/Header';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
@@ -9,13 +9,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { API } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
-import { getUser, IResponse } from '../../config/user';
+import { getUser } from '../../config/user';
 import { tokenState } from 'store/login';
-import { constSelector, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
-import { MapContainer, Marker, Polygon, TileLayer, useMap, useMapEvents, ZoomControl } from 'react-leaflet';
+import { MapContainer, Polygon, TileLayer, useMap,} from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../NovyNalez/constants';
 import 'leaflet/dist/leaflet.css';
 import { Label } from 'Components/Inputs/shared';
@@ -34,15 +34,6 @@ interface ILocation {
     name?: string
 }
 
-interface ILocationResponse {
-    id: 0,
-    okres: string,
-    okresName: string,
-    obec: string,
-    obecName: string,
-    mestkaCast: string,
-    mestkaCastName: string
-}
 interface ITeam {
     id?: string,
     name: string,
@@ -195,7 +186,7 @@ const Team = (props: any) => {
                 history.push(LINKS.LOGIN);
             });
         }
-    }, [token]);
+    }, [token, history]);
 
     useEffect(() => {
         setGeom([]);
@@ -209,6 +200,7 @@ const Team = (props: any) => {
                 return transformGeom;
             });
             setGeom((geom: any) => [...geom, geometry]);
+            return null;
         });
     }, [selectedLocation])
 
@@ -232,7 +224,7 @@ const Team = (props: any) => {
                 setSelectedMembers(users)
             });
         }
-    }, [isEdit, location])
+    }, [isEdit, location, teamId, history])
 
     function GetBoundary() {
         const map = useMap();
@@ -346,9 +338,8 @@ const Team = (props: any) => {
                                             break;
                                         }
                                     }
-                                    const response: AxiosResponse<any> = await API.get(`/organization/${logUser.organizationId}`);
                                 } catch (error: any) {
-                                    //link to error page
+                                    history.push(LINKS.ERROR);
                                 }
                             }}
                         >

@@ -1,6 +1,4 @@
-import React, { useCallback, useState } from 'react';
-import { useMediaQuery } from '@mui/material';
-import { media } from 'utils/media';
+import React from 'react';
 import Modal from 'Components/Modal/Modal';
 
 interface ModalProps {
