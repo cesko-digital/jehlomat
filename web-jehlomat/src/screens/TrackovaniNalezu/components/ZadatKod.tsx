@@ -46,11 +46,10 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
     const { trackId } = useParams<IRouteParams>();
 
     useEffect(() => {
-        console.log('here', trackId)
         if (trackId) {
             setCode(trackId)
         }
-    }, [code, trackId]);
+    }, [trackId]);
 
 
 
