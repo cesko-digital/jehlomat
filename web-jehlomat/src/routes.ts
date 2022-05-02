@@ -163,6 +163,12 @@ export const routes: Route[] = [
     {
         id: Routes.TRACKING_FIND,
         Component: TrackovaniNalezu,
+        path: `/${FINDINGS_URL_PATH}/trackovani-nalezu/:trackId?`,
+        AdditionalComponents: Layout,
+    },
+    {
+        id: Routes.TRACKING_FIND,
+        Component: TrackovaniNalezu,
         path: `/${FINDINGS_URL_PATH}/trackovani-nalezu`,
         AdditionalComponents: Layout,
     },
