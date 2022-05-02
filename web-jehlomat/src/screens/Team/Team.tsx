@@ -11,7 +11,7 @@ import { AxiosResponse } from 'axios';
 import Item from './Item';
 import { getUser, IResponse } from '../../config/user';
 import { tokenState } from 'store/login';
-import { useRecoilValue } from 'recoil';
+import { constSelector, useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
@@ -25,7 +25,7 @@ import MapModal from './components/MapModal';
 import { LINKS } from 'routes';
 import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-status';
 import { useHistory, useLocation, useParams } from 'react-router';
-import { IUser , IUserEdited} from 'types';
+import { IUser, IUserEdited } from 'types';
 import ConfirmModal from './components/ConfirmModal';
 
 interface ILocation {
@@ -44,6 +44,7 @@ interface ILocationResponse {
     mestkaCastName: string
 }
 interface ITeam {
+    id?: string,
     name: string,
     locationIds: ILocation[],
     organizationId: number
@@ -51,7 +52,7 @@ interface ITeam {
 interface ITeamResponse {
     id: number,
     name: string,
-    locations: ILocation[],
+    locationIds: ILocation[],
     organizationId: number
 }
 interface IRouteParams {
@@ -125,13 +126,13 @@ const Team = (props: any) => {
         setShowModal(false);
     }, []);
     const { teamId } = useParams<IRouteParams>();
-    const path = useLocation();  
-    const isEdit: boolean = path.pathname.includes('edit')?true:false
+    const path = useLocation();
+    const isEdit: boolean = path.pathname.includes('edit') ? true : false
 
-    const titleText = path.pathname.includes('edit')?'Editace teamu':'Přidat nový tým';
+    const titleText = path.pathname.includes('edit') ? 'Editace teamu' : 'Přidat nový tým';
 
     const history = useHistory();
-    
+
     //console.log(teamId, path)
 
     const getGeometry = async (type: string, id: string) => {
@@ -164,42 +165,6 @@ const Team = (props: any) => {
         return data;
     }
     useEffect(() => {
-        if(isEdit){
-            API.get<ITeamResponse>(`/team/${teamId}`).then((response)=>{
-                if(isStatusGeneralSuccess(response.status)){
-                    const team = response.data;
-                    setTeamName(team.name);
-                    console.log(team.name, teamName);
-                    setSelectedLocation(team.locations);
-                } else {
-                    history.push(LINKS.ERROR);
-                }
-                
-            });
-            API.get<IUser>(`/team/${teamId}/users`).then((response)=>{
-                const users = response.data;
-                setSelectedMembers(users)
-            });
-        }
-    }, [isEdit, teamName])
-
-    useEffect(() => {
-        const selectedGeometry: any[] = []
-        selectedLocation.map(async (place: any, id: number) => {
-            const geometry = await getGeometry(place.type, place.id).then((data) => {
-                const transformGeom: any[] = [];
-                data.coordinates[0].map((coordinate: any) => {
-                    //console.log("coordinates", coordinate);
-                    transformGeom.push([coordinate[1], coordinate[0]]);
-                });
-                return transformGeom;
-            });
-            selectedGeometry.push(geometry);
-        });
-        setGeom(selectedGeometry);
-    }, [selectedLocation])
-
-    useEffect(() => {
         const getLocation = async () => {
             const response: AxiosResponse<any> = await API.get('/location/all');
             return response.data;
@@ -230,7 +195,44 @@ const Team = (props: any) => {
                 history.push(LINKS.LOGIN);
             });
         }
-    }, [selectedLocation, selectedMembers, token]);
+    }, [token]);
+
+    useEffect(() => {
+        setGeom([]);
+        selectedLocation.map(async (place: any, id: number) => {
+            const geometry = await getGeometry(place.type, place.id).then((data) => {
+                const transformGeom: any[] = [];
+                data.coordinates[0].map((coordinate: any) => {
+                    //console.log("coordinates", coordinate);
+                    transformGeom.push([coordinate[1], coordinate[0]]);
+                });
+                return transformGeom;
+            });
+            setGeom((geom: any) => [...geom, geometry]);
+        });
+    }, [selectedLocation])
+
+    useEffect(() => {
+        if (isEdit && location.length > 0) {
+            API.get<ITeamResponse>(`/team/${teamId}`).then((response) => {
+                if (isStatusGeneralSuccess(response.status)) {
+                    const team = response.data;
+                    setTeamName(team.name);
+                    const newLocation = team.locationIds.map((data) => {
+                        return _.find(location, { "id": data.id, "type": data.type });
+                    })
+                    setSelectedLocation(newLocation);
+                } else {
+                    history.push(LINKS.ERROR);
+                }
+
+            });
+            API.get<IUser>(`/team/${teamId}/users`).then((response) => {
+                const users = response.data;
+                setSelectedMembers(users)
+            });
+        }
+    }, [isEdit, location])
 
     function GetBoundary() {
         const map = useMap();
@@ -299,23 +301,32 @@ const Team = (props: any) => {
                                         }),
                                         organizationId: logUser.organizationId
                                     }
-                                    const teamResponse: AxiosResponse<any> = await API.post(`/team`, team);
+
+                                    let teamResponse: AxiosResponse<any>;
+                                    if (isEdit) {
+                                        team.id = teamId;
+                                        teamResponse = await API.put(`/team`, team);
+                                    } else {
+                                        teamResponse = await API.post(`/team`, team);
+                                    }
+
                                     switch (true) {
                                         case isStatusGeneralSuccess(teamResponse.status): {
-                                            console.log("team", teamResponse.data);
                                             selectedMembers.map(async (user: IUser) => {
+                                                let userEdited: IUserEdited = _.cloneDeep(user);
+                                                delete userEdited.id;
+                                                delete userEdited.organizationId;
+                                                delete userEdited.isAdmin;
+                                                delete userEdited.verified;
                                                 if (teamResponse.data && teamResponse.data.id) {
-                                                    let userEdited:IUserEdited = _.cloneDeep(user);
                                                     userEdited.teamId = teamResponse.data.id;
-                                                    delete userEdited.id;
-                                                    delete userEdited.organizationId;
-                                                    delete userEdited.isAdmin;
-                                                    delete userEdited.verified;
-
-                                                    console.log(userEdited)
-                                                    //delete userEdited.id;
                                                     const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
-                                                    isStatusGeneralSuccess(userResponse.status)?setConfirmModal(true):history.push(LINKS.ERROR);
+                                                    isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
+                                                }
+                                                if (teamId) {
+                                                    userEdited.teamId = teamId;
+                                                    const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                    isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
                                                 }
                                             })
                                             break;
@@ -335,7 +346,6 @@ const Team = (props: any) => {
                                             break;
                                         }
                                     }
-                                    console.log(selectedMembers, selectedLocation);
                                     const response: AxiosResponse<any> = await API.get(`/organization/${logUser.organizationId}`);
                                 } catch (error: any) {
                                     //link to error page
@@ -409,7 +419,7 @@ const Team = (props: any) => {
                                                 return (<Item key={id} id={member.id} name={member.username} remove={removeMembers}></Item>)
                                             })}
                                         </SelectList>
-                                        <PrimaryButton id="submit" text="PŘIDAT TEAM" type="submit" disabled={!isValid} style={{ maxWidth: '203px' }} />
+                                        <PrimaryButton id="submit" text={isEdit ? "UPRAVIT TEAM" : "PŘIDAT TEAM"} type="submit" disabled={!isValid} style={{ maxWidth: '250px' }} />
                                     </Form>
                                 )
                             }}
@@ -421,21 +431,22 @@ const Team = (props: any) => {
             <MapModal open={showModal} close={hideModal}>
                 <BasicMap borderRadius='0px' display={true} />
             </MapModal>
-            <ConfirmModal open={confirmModal} close={setConfirmModal}>
-                <Container sx={{ flexGrow: 1, 
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '100%',
-                                height: '100%',
-                                padding: 0
-                                }}>
-                    <div style={{width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center'}}>Založení teamu probehlo úspěšně</div>
-                    <PrimaryButton text="ok" 
-                        onClick={()=>{
+            <ConfirmModal isEdit={isEdit} open={confirmModal} close={setConfirmModal}>
+                <Container sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    padding: 0
+                }}>
+                    <div style={{ width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center' }}>{isEdit?"Úprava teamu probehla úspěšně!":"Založení teamu probehlo úspěšně!"}</div>
+                    <PrimaryButton text="ok"
+                        onClick={() => {
                             setConfirmModal(false);
-                            history.goBack()
+                            history.push('/team/')
                         }}
                     />
                 </Container>
