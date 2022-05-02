@@ -11,11 +11,11 @@ interface ModalProps {
 export const ConfirmModal: React.FC<any> = (props: React.PropsWithChildren<ModalProps>) => {
 
     return (
-        <>
-                <Modal modalHeaderText={props.isEdit?'Úprava teamu':'Založení teamu'} open={props.open} onClose={props.close} >
-                    {props.children}
-                </Modal>
-        </>
+
+        <Modal modalHeaderText={props.isEdit ? 'Úprava teamu' : 'Založení teamu'} open={props.open} onClose={props.close} >
+            {props.children}
+        </Modal>
+
     );
 };
 

@@ -11,11 +11,11 @@ interface ModalProps {
 export const MapModal: React.FC<any> = (props: React.PropsWithChildren<ModalProps>) => {
 
     return (
-        <>
-                <Modal modalHeaderText={'Území týmu'} open={props.open} onClose={props.close}>
-                    {props.children}
-                </Modal>
-        </>
+
+        <Modal modalHeaderText={'Území týmu'} open={props.open} onClose={props.close}>
+            {props.children}
+        </Modal>
+
     );
 };
 

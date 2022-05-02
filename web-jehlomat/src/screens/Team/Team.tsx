@@ -9,13 +9,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { API } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
-import { getUser, IResponse } from '../../config/user';
-import { tokenState } from 'store/login';
-import { constSelector, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
-import { MapContainer, Marker, Polygon, TileLayer, useMap, useMapEvents, ZoomControl } from 'react-leaflet';
+import { MapContainer, Polygon, TileLayer, useMap } from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../NovyNalez/constants';
 import 'leaflet/dist/leaflet.css';
 import { Label } from 'Components/Inputs/shared';
@@ -27,6 +25,7 @@ import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-sta
 import { useHistory, useLocation, useParams } from 'react-router';
 import { IUser, IUserEdited } from 'types';
 import ConfirmModal from './components/ConfirmModal';
+import { userState } from 'store/user';
 
 interface ILocation {
     id: string,
@@ -34,15 +33,6 @@ interface ILocation {
     name?: string
 }
 
-interface ILocationResponse {
-    id: 0,
-    okres: string,
-    okresName: string,
-    obec: string,
-    obecName: string,
-    mestkaCast: string,
-    mestkaCastName: string
-}
 interface ITeam {
     id?: string,
     name: string,
@@ -111,14 +101,13 @@ const validationSchema = yup.object({
 });
 
 const Team = (props: any) => {
-    const [logUser, setUser]: any = useState()
     const [location, setLocation] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
     const [teamName, setTeamName] = useState('')
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
-    const token = useRecoilValue(tokenState);
+    const user = useRecoilValue(userState);
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [showModal, setShowModal] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
@@ -164,45 +153,42 @@ const Team = (props: any) => {
         data.push(val)
         return data;
     }
+
+
+
     useEffect(() => {
         const getLocation = async () => {
             const response: AxiosResponse<any> = await API.get('/location/all');
             return response.data;
         }
-        const getMember = async (token: string) => {
-
-            return getUser(token)
-                .then(async (user) => {
-                    setUser(user);
-                    const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
-                    return response.data;
-                })
-                .catch((error) => {
-                    history.push(LINKS.ERROR);
-                });
-
+        const getMember = async () => {
+            if (user) {
+                const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
+                return response.data;
+            } else {
+                history.push(LINKS.LOGIN);
+            }
         }
 
         getLocation().then((data) => {
             setLocation(data)
-        }).catch((error) => {
+        }).catch(() => {
             history.push(LINKS.ERROR);
         });
-        if (token) {
-            getMember(token).then((data) => {
-                setMembers(data)
-            }).catch((error) => {
-                history.push(LINKS.LOGIN);
-            });
-        }
-    }, [token]);
+        getMember().then((data) => {
+            setMembers(data)
+        }).catch(() => {
+            history.push(LINKS.LOGIN);
+        });
+
+    }, [history, user]);
 
     useEffect(() => {
         setGeom([]);
         selectedLocation.map(async (place: any, id: number) => {
             const geometry = await getGeometry(place.type, place.id).then((data) => {
                 const transformGeom: any[] = [];
-                data.coordinates[0].map((coordinate: any) => {
+                data.coordinates[0].forEach((coordinate: any) => {
                     //console.log("coordinates", coordinate);
                     transformGeom.push([coordinate[1], coordinate[0]]);
                 });
@@ -232,7 +218,7 @@ const Team = (props: any) => {
                 setSelectedMembers(users)
             });
         }
-    }, [isEdit, location])
+    }, [isEdit, location, history, teamId])
 
     function GetBoundary() {
         const map = useMap();
@@ -291,64 +277,66 @@ const Team = (props: any) => {
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
-
-                                    const geoLocation = _.cloneDeep(selectedLocation);
-                                    const team: ITeam = {
-                                        name: values.name,
-                                        locationIds: geoLocation.map((element: ILocation) => {
-                                            delete element.name;
-                                            return element;
-                                        }),
-                                        organizationId: logUser.organizationId
-                                    }
-
-                                    let teamResponse: AxiosResponse<any>;
-                                    if (isEdit) {
-                                        team.id = teamId;
-                                        teamResponse = await API.put(`/team`, team);
-                                    } else {
-                                        teamResponse = await API.post(`/team`, team);
-                                    }
-
-                                    switch (true) {
-                                        case isStatusGeneralSuccess(teamResponse.status): {
-                                            selectedMembers.map(async (user: IUser) => {
-                                                let userEdited: IUserEdited = _.cloneDeep(user);
-                                                delete userEdited.id;
-                                                delete userEdited.organizationId;
-                                                delete userEdited.isAdmin;
-                                                delete userEdited.verified;
-                                                if (teamResponse.data && teamResponse.data.id) {
-                                                    userEdited.teamId = teamResponse.data.id;
-                                                    const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
-                                                    isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
-                                                }
-                                                if (teamId) {
-                                                    userEdited.teamId = teamId;
-                                                    const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
-                                                    isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
-                                                }
-                                            })
-                                            break;
+                                    if (user) {
+                                        const geoLocation = _.cloneDeep(selectedLocation);
+                                        const team: ITeam = {
+                                            name: values.name,
+                                            locationIds: geoLocation.map((element: ILocation) => {
+                                                delete element.name;
+                                                return element;
+                                            }),
+                                            organizationId: user.organizationId
                                         }
-                                        case isStatusConflictError(teamResponse.status): {
-                                            //for validation error;
-                                            setErrors({ 'name': 'Zvolte jiný název teamu. Název teamu již existuje!' });
-                                            break;
+
+                                        let teamResponse: AxiosResponse<any>;
+                                        if (isEdit) {
+                                            team.id = teamId;
+                                            teamResponse = await API.put(`/team`, team);
+                                        } else {
+                                            teamResponse = await API.post(`/team`, team);
                                         }
-                                        default: {
-                                            if (geoLocation.length === 0) {
-                                                //location empty validation error
-                                                setErrors({ 'location': { id: '', name: 'Zvolte jiný název teamu. Název teamu již existuje!', type: '' } });
-                                            } else {
-                                                history.push(LINKS.ERROR);
+
+                                        switch (true) {
+                                            case isStatusGeneralSuccess(teamResponse.status): {
+                                                selectedMembers.map(async (user: IUser) => {
+                                                    let userEdited: IUserEdited = _.cloneDeep(user);
+                                                    delete userEdited.id;
+                                                    delete userEdited.organizationId;
+                                                    delete userEdited.isAdmin;
+                                                    delete userEdited.verified;
+                                                    if (teamResponse.data && teamResponse.data.id) {
+                                                        userEdited.teamId = teamResponse.data.id;
+                                                        const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                        isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
+                                                    }
+                                                    if (teamId) {
+                                                        userEdited.teamId = teamId;
+                                                        const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                        isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
+                                                    }
+                                                })
+                                                break;
                                             }
-                                            break;
+                                            case isStatusConflictError(teamResponse.status): {
+                                                //for validation error;
+                                                setErrors({ 'name': 'Zvolte jiný název teamu. Název teamu již existuje!' });
+                                                break;
+                                            }
+                                            default: {
+                                                if (geoLocation.length === 0) {
+                                                    //location empty validation error
+                                                    setErrors({ 'location': { id: '', name: 'Zvolte jiný název teamu. Název teamu již existuje!', type: '' } });
+                                                } else {
+                                                    history.push(LINKS.ERROR);
+                                                }
+                                                break;
+                                            }
                                         }
+                                    } else {
+                                        throw new TypeError("User is empty");
                                     }
-                                    const response: AxiosResponse<any> = await API.get(`/organization/${logUser.organizationId}`);
                                 } catch (error: any) {
-                                    //link to error page
+                                    history.push(LINKS.ERROR);
                                 }
                             }}
                         >
@@ -442,7 +430,7 @@ const Team = (props: any) => {
                     height: '100%',
                     padding: 0
                 }}>
-                    <div style={{ width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center' }}>{isEdit?"Úprava teamu probehla úspěšně!":"Založení teamu probehlo úspěšně!"}</div>
+                    <div style={{ width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center' }}>{isEdit ? "Úprava teamu probehla úspěšně!" : "Založení teamu probehlo úspěšně!"}</div>
                     <PrimaryButton text="ok"
                         onClick={() => {
                             setConfirmModal(false);
