@@ -9,13 +9,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { API } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
-import { getUser } from '../../config/user';
+import { getUser, IResponse } from '../../config/user';
 import { tokenState } from 'store/login';
-import { useRecoilValue } from 'recoil';
+import { constSelector, useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
-import { MapContainer, Polygon, TileLayer, useMap,} from 'react-leaflet';
+import { MapContainer, Marker, Polygon, TileLayer, useMap, useMapEvents, ZoomControl } from 'react-leaflet';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../NovyNalez/constants';
 import 'leaflet/dist/leaflet.css';
 import { Label } from 'Components/Inputs/shared';
@@ -34,6 +34,15 @@ interface ILocation {
     name?: string
 }
 
+interface ILocationResponse {
+    id: 0,
+    okres: string,
+    okresName: string,
+    obec: string,
+    obecName: string,
+    mestkaCast: string,
+    mestkaCastName: string
+}
 interface ITeam {
     id?: string,
     name: string,
@@ -186,7 +195,7 @@ const Team = (props: any) => {
                 history.push(LINKS.LOGIN);
             });
         }
-    }, [token, history]);
+    }, [token]);
 
     useEffect(() => {
         setGeom([]);
@@ -200,7 +209,6 @@ const Team = (props: any) => {
                 return transformGeom;
             });
             setGeom((geom: any) => [...geom, geometry]);
-            return null;
         });
     }, [selectedLocation])
 
@@ -224,7 +232,7 @@ const Team = (props: any) => {
                 setSelectedMembers(users)
             });
         }
-    }, [isEdit, location, teamId, history])
+    }, [isEdit, location])
 
     function GetBoundary() {
         const map = useMap();
@@ -338,8 +346,9 @@ const Team = (props: any) => {
                                             break;
                                         }
                                     }
+                                    const response: AxiosResponse<any> = await API.get(`/organization/${logUser.organizationId}`);
                                 } catch (error: any) {
-                                    history.push(LINKS.ERROR);
+                                    //link to error page
                                 }
                             }}
                         >
