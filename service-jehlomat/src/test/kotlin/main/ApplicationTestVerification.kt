@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.*
 import model.user.User
+import model.user.UserStatus
 import model.user.UserVerificationRequest
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
@@ -31,7 +32,7 @@ class VerificationTest {
         "user@email.cz",
         "",
         "",
-        false,
+        UserStatus.NOT_VERIFIED,
         "verificationCode",
         0,
         null,
@@ -68,7 +69,7 @@ class VerificationTest {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             val userDb = database.selectUserById(userId)!!
-            assertTrue(userDb.verified)
+            assertEquals(UserStatus.ACTIVE, userDb.status)
             assertEquals("username", userDb.username)
             assertTrue(BCrypt.checkpw("aaAA11aa", userDb.password))
         }
@@ -91,7 +92,7 @@ class VerificationTest {
 
     @Test
     fun testVerifyUserAlreadyVerified() = withTestApplication(Application::module) {
-        database.insertUser(userStab.copy(organizationId = defaultOrgId, verified = true))
+        database.insertUser(userStab.copy(organizationId = defaultOrgId, status = UserStatus.ACTIVE))
         with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/user") {
             addHeader("Content-Type", "application/json")
             setBody(

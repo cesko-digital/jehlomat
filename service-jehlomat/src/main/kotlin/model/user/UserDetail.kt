@@ -7,7 +7,7 @@ data class UserDetail(
     val id: Int,
     val email: String,
     val username: String,
-    val verified: Boolean,
+    val status: UserStatus,
     val organizationId: Int,
     val teamId: Int?,
     val isAdmin: Boolean

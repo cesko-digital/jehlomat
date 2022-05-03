@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import model.user.UserStatus
 import model.user.UserVerificationRequest
 import services.DatabaseService
 import services.JWT_CONFIG_NAME
@@ -46,7 +47,7 @@ fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Ro
             val user = database.selectUserByEmail(request.email)
 
             when {
-                (user == null || user.verified || user.verificationCode != request.code) -> {
+                (user == null || user.status != UserStatus.NOT_VERIFIED || user.verificationCode != request.code) -> {
                     // everything is 404 on purpose to not inform about existed users
                     call.respond(HttpStatusCode.NotFound)
                 }
@@ -61,7 +62,7 @@ fun Route.verificationApi(database: DatabaseService, jwtManager: JwtManager): Ro
                     synchronized(database) {
                         if (database.selectUserByUsername(request.username) == null) {
                             database.updateUser(user.copy(
-                                verified = true,
+                                status = UserStatus.ACTIVE,
                                 username = request.username,
                                 password = request.password
                             ))
