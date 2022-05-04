@@ -19,3 +19,13 @@ export interface IUser {
     isAdmin: boolean;
 }
 
+export interface IUserEdited {
+    id?: number;
+    email: string;
+    username: string;
+    verified?: boolean;
+    organizationId?: number;
+    teamId: number|string;
+    isAdmin?: boolean;
+}
+

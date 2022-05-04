@@ -19,7 +19,7 @@ const Login: FC<WithModal> = ({ inModal }) => {
         if (!inModal) {
             return (
                 <Container sx={{ height: '100vh', width: '100%' }}>
-                    <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>
+                    <Grid container direction="column" justifyContent="start" sx={{ height: '100%', width: '100%' }}>
                         <Box marginBottom={'85px'}>
                             <TitleBar
                                 icon={<ChevronLeft sx={{ color: white, fontSize: 40 }} />}
