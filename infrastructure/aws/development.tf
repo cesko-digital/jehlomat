@@ -360,11 +360,4 @@ resource "aws_cloudfront_distribution" "distribution" {
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2018"
   }
-
-  custom_error_response {
-    error_code            = 403
-    error_caching_min_ttl = 300
-    response_code         = 200
-    response_page_path    = "/index.html"
-  }
 }
