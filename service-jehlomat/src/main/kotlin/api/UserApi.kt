@@ -78,7 +78,7 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
             }
 
             put("/{id}/attributes") {
-                val newUser = call.receive<UserChangeRequest>()
+                val newAttributes = call.receive<UserChangeRequest>()
                 val id = call.parameters["id"]?.toIntOrNull()
                 val userToChange = id?.let { it1 -> databaseInstance.selectUserById(it1) }
 
@@ -89,17 +89,17 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                     userToChange.verified.not() -> {
                         call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                     }
-                    (!userToChange.username.isValidUsername()) -> {
+                    (!newAttributes.username.isValidUsername()) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong username format.")
                     }
-                    (!userToChange.email.isValidMail()) -> {
+                    (!newAttributes.email.isValidMail()) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                     }
-                    (newUser.email != userToChange.email && databaseInstance.selectUserByEmail(newUser.email) != null) -> {
+                    (newAttributes.email != userToChange.email && databaseInstance.selectUserByEmail(newAttributes.email) != null) -> {
                         call.respond(HttpStatusCode.BadRequest, "E-mail already taken")
                     }
                     else -> {
-                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, userToChange, newUser.toUser(userToChange))) {
+                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, userToChange, newAttributes.toUser(userToChange))) {
                             return@put
                         }
 
@@ -107,20 +107,20 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
 
                         databaseInstance.useTransaction {
                             synchronized(databaseInstance) {
-                                if (newUser.username == userToChange.username || databaseInstance.selectUserByUsername(newUser.username) == null) {
-                                    databaseInstance.updateUserAttributes(id, newUser)
+                                if (newAttributes.username == userToChange.username || databaseInstance.selectUserByUsername(newAttributes.username) == null) {
+                                    databaseInstance.updateUserAttributes(id, newAttributes)
                                     isUserNameUnique = true
                                 }
                             }
 
-                            if (newUser.email != userToChange.email) {
+                            if (isUserNameUnique && newAttributes.email != userToChange.email) {
                                 val verificationCode = RandomIdGenerator.generateRegistrationCode()
                                 val organization = databaseInstance.selectOrganizationById(userToChange.organizationId)
 
-                                databaseInstance.updateUserEmail(id, newUser.email, verificationCode)
+                                databaseInstance.updateUserEmail(id, newAttributes.email, verificationCode)
                                 mailer.sendRegistrationConfirmationEmail(
                                     organization!!,
-                                    newUser.email,
+                                    newAttributes.email,
                                     verificationCode
                                 )
                             }
