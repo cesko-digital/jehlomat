@@ -14,7 +14,7 @@ interface IProps {
     values: Option[];
     onChange: any;
     onBlur: any;
-    value: number | null;
+    value: number | '';
     required: boolean;
     error?: string | undefined;
 }
