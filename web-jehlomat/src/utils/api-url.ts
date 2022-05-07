@@ -49,6 +49,10 @@ class APIURL {
     putUser(userId: string | number) {
         return `${this.user}/${userId}/attributes`;
     }
+
+    deleteUserFromOrganization(userId: string | number) {
+        return `${this.user}/${userId}`;
+    }
 }
 
 const apiURL = new APIURL();

@@ -11,7 +11,7 @@ export const PageHeading = styled(Typography)`
     }
 `;
 
-export const FormWrapper = styled.div`
+export const SectionWrapper = styled.div`
     width: 100%;
     box-sizing: border-box;
     padding-left: 114px;
@@ -45,5 +45,20 @@ export const ButtonWrapper = styled.div`
     button {
         height: 48px;
         width: 203px;
+    }
+`;
+
+export const TextButtonWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .text-button {
+        width: auto;
+        height: auto;
+        padding: 0;
+        line-height: 1;
+        margin-top: 38px;
+        margin-bottom: 38px;
     }
 `;
