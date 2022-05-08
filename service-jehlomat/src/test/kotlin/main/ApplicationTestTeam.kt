@@ -207,7 +207,7 @@ class TeamTest {
             setBody(Json.encodeToString(newTeam))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            val actualTeams = database.selectTeams()
+            val actualTeams = database.selectTeams().map { team -> team.copy(locations = team.locations.sortedBy { loc -> loc.id }) }
             val actualLocationId1 = actualTeams[0].locations[0].id
             val actualLocationId2 = actualTeams[0].locations[1].id
 
@@ -216,7 +216,7 @@ class TeamTest {
                 id = newTeam.id,
                 name = newTeam.name,
                 organizationId = newTeam.organizationId,
-                locations = listOf(LOCATION2.copy(id=actualLocationId1), LOCATION3.copy(actualLocationId2))
+                locations = listOf(LOCATION2.copy(id=actualLocationId1), LOCATION3.copy(actualLocationId2)).sortedBy { loc -> loc.id }
             )), actualTeams)
         }
     }
