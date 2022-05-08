@@ -141,7 +141,7 @@ class Mailer: MailerService {
                 Emailv31.MESSAGES, prepareBodyWithLink(
                     3222932,
                     "Potvrzení zaznamenání nálezu",
-                    "${publicUrl}api/v1/jehlomat/syringe/$syringeId/info",
+                    "${publicUrl}nalezy/trackovani-nalezu/$syringeId",
                     email,
                     ""
                 )

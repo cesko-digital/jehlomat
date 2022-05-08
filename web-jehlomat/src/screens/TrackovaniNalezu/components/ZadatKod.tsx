@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Form, Formik } from 'formik';
 import TextInput from '../../../Components/Inputs/TextInput/TextInput';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from '../../../Components/Buttons/TextButton/TextButton';
 import * as yup from 'yup';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -27,6 +27,10 @@ interface IZadatKod {
     height: string;
 }
 
+interface IRouteParams {
+    trackId?: string;
+}
+
 const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyringeState, height }) => {
     const history = useHistory();
 
@@ -38,8 +42,19 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
         history.push('/error');
     };
 
+    const [code, setCode] = useState('');
+    const { trackId } = useParams<IRouteParams>();
+
+    useEffect(() => {
+        if (trackId) {
+            setCode(trackId)
+        }
+    }, [trackId]);
+
+
+
     return (
-        <Container maxWidth="xs" sx={{ height }}>
+        <Container maxWidth="xs" sx={{ height, display: "flex", flexGrow: 2, justifyContent: "center", alignItems: "center" }}>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
                     <Typography align="center" variant="body1" fontWeight="bold" color={primaryDark}>
@@ -47,7 +62,8 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                     </Typography>
                     <Box sx={{ mt: '2rem', width: '100%' }}>
                         <Formik
-                            initialValues={{ kod: '' }}
+                            enableReinitialize
+                            initialValues={{ kod: code }}
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {

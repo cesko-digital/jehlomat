@@ -37,6 +37,14 @@ class APIURL {
     readSyringeDetails(id: string) {
         return `/syringle/${id}`;
     }
+
+    getTeamsInOrganization(orgId?: string | number) {
+        return `${this.organization}/${orgId}/teams`;
+    }
+
+    putUser(userId: string | number) {
+        return `${this.user}/${userId}/attributes`;
+    }
 }
 
 const apiURL = new APIURL();

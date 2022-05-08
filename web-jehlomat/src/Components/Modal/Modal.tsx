@@ -17,6 +17,7 @@ interface Props extends Pick<ModalProps, 'open'> {
 const ModalWrapper = styled.div<{ mobile?: boolean }>`
     background: ${white};
     height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     ${props =>
@@ -32,7 +33,7 @@ const ModalWrapper = styled.div<{ mobile?: boolean }>`
 `;
 
 const ModalBody = styled.div<{ mobile?: boolean }>`
-    padding-top: 50px;
+    padding-top:50px;
 `;
 
 const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {

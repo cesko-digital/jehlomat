@@ -16,9 +16,10 @@ const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/Reg
 const OrganizationVerification = lazy(() => import('./screens/OrganizationVerification/OrganizationVerification'));
 const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
 const SetNewPassword = lazy(() => import('./screens/SetNewPassword/SetNewPassword'));
-
+const Team = lazy(() => import('./screens/Team/Team'));
 const DekujemeUzivatel = lazy(() => import('./screens/RegistraceUzivatele/Dekujeme'));
 const SeznamUzivatelu = lazy(() => import('./screens/SeznamUzivatelu/SeznamUzivatelu'));
+const EditaceUzivatele = lazy(() => import('./screens/EditaceUzivatele/EditaceUzivatele'));
 const PridatUzivatele = lazy(() => import('./screens/RegistraceUzivatele/PridatUzivatele'));
 const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
@@ -33,6 +34,7 @@ export enum Routes {
     LOGIN = 'LOGIN',
     USER = 'USER',
     USER_NEW = 'USER_NEW',
+    USER_EDIT = 'USER_EDIT',
     USER_VALIDATION = 'USER_VALIDATION',
     USER_REGISTRATION = 'USER_REGISTRATION',
     USER_THANK_YOU = 'USER_THANK_YOU',
@@ -56,6 +58,7 @@ export enum Routes {
     CONTACT = 'CONTACT',
     ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
     ORGANIZATION_EDIT = 'ORGANIZATION_EDIT',
+    TEAM = 'TEAM'
 }
 
 interface Route {
@@ -78,6 +81,7 @@ const USER_URL_PATH_ = 'uzivatel';
 export const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
 export const LOGIN_URL_PATH = 'prihlaseni';
+export const TEAM_URL_PATH = 'team'
 
 export const routes: Route[] = [
     {
@@ -98,6 +102,13 @@ export const routes: Route[] = [
         title: 'Přidat uživatele',
     },
     {
+        id: Routes.USER_EDIT,
+        Component: EditaceUzivatele,
+        path: `/${USER_URL_PATH_}/upravit/:userId`,
+        protectedRoute: true,
+        title: 'Editace uživatele',
+    },
+    {
         id: Routes.USER_VALIDATION,
         Component: OvereniEmailu,
         path: `/${USER_URL_PATH_}/validace`,
@@ -106,8 +117,8 @@ export const routes: Route[] = [
         id: Routes.USER_REGISTRATION,
         Component: RegistraceUzivatele,
         path: `/${USER_URL_PATH_}/registrace`,
-        protectedRoute:true,
-        from: true
+        protectedRoute: true,
+        from: true,
     },
     {
         id: Routes.USER_THANK_YOU,
@@ -152,6 +163,20 @@ export const routes: Route[] = [
         from: true,
     },
     {
+        id: Routes.TEAM,
+        Component: Team,
+        path: `/${TEAM_URL_PATH}/novy`,
+        protectedRoute: true,
+        from: true,
+    },
+    {
+        id: Routes.TEAM,
+        Component: Team,
+        path: `/${TEAM_URL_PATH}/edit/:teamId?`,
+        protectedRoute: true,
+        from: true,
+    },
+    {
         id: Routes.PROFILE,
         Component: Profil,
         path: '/profil',
@@ -160,6 +185,12 @@ export const routes: Route[] = [
         id: Routes.NEW_FIND,
         Component: NovyNalez,
         path: (step?: 0 | 1 | 2 | 3 | 4) => `/${FINDINGS_URL_PATH}/novy-nalez${step ? `?step=${step}` : ''}`,
+        AdditionalComponents: Layout,
+    },
+    {
+        id: Routes.TRACKING_FIND,
+        Component: TrackovaniNalezu,
+        path: `/${FINDINGS_URL_PATH}/trackovani-nalezu/:trackId?`,
         AdditionalComponents: Layout,
     },
     {
