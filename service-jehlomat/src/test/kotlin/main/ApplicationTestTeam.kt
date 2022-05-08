@@ -1,7 +1,6 @@
 package main
 
 import TestUtils.Companion.loginUser
-import api.LocationTable.okres
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -14,6 +13,7 @@ import model.location.LocationId
 import model.location.LocationType
 import model.team.Team
 import model.team.TeamRequest
+import model.user.UserStatus
 import org.junit.Test
 import services.DatabaseService
 import kotlin.test.AfterTest
@@ -52,7 +52,7 @@ class TeamTest {
         database.cleanTeams()
         database.cleanOrganizations()
         defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = null, isAdmin = true))
     }
 
     @AfterTest
@@ -270,9 +270,9 @@ class TeamTest {
         val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
         val teamId2 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId, name = "team2"))
 
-        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = teamId1))
-        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = defaultOrgId, teamId = teamId1))
-        database.insertUser(USER.copy(email = "email3",verified = true, organizationId = defaultOrgId, teamId = teamId2))
+        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = teamId1))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = teamId1))
+        database.insertUser(USER.copy(email = "email3",status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = teamId2))
         val token = loginUser( "email1", USER.password)
 
         with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$teamId1/users"){
@@ -303,10 +303,10 @@ class TeamTest {
     @Test
     fun testGetUsersOrgAdminOk() = withTestApplication(Application::module) {
         val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
-        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = teamId1))
-        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = defaultOrgId, teamId = teamId1))
+        val userId1 = database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = teamId1))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = teamId1))
 
-        val orgAdminId = database.insertUser(USER.copy(username = "Org Admin", email = "email3", verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true))
+        database.insertUser(USER.copy(username = "Org Admin", email = "email3", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = null, isAdmin = true))
         val token = loginUser( "email3", USER.password)
         with(handleRequest(HttpMethod.Get, "$TEAM_API_PATH/$teamId1/users"){
             addHeader("Authorization", "Bearer $token")
@@ -347,7 +347,7 @@ class TeamTest {
 
     @Test
     fun testGetUsersNotAllowed() = withTestApplication(Application::module) {
-        database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", verified = true, organizationId = defaultOrgId, teamId = null))
+        database.insertUser(USER.copy(username = "Lucie Modra", email = "email1", status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = null))
         val token = loginUser("email1", USER.password)
 
         val teamId = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))

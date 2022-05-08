@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import model.Organization
 import model.OrganizationRegistration
 import model.user.User
+import model.user.UserStatus
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
@@ -95,9 +96,9 @@ class OrganizationTest {
         val orgId = database.insertOrganization(ORGANIZATION)
         val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
 
-        val userId1 = database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
-        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", verified = true, organizationId = orgId, teamId = null))
-        database.insertUser(USER.copy(email = "email3",verified = true, organizationId = differentOrgId, teamId = null))
+        val userId1 = database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
+        val userId2 = database.insertUser(USER.copy(username = "Tomas Novak", email = "email2", status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(email = "email3",status = UserStatus.ACTIVE, organizationId = differentOrgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/$orgId/users"){
@@ -170,7 +171,7 @@ class OrganizationTest {
     @Test
     fun testGetUsersOrgNotFound() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/differentOrg/users"){
@@ -184,7 +185,7 @@ class OrganizationTest {
     @Test
     fun testGetUsersNotAllowed() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
@@ -200,7 +201,7 @@ class OrganizationTest {
     @Test
     fun testGetTeamsOk() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         val teamId1 = database.insertTeam(TEAM.copy(name = "team 1", organizationId = orgId))
@@ -267,7 +268,7 @@ class OrganizationTest {
     @Test
     fun testGetTeamsOrgNotFound() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH/differentOrg/teams"){
@@ -281,7 +282,7 @@ class OrganizationTest {
     @Test
     fun testGetTeamsNotAllowed() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
 
         val differentOrgId = database.insertOrganization(ORGANIZATION.copy(name = "differentOrg"))
@@ -314,6 +315,7 @@ class OrganizationTest {
             assertEquals(createdOrganization.id, createdUser.organizationId)
             assertEquals(null, createdUser.teamId)
             assertEquals(true, createdUser.isAdmin)
+            assertEquals(UserStatus.NOT_VERIFIED, createdUser.status)
             assert(BCrypt.checkpw("aaBB11aa", createdUser.password))
         }
     }
@@ -336,7 +338,7 @@ class OrganizationTest {
     fun testPostAlreadyExistingEmail() = withTestApplication(Application::module) {
         with(handleRequest(HttpMethod.Post, ORGANIZATION_API_PATH) {
             val orgId = database.insertOrganization(ORGANIZATION)
-            database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",false, "", orgId, null, false))
+            database.insertUser(User(0, "email@email.cz", "orgName", "aaAA11aa",UserStatus.NOT_VERIFIED, "", orgId, null, false))
             addHeader("Content-Type", "application/json")
             setBody(Json.encodeToString(OrganizationRegistration("new org", "email@email.cz", "aaAA11aa")))
         }) {
@@ -387,7 +389,7 @@ class OrganizationTest {
     @Test
     fun testPutOrganizationNotExists() = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null, isAdmin = true))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null, isAdmin = true))
         val token = loginUser(USER.email, USER.password)
 
         with(handleRequest(HttpMethod.Put, "$ORGANIZATION_API_PATH/") {
@@ -403,7 +405,7 @@ class OrganizationTest {
     @Test
     fun testPutOrganizationOk(): Unit = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null, isAdmin = true))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null, isAdmin = true))
         val token = loginUser(USER.email, USER.password)
         val newOrganization = ORGANIZATION.copy(name="different name")
 
@@ -422,7 +424,7 @@ class OrganizationTest {
     @Test
     fun testPutOrganizationForbidden(): Unit = withTestApplication(Application::module) {
         val orgId = database.insertOrganization(ORGANIZATION)
-        database.insertUser(USER.copy(verified = true, organizationId = orgId, teamId = null))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
         val newOrganization = ORGANIZATION.copy(name="different name")
 

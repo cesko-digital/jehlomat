@@ -37,6 +37,35 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 }
             }
 
+            delete("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
+
+                if (user == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@delete
+                }
+
+                if (user.status != UserStatus.ACTIVE) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@delete
+                }
+
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                val roles = PermissionService.determineRoles(loggedInUser, user)
+                if (!roles.contains(Role.OrgAdmin)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
+
+                databaseInstance.useTransaction {
+                    databaseInstance.deactivateUser(id)
+                    databaseInstance.unlockSyringes(id)
+                }
+
+                call.respond(HttpStatusCode.NoContent)
+            }
+
             post {
                 val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
                 if (!loggedInUser.isAdmin) {
@@ -58,7 +87,7 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                             email = request.email,
                             username = "",
                             password = "",
-                            verified = false,
+                            status = UserStatus.NOT_VERIFIED,
                             verificationCode = verificationCode,
                             organizationId = loggedInUser.organizationId,
                             teamId = null,
@@ -86,8 +115,8 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                     userToChange == null -> {
                         call.respond(HttpStatusCode.NotFound)
                     }
-                    userToChange.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                    userToChange.status != UserStatus.ACTIVE -> {
+                        call.respond(HttpStatusCode.PreconditionFailed, "User is not active")
                     }
                     (!newAttributes.username.isValidUsername()) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong username format.")
@@ -153,8 +182,8 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 }
 
                 when {
-                    userToChange.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                    userToChange.status != UserStatus.ACTIVE -> {
+                        call.respond(HttpStatusCode.PreconditionFailed, "User is not active")
                     }
                     (!BCrypt.checkpw(passwordReq.oldPassword, userToChange.password)) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong old password.")
