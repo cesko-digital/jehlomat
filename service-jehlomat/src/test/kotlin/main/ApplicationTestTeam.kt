@@ -22,10 +22,9 @@ import kotlin.test.assertEquals
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
-val LOCATION1 = Location(0,"CZ0634", "Třebíč", null, null,null, null)
+val LOCATION1 = Location(0,"CZ0324", "Plzeň-jih", null, null,null, null)
 val LOCATION2 = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=559199, mestkaCastName = "Plzeň 9-Malesice")
 val LOCATION3 = Location(id=0, okres="CZ0323", okresName = "Plzeň-město", obec=554791, obecName = "Plzeň", mestkaCast=546003, mestkaCastName = "Plzeň 3")
-val LOCATION4 = Location(0,"CZ0634", "Třebíč", 591939, "Výčapy",null, null)
 
 val TEAM = Team(
     0,
@@ -51,6 +50,7 @@ class TeamTest {
         database.cleanUsers()
         database.cleanTeams()
         database.cleanOrganizations()
+        database.cleanLocation()
         defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
         database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = null, isAdmin = true))
     }
@@ -60,6 +60,7 @@ class TeamTest {
         database.cleanUsers()
         database.cleanTeams()
         database.cleanOrganizations()
+        database.cleanLocation()
     }
     
     @Test
