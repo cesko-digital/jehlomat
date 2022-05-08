@@ -1,20 +1,20 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { Marker, TileLayer, useMap } from 'react-leaflet';
-import L, { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
+import dayjs from 'dayjs';
+import { Loader } from 'utils/Loader';
+import gpsParser from 'utils/gpsParser';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import { Loader } from 'utils/Loader';
 import Loading from 'screens/Nalezy/Components/Loading';
 import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/PinMenu';
+import pin from 'screens/Nalezy/Components/utils/pin';
 
 import 'leaflet/dist/leaflet.css';
-
-import dayjs from 'dayjs';
-import pin from './utils/pin';
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
@@ -31,13 +31,7 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
         alert('Nastala chyba při načítání seznamu nálezů.');
     }, [error]);
 
-    const coordinates = data.map((item: Syringe) => {
-        const [lat, lng] = item.gps_coordinates.split(' ').map(i => i.trim());
-        const coordinate: LatLngTuple = [+lat, +lng];
-
-        return coordinate;
-    });
-
+    const coordinates = data.map((item: Syringe) => gpsParser(item.gps_coordinates));
     const Bounds = (): JSX.Element | null => {
         const map = useMap();
 

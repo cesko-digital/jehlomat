@@ -57,7 +57,6 @@ const Detail = () => {
                     return;
                 }
 
-                // setLoader({ resp: mock.syringeList[1] });
                 setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
