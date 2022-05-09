@@ -43,7 +43,8 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
                         val organization = Organization(0, registration.name, false)
                         val orgId = database.insertOrganization(organization)
 
-                        val user = User(0, registration.email, registration.name, registration.password, UserStatus.NOT_VERIFIED, "", orgId, null, true)
+                        val verificationCode = RandomIdGenerator.generateRegistrationCode()
+                        val user = User(0, registration.email, registration.name, registration.password, UserStatus.NOT_VERIFIED, verificationCode, orgId, null, true)
                         database.insertUser(user)
 
                         mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId), registration.email)

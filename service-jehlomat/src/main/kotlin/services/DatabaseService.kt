@@ -1,6 +1,7 @@
 package services
 
 import api.*
+import api.PasswordResetTable.code
 import model.*
 import model.exception.UnknownLocationException
 import model.location.*
@@ -344,6 +345,15 @@ class DatabaseService(
             set(it.email, email)
             set(it.verificationCode, code)
             set(it.status, UserStatus.NOT_VERIFIED.code)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
+    fun updateUserStatus(id: Int, status: UserStatus) {
+        databaseInstance.update(UserTable) {
+            set(it.status, status.code)
             where {
                 it.userId eq id
             }

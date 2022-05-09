@@ -14,6 +14,7 @@ import model.user.UserStatus
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
+import services.MailerService
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -31,12 +32,14 @@ val ORGANIZATION = Organization(
 class OrganizationTest {
 
     var database: DatabaseService = DatabaseService()
+    lateinit var mailerMock: MailerService
 
     @BeforeTest
     fun beforeEach() {
         database.cleanUsers()
         database.cleanTeams()
         database.cleanOrganizations()
+        mailerMock = TestUtils.mockMailer()
     }
 
     @Test
@@ -64,7 +67,7 @@ class OrganizationTest {
         val orgId = database.insertOrganization(ORGANIZATION)
         database.insertUser(USER.copy(organizationId = orgId, teamId = null))
         val token = loginUser(USER.email, USER.password)
-        with(handleRequest(HttpMethod.Get, "$ORGANIZATION_API_PATH") {
+        with(handleRequest(HttpMethod.Get, ORGANIZATION_API_PATH) {
             addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -317,6 +320,13 @@ class OrganizationTest {
             assertEquals(true, createdUser.isAdmin)
             assertEquals(UserStatus.NOT_VERIFIED, createdUser.status)
             assert(BCrypt.checkpw("aaBB11aa", createdUser.password))
+
+            io.mockk.verify(exactly = 1) {
+                mailerMock.sendOrganizationConfirmationEmail(
+                    createdOrganization,
+                    "email@email.cz"
+                )
+            }
         }
     }
 

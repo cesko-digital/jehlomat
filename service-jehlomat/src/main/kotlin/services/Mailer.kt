@@ -7,11 +7,13 @@ import com.mailjet.client.MailjetResponse
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.resource.Emailv31
 import model.Organization
+import model.user.User
 import org.json.JSONArray
 import org.json.JSONObject
 
 interface MailerService {
     fun sendRegistrationConfirmationEmail(organization: Organization, userEmail: String, verificationCode: String)
+    fun sendOrgAdminConfirmationEmail(user: User, organizationName: String)
     fun sendOrganizationConfirmationEmail(organization: Organization, adminEmail: String)
     fun sendSyringeFindingConfirmation(email: String, syringeId: String)
     fun sendSyringeFinding(organization: Organization, email: String, syringeId: String)
@@ -29,6 +31,9 @@ class FakeMailer: MailerService {
     }
     override fun sendOrganizationConfirmationEmail(organization: Organization, adminEmail: String) {
         println("sendOrganizationConfirmationEmail")
+    }
+    override fun sendOrgAdminConfirmationEmail(user: User, organizationName: String){
+        println("sendOrgAdminConfirmationEmail user: ${user.username}, organizationName: $organizationName, code: ${user.verificationCode}")
     }
     override fun sendSyringeFindingConfirmation(email: String, syringeId: String) {
         println("sendSyringeFindingConfirmation")
@@ -106,10 +111,7 @@ class Mailer: MailerService {
                         .put("ORGANIZATION_EMAIL", adminEmail)
                 )
             )
-        val response: MailjetResponse = client.post(request)
-
-        println(response.status)
-        println(response.data)
+        client.post(request)
     }
 
     @Throws(MailjetException::class)
@@ -128,10 +130,27 @@ class Mailer: MailerService {
                     organization.name
                 )
             )
-        val response: MailjetResponse = client.post(request)
+        client.post(request)
+    }
 
-        println(response.status)
-        println(response.data)
+    @Throws(MailjetException::class)
+    override fun sendOrgAdminConfirmationEmail(
+        user: User,
+        organizationName: String
+    ) {
+        val request = MailjetRequest(Emailv31.resource)
+            .property(
+                Emailv31.MESSAGES, prepareBodyGeneral(
+                    3918960,
+                    "Dokončení registrace administrátora organizace",
+                    user.email,
+                    user.username,
+                    JSONObject()
+                        .put("CONFIRM_LINK", "${publicUrl}organizace/admin/povoleni/?userId=${user.id}&code=${user.verificationCode}")
+                        .put("ORGANIZATION_NAME", organizationName)
+                )
+            )
+        client.post(request)
     }
 
     @Throws(MailjetException::class)
@@ -146,10 +165,7 @@ class Mailer: MailerService {
                     ""
                 )
             )
-        val response: MailjetResponse = client.post(request)
-
-        println(response.status)
-        println(response.data)
+        client.post(request)
     }
 
     @Throws(MailjetException::class)
@@ -164,10 +180,7 @@ class Mailer: MailerService {
                     organization.name
                 )
             )
-        val response: MailjetResponse = client.post(request)
-
-        println(response.status)
-        println(response.data)
+        client.post(request)
     }
 
     @Throws(MailjetException::class)

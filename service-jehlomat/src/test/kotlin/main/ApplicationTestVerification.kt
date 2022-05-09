@@ -8,12 +8,14 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.*
+import model.user.OrgAdminVerificationRequest
 import model.user.User
 import model.user.UserStatus
 import model.user.UserVerificationRequest
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
+import services.MailerService
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -38,14 +40,18 @@ class VerificationTest {
         null,
         false
     )
+    lateinit var mailerMock: MailerService
+
+    val orgStab = Organization(0, "defaultOrgName", false)
 
     @BeforeTest
     fun beforeEach() {
         database.cleanUsers()
         database.cleanTeams()
         database.cleanOrganizations()
-        defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", false))
+        defaultOrgId = database.insertOrganization(orgStab)
         defaultTeamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        mailerMock = TestUtils.mockMailer()
     }
 
     @AfterTest
@@ -171,15 +177,127 @@ class VerificationTest {
     }
 
     @Test
-    fun testVerifyOrganizationAsSuperAdmin() = withTestApplication(Application::module) {
+    fun testVerifyOrganizationAsSuperAdmin() = withTestApplication({ module(testing = true) }) {
         database.insertUser(SUPER_ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(SUPER_ADMIN.email, SUPER_ADMIN.password)
+        val orgAdminId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = true))
+        val orgAdmin = database.selectUserById(orgAdminId)!!
+
         with(handleRequest(HttpMethod.Get, "$VERIFICATION_API_PATH/organization?orgId=$defaultOrgId") {
             addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertTrue(database.selectOrganizationById(defaultOrgId)!!.verified)
+
+            io.mockk.verify(exactly = 1) {
+                mailerMock.sendOrgAdminConfirmationEmail(
+                    orgAdmin,
+                    "defaultOrgName"
+                )
+            }
         }
     }
+
+    @Test
+    fun testVerifyOrgAdminOk() = withTestApplication(Application::module) {
+        database.updateOrganization(orgStab.copy(id = defaultOrgId, verified = true))
+        val userId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = true))
+
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest(userStab.verificationCode, userId)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            val userDb = database.selectUserById(userId)!!
+            assertEquals(UserStatus.ACTIVE, userDb.status)
+        }
+    }
+
+    @Test
+    fun testVerifyOrgAdminWrongCode() = withTestApplication(Application::module) {
+        database.updateOrganization(orgStab.copy(id = defaultOrgId, verified = true))
+        val userId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = true))
+
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest("wronng-code", userId)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrgAdminNotExist() = withTestApplication(Application::module) {
+        database.updateOrganization(orgStab.copy(id = defaultOrgId, verified = true))
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest(userStab.verificationCode, 123)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrgAdminAlreadyActive() = withTestApplication(Application::module) {
+        database.updateOrganization(orgStab.copy(id = defaultOrgId, verified = true))
+        val userId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = true, status = UserStatus.ACTIVE))
+
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest(userStab.verificationCode, userId)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrgAdminNotOrgAdmin() = withTestApplication(Application::module) {
+        database.updateOrganization(orgStab.copy(id = defaultOrgId, verified = true))
+        val userId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = false))
+
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest(userStab.verificationCode, userId)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testVerifyOrgAdminNotVerifiedOrg() = withTestApplication(Application::module) {
+        val userId = database.insertUser(userStab.copy(organizationId = defaultOrgId, isAdmin = true))
+
+        with(handleRequest(HttpMethod.Post, "$VERIFICATION_API_PATH/org-admin") {
+            addHeader("Content-Type", "application/json")
+            setBody(
+                Json.encodeToString(
+                    OrgAdminVerificationRequest(userStab.verificationCode, userId)
+                )
+            )
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
 }
 

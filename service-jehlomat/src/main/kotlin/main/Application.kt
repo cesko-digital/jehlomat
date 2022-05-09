@@ -139,7 +139,7 @@ fun Application.module(testing: Boolean = false) {
             organizationApi(service, jwtManager, mailer)
         }
         route("/api/v1/jehlomat/verification") {
-            verificationApi(service, jwtManager)
+            verificationApi(service, jwtManager, mailer)
         }
         route("/api/v1/jehlomat/location") {
             locationApi(service)
