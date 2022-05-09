@@ -36,12 +36,6 @@ interface ILocation {
     name?: string;
 }
 
-interface ILocationTransformed {
-    id: string,
-    label: string,
-    type: string
-}
-
 interface ITeam {
     id?: string;
     name: string;
@@ -111,7 +105,6 @@ const validationSchema = yup.object({
 
 const Team = () => {
     const [location, setLocation]: ILocation[]|any[] = useState([]);
-    const [locationTransformed, setTranLocation]: ILocationTransformed[]|any[] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
     const [teamName, setTeamName] = useState('');
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
