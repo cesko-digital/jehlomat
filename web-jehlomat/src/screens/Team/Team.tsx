@@ -1,4 +1,4 @@
-import { Typography, Container, useMediaQuery, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { Typography, Container, useMediaQuery, FormControl, Select, MenuItem, FormHelperText, Autocomplete, TextField } from '@mui/material';
 import { Header } from '../../Components/Header/Header';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
@@ -34,6 +34,12 @@ interface ILocation {
     id: string;
     type: string;
     name?: string;
+}
+
+interface ILocationTransformed {
+    id: string,
+    label: string,
+    type: string
 }
 
 interface ITeam {
@@ -103,8 +109,9 @@ const validationSchema = yup.object({
     name: yup.string().required('Název Teamu je povinné pole'),
 });
 
-const Team = (props: any) => {
-    const [location, setLocation] = useState([]);
+const Team = () => {
+    const [location, setLocation]: ILocation[]|any[] = useState([]);
+    const [locationTransformed, setTranLocation]: ILocationTransformed[]|any[] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
     const [teamName, setTeamName] = useState('');
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
@@ -160,7 +167,7 @@ const Team = (props: any) => {
 
     useEffect(() => {
         const getLocation = async () => {
-            const response: AxiosResponse<any> = await API.get('/location/all');
+            const response: AxiosResponse<ILocation[]> = await API.get('/location/all');
             return response.data;
         };
         const getMember = async () => {
@@ -168,7 +175,18 @@ const Team = (props: any) => {
                 const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
                 return response.data;
             }
-        };
+        }
+
+        getLocation().then((data: any[]) => {
+            setLocation(data);
+        }).catch(() => {
+            history.push(LINKS.ERROR);
+        });
+        getMember().then((data) => {
+            setMembers(data)
+        }).catch(() => {
+            history.push(LINKS.LOGIN);
+        });
 
         getLocation()
             .then(data => {
@@ -404,22 +422,24 @@ const Team = (props: any) => {
                                         </StyledFormControl>
                                         <StyledFormControl fullWidth>
                                             <Label htmlFor="team-locality-select">Vyberte území týmu</Label>
-                                            <Select
+                                            <Autocomplete
+                                                disablePortal
+                                                disableClearable={true}
                                                 id="team-locality-select"
-                                                name="location"
-                                                value={values.location}
-                                                onChange={event => {
-                                                    handleChange(event);
-                                                    const data = knock(selectedLocation, event.target.value);
+                                                options={location}
+                                                getOptionLabel={(option:ILocation) => `${option.type} - ${option.name}`}
+                                                onChange={(event, value) => {
+                                                    const data = knock(selectedLocation, value);
                                                     setSelectedLocation([...data]);
                                                 }}
-                                                error={touched.location && Boolean(errors.location)}
-                                            >
-                                                {location.map((place: any) => {
-                                                    return <MenuItem key={place.id} id={place.id} value={place}>{`${place.type} - ${place.name}`}</MenuItem>;
-                                                })}
-                                            </Select>
-                                            <FormHelperText error={true}>{touched.location && errors.location ? errors.location.name : undefined}</FormHelperText>
+                                                renderInput={
+                                                    (params) => <TextField {...params}/>
+                                                }
+                                            />
+                                            
+                                            <FormHelperText error={true}>
+                                                {touched.location && errors.location ? errors.location.name : undefined}
+                                            </FormHelperText>
                                         </StyledFormControl>
                                         {isMobile ? (
                                             <SecondaryButton
