@@ -27,6 +27,8 @@ const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidac
 const About = lazy(() => import('./screens/AboutPage'));
 const Contact = lazy(() => import('./screens/ContactPage'));
 const FAQPage = lazy(() => import('./screens/FAQ'));
+const OrganizationAdminVerification = lazy(() => import('./screens/OrganizationAdminVerification/OrganizationAdminVerification'));
+
 
 export enum Routes {
     HOME = 'HOME',
@@ -55,6 +57,7 @@ export enum Routes {
     FAQ = 'FAQ',
     CONTACT = 'CONTACT',
     ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
+    ORGANIZATION_ADMIN_CONFIRMATION = 'ORGANIZATION_ADMIN_CONFIRMATION',
     ORGANIZATION_EDIT = 'ORGANIZATION_EDIT',
     TEAM = 'TEAM'
 }
@@ -143,6 +146,13 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_CONFIRMATION,
         Component: OrganizationVerification,
         path: `/${ORGANIZATION_URL_PATH}/povoleni/:orgId?`,
+        protectedRoute: true,
+        from: true,
+    },
+    {
+        id: Routes.ORGANIZATION_ADMIN_CONFIRMATION,
+        Component: OrganizationAdminVerification,
+        path: `/${ORGANIZATION_URL_PATH}/admin/povoleni/`,
         protectedRoute: true,
         from: true,
     },
