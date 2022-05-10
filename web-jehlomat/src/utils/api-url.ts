@@ -3,6 +3,8 @@ class APIURL {
     organization = '/organization';
     userVerification = '/verification/user';
     user = '/user';
+    setNewPassword = '/password-reset/save';
+    testResetPassword = '/password-reset/test-code';
 
     getUserPassword(userId: string | number) {
         return `${this.user}/${userId}/password`;
@@ -34,6 +36,14 @@ class APIURL {
 
     readSyringeDetails(id: string) {
         return `/syringle/${id}`;
+    }
+
+    getTeamsInOrganization(orgId?: string | number) {
+        return `${this.organization}/${orgId}/teams`;
+    }
+
+    putUser(userId: string | number) {
+        return `${this.user}/${userId}/attributes`;
     }
 }
 

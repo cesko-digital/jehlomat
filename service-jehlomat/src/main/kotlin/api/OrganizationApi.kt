@@ -8,6 +8,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.*
 import model.user.User
+import model.user.UserStatus
 import model.user.toUserInfo
 import services.*
 import services.RequestValidationWrapper.Companion.validateOrganizationRequest
@@ -42,8 +43,8 @@ fun Route.organizationApi(database: DatabaseService, jwtManager: JwtManager, mai
                         val organization = Organization(0, registration.name, false)
                         val orgId = database.insertOrganization(organization)
 
-                        //todo: check if username should be filled in for organization different than organization name
-                        val user = User(0, registration.email, registration.name, registration.password, false, "", orgId, null, true)
+                        val verificationCode = RandomIdGenerator.generateRegistrationCode()
+                        val user = User(0, registration.email, registration.name, registration.password, UserStatus.NOT_VERIFIED, verificationCode, orgId, null, true)
                         database.insertUser(user)
 
                         mailer.sendOrganizationConfirmationEmail(organization.copy(id = orgId), registration.email)

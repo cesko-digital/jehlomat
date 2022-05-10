@@ -19,3 +19,34 @@ export interface IUser {
     isAdmin: boolean;
 }
 
+export interface IUserEdited {
+    id?: number;
+    email: string;
+    username: string;
+    verified?: boolean;
+    organizationId?: number;
+    teamId: number | string;
+    isAdmin?: boolean;
+}
+
+type Location = {
+    id: number;
+    mestkaCast: string | null;
+    mestkaCastName: string | null;
+    obec: string | null;
+    obecName: string | null;
+    okres: string | null;
+    okresName: string | null;
+};
+export interface ITeam {
+    id: number;
+    name: string;
+    organizationId: number;
+    locations: Location[];
+}
+
+export interface IOrganizace {
+    id: number;
+    name: string;
+    verified: boolean;
+}

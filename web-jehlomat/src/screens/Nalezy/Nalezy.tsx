@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
 import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
 import FilterByState from 'screens/Nalezy/Components/FilterByState';
@@ -19,7 +19,6 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
-import { mock } from './__mock';
 import { filteringState, paginationState, sortingState } from './store';
 import { useRecoilValue } from 'recoil';
 
@@ -56,7 +55,6 @@ const Nalezy: FunctionComponent = () => {
 
         load()
             .then(data => {
-                // setLoader({ resp: mock });
                 setLoader({ resp: data });
             })
             .catch(e => {

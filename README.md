@@ -26,7 +26,7 @@ Please change it in example by your postgres configuration.
 
 4) Create the Magdalena organization and super admin with email `jehlomat@cesko.digital` and password `SuperAdmin1`. Use this script only for testing purposes.
 ```shell
-  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
+  psql -h localhost -p 5432 -U jehlomat -d jehlomat -f ../service-jehlomat/src/main/resources/sql/insert_super_admin.sql
 ```
 5) Set environment variables
 ```shell
@@ -41,6 +41,7 @@ export JWT_REALM=jehlomat_local_realm
 export SUPER_ADMIN_EMAIL=jehlomat@cesko.digital
 export MAILJET_PUBLIC_KEY=cbb81504a06f2fd735db577f09666b7f
 export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
+export FRONTEND_URL=http://localhost:3000/#/
 ```
 6) `cd service-jehlomat` 
 7) `../gradlew shadowJar` 
@@ -51,17 +52,17 @@ export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 
 > This approach is useful mostly for FE development. By hybrid means, the BE service will be run locally but the database will be run via docker, so it will not be necessary to install the DB and run it 1. locally.
 
-1. In the root run `docker compose up`
+1. In the root run `docker compose up` or `docker compose up --build` for rebuilding docker container with for example when new DB schema is needed
 2. Create relations:
     1. Run `docker ps`, you should see a table with just one row. It is your running container. Remember its container id, we will need it in the next step
     2. Run commands:
     ```shell
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/postgis.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/obce.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/mc.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/test/resources/okres.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/create_table.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ./service-jehlomat/src/main/resources/sql/insert_super_admin.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/postgis.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/obce.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/mc.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/okres.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/create_table.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/insert_super_admin.sql
     ```
 3. Set env variables
 ```shell

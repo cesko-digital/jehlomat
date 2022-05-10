@@ -7,6 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import model.LoginRequest
 import model.LoginResponse
+import model.user.UserStatus
 import org.mindrot.jbcrypt.BCrypt
 import services.DatabaseService
 import services.JwtManager
@@ -23,7 +24,7 @@ fun Route.loginApi(database: DatabaseService, jwtManager: JwtManager): Route {
                 return@post
             }
 
-            if (!user.verified) {
+            if (user.status != UserStatus.ACTIVE) {
                 call.respond(HttpStatusCode.Unauthorized)
                 return@post
             }
