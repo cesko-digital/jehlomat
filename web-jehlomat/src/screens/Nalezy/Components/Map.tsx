@@ -2,17 +2,17 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import dayjs from 'dayjs';
-import { Loader } from 'utils/Loader';
 import gpsParser from 'utils/gpsParser';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
+import { Loader } from 'utils/Loader';
+import pin from 'screens/Nalezy/Components/utils/pin';
 import Loading from 'screens/Nalezy/Components/Loading';
 import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/PinMenu';
-import pin from 'screens/Nalezy/Components/utils/pin';
 
 import 'leaflet/dist/leaflet.css';
 
