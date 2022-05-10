@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { TileLayer } from 'react-leaflet';
+import dayjs from 'dayjs';
 import { Alert, Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Page from 'screens/Nalezy/Components/Page';
@@ -12,20 +13,18 @@ import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
+import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/PinMenu';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
+import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
+import Links from 'screens/Nalezy/Components/Links';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
-import { mock } from './__mock';
-import { Info, Location, PinMenu, State, Time } from './Components/PinMenu';
-import dayjs from 'dayjs';
-import PreviewSyringeState from './Components/SyringeState';
-import Links from './Components/Links';
 
 const Details = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(2),
@@ -57,7 +56,6 @@ const Detail = () => {
                     return;
                 }
 
-                // setLoader({ resp: mock.syringeList[1] });
                 setLoader({ resp: resp.data });
             },
             () => setLoader({ err: 'Unable load details' }),
