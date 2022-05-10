@@ -29,10 +29,10 @@ interface IState {
     show: boolean;
     title: string;
     confirmText: string;
-    cancelText: string;
+    cancelText?: string;
 }
 
-type TPayload = 'confirm' | 'cancel'
+type TPayload = 'confirm' | 'cancel';
 
 interface IPromiseInfo {
     resolve: (payload: TPayload) => void;
@@ -41,7 +41,7 @@ interface IPromiseInfo {
 interface IShowParams {
     title: string;
     confirmText: string;
-    cancelText: string;
+    cancelText?: string;
 }
 
 class ConfirmationModal extends Component<IProps, IState> {
@@ -53,7 +53,7 @@ class ConfirmationModal extends Component<IProps, IState> {
             show: false,
             title: '',
             confirmText: '',
-            cancelText: '',
+            cancelText: undefined,
         };
     }
 
@@ -93,8 +93,8 @@ class ConfirmationModal extends Component<IProps, IState> {
                 <Wrapper>
                     <Text variant="h2">{this.state.title}</Text>
                     <Box marginTop="auto" display="flex" justifyContent="space-between">
-                        <SecondaryButton onClick={this.handleCancel} text={this.state.cancelText} />
-                        <PrimaryButton onClick={this.handleConfirm} text={this.state.confirmText} />
+                        {this.state.cancelText && <SecondaryButton onClick={this.handleCancel} text={this.state.cancelText} />}
+                        <PrimaryButton style={{ marginLeft: 'auto' }} onClick={this.handleConfirm} text={this.state.confirmText} />
                     </Box>
                 </Wrapper>
             </Modal>

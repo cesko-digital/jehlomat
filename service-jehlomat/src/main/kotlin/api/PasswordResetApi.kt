@@ -7,6 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.password.*
+import model.user.UserStatus
 import services.DatabaseService
 import services.MailerService
 import services.RandomIdGenerator
@@ -25,7 +26,7 @@ fun Route.passwordResetApi(database: DatabaseService, mailer: MailerService): Ro
                 userToChange == null -> {
                     call.respond(HttpStatusCode.NotFound)
                 }
-                userToChange.verified.not() -> {
+                userToChange.status != UserStatus.ACTIVE -> {
                     call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
                 }
                 else -> {

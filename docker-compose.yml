@@ -17,5 +17,7 @@ services:
     ports:
       - 5432:5432
     restart: on-failure
+    volumes:
+      - ./service-jehlomat:/service-jehlomat
     healthcheck:
       test: "exit 0"

@@ -113,7 +113,8 @@ resource "aws_ecs_task_definition" "service-jehlomat" {
     jwt-audience        = var.jwt-audience,
     jwt-realm           = var.jwt-realm,
     mailjet-public-key  = var.mailjet-public-key,
-    mailjet-private-key = var.mailjet-private-key
+    mailjet-private-key = var.mailjet-private-key,
+    frontend-url        = var.frontend-url
   })
   network_mode          = "awsvpc"
   execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
@@ -358,12 +359,5 @@ resource "aws_cloudfront_distribution" "distribution" {
     cloudfront_default_certificate = false
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2018"
-  }
-
-  custom_error_response {
-    error_code            = 403
-    error_caching_min_ttl = 300
-    response_code         = 200
-    response_page_path    = "/index.html"
   }
 }

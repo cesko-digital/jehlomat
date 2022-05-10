@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
 import { SortDirection } from 'screens/Nalezy/types/SortDirection';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import SortableHeading from 'screens/Nalezy/Components/SortableHeading';
 import SyringeRow from 'screens/Nalezy/Components/SyringeRow';
 import Heading from 'screens/Nalezy/Components/Heading';

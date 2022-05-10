@@ -51,7 +51,7 @@ CREATE TABLE public.users(
     email TEXT NOT NULL,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
-    verified BOOLEAN NOT NULL,
+    status INT NOT NULL,
     verification_code TEXT NOT NULL,
     organization_id INT NOT null,
     team_id INT,

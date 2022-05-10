@@ -24,6 +24,7 @@ class TestUtils {
             every { mailer.sendSyringeFindingConfirmation(any(), any()) } returns Unit
             every { mailer.sendSyringeFinding(any(), any(), any()) } returns Unit
             every { mailer.sendPassResetEmail(any(), any(), any()) } returns Unit
+            every { mailer.sendOrgAdminConfirmationEmail(any(), any()) } returns Unit
 
             return mailer
         }

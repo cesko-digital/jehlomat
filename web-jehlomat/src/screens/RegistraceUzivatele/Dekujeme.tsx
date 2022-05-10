@@ -9,12 +9,20 @@ import Typography from '@mui/material/Typography';
 
 import { primary, white, secondary } from '../../utils/colors';
 import TitleBar from '../../Components/Navigation/TitleBar';
+import { useEffect } from 'react';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 
 const Dekujeme = () => {
     let history = useHistory();
 
     const theme = useTheme();
     const desktop = useMediaQuery(theme.breakpoints.up('sm'));
+
+    useEffect(() => {
+        setTimeout(() => {
+          history.push('/prihlaseni')
+        }, 5000)
+      }, []);
 
     return (
         <Container sx={{ height: '100vh', width: '100%', backgroundColor: desktop ? white : primary, color: desktop ? primary : white }}>
@@ -40,6 +48,9 @@ const Dekujeme = () => {
                     <Grid item direction="column" justifyContent="center" alignItems="center">
                         <CheckCircle sx={{ color: secondary, fontSize: 80 }} />
                     </Grid>
+                </Grid>
+                <Grid container direction="column" rowSpacing={2} justifyContent="center" alignItems="center">
+                    <PrimaryButton text={'Přejít na přihlášení'} onClick={()=>{history.push('/prihlaseni')}}/>
                 </Grid>
             </Grid>
         </Container>

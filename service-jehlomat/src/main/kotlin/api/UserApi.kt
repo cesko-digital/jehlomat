@@ -28,10 +28,42 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
 
                 if (user != null ) {
-                    call.respond(HttpStatusCode.OK, user.toUserInfo())
+                    val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                    val roles = PermissionService.determineRoles(loggedInUser, user)
+
+                    call.respond(HttpStatusCode.OK, user.toUserInfo(roles.contains(Role.OrgAdmin)))
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
+            }
+
+            delete("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val user = id?.let { it1 -> databaseInstance.selectUserById(it1) }
+
+                if (user == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@delete
+                }
+
+                if (user.status != UserStatus.ACTIVE) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@delete
+                }
+
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                val roles = PermissionService.determineRoles(loggedInUser, user)
+                if (!roles.contains(Role.OrgAdmin)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
+
+                databaseInstance.useTransaction {
+                    databaseInstance.deactivateUser(id)
+                    databaseInstance.unlockSyringes(id)
+                }
+
+                call.respond(HttpStatusCode.NoContent)
             }
 
             post {
@@ -55,7 +87,7 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                             email = request.email,
                             username = "",
                             password = "",
-                            verified = false,
+                            status = UserStatus.NOT_VERIFIED,
                             verificationCode = verificationCode,
                             organizationId = loggedInUser.organizationId,
                             teamId = null,
@@ -75,7 +107,7 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
             }
 
             put("/{id}/attributes") {
-                val newUser = call.receive<UserChangeRequest>()
+                val newAttributes = call.receive<UserChangeRequest>()
                 val id = call.parameters["id"]?.toIntOrNull()
                 val userToChange = id?.let { it1 -> databaseInstance.selectUserById(it1) }
 
@@ -83,28 +115,43 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                     userToChange == null -> {
                         call.respond(HttpStatusCode.NotFound)
                     }
-                    userToChange.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                    userToChange.status != UserStatus.ACTIVE -> {
+                        call.respond(HttpStatusCode.PreconditionFailed, "User is not active")
                     }
-                    (!userToChange.username.isValidUsername()) -> {
+                    (!newAttributes.username.isValidUsername()) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong username format.")
                     }
-                    (!userToChange.email.isValidMail()) -> {
+                    (!newAttributes.email.isValidMail()) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
                     }
-                    (newUser.email != userToChange.email && databaseInstance.selectUserByEmail(newUser.email) != null) -> {
+                    (newAttributes.email != userToChange.email && databaseInstance.selectUserByEmail(newAttributes.email) != null) -> {
                         call.respond(HttpStatusCode.BadRequest, "E-mail already taken")
                     }
                     else -> {
-                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, userToChange, newUser.toUser(userToChange))) {
+                        if (!RequestValidationWrapper.validatePutObject(call, jwtManager, databaseInstance, userToChange, newAttributes.toUser(userToChange))) {
                             return@put
                         }
 
                         var isUserNameUnique = false
-                        synchronized(databaseInstance) {
-                            if (newUser.username == userToChange.username || databaseInstance.selectUserByUsername(newUser.username) == null) {
-                                databaseInstance.updateUserAttributes(id, newUser)
-                                isUserNameUnique = true
+
+                        databaseInstance.useTransaction {
+                            synchronized(databaseInstance) {
+                                if (newAttributes.username == userToChange.username || databaseInstance.selectUserByUsername(newAttributes.username) == null) {
+                                    databaseInstance.updateUserAttributes(id, newAttributes)
+                                    isUserNameUnique = true
+                                }
+                            }
+
+                            if (isUserNameUnique && newAttributes.email != userToChange.email) {
+                                val verificationCode = RandomIdGenerator.generateRegistrationCode()
+                                val organization = databaseInstance.selectOrganizationById(userToChange.organizationId)
+
+                                databaseInstance.updateUserEmail(id, newAttributes.email, verificationCode)
+                                mailer.sendRegistrationConfirmationEmail(
+                                    organization!!,
+                                    newAttributes.email,
+                                    verificationCode
+                                )
                             }
                         }
 
@@ -135,8 +182,8 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 }
 
                 when {
-                    userToChange.verified.not() -> {
-                        call.respond(HttpStatusCode.PreconditionFailed, "User is not verified yet")
+                    userToChange.status != UserStatus.ACTIVE -> {
+                        call.respond(HttpStatusCode.PreconditionFailed, "User is not active")
                     }
                     (!BCrypt.checkpw(passwordReq.oldPassword, userToChange.password)) -> {
                         call.respond(HttpStatusCode.BadRequest, "Wrong old password.")
