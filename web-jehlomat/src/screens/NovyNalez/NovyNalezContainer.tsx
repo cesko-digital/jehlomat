@@ -52,7 +52,7 @@ const NovyNalezContainer: FC = () => {
 
             const apiSyringe = {
                 createdAt: datetime,
-                gps_coordinates: `${lat} ${lng}`,
+                gps_coordinates: `${lng} ${lat}`,
                 note: info,
                 photo,
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
