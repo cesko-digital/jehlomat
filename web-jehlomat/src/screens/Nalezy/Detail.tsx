@@ -12,7 +12,7 @@ import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import { Loader } from 'screens/Nalezy/types/Loader';
+import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
