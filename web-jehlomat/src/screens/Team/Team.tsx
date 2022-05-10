@@ -165,8 +165,6 @@ const Team = (props: any) => {
             if (user) {
                 const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
                 return response.data;
-            } else {
-                history.push(LINKS.LOGIN);
             }
         }
 
@@ -184,12 +182,20 @@ const Team = (props: any) => {
     }, [history, user]);
 
     useEffect(() => {
+        const checkType = (type: string, data:any) => {
+            switch (type.toLowerCase()) {
+                case 'multipolygon':
+                    return data.coordinates&&data.coordinates[0]&&data.coordinates[0][0]?data.coordinates[0][0]:[];
+                case 'polygon':
+                    return data.coordinates&&data.coordinates[0]?data.coordinates[0]:[];
+            }
+        }
         setGeom([]);
         selectedLocation.map(async (place: any, id: number) => {
             const geometry = await getGeometry(place.type, place.id).then((data) => {
                 const transformGeom: any[] = [];
-                data.coordinates[0].forEach((coordinate: any) => {
-                    //console.log("coordinates", coordinate);
+                //GEOMETRY TRANSFORMATION        
+                checkType(data.type, data).forEach((coordinate: any) => {
                     transformGeom.push([coordinate[1], coordinate[0]]);
                 });
                 return transformGeom;
