@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import model.Organization
 import model.user.User
 import model.user.UserRegistrationRequest
+import model.user.UserStatus
 import model.user.UserVerificationRequest
 import org.junit.Test
 import services.DatabaseService
@@ -42,7 +43,7 @@ class ApplicationTestWorkflows {
     @Test
     fun testFullRegistration() = withTestApplication({ module(testing = true) }) {
         // create org admin
-        database.insertUser(USER.copy(verified = true, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
+        database.insertUser(USER.copy(status = UserStatus.ACTIVE, organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
         val token = loginUser("org@cesko.digital", USER.password)
 
         // register a new user

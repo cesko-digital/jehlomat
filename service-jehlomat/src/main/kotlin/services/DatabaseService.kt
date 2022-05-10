@@ -1,6 +1,7 @@
 package services
 
 import api.*
+import api.PasswordResetTable.code
 import model.*
 import model.exception.UnknownLocationException
 import model.location.*
@@ -15,6 +16,7 @@ import model.team.Team
 import model.user.User
 import model.user.UserChangeRequest
 import model.user.UserInfo
+import model.user.UserStatus
 import org.ktorm.database.Database
 import org.ktorm.database.asIterable
 import org.ktorm.dsl.*
@@ -26,6 +28,7 @@ import org.ktorm.support.postgresql.insertOrUpdateReturning
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState
 import utils.hashPassword
+import java.time.Instant
 import kotlin.RuntimeException
 import kotlin.streams.toList
 
@@ -98,7 +101,7 @@ class DatabaseService(
             email = row[UserTable.email]!!,
             username = row[UserTable.username]!!,
             password = row[UserTable.password]!!,
-            verified = row[UserTable.verified]!!,
+            status = UserStatus.valueOf(row[UserTable.status]!!),
             verificationCode = row[UserTable.verificationCode]!!,
             organizationId = row[UserTable.organizationId]!!,
             teamId = row[UserTable.teamId],
@@ -212,7 +215,7 @@ class DatabaseService(
         return databaseInstance
             .from(UserTable)
             .select()
-            .where { (UserTable.organizationId eq organizationId) and (UserTable.verified eq true) }
+            .where { (UserTable.organizationId eq organizationId) and (UserTable.status eq UserStatus.ACTIVE.code) }
             .orderBy(UserTable.username.asc())
             .map(mapUserRow)
             .toList()
@@ -222,7 +225,7 @@ class DatabaseService(
         return databaseInstance
             .from(UserTable)
             .select()
-            .where { (UserTable.teamId eq teamId) and (UserTable.verified eq true) }
+            .where { (UserTable.teamId eq teamId) and (UserTable.status eq UserStatus.ACTIVE.code) }
             .orderBy(UserTable.username.asc())
             .map(mapUserRow)
             .toList()
@@ -341,7 +344,16 @@ class DatabaseService(
         databaseInstance.update(UserTable) {
             set(it.email, email)
             set(it.verificationCode, code)
-            set(it.verified, false)
+            set(it.status, UserStatus.NOT_VERIFIED.code)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
+    fun updateUserStatus(id: Int, status: UserStatus) {
+        databaseInstance.update(UserTable) {
+            set(it.status, status.code)
             where {
                 it.userId eq id
             }
@@ -357,11 +369,20 @@ class DatabaseService(
         }
     }
 
+    fun deactivateUser(id: Int) {
+        databaseInstance.update(UserTable) {
+            set(it.status, UserStatus.DEACTIVATED.code)
+            where {
+                it.userId eq id
+            }
+        }
+    }
+
     private fun updateUserRecord(builder: AssignmentsBuilder, it: UserTable, user: User) {
         builder.set(it.email, user.email)
         builder.set(it.password, user.password.hashPassword())
         builder.set(it.username, user.username)
-        builder.set(it.verified, user.verified)
+        builder.set(it.status, user.status.code)
         builder.set(it.verificationCode, user.verificationCode)
         builder.set(it.organizationId, user.organizationId)
         builder.set(it.teamId, user.teamId)
@@ -483,6 +504,16 @@ class DatabaseService(
         }
     }
 
+    fun unlockSyringes(userId: Int) {
+        databaseInstance.update(SyringeTable) {
+            set(it.reservedBy, null)
+            set(it.reservedTill, null)
+            where {
+                (it.reservedBy eq userId) and (it.reservedTill greater Instant.now().epochSecond)
+            }
+        }
+    }
+
     private fun updateSyringeRecord(builder: AssignmentsBuilder, it: SyringeTable, syringe: Syringe) {
         builder.set(it.createdAt, syringe.createdAt)
         builder.set(it.createdBy, syringe.createdBy?.id)
@@ -511,10 +542,6 @@ class DatabaseService(
             set(it.name, organization.name)
             set(it.verified, organization.verified)
         } as Int
-    }
-
-    fun deleteOrganization(organization: Organization) {
-        databaseInstance.delete(OrganizationTable) { it.name eq organization.name }
     }
 
     fun insertTeam(team: Team): Int {
@@ -550,10 +577,6 @@ class DatabaseService(
 
     fun deleteSyringe(id: String) {
         databaseInstance.delete(SyringeTable) { it.id eq id }
-    }
-
-    fun deleteTeam(name: String) {
-        databaseInstance.delete(TeamTable) { it.name eq name }
     }
 
     private fun postgisLocation(table: String, gpsCoordinates: String, idColumn: String, nameColumn: String): LocationPart? {

@@ -16,6 +16,7 @@ import pin from 'screens/Nalezy/Components/utils/pin';
 
 import 'leaflet/dist/leaflet.css';
 
+
 interface MapProps {
     loader: Loader<SyringeReadModel>;
 }
