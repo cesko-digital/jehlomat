@@ -19,10 +19,12 @@ const RoundButton = styled('button', {
     transition: 'border 300ms',
     outline: 'none',
     width: 32,
-    ...(filled ? ({
-        background: 'rgba(14, 118, 108, 1)',
-        color: 'white',
-    }) : {}),
+    ...(filled
+        ? {
+              background: 'rgba(14, 118, 108, 1)',
+              color: 'white',
+          }
+        : {}),
 
     '&:hover': {
         borderColor: 'rgba(14, 118, 108, 1)',
@@ -30,6 +32,13 @@ const RoundButton = styled('button', {
 
     '&:focus': {
         outline: 'none',
+    },
+
+    '&.disabled': {
+        background: 'rgba(218, 218, 218, 0.5)',
+        color: 'rgba(218, 218, 218)',
+        cursor: 'not-allowed',
+        pointerEvents: 'none',
     },
 }));
 

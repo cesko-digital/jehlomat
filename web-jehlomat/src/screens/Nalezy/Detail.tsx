@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { TileLayer } from 'react-leaflet';
+import dayjs from 'dayjs';
 import { Alert, Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Page from 'screens/Nalezy/Components/Page';
@@ -15,8 +16,11 @@ import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
+import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/PinMenu';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
+import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
+import Links from 'screens/Nalezy/Components/Links';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 
@@ -109,7 +113,20 @@ const Detail = () => {
                             right={
                                 <Box height={443} borderRadius={2} overflow="hidden">
                                     <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
-                                        {data && <Pin syringe={data} />}
+                                        {data && (
+                                            <Pin syringe={data}>
+                                                <PinMenu closeButton={false} minWidth={220}>
+                                                    <Info>
+                                                        <Location>{data.location.obec}</Location>
+                                                        <Time>{dayjs(data.createdAt * 1000).format('D. M. YYYY')}</Time>
+                                                        <State>
+                                                            <PreviewSyringeState syringe={data} />
+                                                        </State>
+                                                    </Info>
+                                                    <Links syringe={data} />
+                                                </PinMenu>
+                                            </Pin>
+                                        )}
                                         <TileLayer
                                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -1,70 +1,26 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { Marker, TileLayer, useMap } from 'react-leaflet';
 import L, { LatLngTuple } from 'leaflet';
-import { styled } from '@mui/system';
 import dayjs from 'dayjs';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { Loader } from 'utils/Loader';
+import pin from 'screens/Nalezy/Components/utils/pin';
 import Loading from 'screens/Nalezy/Components/Loading';
 import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import pin from 'screens/Nalezy/Components/utils/pin';
+import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/PinMenu';
 
 import 'leaflet/dist/leaflet.css';
 
 
 interface MapProps {
     loader: Loader<SyringeReadModel>;
-    onUpdate: () => void;
 }
 
-const PopupMenu = styled(Popup)({
-    '& > .leaflet-popup-content-wrapper': {
-        overflow: 'hidden',
-        padding: 0,
-    },
-
-    '& > .leaflet-popup-content-wrapper > .leaflet-popup-content': {
-        margin: 0,
-        overflow: 'hidden',
-    },
-});
-
-const Info = styled('div')({
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '24px 24px',
-    background: 'rgba(47, 166, 154, 0.1)',
-});
-
-const Location = styled('div')({
-    alignSelf: 'end',
-    gridColumn: '1',
-    gridRow: '1',
-    justifySelf: 'start',
-    padding: '0 8px',
-});
-
-const Time = styled('div')({
-    alignSelf: 'end',
-    gridColumn: '2',
-    gridRow: '1',
-    justifySelf: 'end',
-    padding: '0 8px',
-});
-
-const State = styled('div')({
-    alignSelf: 'center',
-    gridColumn: '1 / span 2',
-    gridRow: '2',
-    justifySelf: 'start',
-    padding: '0 8px',
-});
-
-const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
+const Map: FunctionComponent<MapProps> = ({ loader }) => {
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const data = loader.resp?.syringeList || [];
@@ -103,7 +59,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
                     const [lat, lng] = coordinates;
                     return (
                         <Marker key={`${lat}-${lng}-${i}`} position={coordinates} icon={icon}>
-                            <PopupMenu closeButton={false} minWidth={220}>
+                            <PinMenu closeButton={false} minWidth={220}>
                                 <Info>
                                     <Location>{item.location.obec}</Location>
                                     <Time>{dayjs(item.createdAt * 1000).format('D. M. YYYY')}</Time>
@@ -111,8 +67,8 @@ const Map: FunctionComponent<MapProps> = ({ loader, onUpdate }) => {
                                         <PreviewSyringeState syringe={item} />
                                     </State>
                                 </Info>
-                                <Links syringe={item} onUpdate={onUpdate} />
-                            </PopupMenu>
+                                <Links syringe={item} />
+                            </PinMenu>
                         </Marker>
                     );
                 })}

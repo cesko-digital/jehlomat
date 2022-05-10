@@ -1,10 +1,7 @@
 import { Syringe } from './Syringe';
+import { PageInfo } from './PageInfo';
 
 export interface SyringeReadModel {
     syringeList: Syringe[];
-    pageInfo: {
-        index: number;
-        size: number;
-        hasMore: boolean;
-    };
+    pageInfo: PageInfo;
 }

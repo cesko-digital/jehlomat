@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
@@ -7,7 +7,6 @@ import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { Loader } from 'utils/Loader';
-import useFindingsFilter from 'screens/Nalezy/hooks/useFindingsFilter';
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
 import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
 import FilterByState from 'screens/Nalezy/Components/FilterByState';
@@ -20,6 +19,8 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
+import { filteringState, paginationState, sortingState } from './store';
+import { useRecoilValue } from 'recoil';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useState<Loader<SyringeReadModel>>({});
@@ -27,7 +28,10 @@ const Nalezy: FunctionComponent = () => {
     const history = useHistory();
     const location = useLocation();
     const match = useRouteMatch();
-    const { direction, handleSort, filter, filterByRange, resetByRange, filterByReporter, resetByReporter, filterByState, resetByState, reload } = useFindingsFilter();
+
+    const sorting = useRecoilValue(sortingState);
+    const filtering = useRecoilValue(filteringState);
+    const paging = useRecoilValue(paginationState);
 
     const isMapMatch = matchPath(location.pathname, '/nalezy/mapa');
     const isTableMatch = matchPath(location.pathname, '/nalezy');
@@ -36,6 +40,12 @@ const Nalezy: FunctionComponent = () => {
     const isTable = isTableMatch?.isExact;
 
     useEffect(() => {
+        const filter = {
+            ordering: sorting,
+            filter: filtering,
+            pageInfo: paging,
+        };
+
         const load = async () => {
             const response: AxiosResponse<SyringeReadModel> = await API.post('/syringe/search', filter);
             if (response.status !== 200) throw new Error('Unable to load data');
@@ -51,13 +61,7 @@ const Nalezy: FunctionComponent = () => {
                 setLoader({ err: e });
                 console.warn(e);
             });
-    }, [filter]);
-
-    const handleRangeFilter = useCallback((kind, from, to) => {
-        filterByRange(kind, { from: +from, to: +to });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [sorting, filtering, paging]);
 
     return (
         <>
@@ -80,18 +84,18 @@ const Nalezy: FunctionComponent = () => {
                 {filters && (
                     <Filters>
                         <HorizontalContainer>
-                            <FilterByRange onFilter={handleRangeFilter} onReset={resetByRange} />
-                            <FilterByReporter onFilter={filterByReporter} onReset={resetByReporter} />
-                            <FilterByState onFilter={filterByState} onReset={resetByState} />
+                            <FilterByRange />
+                            <FilterByReporter />
+                            <FilterByState />
                         </HorizontalContainer>
                     </Filters>
                 )}
                 <Switch>
                     <Route path={`${match.path}/`} exact={true}>
-                        <Table loader={loader} direction={direction} onSort={handleSort} onUpdate={reload} />
+                        <Table loader={loader} />
                     </Route>
                     <Route path={`${match.path}/mapa/`} exact={true}>
-                        <Map loader={loader} onUpdate={reload} />
+                        <Map loader={loader} />
                     </Route>
                 </Switch>
             </Page>

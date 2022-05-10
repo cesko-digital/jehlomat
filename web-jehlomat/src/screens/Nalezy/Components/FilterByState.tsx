@@ -1,26 +1,42 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { SyringeState } from '../types/SyringeState';
 import { Filter } from './Filter';
 import Select from './Select';
+import { filteringState } from 'screens/Nalezy/store';
+import { Filtering } from 'screens/Nalezy/types/Filtering';
 
-interface FilterStateProps {
-    onFilter: (state: SyringeState) => void;
-    onReset: () => void;
-}
-
-const FilterByState: FunctionComponent<FilterStateProps> = ({ onFilter, onReset }) => {
+const FilterByState: FunctionComponent = () => {
     const [state, setState] = useState<SyringeState | ''>('');
+    const setFilter = useSetRecoilState(filteringState);
+
+    const filter = useCallback(
+        (status: SyringeState) => {
+            setFilter((state: Filtering) => ({ ...state, status }));
+        },
+        [setFilter],
+    );
+
+    const reset = useCallback(() => {
+        setFilter(state => {
+            const filter = { ...state };
+            delete filter.status;
+
+            return filter;
+        });
+    }, [setFilter]);
 
     useEffect(() => {
         if (!state) return;
 
-        onFilter(state);
-    }, [state]);
+        filter(state);
+    }, [state, filter]);
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value as SyringeState);
     const handleReset = () => {
         setState('');
-        onReset();
+
+        reset();
     };
 
     return (

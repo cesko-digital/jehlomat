@@ -10,7 +10,6 @@ interface ListItemMenuProps {
     anchorEl: VirtualElement;
     onClickAway: () => void;
     syringe: Syringe;
-    onUpdate: () => void;
 }
 
 const Menu = styled('nav')({
@@ -24,11 +23,11 @@ const Menu = styled('nav')({
     overflow: 'hidden',
 });
 
-const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickAway, open, syringe, onUpdate }) => (
+const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickAway, open, syringe }) => (
     <Popper open={open} anchorEl={anchorEl} placement="bottom">
         <ClickAwayListener onClickAway={onClickAway}>
             <Menu>
-                <Links syringe={syringe} onUpdate={onUpdate} />
+                <Links syringe={syringe} />
             </Menu>
         </ClickAwayListener>
     </Popper>
