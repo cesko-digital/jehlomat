@@ -27,10 +27,10 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
 
     const history = useHistory();
 
-    const handleOpenActions = (syringe: Syringe) => (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
+    const handleOpenActions = (syringe: Syringe) => (ev: React.MouseEvent<HTMLButtonElement>) => {
+        ev.stopPropagation();
 
-        setAnchorEl(event.currentTarget);
+        setAnchorEl(ev.currentTarget);
         setEdit(syringe);
     };
 

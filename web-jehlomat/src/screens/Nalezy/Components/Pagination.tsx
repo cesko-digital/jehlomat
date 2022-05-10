@@ -15,6 +15,7 @@ const Controls = styled('div')(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
     gap: theme.spacing(1),
+    marginBottom: theme.spacing(3),
 }));
 
 interface PaginationProps {

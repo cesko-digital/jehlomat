@@ -16,11 +16,12 @@ import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
-import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/PinMenu';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
-import PreviewSyringeState from 'screens/Nalezy/Components/SyringeState';
+import PreviewSyringeState from 'screens/Nalezy//Components/SyringeState';
 import Links from 'screens/Nalezy/Components/Links';
+import texts from 'screens/Nalezy/texts';
+import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/PinMenu';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 
@@ -48,7 +49,7 @@ const Detail = () => {
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
 
-    useEffect(() => {
+    const load = useCallback(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
             resp => {
                 if (!isStatusSuccess(resp.status)) {
@@ -61,6 +62,10 @@ const Detail = () => {
             () => setLoader({ err: 'Unable load details' }),
         );
     }, [id]);
+
+    useEffect(() => {
+        load();
+    }, [load]);
 
     const handleGetBack = useCallback(() => {
         history.push('/nalezy');
@@ -76,12 +81,12 @@ const Detail = () => {
 
     return (
         <>
-            <Header mobileTitle="Detail nálezu" />
+            <Header mobileTitle={texts.DETAIL__TITLE} />
 
             <Page>
                 <Container sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <Box mt={5} mb={2}>
-                        <TextHeader>Detail nálezu</TextHeader>
+                        <TextHeader>{texts.DETAIL__TITLE}</TextHeader>
                         <RoundButton filled={true} onClick={handleGetBack}>
                             <BackIcon />
                         </RoundButton>
@@ -97,16 +102,16 @@ const Detail = () => {
                                 <Details>
                                     {error && (
                                         <Box>
-                                            <Alert severity="error">Zadaný nález nebyl nalezen</Alert>
+                                            <Alert severity="error">{texts.DETAIL__NOT_FOUND}</Alert>
                                         </Box>
                                     )}
-                                    <TextInput label="Počet jehel" value={data?.count} disabled />
-                                    <TextInput label="Datum a čas nálezu" value={foundAt} disabled />
-                                    <TextInput label="Místo nálezu" value={data?.location?.obec} disabled />
-                                    <TextInput label="Poznámka" value={data?.note} disabled />
-                                    <TextInput label="Stav nálezu" value={state(data)} disabled />
+                                    <TextInput label={texts.DETAIL__SYRINGES_COUNT} value={data?.count} disabled />
+                                    <TextInput label={texts.DETAIL__DATETIME} value={foundAt} disabled />
+                                    <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
+                                    <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
+                                    <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
                                     <Box display="flex" alignItems="center" flexDirection="column" py={2}>
-                                        <SecondaryButton onClick={handleGetBack} text="Zpět na seznam" />
+                                        <SecondaryButton onClick={handleGetBack} text={texts.DETAIL__BACK} />
                                     </Box>
                                 </Details>
                             }
@@ -123,7 +128,7 @@ const Detail = () => {
                                                             <PreviewSyringeState syringe={data} />
                                                         </State>
                                                     </Info>
-                                                    <Links syringe={data} />
+                                                    <Links onClose={load} syringe={data} />
                                                 </PinMenu>
                                             </Pin>
                                         )}

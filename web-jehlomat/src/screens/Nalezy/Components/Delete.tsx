@@ -21,8 +21,6 @@ const Link = styled('a')({
     fontSize: '0.825rem',
     height: 44,
     justifyContent: 'space-between',
-    marginLeft: -12,
-    marginRight: -12,
     padding: '0 12px',
     textDecoration: 'none',
     transition: 'all 300ms',
