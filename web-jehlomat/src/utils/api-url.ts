@@ -34,6 +34,10 @@ class APIURL {
         return `${this.organization}/${orgId}`;
     }
 
+    readSyringeDetails(id: string) {
+        return `/syringle/${id}`;
+    }
+
     getTeamsInOrganization(orgId?: string | number) {
         return `${this.organization}/${orgId}/teams`;
     }
