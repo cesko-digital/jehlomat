@@ -1,5 +1,45 @@
 import { SyringeReadModel } from './types/SyringeReadModel';
 
+export const sample: SyringeReadModel = {
+    syringeList: [
+        {
+            id: 'BRYK6YAC',
+            createdAt: 1652355610,
+            createdBy: {
+                id: 1,
+                username: 'Super Admin',
+                organizationId: 1,
+                email: '---',
+                teamId: undefined,
+                isAdmin: true,
+            },
+            reservedTill: undefined,
+            reservedBy: undefined,
+            demolishedAt: undefined,
+            demolishedBy: undefined,
+            photo: '',
+            count: 3,
+            note: 'test info',
+            gps_coordinates: '13.373107910156252 49.74045665339644',
+            location: {
+                id: 1,
+                okres: 'CZ0323',
+                okresName: 'Plzeň-město',
+                obec: 554791,
+                obecName: 'Plzeň',
+                mestkaCast: 546003,
+                mestkaCastName: 'Plzeň 3',
+            },
+            demolished: false,
+        },
+    ],
+    pageInfo: {
+        index: 0,
+        size: 20,
+        hasMore: false,
+    },
+};
+
 export const mock: SyringeReadModel = {
     syringeList: [
         {

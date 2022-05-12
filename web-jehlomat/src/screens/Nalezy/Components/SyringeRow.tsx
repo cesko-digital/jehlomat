@@ -39,8 +39,8 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
             <td>
                 <SyringeIcon />
             </td>
-            <td>{syringe.location.obec}</td>
-            <td>{syringe.location.mestkaCast}</td>
+            <td>{syringe.location.obecName ?? syringe.location.obec}</td>
+            <td>{syringe.location.okresName ?? syringe.location.okresName}</td>
             <td>{dayjs(syringe.createdAt * 1000).format('D. M. YYYY')}</td>
             <td>
                 <SyringeDemolishDate syringe={syringe} />
