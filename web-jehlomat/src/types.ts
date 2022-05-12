@@ -13,10 +13,10 @@ export interface IUser {
     id: number;
     email: string;
     username: string;
-    verified: boolean;
     organizationId: number;
-    teamId: number;
+    teamId: number | undefined;
     isAdmin: boolean;
+    verified?: boolean;
 }
 
 export interface IUserEdited {
@@ -25,7 +25,7 @@ export interface IUserEdited {
     username: string;
     verified?: boolean;
     organizationId?: number;
-    teamId: number | string;
+    teamId: number | string | undefined;
     isAdmin?: boolean;
 }
 

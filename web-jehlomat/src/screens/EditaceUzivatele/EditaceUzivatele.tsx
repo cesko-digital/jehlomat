@@ -37,13 +37,13 @@ interface IValues {
     email: string;
     username: string;
     organizationId: number;
-    teamId: number;
+    teamId: number | undefined;
 }
 
 interface EditedUser {
     email: string;
     username: string;
-    teamId: number;
+    teamId: number | undefined;
 }
 
 const EditaceUzivatele: React.FC = () => {
@@ -161,7 +161,7 @@ const EditaceUzivatele: React.FC = () => {
                                                 values={teams}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
-                                                value={values.teamId}
+                                                value={values.teamId ?? null}
                                                 name="teamId"
                                                 label="Tým"
                                                 required
