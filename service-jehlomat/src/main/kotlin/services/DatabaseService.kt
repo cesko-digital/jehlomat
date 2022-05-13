@@ -369,6 +369,15 @@ class DatabaseService(
         }
     }
 
+    fun removedUsersTeam(teamId: Int) {
+        databaseInstance.update(UserTable) {
+            set(it.teamId, null)
+            where {
+                it.teamId eq teamId
+            }
+        }
+    }
+
     fun deactivateUser(id: Int) {
         databaseInstance.update(UserTable) {
             set(it.status, UserStatus.DEACTIVATED.code)
@@ -474,6 +483,11 @@ class DatabaseService(
             databaseInstance.delete(TeamLocationTable) { it.teamId eq team.id }
             insertTeamLocations(team.id, team.locations)
         }
+    }
+
+    fun deleteTeam(teamId: Int) {
+        databaseInstance.delete(TeamLocationTable) { it.teamId eq teamId }
+        databaseInstance.delete(TeamTable) { it.teamId eq teamId }
     }
 
     fun insertSyringe(syringe: Syringe): String? {

@@ -19,6 +19,7 @@ import services.DatabaseService
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 const val TEAM_API_PATH = "/api/v1/jehlomat/team"
 
@@ -357,6 +358,59 @@ class TeamTest {
             addHeader("Authorization", "Bearer $token")
         }) {
             assertEquals(HttpStatusCode.Forbidden, response.status())
+        }
+    }
+
+    @Test
+    fun testDeleteTeamOk() = withTestApplication(Application::module) {
+        val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, email = "email2", username = "user2", teamId = teamId1, status = UserStatus.DEACTIVATED))
+
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Delete, "$TEAM_API_PATH/$teamId1"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NoContent, response.status())
+            assertNull(database.selectTeamById(teamId1))
+
+            val user2 = database.selectUserById(userId)!!
+            assertNull(user2.teamId)
+        }
+    }
+
+    @Test
+    fun testDeleteTeamWrongTeam() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Delete, "$TEAM_API_PATH/123456"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testDeleteTeamNotOrgAdmin() = withTestApplication(Application::module) {
+        val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        database.insertUser(USER.copy(organizationId = defaultOrgId, email = "email2", username = "user2", teamId = null))
+
+        val token = loginUser("email2", USER.password)
+        with(handleRequest(HttpMethod.Delete, "$TEAM_API_PATH/$teamId1"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.Forbidden, response.status())
+        }
+    }
+
+    @Test
+    fun testDeleteTeamNotEmpty() = withTestApplication(Application::module) {
+        val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
+        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, email = "email2", username = "user2", teamId = teamId1))
+
+        val token = loginUser(USER.email, USER.password)
+        with(handleRequest(HttpMethod.Delete, "$TEAM_API_PATH/$teamId1"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
         }
     }
 }

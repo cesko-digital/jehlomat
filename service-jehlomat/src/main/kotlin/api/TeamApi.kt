@@ -30,6 +30,36 @@ fun Route.teamApi(databaseInstance: DatabaseService, jwtManager: JwtManager): Ro
                 }
             }
 
+            delete("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val team = id?.let { it1 -> databaseInstance.selectTeamById(it1) }
+
+                if (team == null ) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@delete
+                }
+
+                val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
+                val roles = PermissionService.determineRoles(loggedInUser, team)
+                if (!roles.contains(Role.OrgAdmin)) {
+                    call.respond(HttpStatusCode.Forbidden,"A team can be deleted only by the organization administrator.")
+                    return@delete
+                }
+
+                val users = databaseInstance.selectUsersByTeam(id)
+                if (users.isNotEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, "Team must be empty.")
+                    return@delete
+                }
+
+                databaseInstance.useTransaction {
+                    databaseInstance.removedUsersTeam(team.id) // not verified and deactivated
+                    databaseInstance.deleteTeam(team.id)
+                }
+
+                call.respond(HttpStatusCode.NoContent)
+            }
+
             get("/{id}/users") {
                 val id = call.parameters["id"]?.toIntOrNull()
 
