@@ -624,6 +624,31 @@ paths:
           description: User not found
         '405':
           description: Parameters violate requirements
+  /verification/org-admin:
+    post:
+      summary: Verify and finish registration of an organization administrator
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                description: a registration code
+                example: "df5dg3agh8h"
+              userId:
+                type: string
+                description: user's id
+                example: "123"
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: User not found
+        '405':
+          description: Parameters violate requirements
   /location/point:
     get:
       summary: Get combination of locations for gps coordinates
@@ -906,7 +931,8 @@ definitions:
         default: NO
       gps_coordinates:
         type: string
-        example: 25.326,-31.265
+        example: 13.37 49.72
+        description: The format is "longitute latitude"
       demolished:
         type: boolean
         example: false
@@ -932,7 +958,8 @@ definitions:
         example: "note 1"
       gps_coordinates:
         type: string
-        example: 25.326 -31.265
+        example: 13.37 49.72
+        description: The format is "longitute latitude"
       status:
         type: string
         enum:
@@ -958,7 +985,8 @@ definitions:
         example: "note 1"
       gps_coordinates:
         type: string
-        example: 25.326 -31.265
+        example: 13.37 49.72
+        description: The format is "longitute latitude"
   SyringeCreateRes:
     type: object
     properties:
