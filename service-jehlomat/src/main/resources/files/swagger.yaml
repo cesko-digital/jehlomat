@@ -388,6 +388,26 @@ paths:
             $ref: '#/definitions/TeamRequest'
         '404':
           description: Team not found
+    delete:
+      summary: Delete a team
+      description: Delete a team with requested id
+      security:
+        - Bearer: [ ]
+      parameters:
+        - name: id
+          in: path
+          description: Id of team to delete
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: successful operation
+        '403':
+          description: Only an organization administrator can delete a team
+        '404':
+          description: Team not found
+        '405':
+          description: Team has a active user
   /team/{id}/users:
     get:
       summary: Get team users
