@@ -22,6 +22,10 @@ class APIURL {
         return `/verification/organization?orgId=${orgId}`;
     }
 
+    postAdminOrganizationVerification() {
+        return `/verification/org-admin`;
+    }
+
     getUser(userId: string | number) {
         return `${this.user}/${userId}`;
     }
