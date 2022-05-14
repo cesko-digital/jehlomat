@@ -1,5 +1,5 @@
-import {IUser as Person} from "../../../types";
-import {Location} from "./Location";
+﻿import { IUser as Person } from '../../../types';
+import { Location } from './Location';
 
 export interface Syringe {
     id: string;
@@ -12,7 +12,7 @@ export interface Syringe {
     photo?: string;
     count: number;
     note: string;
-    demolisher: string;
+    demolisher?: string;
     gps_coordinates: string;
     demolished: boolean;
     location: Location;

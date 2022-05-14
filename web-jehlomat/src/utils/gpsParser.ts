@@ -1,7 +1,7 @@
 import { LatLngTuple } from 'leaflet';
 
 const gpsParser = (coordinates: string): LatLngTuple => {
-    const [lat, lng] = coordinates.split(' ').map(i => i.trim());
+    const [lng, lat] = coordinates.split(' ').map(i => i.trim());
 
     return [+lat, +lng];
 };
