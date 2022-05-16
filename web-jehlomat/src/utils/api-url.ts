@@ -3,6 +3,7 @@ class APIURL {
     organization = '/organization';
     userVerification = '/verification/user';
     user = '/user';
+    team = '/team';
     setNewPassword = '/password-reset/save';
     testResetPassword = '/password-reset/test-code';
 
@@ -52,6 +53,10 @@ class APIURL {
 
     deleteUserFromOrganization(userId: string | number) {
         return `${this.user}/${userId}`;
+    }
+
+    deleteTeamFromOrganization(teamId: string | number) {
+        return `${this.team}/${teamId}`;
     }
 }
 
