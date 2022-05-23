@@ -58,9 +58,7 @@ export FRONTEND_URL=http://localhost:3000/#/
     2. Run commands:
     ```shell
     docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/postgis.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/obce.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/mc.sql
-    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/okres.sql
+    docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/test/resources/sph_okres.sql
     docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/create_table.sql
     docker exec -it <container_id> psql postgresql://jehlomat:jehlomat@localhost:5432/jehlomat -f ../service-jehlomat/src/main/resources/sql/insert_super_admin.sql
     ```
