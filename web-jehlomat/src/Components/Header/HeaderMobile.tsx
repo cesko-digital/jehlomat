@@ -4,11 +4,13 @@ import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import SecondaryButton from '../Buttons/SecondaryButton/SecondaryButton';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import TextButton from '../Buttons/TextButton/TextButton';
-import { LINKS, Routes } from 'routes';
-import { Link } from 'react-router-dom';
+import { LINKS, LINKS_WITH_PARAMS, Routes } from 'routes';
+import { Link, useHistory } from 'react-router-dom';
 import Navigator from 'Components/Navigator/Navigator';
 
 export const HeaderMobile: FC = () => {
+    const history = useHistory();
+
     return (
         <s.Container>
             <s.LogoContainer>
@@ -33,7 +35,12 @@ export const HeaderMobile: FC = () => {
                 <TextButton text={'Našli jste jehlu a nevíte, co s ní?'} />
             </div>
             <div>
-                <TextButton text={'Zadat nález anonymně'} />
+                <TextButton
+                    text={'Zadat nález anonymně'}
+                    onClick={() => {
+                        history.push(LINKS_WITH_PARAMS.NEW_FIND?.(0));
+                    }}
+                />
             </div>
         </s.Container>
     );

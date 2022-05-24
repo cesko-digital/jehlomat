@@ -5,9 +5,12 @@ import { Header } from '../../Components/Header/Header';
 import { darkGrey, primaryDark } from '../../utils/colors';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
+import { useHistory } from 'react-router-dom';
+import { LINKS, LINKS_WITH_PARAMS } from 'routes';
 
 const LandingPage = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const history = useHistory();
 
     if (isMobile) {
         return <HeaderMobile />;
@@ -34,7 +37,13 @@ const LandingPage = () => {
                     <Typography align="left" variant="h2" color={darkGrey} fontSize="24px" lineHeight="28px" sx={{ my: '50px' }}>
                         Našli jste jehlu a nevíte co s ní?
                     </Typography>
-                    <PrimaryButton text="zadat nález ANONYMNĚ" type="button" />
+                    <PrimaryButton
+                        text="zadat nález ANONYMNĚ"
+                        type="button"
+                        onClick={() => {
+                            history.push(LINKS_WITH_PARAMS.NEW_FIND?.(0));
+                        }}
+                    />
                     <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
                         Jehlomat.cz je online nástroj, sloužící terénním pracovníkům a veřejnosti ke hlášení nálezů odhozených injekčních stříkaček a následně k jejich odborné likvidaci
                     </Typography>
