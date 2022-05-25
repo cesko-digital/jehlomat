@@ -73,7 +73,7 @@ export const SSubTitle = styled(Typography)`
 `;
 
 export const SContainer = styled.div`
-    min-height: calc(100vh - 191px);
+    min-height: calc(100vh - 268px); /* height of header + second header */
     display: flex;
     flex-direction: column;
     justify-content: center;
