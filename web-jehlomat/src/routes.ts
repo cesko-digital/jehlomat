@@ -155,8 +155,6 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_ADMIN_CONFIRMATION,
         Component: OrganizationAdminVerification,
         path: `/${ORGANIZATION_URL_PATH}/admin/povoleni/`,
-        protectedRoute: true,
-        from: true,
     },
     {
         id: Routes.ORGANIZATION_EDIT,
