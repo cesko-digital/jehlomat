@@ -267,7 +267,7 @@ class ApplicationTestSyringe {
         with(handleRequest(HttpMethod.Put, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, createdBy = defaultUser, demolisherType = Demolisher.CITY_POLICE)))
+            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, createdBy = defaultUser, demolisherType = Demolisher.CITY_POLICE).toFlatObject()))
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(listOf(
@@ -287,7 +287,7 @@ class ApplicationTestSyringe {
         with(handleRequest(HttpMethod.Put, SYRINGE_API_PATH) {
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, count = -100)))
+            setBody(Json.encodeToString(defaultSyringe.copy(id = syringeId!!, count = -100).toFlatObject()))
         }) {
             assertEquals(HttpStatusCode.BadRequest, response.status())
             assertEquals("The field count is unchangeable by PUT request.", response.content)
