@@ -61,7 +61,15 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet stříkaček</FormItemLabel>
-                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
+                    <TextInput
+                        required
+                        disabled={readOnly}
+                        inputProps={{ min: 1 }}
+                        placeholder="Zadejte počet stříkaček"
+                        type="number"
+                        value={count}
+                        onChange={e => onInputChange('count', e.target.value)}
+                    />
                     <Icon src={syringe} readOnly={readOnly} />
                 </FormItem>
                 <FormItem>
