@@ -7,12 +7,15 @@ import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { ActionButton } from 'screens/Nalezy/Components/Link';
 import Delete from 'screens/Nalezy/Components/Delete';
 import { ReactComponent as SyringeIcon } from 'assets/icons/syringe-line.svg';
+import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
 import { API } from 'config/baseURL';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userState } from 'store/user';
 import { paginationState } from 'screens/Nalezy/store';
 import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import texts from 'screens/Nalezy/texts';
+import { useHistory } from 'react-router';
+import { LINKS, LINKS_WITH_PARAMS } from 'routes';
 
 const List = styled('ul')({
     margin: 0,
@@ -38,6 +41,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
     const auth = useRecoilValue(userState);
     const setPaging = useSetRecoilState(paginationState);
     const confirmationModal = useConfirmationModalContext();
+    const history = useHistory();
 
     const handleDemolish = useCallback(
         (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,12 +76,24 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
         [auth, confirmationModal, onClose, setPaging, syringe],
     );
 
+    const handleEdit = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+        ev.stopPropagation()
+
+        history.push(LINKS.EDIT_FINDING.replace(':id', syringe.id))
+    },[]);
+
     return (
         <List>
             <li>
                 <ActionButton onClick={handleDemolish}>
                     <span>Zlikvidovat nález</span>
                     <SyringeIcon style={{ width: '20px', height: '20px' }} />
+                </ActionButton>
+            </li>
+            <li>
+                <ActionButton onClick={handleEdit}>
+                    <span>Upravit</span>
+                    <EditIcon style={{ width: '20px', height: '20px' }} />
                 </ActionButton>
             </li>
             <li>

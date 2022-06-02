@@ -21,7 +21,8 @@ const Right = styled('td')({
     textAlign: 'right',
 });
 
-const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
+const
+    SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [edit, setEdit] = useState<Syringe | null>();
 

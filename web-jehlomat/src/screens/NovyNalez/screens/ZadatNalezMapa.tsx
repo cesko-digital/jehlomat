@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import LocationAgreement from 'screens/NovyNalez/components/LocationAgreement';
 import Map from 'screens/NovyNalez/components/Map';
 import { LatLngExpression } from 'leaflet';
-import { INovaJehla } from 'screens/NovyNalez/components/types';
+import {INovaJehla, isExistingSyringe, JehlaState} from 'screens/NovyNalez/components/types';
 import { StepsEnum } from 'screens/NovyNalez/components/types';
 import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -37,10 +37,10 @@ export enum LocationState {
 
 const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     const [modalVisible, setModalVisible] = useState<boolean | null>(null);
-    const [userPosition, setUserPosition] = useRecoilState(mapUserPositionState);
+    const [, setUserPosition] = useRecoilState(mapUserPositionState);
     const [locationState, setLocationState] = useState<LocationState>();
     const setCurrentStep = useSetRecoilState(newSyringeStepState);
-    const setNewSyringeInfo = useSetRecoilState(newSyringeInfoState);
+    const [syringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
     const mapPosition = useRecoilValue(mapPositionState);
 
     useEffect(() => {
@@ -94,7 +94,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     }, [mapPosition]);
 
     const onAddPlaceClick = useCallback(() => {
-        setNewSyringeInfo((syringeInfo: INovaJehla) => ({ ...syringeInfo, ...convertPositionToInfo() }));
+        setNewSyringeInfo((syringeInfo: JehlaState) => ({ ...syringeInfo, ...convertPositionToInfo() }));
         setCurrentStep(StepsEnum.Info);
     }, [convertPositionToInfo, setNewSyringeInfo, setCurrentStep]);
 
@@ -104,7 +104,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
                 <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
                 <MapControl />
                 <FloatinButtonContainer>
-                    <PrimaryButton text="Vložit místo" onClick={onAddPlaceClick} />
+                    <PrimaryButton text={`${isExistingSyringe(syringeInfo) && syringeInfo.edit ? 'Editovat' : 'Vložit'} místo`} onClick={onAddPlaceClick} />
                 </FloatinButtonContainer>
             </Map>
         </StyledContainer>

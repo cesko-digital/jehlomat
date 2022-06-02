@@ -10,7 +10,7 @@ import marker from 'assets/icons/marker.svg';
 
 import { DateTimePicker } from 'Components/Inputs/DateTimePicker/DateTimePicker';
 
-import { INovaJehla } from 'screens/NovyNalez/components/types';
+import { JehlaState } from 'screens/NovyNalez/components/types';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemLabel } from 'utils/typography';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
@@ -21,7 +21,6 @@ import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { useRecoilValue } from 'recoil';
 import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
-
 
 const ButtonContainer = styled.div`
     display: flex;
@@ -44,7 +43,7 @@ const Icon = styled.img<{ readOnly?: boolean }>`
 
 interface Props {
     onInputChange: (key: string, value: string | number) => void;
-    syringeInfo: INovaJehla;
+    syringeInfo: JehlaState;
     readOnly?: boolean;
     handleEditLocation?: () => void;
 }

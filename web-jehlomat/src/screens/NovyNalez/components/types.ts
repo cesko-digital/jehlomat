@@ -1,3 +1,6 @@
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import { isObject, has } from 'lodash';
+
 export enum LocationState {
     CHECKING = 'CHECKING',
     CHECKED = 'CHECKED',
@@ -29,7 +32,6 @@ export interface Address {
     };
 }
 
-
 export enum StepsEnum {
     Start,
     Mapa,
@@ -37,7 +39,6 @@ export enum StepsEnum {
     Nahled,
     Potvrzeni,
 }
-
 
 export interface INovaJehla {
     lat: number | undefined;
@@ -48,4 +49,11 @@ export interface INovaJehla {
     photo: string | undefined;
 }
 
+export interface IExistujiciJehla extends Omit<INovaJehla, 'count' | 'photo'>, Syringe {
+    edit?: boolean;
+    id: string;
+}
 
+export type JehlaState = INovaJehla | IExistujiciJehla;
+
+export const isExistingSyringe = (variable: INovaJehla | IExistujiciJehla): variable is IExistujiciJehla => isObject(variable) && has(variable, 'id');

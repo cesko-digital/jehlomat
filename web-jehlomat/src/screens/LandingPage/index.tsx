@@ -6,7 +6,7 @@ import { darkGrey, primaryDark } from '../../utils/colors';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
 import { useHistory } from 'react-router-dom';
-import { LINKS, LINKS_WITH_PARAMS } from 'routes';
+import { LINKS_WITH_PARAMS } from 'routes';
 
 const LandingPage = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
