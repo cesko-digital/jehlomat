@@ -1,1 +1,1 @@
-export type SyringeState = 'DEMOLISHED' | 'WAITING' | 'RESERVED';
+export type SyringeState = 'DEMOLISHED' | 'WAITING' | 'RESERVED' | '';

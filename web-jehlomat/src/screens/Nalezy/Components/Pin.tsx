@@ -15,11 +15,16 @@ const Pin: FunctionComponent<PinProps> = ({ syringe, children }) => {
         return null;
     }
 
+    const icon = pin(syringe);
+    if (!icon) {
+        return null;
+    }
+
     const coordinates = gpsParser(syringe.gps_coordinates);
 
     map.flyTo(coordinates);
     return (
-        <Marker position={coordinates} icon={pin(syringe)}>
+        <Marker position={coordinates} icon={icon}>
             {children}
         </Marker>
     );
