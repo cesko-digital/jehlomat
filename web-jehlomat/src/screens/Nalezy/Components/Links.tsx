@@ -48,7 +48,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
             ev.stopPropagation();
 
             const payload = {
-                ...syringe,
+                id: syringe.id,
                 demolishedAt: +dayjs(),
                 demolishedBy: {
                     id: auth?.id,
