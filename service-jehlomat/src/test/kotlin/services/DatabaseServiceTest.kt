@@ -223,7 +223,7 @@ class DatabaseServiceTest {
         var syringeToCreate2 = Syringe("", 0, userInfo, null, null, null, null, Demolisher.USER,"", 2, "second", "", loc, false)
         val syringeId2 = database.insertSyringe(syringeToCreate2)
         syringeToCreate2 = syringeToCreate2.copy(id = syringeId2!!, count = 5)
-        database.updateSyringe(syringeToCreate2)
+        database.updateSyringe(syringeToCreate2.toFlatObject())
 
         assertEquals(1, database.selectSyringeById(syringeId1)?.count)
         assertEquals(5, database.selectSyringeById(syringeId2)?.count)
