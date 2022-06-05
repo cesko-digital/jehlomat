@@ -48,4 +48,8 @@ export interface INovaJehla {
     photo: string | undefined;
 }
 
+export interface INovaJehlaError {
+    count?: string;
+}
+
 

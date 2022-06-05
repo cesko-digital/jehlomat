@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
 import dayjs from 'dayjs';
@@ -19,8 +19,8 @@ import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { useRecoilValue } from 'recoil';
-import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeInfoErrorState, newSyringeInfoState } from 'screens/NovyNalez/components/store';
 
 const ButtonContainer = styled.div`
     display: flex;
@@ -56,14 +56,14 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
     const currentTime = useMemo(() => dayjs(), []);
     const { photo } = useRecoilValue(newSyringeInfoState);
     const decodedFiles = useMemo(() => photo && JSON.parse(photo), [photo]);
-    const [syringeCountError, setSyringeCountError] = useState<string | undefined>(undefined);
+    const [newSyringeInfoError, setNewSyringeInfoError] = useRecoilState(newSyringeInfoErrorState);
 
     const validateSyringeCount = (value: string) => {
         if (!value || value.length === 0 || parseInt(value, 10) <= 0) {
-            setSyringeCountError('Je nutné vyplnit počet stříkaček!');
+            setNewSyringeInfoError({ ...newSyringeInfoError, count: 'Je nutné vyplnit počet stříkaček!' });
             onInputChange('count', value);
         } else {
-            setSyringeCountError(undefined);
+            setNewSyringeInfoError({ ...newSyringeInfoError, count: undefined });
             onInputChange('count', value);
         }
     };
@@ -76,13 +76,13 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                     <TextInput
                         required
                         disabled={readOnly}
-                        error={syringeCountError}
+                        error={newSyringeInfoError.count}
                         placeholder="Zadejte počet stříkaček"
                         type="number"
                         value={count}
                         onChange={e => validateSyringeCount(e.target.value)}
                     />
-                    <Icon src={syringe} readOnly={readOnly} error={!!syringeCountError} />
+                    <Icon src={syringe} readOnly={readOnly} error={!!newSyringeInfoError.count} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
