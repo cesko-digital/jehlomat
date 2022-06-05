@@ -88,6 +88,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
                     <DateTimePicker
+                        required
                         value={datetime || currentTime.unix()}
                         maxDateTime={currentTime}
                         onChange={newValue => {
