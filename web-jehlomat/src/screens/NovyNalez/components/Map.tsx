@@ -30,7 +30,6 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [position, setPosition] = useRecoilState(mapPositionState);
 
-
     useEffect(() => {
         if (userPosition) {
             setMarkerPosition(userPosition);
@@ -53,7 +52,6 @@ const Map: FC<IMapa> = ({ children, locked }) => {
         setPosition([lat, lng]);
     }
 
-
     return (
         <Box position="relative" width="100%" height="100%">
             <MapContainer
@@ -71,7 +69,7 @@ const Map: FC<IMapa> = ({ children, locked }) => {
                 preferCanvas
             >
                 <MapCustomEvents />
-                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"  />
+                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {markerPosition && <Marker position={markerPosition} />}
                 {userPosition && <ChangeView center={userPosition} callback={() => setUserPosition(null)} />}
                 <RealPositionContextProvider />

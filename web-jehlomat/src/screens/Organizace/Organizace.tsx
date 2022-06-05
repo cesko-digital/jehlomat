@@ -24,15 +24,18 @@ const Organizace: FC = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const { orgId } = useParams<IRouteParams>();
 
-    const handleError: TErrorCallback = useCallback(errorType => {
-        if (errorType === 'not-found') {
-            setNotFound(true);
-        } else if (errorType === 'not-admin') {
-            setNoPermission(true);
-        } else {
-            history.push('/error');
-        }
-    }, [history]);
+    const handleError: TErrorCallback = useCallback(
+        errorType => {
+            if (errorType === 'not-found') {
+                setNotFound(true);
+            } else if (errorType === 'not-admin') {
+                setNoPermission(true);
+            } else {
+                history.push('/error');
+            }
+        },
+        [history],
+    );
 
     const getOrganisation = useOrganisation(handleError);
 
@@ -59,7 +62,7 @@ const Organizace: FC = () => {
     }
 
     if (noPermission) {
-        return <AccessDenied/>
+        return <AccessDenied />;
     }
 
     if (!data) {

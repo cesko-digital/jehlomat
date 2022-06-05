@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { FC } from 'react';
 import Box from '@mui/material/Box';
-import Container, {ContainerProps} from '@mui/material/Container';
+import Container, { ContainerProps } from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
@@ -38,9 +38,7 @@ const NovyNalezContainer: FC = () => {
 
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
 
-
     const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
-
 
     const handleOnSubmit = () => {
         setCurrentStep(StepsEnum.Nahled);
@@ -100,7 +98,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
             );
         case StepsEnum.Info:
             return (
-                <SyringeLayout sx={{paddingTop: '2rem'}}>
+                <SyringeLayout sx={{ paddingTop: '2rem' }}>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
                             <PrimaryButton text="Dokončit" onClick={handleOnSubmit} type="button" />
@@ -132,7 +130,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
             );
         case StepsEnum.Nahled:
             return (
-                <SyringeLayout sx={{paddingTop: '2rem'}}>
+                <SyringeLayout sx={{ paddingTop: '2rem' }}>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
                             <Box display="flex" justifyContent="center" flexDirection="column">
@@ -161,7 +159,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
 
         case StepsEnum.Potvrzeni:
             return (
-                <SyringeLayout sx={{padding: 0}}>
+                <SyringeLayout sx={{ padding: 0 }}>
                     <Potvrzeni />
                 </SyringeLayout>
             );
@@ -185,7 +183,6 @@ interface INovyNalez {
 
 export interface AddSyringeLayoutProps extends Pick<ContainerProps, 'sx'> {}
 
-
 const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
@@ -193,14 +190,14 @@ const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
         return (
             <>
                 <Stepper />
-                <Container maxWidth="lg" sx={{ flexGrow: 1 , ...sx}} id="content-container">
+                <Container maxWidth="lg" sx={{ flexGrow: 1, ...sx }} id="content-container">
                     {children}
                 </Container>
             </>
         );
     }
     return (
-        <Container maxWidth="lg" sx={{ flexGrow: 1 , ...sx}} id="content-container">
+        <Container maxWidth="lg" sx={{ flexGrow: 1, ...sx }} id="content-container">
             {children}
         </Container>
     );

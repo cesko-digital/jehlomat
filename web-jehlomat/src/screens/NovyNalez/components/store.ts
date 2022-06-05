@@ -3,7 +3,7 @@ import { LatLngExpression } from 'leaflet';
 import dayjs from 'dayjs';
 import { INovaJehla } from 'screens/NovyNalez/components/types';
 import { StepsEnum } from 'screens/NovyNalez/components/types';
-import {DEFAULT_POSITION} from "screens/NovyNalez/constants";
+import { DEFAULT_POSITION } from 'screens/NovyNalez/constants';
 
 export const mapUserPositionState = atom<LatLngExpression | null>({
     key: 'mapUserPosition',

@@ -1,4 +1,4 @@
-import {Syringe} from "../../types/Syringe";
+import { Syringe } from '../../types/Syringe';
 
 const BG_WAITING_COLOR = 'rgba(254, 171, 13, 0.1)';
 

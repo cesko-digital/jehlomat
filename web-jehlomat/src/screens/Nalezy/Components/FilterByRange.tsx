@@ -15,18 +15,21 @@ const FilterByRange: FunctionComponent = () => {
     const [to, setTo] = useState<string>('');
     const setFilter = useSetRecoilState(filteringState);
 
-    const filtering = useCallback((kind: RangeKind, range: DateRange) => {
-        setFilter((state: Filtering) => {
-            const filter = { ...state };
-            delete filter.createdAt;
-            delete filter.demolishedAt;
+    const filtering = useCallback(
+        (kind: RangeKind, range: DateRange) => {
+            setFilter((state: Filtering) => {
+                const filter = { ...state };
+                delete filter.createdAt;
+                delete filter.demolishedAt;
 
-            if (kind === 'DEMOLISH') return { ...filter, demolishedAt: range };
-            if (kind === 'FIND') return { ...filter, createdAt: range };
+                if (kind === 'DEMOLISH') return { ...filter, demolishedAt: range };
+                if (kind === 'FIND') return { ...filter, createdAt: range };
 
-            return filter;
-        });
-    }, [setFilter]);
+                return filter;
+            });
+        },
+        [setFilter],
+    );
     const reset = useCallback(() => {
         setFilter(state => {
             const filter = { ...state };

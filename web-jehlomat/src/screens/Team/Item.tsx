@@ -1,4 +1,4 @@
-import { Chip } from "@mui/material";
+import { Chip } from '@mui/material';
 import styled from '@emotion/styled';
 
 const ChipParent = styled.li`
@@ -7,12 +7,18 @@ const ChipParent = styled.li`
     text-align: left;
 `;
 
-const Item = (props: { id: string, name: string, remove:any }) => {
+const Item = (props: { id: string; name: string; remove: any }) => {
     return (
         <ChipParent>
-            <Chip label={props.name} variant="outlined" onDelete={()=>{props.remove(props.id)}} />
+            <Chip
+                label={props.name}
+                variant="outlined"
+                onDelete={() => {
+                    props.remove(props.id);
+                }}
+            />
         </ChipParent>
-    )
-}
+    );
+};
 
 export default Item;

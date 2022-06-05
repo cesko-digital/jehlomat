@@ -80,7 +80,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
 
             {encodedFiles.length > 0 && readOnly && (
                 <Box mt={2} width="100%">
-                    <Box sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} display="flex" alignItems="flex-start">
+                    <Box
+                        sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}
+                        display="flex"
+                        alignItems="flex-start"
+                    >
                         {encodedFiles.map((photo, index) => (
                             <>
                                 <Box

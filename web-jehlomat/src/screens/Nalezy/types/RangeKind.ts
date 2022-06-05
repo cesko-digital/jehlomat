@@ -1,3 +1,1 @@
-export type RangeKind
-    = "DEMOLISH"
-    | "FIND";
+export type RangeKind = 'DEMOLISH' | 'FIND';

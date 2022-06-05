@@ -28,7 +28,7 @@ export const FormItem = styled.div`
     font-family: Roboto;
     margin: 15px 6px;
     position: relative;
-  
+
     @media (min-width: 420px) {
         align-items: center;
         width: 100%;

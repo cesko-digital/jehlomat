@@ -29,7 +29,6 @@ export interface Address {
     };
 }
 
-
 export enum StepsEnum {
     Start,
     Mapa,
@@ -37,7 +36,6 @@ export enum StepsEnum {
     Nahled,
     Potvrzeni,
 }
-
 
 export interface INovaJehla {
     lat: number | undefined;
@@ -47,5 +45,3 @@ export interface INovaJehla {
     count: number | undefined;
     photo: string | undefined;
 }
-
-

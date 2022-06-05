@@ -12,7 +12,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
-import {PASSWORD_COMPLEXITY} from 'utils/constants';
+import { PASSWORD_COMPLEXITY } from 'utils/constants';
 
 interface IValues {
     organizace: string;
@@ -30,11 +30,7 @@ interface IOrganization {
 const validationSchema = yup.object({
     organizace: yup.string().required('Název organizace je povinné pole'),
     email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
-    heslo: yup
-        .string()
-        .matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno')
-        .min(8, 'Heslo musí být 8 znaků dlouhé')
-        .required('Heslo je povinné pole'),
+    heslo: yup.string().matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno').min(8, 'Heslo musí být 8 znaků dlouhé').required('Heslo je povinné pole'),
     hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná'),
 });
 

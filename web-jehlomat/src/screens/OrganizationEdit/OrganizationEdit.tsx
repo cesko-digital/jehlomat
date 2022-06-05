@@ -38,15 +38,18 @@ const OrganizationEdit = () => {
     const history = useHistory();
     const { orgId } = useParams<IRouteParams>();
 
-    const handleError: TErrorCallback = useCallback((errorType) => {
-        if (errorType === "not-found") {
-            setNotFound(true);
-        } else if (errorType === "not-admin") {
-            setNoPermission(true);
-        } else {
-            history.push('/error');
-        }
-    }, [history]);
+    const handleError: TErrorCallback = useCallback(
+        errorType => {
+            if (errorType === 'not-found') {
+                setNotFound(true);
+            } else if (errorType === 'not-admin') {
+                setNoPermission(true);
+            } else {
+                history.push('/error');
+            }
+        },
+        [history],
+    );
 
     const getOrganisation = useOrganisation(handleError);
 
@@ -63,13 +66,13 @@ const OrganizationEdit = () => {
         }
         fetchMyAPI();
     }, []);
-    
+
     if (notFound) {
-        return <OrganisationNotFound/>
+        return <OrganisationNotFound />;
     }
 
     if (noPermission) {
-        return <AccessDenied/>
+        return <AccessDenied />;
     }
 
     return (

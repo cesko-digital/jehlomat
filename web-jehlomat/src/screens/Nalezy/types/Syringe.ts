@@ -1,4 +1,4 @@
-﻿import { IUser as Person } from '../../../types';
+import { IUser as Person } from '../../../types';
 import { Location } from './Location';
 
 export interface Syringe {

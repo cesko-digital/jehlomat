@@ -30,7 +30,6 @@ const Contact = lazy(() => import('./screens/ContactPage'));
 const FAQPage = lazy(() => import('./screens/FAQ'));
 const OrganizationAdminVerification = lazy(() => import('./screens/OrganizationAdminVerification/OrganizationAdminVerification'));
 
-
 export enum Routes {
     HOME = 'HOME',
     LOGIN = 'LOGIN',
@@ -61,7 +60,7 @@ export enum Routes {
     ORGANIZATION_CONFIRMATION = 'ORGANIZATION_CONFIRMATION',
     ORGANIZATION_ADMIN_CONFIRMATION = 'ORGANIZATION_ADMIN_CONFIRMATION',
     ORGANIZATION_EDIT = 'ORGANIZATION_EDIT',
-    TEAM = 'TEAM'
+    TEAM = 'TEAM',
 }
 
 interface Route {
@@ -84,7 +83,7 @@ const USER_URL_PATH_ = 'uzivatel';
 export const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
 export const LOGIN_URL_PATH = 'prihlaseni';
-export const TEAM_URL_PATH = 'team'
+export const TEAM_URL_PATH = 'team';
 
 export const routes: Route[] = [
     {

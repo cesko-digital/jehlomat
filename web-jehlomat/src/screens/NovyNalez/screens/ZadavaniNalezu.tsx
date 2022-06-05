@@ -22,7 +22,6 @@ import { media } from 'utils/media';
 import { useRecoilValue } from 'recoil';
 import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
 
-
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;

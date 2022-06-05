@@ -47,14 +47,12 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
 
     useEffect(() => {
         if (trackId) {
-            setCode(trackId)
+            setCode(trackId);
         }
     }, [trackId]);
 
-
-
     return (
-        <Container maxWidth="xs" sx={{ height, display: "flex", flexGrow: 2, justifyContent: "center", alignItems: "center" }}>
+        <Container maxWidth="xs" sx={{ height, display: 'flex', flexGrow: 2, justifyContent: 'center', alignItems: 'center' }}>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
                     <Typography align="center" variant="body1" fontWeight="bold" color={primaryDark}>

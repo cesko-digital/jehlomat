@@ -19,12 +19,12 @@ const Button = styled.button`
     margin-bottom: 10px;
 `;
 
-const TextButton: FC<ITextButton> = ({ text, color, fontSize,textTransform, ...props }) => {
+const TextButton: FC<ITextButton> = ({ text, color, fontSize, textTransform, ...props }) => {
     return (
         <Button {...props}>
-            <Typography
-                {...{fontSize, textTransform}}
-                sx={{ fontWeight: 'bold', lineHeight: '18px', color: color }}>{text}</Typography>
+            <Typography {...{ fontSize, textTransform }} sx={{ fontWeight: 'bold', lineHeight: '18px', color: color }}>
+                {text}
+            </Typography>
         </Button>
     );
 };

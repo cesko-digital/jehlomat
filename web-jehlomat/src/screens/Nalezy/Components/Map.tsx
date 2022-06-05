@@ -16,7 +16,6 @@ import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/
 
 import 'leaflet/dist/leaflet.css';
 
-
 interface MapProps {
     loader: Loader<SyringeReadModel>;
 }

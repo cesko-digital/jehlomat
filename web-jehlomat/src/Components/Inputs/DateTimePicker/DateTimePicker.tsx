@@ -11,7 +11,7 @@ interface Props extends Omit<MaterialPickerProps, 'renderInput' | 'rawValue' | '
 
 export const StyledMaterialPicker = styled.div`
     width: 100%;
-  
+
     .MuiInputAdornment-root {
         margin-right: 7px !important;
         color: black;
