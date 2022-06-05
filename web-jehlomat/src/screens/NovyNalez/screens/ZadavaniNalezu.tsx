@@ -77,6 +77,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                         required
                         disabled={readOnly}
                         error={newSyringeInfoError.count}
+                        inputProps={{ min: 1 }}
                         placeholder="Zadejte počet stříkaček"
                         type="number"
                         value={count}
