@@ -1,7 +1,6 @@
 package services
 
 import api.*
-import api.PasswordResetTable.code
 import model.*
 import model.exception.UnknownLocationException
 import model.location.*
@@ -12,6 +11,7 @@ import model.password.PasswordReset
 import model.password.PasswordResetStatus
 import model.syringe.SyringeFilter
 import model.syringe.OrderBySyringeColumn
+import model.syringe.SyringeFlat
 import model.team.Team
 import model.user.User
 import model.user.UserChangeRequest
@@ -496,7 +496,7 @@ class DatabaseService(
             try {
                 databaseInstance.insert(SyringeTable) {
                     set(it.id, id)
-                    updateSyringeRecord(this, it, syringe)
+                    updateSyringeRecord(this, it, syringe.toFlatObject())
                 }
                 return id
             } catch (e: PSQLException) {
@@ -509,7 +509,7 @@ class DatabaseService(
         return null
     }
 
-    fun updateSyringe(syringe: Syringe) {
+    fun updateSyringe(syringe: SyringeFlat) {
         databaseInstance.update(SyringeTable) {
             updateSyringeRecord(this, it, syringe)
             where {
@@ -528,20 +528,20 @@ class DatabaseService(
         }
     }
 
-    private fun updateSyringeRecord(builder: AssignmentsBuilder, it: SyringeTable, syringe: Syringe) {
+    private fun updateSyringeRecord(builder: AssignmentsBuilder, it: SyringeTable, syringe: SyringeFlat) {
         builder.set(it.createdAt, syringe.createdAt)
-        builder.set(it.createdBy, syringe.createdBy?.id)
+        builder.set(it.createdBy, syringe.createdById)
         builder.set(it.reservedTill, syringe.reservedTill)
-        builder.set(it.reservedBy, syringe.reservedBy?.id)
+        builder.set(it.reservedBy, syringe.reservedById)
         builder.set(it.demolishedAt, syringe.demolishedAt)
-        builder.set(it.demolishedBy, syringe.demolishedBy?.id)
+        builder.set(it.demolishedBy, syringe.demolishedById)
         builder.set(it.demolisherType, syringe.demolisherType.name)
         builder.set(it.photo, syringe.photo)
         builder.set(it.count, syringe.count)
         builder.set(it.note, syringe.note)
         builder.set(it.gpsCoordinates, syringe.gps_coordinates)
         builder.set(it.demolished, syringe.demolished)
-        builder.set(it.locationId, syringe.location.id)
+        builder.set(it.locationId, syringe.locationId)
     }
 
 

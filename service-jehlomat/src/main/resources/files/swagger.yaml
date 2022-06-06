@@ -288,7 +288,7 @@ paths:
           description: Syringe object that needs to be changed
           required: true
           schema:
-            $ref: '#/definitions/Syringe'
+            $ref: '#/definitions/SyringeChangeReq'
       responses:
         '200':
           description: Success
@@ -958,6 +958,56 @@ definitions:
         example: false
       location:
         $ref: '#/definitions/Location'
+  SyringeChangeReq:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "R4YFD1AC"
+      createdAt:
+        type: integer
+        example: 1637092279
+      createdById:
+        type: integer
+        example: 12
+      reservedTill:
+        type: integer
+        example: 1637092279
+      reservedById:
+        type: integer
+        example: 31
+      demolishedAt:
+        type: integer
+        example: 1637092279
+      demolishedId:
+        type: integer
+        example: 42
+      photo:
+        type: string
+        example: "nothing"
+      count:
+        type: integer
+        example: 1
+      note:
+        type: string
+        example: "note 1"
+      demolisher:
+        type: string
+        enum:
+          - USER
+          - NO
+          - CITY_POLICE
+        default: NO
+      gps_coordinates:
+        type: string
+        example: 13.37 49.72
+        description: The format is "longitute latitude"
+      demolished:
+        type: boolean
+        example: false
+      locationId:
+        type: integer
+        example: 5
   SyringeInfo:
     type: object
     properties:

@@ -12,7 +12,6 @@ import model.pagination.OrderByDirection
 import model.pagination.PageInfoResult
 import model.pagination.ensureValidity
 import model.syringe.*
-import model.user.User
 import model.user.toUserInfo
 import services.*
 import utils.isValidMail
@@ -79,7 +78,7 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
             }
 
             put {
-                val newSyringe = call.receive<Syringe>()
+                val newSyringe = call.receive<SyringeFlat>()
                 val currentSyringe = database.selectSyringeById(newSyringe.id)
 
                 if (currentSyringe == null) {
@@ -87,7 +86,7 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                     return@put
                 }
 
-                val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe, newSyringe)
+                val fieldName = GeneralValidator.validateUnchangeableByPut(currentSyringe.toFlatObject(), newSyringe)
                 if (fieldName != null) {
                     call.respond(HttpStatusCode.BadRequest, "The field $fieldName is unchangeable by PUT request.")
                     return@put
