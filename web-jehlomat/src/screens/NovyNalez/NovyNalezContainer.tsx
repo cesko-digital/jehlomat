@@ -1,11 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, ReactNode } from 'react';
 import { FC } from 'react';
 import Box from '@mui/material/Box';
 import Container, { ContainerProps } from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import {INovaJehla, isExistingSyringe, JehlaState, StepsEnum} from 'screens/NovyNalez/components/types';
+import { INovaJehla, isExistingSyringe, JehlaState, StepsEnum } from 'screens/NovyNalez/components/types';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/NovyNalez/components/Info';
 import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
@@ -24,7 +24,11 @@ import MapComponent from 'screens/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import Stepper from 'screens/NovyNalez/components/Stepper';
-import {Syringe} from "screens/Nalezy/types/Syringe";
+import { Syringe } from 'screens/Nalezy/types/Syringe';
+import RoundButton from 'screens/Nalezy/Components/RoundButton';
+import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
+import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/system';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Start, 'Start přidání nálezu'],
@@ -61,8 +65,12 @@ const NovyNalezContainer: FC<{ edit?: boolean }> = () => {
             if ('id' in newSyringeInfo && newSyringeInfo.id) {
                 const { id } = newSyringeInfo;
 
-                apiSyringe.id = id;
                 method = 'put';
+                const modifiedSyringe = {
+                    id,
+                    ...apiSyringe,
+                };
+                apiSyringe = modifiedSyringe;
             }
 
             const data = await API[method]('/syringe', apiSyringe);
@@ -192,24 +200,42 @@ interface INovyNalez {
 
 export interface AddSyringeLayoutProps extends Pick<ContainerProps, 'sx'> {}
 
+const BackButton = styled(RoundButton)`
+    position: absolute;
+    left: -50px;
+`;
+
 const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const history = useHistory();
+    const [newSyringeInfo] = useRecoilState(newSyringeInfoState);
+
+    const handleGetBack = useCallback(() => {
+        history.push('/nalezy');
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const renderContainer = (child: ReactNode) => (
+        <Container maxWidth="lg" sx={{ flexGrow: 1, position: 'relative', ...sx }} id="content-container">
+            {isExistingSyringe(newSyringeInfo) && (
+                <BackButton filled={true} onClick={handleGetBack}>
+                    <BackIcon />
+                </BackButton>
+            )}
+            {child}
+        </Container>
+    );
 
     if (!isMobile) {
         return (
             <>
                 <Stepper />
-                <Container maxWidth="lg" sx={{ flexGrow: 1, ...sx }} id="content-container">
-                    {children}
-                </Container>
+                {renderContainer(<>{children}</>)}
             </>
         );
     }
-    return (
-        <Container maxWidth="lg" sx={{ flexGrow: 1, ...sx }} id="content-container">
-            {children}
-        </Container>
-    );
+    return renderContainer(children);
 };
 
 export default NovyNalezContainer;

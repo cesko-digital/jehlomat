@@ -15,6 +15,8 @@ import {newSyringeInfoState, newSyringeStepState} from 'screens/NovyNalez/compon
 import texts from "screens/Nalezy/texts";
 import Link from "Components/Link";
 import {LINKS} from "routes";
+import RoundButton from "screens/Nalezy/Components/RoundButton";
+import {ReactComponent as BackIcon} from "assets/icons/chevron-left.svg";
 
 
 const Edit = () => {

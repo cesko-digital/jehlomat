@@ -47,8 +47,10 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
         (ev: React.MouseEvent<HTMLButtonElement>) => {
             ev.stopPropagation();
 
+            const { demolishedBy, reservedBy, createdBy, location, ...restSyringe } = syringe;
+
             const payload = {
-                id: syringe.id,
+                ...restSyringe,
                 demolishedAt: +dayjs(),
                 demolishedBy: {
                     id: auth?.id,
@@ -77,10 +79,10 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
     );
 
     const handleEdit = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
-        ev.stopPropagation()
+        ev.stopPropagation();
 
-        history.push(LINKS.EDIT_FINDING.replace(':id', syringe.id))
-    },[]);
+        history.push(LINKS.EDIT_FINDING.replace(':id', syringe.id));
+    }, []);
 
     return (
         <List>
