@@ -7,9 +7,10 @@ import { primary, primaryDark, secondary, white } from '../../../utils/colors';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
 import { media } from '../../../utils/media';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { newSyringeStepState } from 'screens/NovyNalez/components/store';
 import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { isLoginValidState } from 'store/login';
 
 const Container = styled.div`
     display: flex;
@@ -61,7 +62,7 @@ export const Card = styled.div<iCard>`
 
     ${props =>
         props.active &&
-        `   
+        `
         ${Icon} {
             border-color: ${secondary};
         }
@@ -84,15 +85,15 @@ export const Card = styled.div<iCard>`
     // active yellow line and yellow icon
     ${props =>
         props.lineActive &&
-        `   
+        `
             ${IconWrapper}:after {
                 background-color: ${secondary} !important;
             }
-            
+
             svg path {
                 fill: white;
             }
-            
+
             ${Icon} {
                 background-color: ${secondary};
                 border-color: white;
@@ -115,6 +116,7 @@ const Title = styled.h6`
 const Stepper: FC = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
+    const isLoggedIn = useRecoilValue(isLoginValidState);
 
     return (
         <>
@@ -146,7 +148,7 @@ const Stepper: FC = ({ children }) => {
                     </Card>
                     {children}
                 </Container>
-                <Navigation />
+                {isLoggedIn && <Navigation />}
             </Box>
         </>
     );
