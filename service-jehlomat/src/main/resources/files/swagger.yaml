@@ -933,6 +933,13 @@ definitions:
         example: 1637092279
       demolishedBy:
         $ref: '#/definitions/UserInfo'
+      demolisherType:
+        type: string
+        enum:
+          - USER
+          - 'NO'
+          - CITY_POLICE
+        default: 'NO'
       photo:
         type: string
         example: "nothing"
@@ -942,13 +949,6 @@ definitions:
       note:
         type: string
         example: "note 1"
-      demolisher:
-        type: string
-        enum:
-          - USER
-          - NO
-          - CITY_POLICE
-        default: NO
       gps_coordinates:
         type: string
         example: 13.37 49.72
@@ -982,6 +982,13 @@ definitions:
       demolishedId:
         type: integer
         example: 42
+      demolisherType:
+        type: string
+        enum:
+          - USER
+          - 'NO'
+          - CITY_POLICE
+        default: 'USER'
       photo:
         type: string
         example: "nothing"
@@ -991,13 +998,6 @@ definitions:
       note:
         type: string
         example: "note 1"
-      demolisher:
-        type: string
-        enum:
-          - USER
-          - NO
-          - CITY_POLICE
-        default: NO
       gps_coordinates:
         type: string
         example: 13.37 49.72
