@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
-import { primaryDark, white } from '../../../utils/colors';
+import { primaryDark, white, grey, greyLight } from '../../../utils/colors';
 import { H4 } from '../../../utils/typography';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,6 +20,12 @@ const Button = styled.button`
     a {
         text-decoration: none;
         color: inherit;
+    }
+
+    &:disabled {
+        color: ${grey};
+        background-color: ${greyLight};
+        cursor: not-allowed;
     }
 `;
 

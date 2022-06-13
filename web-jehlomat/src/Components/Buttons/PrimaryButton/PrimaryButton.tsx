@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 import styled from '@emotion/styled';
-import { primaryDark, white } from '../../../utils/colors';
+import { primaryDark, white, grey, greyLight } from '../../../utils/colors';
 import { Typography } from '@mui/material';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,6 +16,12 @@ const Button = styled.button`
     color: ${white};
     cursor: pointer;
     padding: 15px 30px;
+
+    &:disabled {
+        color: ${greyLight};
+        background-color: ${grey};
+        cursor: not-allowed;
+    }
 `;
 
 const PrimaryButton: FC<Props> = ({ text, ...props }) => {
