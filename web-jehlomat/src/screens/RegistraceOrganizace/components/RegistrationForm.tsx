@@ -35,7 +35,10 @@ const validationSchema = yup.object({
         .matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno')
         .min(8, 'Heslo musí být 8 znaků dlouhé')
         .required('Heslo je povinné pole'),
-    hesloConfirm: yup.string().oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná'),
+    hesloConfirm: yup
+        .string()
+        .oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná')
+        .required('Potvrzení hesla je povinné pole'),
 });
 
 export default function RegistrationForm() {
