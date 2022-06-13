@@ -1,3 +1,4 @@
+import { ButtonHTMLAttributes, FC } from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -40,6 +41,19 @@ const validationSchema = yup.object({
         .oneOf([yup.ref('heslo'), null], 'Hesla musí být stejná')
         .required('Potvrzení hesla je povinné pole'),
 });
+
+interface ISubmitButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    isMobile: boolean;
+}
+
+const SubmitButton: FC<ISubmitButtonProps> = ({ disabled, isMobile, ...props }) => {
+    const title = disabled ? 'Vyplňte povinná pole' : undefined;
+    const text = isMobile ? 'Registrovat' : 'Založit';
+    const Cmp = isMobile ? PrimaryButton : SecondaryButton;
+    return (
+        <Cmp id="submit" text={text} type="submit" disabled={disabled} title={title} {...props} />
+    );
+}
 
 export default function RegistrationForm() {
     const history = useHistory();
@@ -142,12 +156,7 @@ export default function RegistrationForm() {
                             </Box>
 
                             <Box display="flex" flexDirection="column" alignItems="center">
-                                {isMobile ? (
-                                    <PrimaryButton id="submit" text="Registrovat" type="submit" disabled={!isValid} />
-                                ) : (
-                                    <SecondaryButton id="submit" text="Založit" type="submit" disabled={!isValid} />
-                                )}
-
+                                <SubmitButton disabled={!isValid} isMobile={isMobile} />
                                 <SBackLink to={LINKS.HOME}>Zrušit</SBackLink>
                             </Box>
                         </Form>
