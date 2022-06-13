@@ -55,6 +55,7 @@ export default function RegistrationForm() {
             <Formik
                 initialValues={{ organizace: '', email: '', heslo: '', hesloConfirm: '' }}
                 validationSchema={validationSchema}
+                validateOnMount={true}
                 onSubmit={async (values: IValues, { setErrors }) => {
                     try {
                         const organizace: IOrganization = {
