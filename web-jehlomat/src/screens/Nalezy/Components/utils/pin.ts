@@ -5,7 +5,7 @@ import gray from 'assets/pins/pin-gray.svg';
 import green from 'assets/pins/pin-green.svg';
 import yellow from 'assets/pins/pin-yellow.svg';
 
-const map: Record<SyringeState, Icon> = {
+const map: Record<SyringeState, Icon | null> = {
     RESERVED: L.icon({
         iconUrl: green,
         iconAnchor: [30, 60],
@@ -18,6 +18,7 @@ const map: Record<SyringeState, Icon> = {
         iconUrl: yellow,
         iconAnchor: [30, 60],
     }),
+    '': null,
 };
 
 const deriveStateOf = (syringe: Syringe): SyringeState => {
@@ -32,7 +33,7 @@ const deriveStateOf = (syringe: Syringe): SyringeState => {
     return 'WAITING';
 };
 
-const pin = (syringe: Syringe): Icon => {
+const pin = (syringe: Syringe): Icon | null => {
     const state = deriveStateOf(syringe);
 
     return map[state];

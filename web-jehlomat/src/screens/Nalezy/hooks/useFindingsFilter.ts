@@ -72,11 +72,12 @@ const useFindings = () => {
 
     const filterByState = useCallback((status: SyringeState) => {
         setFilter((state: GridFilter) => {
-            const filter = {
-                ...state.filter,
-                status,
-            };
+            const filter = { ...state.filter };
+            delete filter.status;
 
+            if (status !== '') filter.status = status;
+
+            console.log(filter);
             return { ...state, filter };
         });
     }, []);

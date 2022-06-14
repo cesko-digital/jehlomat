@@ -16,7 +16,6 @@ import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/
 
 import 'leaflet/dist/leaflet.css';
 
-
 interface MapProps {
     loader: Loader<SyringeReadModel>;
 }
@@ -51,6 +50,8 @@ const Map: FunctionComponent<MapProps> = ({ loader }) => {
                 {coordinates.map((coordinates, i) => {
                     const item = data[i];
                     const icon = pin(item);
+                    if (!icon) return null;
+
                     const [lat, lng] = coordinates;
                     return (
                         <Marker key={`${lat}-${lng}-${i}`} position={coordinates} icon={icon}>
