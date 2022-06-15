@@ -14,5 +14,8 @@ export const isStatusNotFound = (status: TStatus) =>
 export const isStatusNoPermission = (status: TStatus) =>
   status === 403
 
+export const isStatusUnauthorized = (status: TStatus) =>
+  status === 401
+
 export const isStatusNoContent = (status: TStatus) =>
   status === 204

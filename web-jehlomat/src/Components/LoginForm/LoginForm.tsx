@@ -13,7 +13,7 @@ import { ItemContainer } from './LoginForm.styles';
 import { LINKS } from 'routes';
 import { ModalContext } from 'Components/Navigator/Navigator';
 import { convertSearchStringToMap } from 'utils/url';
-import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusUnauthorized } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import { tokenState } from 'store/login';
 
@@ -65,9 +65,9 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                 }
                                 break;
                             }
-                            case isStatusConflictError(status): {
+                            case isStatusUnauthorized(status): {
                                 //for validation error;
-                                setErrors({ email: ' ', password: 'E-mail nebo heslo nejsou správne!' });
+                                setErrors({ email: ' ', password: 'E-mail nebo heslo nejsou správné!' });
                                 break;
                             }
                             default: {
