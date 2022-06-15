@@ -19,9 +19,8 @@ import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import { useRecoilValue } from 'recoil';
-import { newSyringeInfoState } from 'screens/NovyNalez/components/store';
-
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeInfoErrorState, newSyringeInfoState } from 'screens/NovyNalez/components/store';
 
 const ButtonContainer = styled.div`
     display: flex;
@@ -29,7 +28,7 @@ const ButtonContainer = styled.div`
     width: 100%;
 `;
 
-const Icon = styled.img<{ readOnly?: boolean }>`
+const Icon = styled.img<{ readOnly?: boolean; error?: boolean }>`
     position: absolute;
     right: 20px;
     bottom: 15px;
@@ -40,6 +39,8 @@ const Icon = styled.img<{ readOnly?: boolean }>`
         `
         opacity: .6;
     `}
+
+    ${({ error }) => error && `bottom: 37px;`}
 `;
 
 interface Props {
@@ -55,18 +56,39 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
     const currentTime = useMemo(() => dayjs(), []);
     const { photo } = useRecoilValue(newSyringeInfoState);
     const decodedFiles = useMemo(() => photo && JSON.parse(photo), [photo]);
+    const [newSyringeInfoError, setNewSyringeInfoError] = useRecoilState(newSyringeInfoErrorState);
+
+    const validateSyringeCount = (value: string) => {
+        if (!value || value.length === 0 || parseInt(value, 10) <= 0) {
+            setNewSyringeInfoError({ ...newSyringeInfoError, count: 'Je nutné vyplnit počet stříkaček!' });
+            onInputChange('count', value);
+        } else {
+            setNewSyringeInfoError({ ...newSyringeInfoError, count: undefined });
+            onInputChange('count', value);
+        }
+    };
 
     return (
         <>
             <FormWrapper>
                 <FormItem>
                     <FormItemLabel>Počet stříkaček</FormItemLabel>
-                    <TextInput type="number" value={count} placeholder="Zadejte počet stříkaček" onChange={e => onInputChange('count', e.target.value)} disabled={readOnly} />
-                    <Icon src={syringe} readOnly={readOnly} />
+                    <TextInput
+                        required
+                        disabled={readOnly}
+                        error={newSyringeInfoError.count}
+                        inputProps={{ min: 1 }}
+                        placeholder="Zadejte počet stříkaček"
+                        type="number"
+                        value={count}
+                        onChange={e => validateSyringeCount(e.target.value)}
+                    />
+                    <Icon src={syringe} readOnly={readOnly} error={!!newSyringeInfoError.count} />
                 </FormItem>
                 <FormItem>
                     <FormItemLabel>Datum a čas nálezu</FormItemLabel>
                     <DateTimePicker
+                        required
                         value={datetime || currentTime.unix()}
                         maxDateTime={currentTime}
                         onChange={newValue => {
@@ -81,13 +103,7 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                     <>
                         <FormItem>
                             <FormItemLabel>Místo nálezu</FormItemLabel>
-                            <TextInput
-                                type="text"
-                                value={`${lat?.toFixed(4)}, ${lng?.toFixed(4)}`}
-                                placeholder="Zadejte počet stříkaček"
-                                onChange={e => onInputChange('count', e.target.value)}
-                                disabled={readOnly}
-                            />
+                            <TextInput type="text" value={`${lat?.toFixed(4)}, ${lng?.toFixed(4)}`} disabled={readOnly} />
                             <Icon src={marker} readOnly={readOnly} />
                         </FormItem>
                         {isMobile && (

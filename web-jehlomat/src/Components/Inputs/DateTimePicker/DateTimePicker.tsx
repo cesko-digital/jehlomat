@@ -7,11 +7,12 @@ import TextField from '@mui/material/TextField';
 interface Props extends Omit<MaterialPickerProps, 'renderInput' | 'rawValue' | 'openPicker' | 'onChange'> {
     onChange: (id: number) => void;
     value: number; // unix
+    required?: boolean;
 }
 
 export const StyledMaterialPicker = styled.div`
     width: 100%;
-  
+
     .MuiInputAdornment-root {
         margin-right: 7px !important;
         color: black;
@@ -24,7 +25,7 @@ export const DateTimePicker: React.FC<Props> = ({ value, onChange, ...restProps 
     return (
         <StyledMaterialPicker>
             <MaterialPicker
-                renderInput={props => <TextField {...props} fullWidth />}
+                renderInput={props => <TextField {...props} fullWidth required={restProps.required} />}
                 value={memoizedValue}
                 cancelText="Zrušit"
                 clearText="Vymazat"

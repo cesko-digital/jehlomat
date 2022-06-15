@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconWrapper } from './TextInput.style';
 import { Label } from '../shared';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement>, Pick<TextFieldProps, 'multiline' | 'rows' | 'maxRows'> {
+interface Props extends InputHTMLAttributes<HTMLInputElement>, Pick<TextFieldProps, 'multiline' | 'rows' | 'maxRows' | 'inputProps'> {
     label?: string;
     error?: string | undefined;
     fullWidth?: boolean;
@@ -20,7 +20,7 @@ const Container = styled.div`
 `;
 
 const TextInput: FC<Props> = props => {
-    const { type: propType, className, multiline, rows, maxRows } = props;
+    const { type: propType, className, multiline, rows, maxRows, inputProps } = props;
     const [type, setType] = useState(propType || 'text');
 
     return (
@@ -41,7 +41,9 @@ const TextInput: FC<Props> = props => {
                 disabled={props.disabled}
                 fullWidth={props.fullWidth ?? true}
                 inputProps={{
+                    ...inputProps,
                     style: {
+                        ...inputProps?.style,
                         width: props.width,
                     },
                 }}
