@@ -343,6 +343,44 @@ paths:
             $ref: '#/definitions/SyringeInfo'
         '404':
           description: Syringe not found
+  /syringe/{id}/summary:
+    put:
+      summary: Update syringe summary
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Syringe object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeCreateReq'
+      responses:
+        '204':
+          description: Successful operation
+        '403':
+          description: Summary can be changed only by its creator
+        '404':
+          description: Syringe not found
+  /syringe/{id}/demolish:
+    post:
+      summary: Demolish syringe
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email
