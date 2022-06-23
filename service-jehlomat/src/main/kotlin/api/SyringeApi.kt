@@ -170,6 +170,55 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                     }
                 }
 
+                put("/summary") {
+                    val syringeRequest = call.receive<SyringeCreateRequest>()
+
+                    val syringe = call.parameters["id"]?.let { it1 -> database.selectSyringeById(it1) }
+                    if (syringe == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@put
+                    }
+
+                    val currentUser = jwtManager.getLoggedInUser(call, database)
+                    if (syringe.createdBy?.id != currentUser.id) {
+                        call.respond(HttpStatusCode.Forbidden, "The syringe summary can be changed only by its creator")
+                        return@put
+                    }
+
+                    val location = database.selectOrInsertLocation(syringeRequest.gps_coordinates)
+                    database.updateSyringe(syringe.copy(
+                        createdAt = syringeRequest.createdAt,
+                        count = syringeRequest.count,
+                        note = syringeRequest.note,
+                        photo = syringeRequest.photo ?: "",
+                        gps_coordinates = syringeRequest.gps_coordinates,
+                        location = location,
+                    ).toFlatObject())
+                    call.respond(HttpStatusCode.NoContent)
+                }
+
+                post("/demolish") {
+                    val syringe = call.parameters["id"]?.let { it1 -> database.selectSyringeById(it1) }
+                    if (syringe == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@post
+                    }
+
+                    if (syringe.demolished) {
+                        call.respond(HttpStatusCode.BadRequest, "The syringe is already demolished")
+                        return@post
+                    }
+
+                    val currentUser = jwtManager.getLoggedInUser(call, database)
+                    val now = Instant.now().epochSecond
+                    database.updateSyringe(syringe.copy(
+                        demolished = true,
+                        demolishedBy = currentUser.toUserInfo(),
+                        demolishedAt = now
+                    ).toFlatObject())
+                    call.respond(HttpStatusCode.NoContent)
+                }
+
                 delete {
                     val id = call.parameters["id"]
 

@@ -24,9 +24,7 @@ import services.DatabaseService
 import services.MailerService
 import java.time.LocalDate
 import java.time.ZoneOffset
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 const val SYRINGE_API_PATH = "/api/v1/jehlomat/syringe"
 
@@ -371,6 +369,86 @@ class ApplicationTestSyringe {
             verify(exactly = 1) { mailerMock.sendSyringeFindingConfirmation("email@email.cz", syrId!!) }
         }
     }
+
+
+    @Test
+    fun testDemolishSyringeOk() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/demolish"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NoContent, response.status())
+            val demolished = database.selectSyringeById(syringeId)
+            assertNotNull(demolished)
+            assertTrue(demolished.demolished)
+            assertEquals(defaultUser, demolished.demolishedBy)
+            assertTrue(demolished.demolishedAt!! > 0)
+        }
+    }
+
+    @Test
+    fun testDemolishSyringeNotLoggedIn() = withTestApplication(Application::module) {
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/demolish"){
+        }) {
+            assertEquals(HttpStatusCode.Unauthorized, response.status())
+        }
+    }
+
+    @Test
+    fun testDemolishSyringeAlreadyDemolished() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, demolished = true))!!
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/demolish"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testDemolishSyringeNotExist() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/not-exist/demolish"){
+            addHeader("Authorization", "Bearer $token")
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun testUpdateSyringeSummaryOk() = withTestApplication({ module(testing = true) }) {
+        val token = loginUser(USER.email, USER.password)
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, demolished = true))!!
+
+        with(handleRequest(HttpMethod.Put, "$SYRINGE_API_PATH/$syringeId/summary") {
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeCreateRequest(
+                createdAt = 123456,
+                photo = "new photo",
+                count = 123,
+                note = "new note",
+                gps_coordinates = "13.3719999 49.7278820"
+                )
+            ))
+        }) {
+            assertEquals(HttpStatusCode.NoContent, response.status())
+            val modified = database.selectSyringeById(syringeId)!!
+            assertEquals(123456, modified.createdAt)
+            assertEquals("new photo", modified.photo)
+            assertEquals(123, modified.count)
+            assertEquals("new note", modified.note)
+            assertEquals("13.3719999 49.7278820", modified.gps_coordinates)
+            assertEquals(554791, modified.location.obec)
+        }
+    }
+
 
     fun createRequestFromDbObject(original: Syringe): SyringeCreateRequest{
         return SyringeCreateRequest(
