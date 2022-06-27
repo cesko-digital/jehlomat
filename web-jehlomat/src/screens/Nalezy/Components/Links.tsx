@@ -35,9 +35,10 @@ const List = styled('ul')({
 interface LinksProps {
     syringe: Syringe;
     onClose?: () => void;
+    onDemolishSuccess?: (id: string) => void;
 }
 
-const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
+const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSuccess }) => {
     const auth = useRecoilValue(userState);
     const setPaging = useSetRecoilState(paginationState);
     const confirmationModal = useConfirmationModalContext();
@@ -47,21 +48,18 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose }) => {
         (ev: React.MouseEvent<HTMLButtonElement>) => {
             ev.stopPropagation();
 
-            const { demolishedBy, reservedBy, createdBy, location, ...restSyringe } = syringe;
+            const { id } = syringe;
 
             const payload = {
-                ...restSyringe,
-                demolishedAt: +dayjs(),
-                demolishedBy: {
-                    id: auth?.id,
-                },
+               id
             };
 
-            API.put(`/syringe`, payload)
+            API.post(`/syringe/${id}/demolish`, payload)
                 .then((response: AxiosResponse) => {
-                    if (response.status !== 200) throw new Error('Unable to update syringe finding');
+                    if (response.status !== 204) throw new Error('Unable to update syringe finding');
 
                     setPaging(state => ({ ...state }));
+                    if(onDemolishSuccess) onDemolishSuccess(id);
                 })
                 .catch(() => {
                     confirmationModal!
