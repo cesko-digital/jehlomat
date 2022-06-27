@@ -10,23 +10,26 @@ import { DatePicker } from './Input';
 import Select from './Select';
 
 const FilterByRange: FunctionComponent = () => {
-    const [kind, setKind] = useState<RangeKind | ''>('');
+    const [kind, setKind] = useState<RangeKind>('');
     const [from, setFrom] = useState<string>('');
     const [to, setTo] = useState<string>('');
     const setFilter = useSetRecoilState(filteringState);
 
-    const filtering = useCallback((kind: RangeKind, range: DateRange) => {
-        setFilter((state: Filtering) => {
-            const filter = { ...state };
-            delete filter.createdAt;
-            delete filter.demolishedAt;
+    const filtering = useCallback(
+        (kind: RangeKind, range: DateRange) => {
+            setFilter((state: Filtering) => {
+                const filter = { ...state };
+                delete filter.createdAt;
+                delete filter.demolishedAt;
 
-            if (kind === 'DEMOLISH') return { ...filter, demolishedAt: range };
-            if (kind === 'FIND') return { ...filter, createdAt: range };
+                if (kind === 'DEMOLISH') return { ...filter, demolishedAt: range };
+                if (kind === 'FIND') return { ...filter, createdAt: range };
 
-            return filter;
-        });
-    }, [setFilter]);
+                return filter;
+            });
+        },
+        [setFilter],
+    );
     const reset = useCallback(() => {
         setFilter(state => {
             const filter = { ...state };
@@ -37,14 +40,17 @@ const FilterByRange: FunctionComponent = () => {
         });
     }, [setFilter]);
 
-    useEffect(() => {
-        const leave = !kind || !from || !to;
-        if (leave) return;
+    useEffect(() => filtering(kind, { from: +dayjs(from), to: +dayjs(to) }), [filtering, kind, from, to]);
 
-        filtering(kind, { from: +dayjs(from), to: +dayjs(to) });
-    }, [filtering, kind, from, to]);
+    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        if (!value) {
+            setFrom('');
+            setTo('');
+        }
 
-    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setKind(e.target.value as RangeKind);
+        setKind(value as RangeKind);
+    };
     const handleFrom = (e: ChangeEvent<HTMLInputElement>) => setFrom(e.target.value);
     const handleTo = (e: ChangeEvent<HTMLInputElement>) => setTo(e.target.value);
     const handleReset = () => {

@@ -22,9 +22,18 @@ const FilterByReporter: FunctionComponent = () => {
     const user = useRecoilValue(userState);
     const setFilter = useSetRecoilState(filteringState);
 
-    const filters = useCallback((type: ReporterType, id: number) => {
-        setFilter((state: Filtering) => ({ ...state, createdBy: { type, id } }));
-    }, [setFilter]);
+    const filters = useCallback(
+        (type: ReporterType, id: number | undefined) => {
+            setFilter((state: Filtering) => {
+                const filter = { ...state };
+                delete filter.createdBy;
+
+                if (type !== '' && id) filter.createdBy = { type, id };
+                return filter;
+            });
+        },
+        [setFilter],
+    );
     const reset = useCallback(() => {
         setFilter(state => {
             const filter = { ...state };
@@ -43,11 +52,7 @@ const FilterByReporter: FunctionComponent = () => {
         );
     }, [user]);
 
-    useEffect(() => {
-        if (!type || !id) return;
-
-        filters(type as ReporterType, id);
-    }, [filters, type, id]);
+    useEffect(() => filters(type, id), [filters, type, id]);
 
     const handleReset = () => {
         setType('');

@@ -343,6 +343,44 @@ paths:
             $ref: '#/definitions/SyringeInfo'
         '404':
           description: Syringe not found
+  /syringe/{id}/summary:
+    put:
+      summary: Update syringe summary
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Syringe object that needs to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/SyringeCreateReq'
+      responses:
+        '204':
+          description: Successful operation
+        '403':
+          description: Summary can be changed only by its creator
+        '404':
+          description: Syringe not found
+  /syringe/{id}/demolish:
+    post:
+      summary: Demolish syringe
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email
@@ -933,6 +971,13 @@ definitions:
         example: 1637092279
       demolishedBy:
         $ref: '#/definitions/UserInfo'
+      demolisherType:
+        type: string
+        enum:
+          - USER
+          - 'NO'
+          - CITY_POLICE
+        default: 'NO'
       photo:
         type: string
         example: "nothing"
@@ -942,13 +987,6 @@ definitions:
       note:
         type: string
         example: "note 1"
-      demolisher:
-        type: string
-        enum:
-          - USER
-          - NO
-          - CITY_POLICE
-        default: NO
       gps_coordinates:
         type: string
         example: 13.37 49.72
@@ -982,6 +1020,13 @@ definitions:
       demolishedId:
         type: integer
         example: 42
+      demolisherType:
+        type: string
+        enum:
+          - USER
+          - 'NO'
+          - CITY_POLICE
+        default: 'USER'
       photo:
         type: string
         example: "nothing"
@@ -991,13 +1036,6 @@ definitions:
       note:
         type: string
         example: "note 1"
-      demolisher:
-        type: string
-        enum:
-          - USER
-          - NO
-          - CITY_POLICE
-        default: NO
       gps_coordinates:
         type: string
         example: 13.37 49.72

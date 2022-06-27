@@ -18,8 +18,8 @@ import TextButton from 'Components/Buttons/TextButton/TextButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 
-import { useRecoilState } from 'recoil';
-import { newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
 import MapComponent from 'screens/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
@@ -102,7 +102,13 @@ const NovyNalezContainer: FC<{ edit?: boolean }> = () => {
 
 const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation }) => {
     const [currentStep] = useRecoilState(newSyringeStepState);
+    const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState)
     const isMobile = useMediaQuery(media.lte('mobile'));
+
+    const isSubmitDisabled = () => {
+        // Pokud je na formulari chyba, zablokujeme Submit button
+        return !Object.values(newSyringeInfoError).every(error => error === undefined);
+    }
 
     switch (currentStep) {
         case StepsEnum.Start:
@@ -118,7 +124,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                 <SyringeLayout sx={{ paddingTop: '2rem' }}>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                            <PrimaryButton text="Uložit" onClick={handleOnSubmit} type="button" />
+                            <PrimaryButton text="Uložit" disabled={isSubmitDisabled()} onClick={handleOnSubmit} type="button" />
                         </ZadavaniNalezu>
                     ) : (
                         <Container>
@@ -130,7 +136,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                                         </Typography>
                                     </Box>
                                     <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                                        <PrimaryButton text="Uložit" onClick={handleOnSubmit} />
+                                        <PrimaryButton text="Uložit" disabled={isSubmitDisabled()} onClick={handleOnSubmit} />
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item sm={6} maxHeight={700}>

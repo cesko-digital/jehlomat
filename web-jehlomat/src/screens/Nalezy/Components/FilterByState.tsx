@@ -12,7 +12,13 @@ const FilterByState: FunctionComponent = () => {
 
     const filter = useCallback(
         (status: SyringeState) => {
-            setFilter((state: Filtering) => ({ ...state, status }));
+            setFilter((state: Filtering) => {
+                const filter = { ...state };
+                delete filter.status;
+
+                if (status !== '') filter.status = status;
+                return filter;
+            });
         },
         [setFilter],
     );
@@ -26,11 +32,7 @@ const FilterByState: FunctionComponent = () => {
         });
     }, [setFilter]);
 
-    useEffect(() => {
-        if (!state) return;
-
-        filter(state);
-    }, [state, filter]);
+    useEffect(() => filter(state), [state, filter]);
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value as SyringeState);
     const handleReset = () => {

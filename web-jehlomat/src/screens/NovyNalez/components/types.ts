@@ -53,6 +53,9 @@ export interface IExistujiciJehla extends Omit<INovaJehla, 'count' | 'photo'>, S
     edit?: boolean;
     id: string;
 }
+export interface INovaJehlaError {
+    count?: string;
+}
 
 export type JehlaState = INovaJehla | IExistujiciJehla;
 
