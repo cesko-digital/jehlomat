@@ -5,12 +5,12 @@ import Container, { ContainerProps } from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { INovaJehla, isExistingSyringe, JehlaState, StepsEnum } from 'screens/NovyNalez/components/types';
+import { INovaJehla, isExistingSyringe, JehlaState, StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { Header } from 'Components/Header/Header';
-import Info from 'screens/NovyNalez/components/Info';
-import Potvrzeni from 'screens/NovyNalez/screens/Potvrzeni';
-import ZadatNalezMapa from 'screens/NovyNalez/screens/ZadatNalezMapa';
-import ZadavaniNalezu from 'screens/NovyNalez/screens/ZadavaniNalezu';
+import Info from 'screens/Nalezy/NovyNalez/components/Info';
+import Potvrzeni from 'screens/Nalezy/NovyNalez/screens/Potvrzeni';
+import ZadatNalezMapa from 'screens/Nalezy/NovyNalez/screens/ZadatNalezMapa';
+import ZadavaniNalezu from 'screens/Nalezy/NovyNalez/screens/ZadavaniNalezu';
 import { API } from 'config/baseURL';
 import { primary } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
@@ -19,11 +19,11 @@ import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
-import MapComponent from 'screens/NovyNalez/components/Map';
-import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
+import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
+import MapComponent from 'screens/Nalezy/NovyNalez/components/Map';
+import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import Stepper from 'screens/NovyNalez/components/Stepper';
+import Stepper from 'screens/Nalezy/NovyNalez/components/Stepper';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
@@ -38,7 +38,7 @@ const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Potvrzeni, 'Potvrzení stříkačky'],
 ]);
 
-const NovyNalezContainer: FC<{ edit?: boolean }> = () => {
+const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
 
@@ -60,22 +60,19 @@ const NovyNalezContainer: FC<{ edit?: boolean }> = () => {
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-            let method: 'post' | 'put' = 'post';
+
+            let data;
 
             if ('id' in newSyringeInfo && newSyringeInfo.id) {
                 const { id } = newSyringeInfo;
 
-                method = 'put';
-                const modifiedSyringe = {
-                    id,
-                    ...apiSyringe,
-                };
-                apiSyringe = modifiedSyringe;
+                data = await API.put(`/syringe/${id}/summary`, apiSyringe);
+            } else {
+                data = await API.post('/syringe', apiSyringe);
             }
 
-            const data = await API[method]('/syringe', apiSyringe);
 
-            if (data.status === 200 || data.status === 201) {
+            if (data.status > 200 && data.status < 300) {
                 setCurrentStep(StepsEnum.Potvrzeni);
             }
         } catch (error) {
@@ -244,4 +241,4 @@ const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     return renderContainer(children);
 };
 
-export default NovyNalezContainer;
+export default NalezContainer;

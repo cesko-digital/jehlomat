@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
 import { MapContainer, Polygon, TileLayer, useMap } from 'react-leaflet';
-import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../NovyNalez/constants';
+import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../Nalezy/NovyNalez/constants';
 import 'leaflet/dist/leaflet.css';
 import { Label } from 'Components/Inputs/shared';
 import { primary } from 'utils/colors';
@@ -210,7 +210,7 @@ const Team = () => {
         selectedLocation.map(async (place: any, id: number) => {
             const geometry = await getGeometry(place.type, place.id).then(data => {
                 const transformGeom: any[] = [];
-                //GEOMETRY TRANSFORMATION        
+                //GEOMETRY TRANSFORMATION
                 checkType(data.type, data).forEach((coordinate: any) => {
                     transformGeom.push([coordinate[1], coordinate[0]]);
                 });
@@ -429,7 +429,7 @@ const Team = () => {
                                                     (params) => <TextField {...params}/>
                                                 }
                                             />
-                                            
+
                                             <FormHelperText error={true}>
                                                 {touched.location && errors.location ? errors.location.name : undefined}
                                             </FormHelperText>

@@ -1,14 +1,14 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { ColorfulSectionsHeader } from 'screens/NovyNalez/components/ColorfulSections/ColorfulSections';
+import { ColorfulSectionsHeader } from 'screens/Nalezy/NovyNalez/components/ColorfulSections/ColorfulSections';
 import {
     StyledColorfulContent,
     StyledColorfulNumber,
     StyledColorfulSection,
     StyledColorfulTitle,
     StyledColorfulDescription,
-} from 'screens/NovyNalez/components/ColorfulSections/ColorfulSections.style';
+} from 'screens/Nalezy/NovyNalez/components/ColorfulSections/ColorfulSections.style';
 import { Header } from 'Components/Header/Header';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';

@@ -1,10 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Formik } from 'formik';
 import axios  from 'axios';
 import styled from '@emotion/styled';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
-import { Address } from './types';
-import { Dayjs } from 'dayjs';
+import { Address } from 'screens/Nalezy/NovyNalez/components/types';
 
 interface AddressSearchProps {}
 

@@ -1,15 +1,12 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import styled from '@emotion/styled';
 import { primary } from 'utils/colors';
-import searchIcon from 'assets/icons/search.svg';
 import questionMark from 'assets/icons/question_mark.svg';
 import location from 'assets/icons/location.svg';
 import spinner from 'assets/icons/tail-spin.svg';
-import AddressSearch from '../../NovyNalez/components/AddressSearch';
-import { ChangeView } from '../../NovyNalez/components/ChangeView';
-import { mapUserPositionState } from './store';
+import { mapUserPositionState } from 'screens/Nalezy/NovyNalez/components/store';
 
 interface MapControlProps {
     // onSearchSubmit: (search: string) => void;

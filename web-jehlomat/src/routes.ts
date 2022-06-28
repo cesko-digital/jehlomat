@@ -4,13 +4,13 @@ import { lazy, ComponentType, LazyExoticComponent } from 'react';
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Profil = lazy(() => import('./screens/Profil/Profil'));
-const NovyNalez = lazy(() => import('./screens/NovyNalez/NovyNalezContainer'));
+const NovyNalez = lazy(() => import('screens/Nalezy/NovyNalez/NalezContainer'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/OrganizationEdit'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
 const Detail = lazy(() => import('./screens/Nalezy/Detail'));
 const EditNalez = lazy(() => import('./screens/Nalezy/Edit'));
-const NahlasitNalezPolicii = lazy(() => import('./screens/NovyNalez/screens/NotifyPolice'));
+const NahlasitNalezPolicii = lazy(() => import('./screens/Nalezy/NovyNalez/screens/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
 const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));

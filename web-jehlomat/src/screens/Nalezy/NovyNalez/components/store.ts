@@ -1,10 +1,10 @@
 import { atom } from 'recoil';
 import { LatLngExpression } from 'leaflet';
 import dayjs from 'dayjs';
-import { INovaJehla, INovaJehlaError } from 'screens/NovyNalez/components/types';
-import { JehlaState } from 'screens/NovyNalez/components/types';
-import { StepsEnum } from 'screens/NovyNalez/components/types';
-import { DEFAULT_POSITION } from 'screens/NovyNalez/constants';
+import { INovaJehlaError } from 'screens/Nalezy/NovyNalez/components/types';
+import { JehlaState } from 'screens/Nalezy/NovyNalez/components/types';
+import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
+import { DEFAULT_POSITION } from 'screens/Nalezy/NovyNalez/constants';
 
 export const mapUserPositionState = atom<LatLngExpression | null>({
     key: 'mapUserPosition',

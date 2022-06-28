@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import Box from '@mui/material/Box';
 
-import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import TextButton from '../../../Components/Buttons/TextButton/TextButton';
-import { ModalBody, ModalContainer } from './../../../Components/Modal/ModalStyles';
-import { LocationState } from './types';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import TextButton from 'Components/Buttons/TextButton/TextButton';
+import { ModalBody, ModalContainer } from 'Components/Modal/ModalStyles';
+import { LocationState } from 'screens/Nalezy/NovyNalez/components/types';
 import { primary } from 'utils/colors';
 
 interface Props {
@@ -20,7 +20,7 @@ const LocationAgreement: FC<Props> = ({ visible, handleAllowGeolocation, handleD
             position => {
                 handleAllowGeolocation(position.coords.latitude, position.coords.longitude);
             },
-            positionError => handleDenyGeolocation(),
+            () => handleDenyGeolocation(),
         );
     };
 

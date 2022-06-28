@@ -2,16 +2,16 @@ import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import PrimaryButton from '../../../Components/Buttons/PrimaryButton/PrimaryButton';
-import { primaryDark, white } from '../../../utils/colors';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import { primaryDark, white } from 'utils/colors';
 
 import whiteArrow from 'assets/images/white-arrow.png';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
-import { media } from '../../../utils/media';
-import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { media } from 'utils/media';
+import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { useRecoilState } from 'recoil';
-import { newSyringeStepState } from 'screens/NovyNalez/components/store';
+import { newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
 
 interface iInfo {}
 
@@ -95,7 +95,7 @@ const Arrow = styled.img`
     }
 `;
 
-const Info: FC<iInfo> = ({ children }) => {
+const Info: FC<iInfo> = ({  }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [firstRun, setFirstRun] = useState(true);

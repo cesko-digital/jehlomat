@@ -10,17 +10,17 @@ import marker from 'assets/icons/marker.svg';
 
 import { DateTimePicker } from 'Components/Inputs/DateTimePicker/DateTimePicker';
 
-import { JehlaState } from 'screens/NovyNalez/components/types';
+import { JehlaState } from 'screens/Nalezy/NovyNalez/components/types';
 import { FormItem, FormWrapper } from 'Components/Form/Form';
 import { FormItemLabel } from 'utils/typography';
 import TextInput from 'Components/Inputs/TextInput/TextInput';
-import PhotoUpload from 'screens/NovyNalez/components/PhotoUpload';
+import PhotoUpload from 'screens/Nalezy/NovyNalez/components/PhotoUpload';
 import TextArea from 'Components/Inputs/TextArea';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { newSyringeInfoErrorState, newSyringeInfoState } from 'screens/NovyNalez/components/store';
+import { newSyringeInfoErrorState, newSyringeInfoState } from 'screens/Nalezy/NovyNalez/components/store';
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;

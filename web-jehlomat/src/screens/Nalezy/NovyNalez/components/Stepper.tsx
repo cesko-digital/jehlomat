@@ -2,22 +2,20 @@ import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import styled from '@emotion/styled/macro';
-import Navigation from '../../../Components/Navigation/Navigation';
-import { primary, primaryDark, secondary, white } from '../../../utils/colors';
+import Navigation from 'Components/Navigation/Navigation';
+import { primary, primaryDark, secondary, white } from 'utils/colors';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
-import { media } from '../../../utils/media';
+import { media } from 'utils/media';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { newSyringeStepState } from 'screens/NovyNalez/components/store';
-import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
+import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { isLoginValidState } from 'store/login';
 
 const Container = styled.div`
     display: flex;
     position: relative;
-    flex-direction: column;
     height: 100%;
-
     flex-direction: row;
     padding-bottom: 4rem;
 `;

@@ -1,15 +1,15 @@
-import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import LocationAgreement from 'screens/NovyNalez/components/LocationAgreement';
-import Map from 'screens/NovyNalez/components/Map';
+import LocationAgreement from 'screens/Nalezy/NovyNalez/components/LocationAgreement';
+import Map from 'screens/Nalezy/NovyNalez/components/Map';
 import { LatLngExpression } from 'leaflet';
-import {INovaJehla, isExistingSyringe, JehlaState} from 'screens/NovyNalez/components/types';
-import { StepsEnum } from 'screens/NovyNalez/components/types';
-import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/NovyNalez/components/store';
+import { isExistingSyringe, JehlaState } from 'screens/Nalezy/NovyNalez/components/types';
+import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
+import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import MapControl from 'screens/NovyNalez/components/MapControl';
+import MapControl from 'screens/Nalezy/NovyNalez/components/MapControl';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
-import { FloatinButtonContainer } from 'screens/NovyNalez/components/styled';
+import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
 
 interface IZadatNalezMapa {
     userSelectedLocation: [number | undefined, number | undefined];

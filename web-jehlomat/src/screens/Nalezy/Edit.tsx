@@ -9,9 +9,9 @@ import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 import { H1 } from 'utils/typography';
 
-import NovyNalezContainer from 'screens/NovyNalez/NovyNalezContainer';
+import NalezContainer from 'screens/Nalezy/NovyNalez/NalezContainer';
 import { useRecoilState } from 'recoil';
-import {newSyringeInfoState, newSyringeStepState} from 'screens/NovyNalez/components/store';
+import {newSyringeInfoState, newSyringeStepState} from 'screens/Nalezy/NovyNalez/components/store';
 import texts from "screens/Nalezy/texts";
 import Link from "Components/Link";
 import {LINKS} from "routes";
@@ -75,7 +75,7 @@ const Edit = () => {
                     <Loading />
                 </Box>
             )}
-            {!loading && !error && <NovyNalezContainer edit />}
+            {!loading && !error && <NalezContainer edit />}
             {error && (
                 <Box>
                     <Alert severity="error">{texts.DETAIL__NOT_FOUND}.

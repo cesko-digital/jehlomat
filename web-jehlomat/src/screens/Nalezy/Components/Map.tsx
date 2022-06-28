@@ -3,7 +3,7 @@ import { Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import dayjs from 'dayjs';
 import gpsParser from 'utils/gpsParser';
-import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
+import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/constants';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { Loader } from 'utils/Loader';
