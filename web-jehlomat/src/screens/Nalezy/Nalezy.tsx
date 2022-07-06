@@ -101,9 +101,7 @@ const Nalezy: FunctionComponent = () => {
             <Page>
                 <Container>
                     <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
-                        <Box>
-                            <TextHeader>Seznam zadaných nálezů</TextHeader>
-                        </Box>
+                        <TextHeader>Seznam zadaných nálezů</TextHeader>
                         <Controls>
                             <Button onClick={exportFiltered}>Export</Button>
                             <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />

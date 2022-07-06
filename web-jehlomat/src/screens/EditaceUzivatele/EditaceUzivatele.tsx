@@ -4,7 +4,7 @@ import imageSrc from 'assets/images/empty-state.svg';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as yup from 'yup';
 import { ButtonWrapper, PageHeading, SectionWrapper, TextButtonWrapper } from './styled';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { tokenState } from 'store/login';
 import { useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
