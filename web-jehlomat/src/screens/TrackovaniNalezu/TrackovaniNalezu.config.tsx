@@ -2,7 +2,7 @@ import React from 'react';
 
 export enum STEPS {
     ZadatKod,
-    ZobraitStav,
+    ZobrazitStav,
 }
 
 export enum SyringeStateType {

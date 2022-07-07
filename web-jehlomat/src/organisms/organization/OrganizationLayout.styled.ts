@@ -73,7 +73,7 @@ export const SSubTitle = styled(Typography)`
 `;
 
 export const SContainer = styled.div`
-    min-height: calc(100vh - 191px);
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -30,7 +30,7 @@ const TrackovaniNalezu: FC<Props> = () => {
 
     const renderContent = () => {
         switch (currentStep) {
-            case STEPS.ZobraitStav:
+            case STEPS.ZobrazitStav:
                 return <ZobrazitStav syringeState={syringeStates[syringeState]!} height={height} />;
             default:
                 return <ZadatKod onClickBack={handleOnClickBack} handleStepChange={handleStepChange} handleNewSyringeState={handleNewSyringeState} height={height} />;

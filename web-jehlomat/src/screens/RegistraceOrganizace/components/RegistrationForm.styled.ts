@@ -23,6 +23,10 @@ export const STextInput = styled(TextInput)`
     label {
         margin-bottom: ${size(2)};
         display: block;
+
+        @media ${media.gt('mobile')} {
+            color: ${white};
+        }
     }
 
     span {
