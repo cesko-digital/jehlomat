@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { StyledColorfulSectionHeader } from './ColorfulSections.style';
+import { StyledColorfulSectionHeader } from 'screens/Nalezy/NovyNalez/components/ColorfulSections/ColorfulSections.style';
 
 export const ColorfulSectionsHeader: FC = ({ children }) => {
     return (

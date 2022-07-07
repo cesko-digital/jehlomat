@@ -3,10 +3,12 @@ import Box from '@mui/material/Box';
 import ImageViewer from 'react-simple-image-viewer';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
-import Resizer from 'react-image-file-resizer';
+import Resizer  from 'react-image-file-resizer';
+
 import FileUpload, { FileUploadProps } from 'Components/Inputs/FileUpload/FileUpload';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import {dataURLtoFile} from "utils/url";
 
 interface PhotoUploadProps extends Omit<FileUploadProps, 'onChange' | 'value'> {
     onChange: (value: string) => void;
@@ -30,6 +32,8 @@ const resizeFile = (file: File) =>
         );
     });
 
+
+
 export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, value }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [filesResizing, setFilesResizing] = useState(false);
@@ -38,6 +42,8 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
     const [isViewerOpen, setIsViewerOpen] = useState(false);
 
     const isMobile = useMediaQuery(media.lte('mobile'));
+
+    console.log({ value, encodedFiles });
 
     const openImageViewer = useCallback(index => {
         setCurrentImage(index);
@@ -67,6 +73,14 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
         }
     }, [files]);
 
+    useEffect(() => {
+        if(value && files.length < (value?.length || 0)) {
+            const files = value.map((string, index) => dataURLtoFile(string, `${index}`))
+
+            setFiles(files)
+        }
+    },  [])
+
     return (
         <>
             {!readOnly && <FileUpload value={files} onChange={setFiles} accept={'image/*'} maxFiles={3} />}
@@ -80,7 +94,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
 
             {encodedFiles.length > 0 && readOnly && (
                 <Box mt={2} width="100%">
-                    <Box sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} display="flex" alignItems="flex-start">
+                    <Box
+                        sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}
+                        display="flex"
+                        alignItems="flex-start"
+                    >
                         {encodedFiles.map((photo, index) => (
                             <>
                                 <Box

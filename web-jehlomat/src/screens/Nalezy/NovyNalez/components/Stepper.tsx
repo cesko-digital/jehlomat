@@ -2,21 +2,20 @@ import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import styled from '@emotion/styled/macro';
-import Navigation from '../../../Components/Navigation/Navigation';
-import { primary, primaryDark, secondary, white } from '../../../utils/colors';
+import Navigation from 'Components/Navigation/Navigation';
+import { primary, primaryDark, secondary, white } from 'utils/colors';
 import Box from '@mui/material/Box';
 import { useMediaQuery } from '@mui/material';
-import { media } from '../../../utils/media';
-import { useRecoilState } from 'recoil';
-import { newSyringeStepState } from 'screens/NovyNalez/components/store';
-import { StepsEnum } from 'screens/NovyNalez/components/types';
+import { media } from 'utils/media';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
+import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
+import { isLoginValidState } from 'store/login';
 
 const Container = styled.div`
     display: flex;
     position: relative;
-    flex-direction: column;
     height: 100%;
-
     flex-direction: row;
     padding-bottom: 4rem;
 `;
@@ -61,7 +60,7 @@ export const Card = styled.div<iCard>`
 
     ${props =>
         props.active &&
-        `   
+        `
         ${Icon} {
             border-color: ${secondary};
         }
@@ -84,15 +83,15 @@ export const Card = styled.div<iCard>`
     // active yellow line and yellow icon
     ${props =>
         props.lineActive &&
-        `   
+        `
             ${IconWrapper}:after {
                 background-color: ${secondary} !important;
             }
-            
+
             svg path {
                 fill: white;
             }
-            
+
             ${Icon} {
                 background-color: ${secondary};
                 border-color: white;
@@ -115,6 +114,7 @@ const Title = styled.h6`
 const Stepper: FC = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
+    const isLoggedIn = useRecoilValue(isLoginValidState);
 
     return (
         <>
@@ -146,7 +146,7 @@ const Stepper: FC = ({ children }) => {
                     </Card>
                     {children}
                 </Container>
-                <Navigation />
+                {isLoggedIn && <Navigation />}
             </Box>
         </>
     );

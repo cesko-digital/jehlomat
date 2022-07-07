@@ -1,16 +1,14 @@
 import L, { LatLngExpression } from 'leaflet';
 import Box from '@mui/material/Box';
-import React, { FC, useEffect, useState, useContext } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents, ZoomControl } from 'react-leaflet';
-import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../constants';
+import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/constants';
 import icon from 'assets/icons/marker_orange.svg';
 import 'leaflet/dist/leaflet.css';
 
-import styled from '@emotion/styled';
-
-import { mapPositionState, mapUserPositionState, newSyringeStepState } from './store';
-import { ChangeView } from './ChangeView';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { mapPositionState, mapUserPositionState, } from 'screens/Nalezy/NovyNalez/components/store';
+import { ChangeView } from 'screens/Nalezy/NovyNalez/components/ChangeView';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 let DefaultIcon = L.icon({
     iconUrl: icon,

@@ -11,7 +11,7 @@ import TextInput from 'Components/Inputs/TextInput';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
-import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/NovyNalez/constants';
+import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
