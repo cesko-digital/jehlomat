@@ -53,7 +53,7 @@ const TextInput: FC<Props> = props => {
             />
             {propType === 'password' && (
                 <IconWrapper onClick={() => setType(type === 'text' ? 'password' : 'text')}>
-                    <FontAwesomeIcon icon={type !== 'text' ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon icon={type !== 'text' ? faEyeSlash : faEye} />
                 </IconWrapper>
             )}
         </Container>
