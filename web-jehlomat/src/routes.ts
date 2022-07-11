@@ -31,7 +31,6 @@ const Contact = lazy(() => import('./screens/ContactPage'));
 const FAQPage = lazy(() => import('./screens/FAQ'));
 const OrganizationAdminVerification = lazy(() => import('./screens/OrganizationAdminVerification/OrganizationAdminVerification'));
 
-
 export enum Routes {
     HOME = 'HOME',
     LOGIN = 'LOGIN',
@@ -80,13 +79,16 @@ interface Route {
      * Valid if protectedRoute is truthy
      */
     from?: boolean;
+    redirectOnLogout?: boolean;
+    redirectOnLogoutPath?: string;
 }
 
 const USER_URL_PATH_ = 'uzivatel';
 export const ORGANIZATION_URL_PATH = 'organizace';
 const FINDINGS_URL_PATH = 'nalezy';
 export const LOGIN_URL_PATH = 'prihlaseni';
-export const TEAM_URL_PATH = 'team'
+export const TEAM_URL_PATH = 'team';
+export const HOME_PATH = '/';
 
 export const routes: Route[] = [
     {
@@ -145,6 +147,7 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_THANK_YOU,
         Component: DekujemeOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
+        redirectOnLogout: true,
     },
     {
         id: Routes.ORGANIZATION_CONFIRMATION,
