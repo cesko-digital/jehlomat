@@ -29,8 +29,17 @@ interface IOrganization {
 }
 
 const validationSchema = yup.object({
-    organizace: yup.string().required('Název organizace je povinné pole'),
-    email: yup.string().email('Vlož validní email').required('Email je povinné pole'),
+    organizace: yup
+        .string()
+        .test('match whitespace', 'U založení organizace není dovoleno vložit mezeru do názvu', (str: any): any => !/\s/g.test(str))
+        .matches(/^\w+(\.\w+)?$/, 'Nepovolené znaky v názvu organizace')
+        .required('Název organizace je povinné pole')
+        .strict(),
+    email: yup
+        .string()
+        .email('Vlož validní email')
+        .matches(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, 'Nepovolené znaky v emailu')
+        .required('Email je povinné pole'),
     heslo: yup.string().matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno').min(8, 'Heslo musí být 8 znaků dlouhé').required('Heslo je povinné pole'),
     hesloConfirm: yup
         .string()
