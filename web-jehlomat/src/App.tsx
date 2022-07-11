@@ -15,10 +15,11 @@ import ConfirmationModal from 'Components/ConfirmationModal';
 import { ConfirmationModalProvider } from 'providers/ConfirmationModalProvider';
 
 import PrivateRoute from 'config/protectedRoute';
+import OnLogoutRoute from './config/onLogoutRoute';
 const Router: FC = () => (
     <HashRouter>
         <Switch>
-            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute, from }) => {
+            {routes.map(({ Component, exact, AdditionalComponents, path, protectedRoute, from, redirectOnLogout, redirectOnLogoutPath }) => {
                 const stringPath = typeof path === 'string' ? path : path(0);
                 if (protectedRoute) {
                     return (
@@ -26,6 +27,13 @@ const Router: FC = () => (
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
                         </PrivateRoute>
+                    );
+                } else if (redirectOnLogout) {
+                    return (
+                        <OnLogoutRoute from={from} path={typeof path === 'string' ? path : path(0)} redirectPath={redirectOnLogoutPath} key={stringPath}>
+                            <Component exact={exact} />
+                            {AdditionalComponents && <AdditionalComponents />}
+                        </OnLogoutRoute>
                     );
                 } else {
                     return (
