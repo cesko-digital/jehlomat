@@ -23,21 +23,21 @@ const Router: FC = () => (
                 const stringPath = typeof path === 'string' ? path : path(0);
                 if (protectedRoute) {
                     return (
-                        <PrivateRoute from={from} path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                        <PrivateRoute from={from} path={stringPath} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
                         </PrivateRoute>
                     );
                 } else if (redirectOnLogout) {
                     return (
-                        <OnLogoutRoute from={from} path={typeof path === 'string' ? path : path(0)} redirectPath={redirectOnLogoutPath} key={stringPath}>
+                        <OnLogoutRoute from={from} path={stringPath} redirectPath={redirectOnLogoutPath} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
                         </OnLogoutRoute>
                     );
                 } else {
                     return (
-                        <Route path={typeof path === 'string' ? path : path(0)} key={stringPath}>
+                        <Route path={stringPath} key={stringPath}>
                             <Component exact={exact} />
                             {AdditionalComponents && <AdditionalComponents />}
                         </Route>
