@@ -54,6 +54,11 @@ const FilterByReporter: FunctionComponent = () => {
 
     useEffect(() => filters(type, id), [filters, type, id]);
 
+    const changeType = (newType: ReporterType) => {
+        setId(undefined); // reset ID from other type
+        setType(newType);
+    };
+
     const handleReset = () => {
         setType('');
         setId(undefined);
@@ -70,7 +75,7 @@ const FilterByReporter: FunctionComponent = () => {
 
     return (
         <Filter title="Zadavatel nálezu" onReset={handleReset}>
-            <Select value={type} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value as ReporterType)}>
+            <Select value={type} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => changeType(e.target.value as ReporterType)}>
                 <option value="">&nbsp;</option>
                 <option value="TEAM">Tým</option>
                 <option value="USER">Jednotlivec</option>
