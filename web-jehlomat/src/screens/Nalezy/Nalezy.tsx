@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState, useCallback, useRef } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
 import { AxiosResponse } from 'axios';
-import {useRecoilState, useRecoilValue} from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
@@ -20,7 +20,7 @@ import DarkButton from 'screens/Nalezy/Components/DarkButton';
 import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
-import {filteringState, loaderState, paginationState, sortingState} from 'screens/Nalezy/store';
+import { filteringState, loaderState, paginationState, sortingState } from 'screens/Nalezy/store';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
@@ -38,6 +38,19 @@ const Nalezy: FunctionComponent = () => {
 
     const isMap = isMapMatch?.isExact;
     const isTable = isTableMatch?.isExact;
+
+    const [exportUrl, setExportUrl] = useState<string | undefined>();
+    const exportRef = useRef<HTMLAnchorElement | null>(null);
+
+    const exportFiltered = useCallback(async () => {
+        const response: AxiosResponse = await API.post('/syringe/export', filtering);
+        if (response.status === 200) {
+            setExportUrl(window.URL.createObjectURL(new Blob([response.data as ArrayBuffer])));
+            exportRef.current?.click();
+        } else {
+            console.warn('Unable to export data');
+        }
+    }, [filtering]);
 
     useEffect(() => {
         const filter = {
@@ -72,7 +85,8 @@ const Nalezy: FunctionComponent = () => {
                             <TextHeader>Seznam zadaných nálezů</TextHeader>
                         </Box>
                         <Controls>
-                            <Button>Export</Button>
+                            <Button onClick={exportFiltered}>Export</Button>
+                            <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />
                             <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
                             {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
                             {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
