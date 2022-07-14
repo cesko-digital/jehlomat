@@ -40,7 +40,7 @@ const FilterByRange: FunctionComponent = () => {
         });
     }, [setFilter]);
 
-    useEffect(() => filtering(kind, { from: +dayjs(from), to: +dayjs(to) }), [filtering, kind, from, to]);
+    useEffect(() => filtering(kind, { from: dayjs(from).unix(), to: dayjs(to).unix() }), [filtering, kind, from, to]);
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
