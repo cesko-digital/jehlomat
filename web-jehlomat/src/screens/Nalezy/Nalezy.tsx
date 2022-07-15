@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect, useState, useCallback, useRef } fr
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath, useRouteMatch } from 'react-router';
 import { Box, Container } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import { AxiosResponse } from 'axios';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
@@ -21,6 +22,7 @@ import Filters from 'screens/Nalezy/Components/Filters';
 import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
 import { filteringState, loaderState, paginationState, sortingState } from 'screens/Nalezy/store';
+import { Filtering } from './types/Filtering';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
@@ -40,15 +42,33 @@ const Nalezy: FunctionComponent = () => {
     const isTable = isTableMatch?.isExact;
 
     const [exportUrl, setExportUrl] = useState<string | undefined>();
+    const [exportErrorMessage, setExportErrorMessage] = useState<string | null>(null);
     const exportRef = useRef<HTMLAnchorElement | null>(null);
 
     const exportFiltered = useCallback(async () => {
         const response: AxiosResponse = await API.post('/syringe/export', filtering);
         if (response.status === 200) {
+            setExportErrorMessage(null);
             setExportUrl(window.URL.createObjectURL(new Blob([response.data as ArrayBuffer])));
             exportRef.current?.click();
+        } else if (response.status === 400) {
+            // Temporary solution, we expect that the main reason for error 400 is wrong range filter
+            setExportErrorMessage('Export se nepodařil, zkontrolujte prosím, že je aktivní filtr období nálezu nebo likvidace.');
+            console.warn('Export error:', response.data);
         } else {
-            console.warn('Unable to export data');
+            setExportErrorMessage('Export se nepodařil, pokusíme se to opravit.');
+            console.warn('Export error:', response);
+        }
+    }, [filtering]);
+
+    const hasValidRangeFilter = (filters: Filtering): boolean => {
+        const rangeFilters = filters?.createdAt || filters?.demolishedAt;
+        return !!(rangeFilters?.from || rangeFilters?.to);
+    };
+
+    useEffect(() => {
+        if (hasValidRangeFilter(filtering)) {
+            setExportErrorMessage(null);
         }
     }, [filtering]);
 
@@ -93,6 +113,13 @@ const Nalezy: FunctionComponent = () => {
                         </Controls>
                     </Box>
                 </Container>
+                {exportErrorMessage && (
+                    <Container>
+                        <Box my={2}>
+                            <Alert severity="warning">{exportErrorMessage}</Alert>
+                        </Box>
+                    </Container>
+                )}
                 {filters && (
                     <Filters>
                         <HorizontalContainer>
