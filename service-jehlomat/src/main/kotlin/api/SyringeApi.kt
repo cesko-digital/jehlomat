@@ -17,6 +17,7 @@ import services.*
 import utils.isValidMail
 import java.time.Instant
 
+const val MAXIMUM_EXPORT_TIMESPAN = 60 * 60 * 24 * 30 * 6
 
 fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
@@ -47,12 +48,17 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
 
                 val now = Instant.now().epochSecond
                 val createdAt = request.createdAt ?: DateInterval(0, now)
-                val from = createdAt.from ?: 0
-                val to = createdAt.to ?: now
+                val createdAtFrom = createdAt.from ?: 0
+                val createdAtTo = createdAt.to ?: now
+                val demolishedAt = request.demolishedAt ?: DateInterval(0, now)
+                val demolishedAtFrom = demolishedAt.from ?: 0
+                val demolishedAtTo = demolishedAt.to ?: now
 
-                val halfYear = 60 * 60 * 24 * 30 * 6
-                if ((to - from) >  halfYear) {
-                    call.respond(HttpStatusCode.BadRequest, "Selected time range is to wide $from - $to")
+                if (
+                    (createdAtTo - createdAtFrom > MAXIMUM_EXPORT_TIMESPAN) &&
+                    (demolishedAtTo - demolishedAtFrom > MAXIMUM_EXPORT_TIMESPAN)
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, "Either demolished or created time range must be limited to half a year")
                     return@post
                 }
 
