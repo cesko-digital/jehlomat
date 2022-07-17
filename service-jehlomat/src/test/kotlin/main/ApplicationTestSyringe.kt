@@ -203,6 +203,33 @@ class ApplicationTestSyringe {
     }
 
     @Test
+    fun testExportSyringesCreatedByAnonymous() = withTestApplication(Application::module) {
+        database.insertUser(SUPER_ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
+        val token = loginUser(SUPER_ADMIN.email, SUPER_ADMIN.password)
+        val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
+        val id = database.insertSyringe(defaultSyringe.copy(createdAt = 1))
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/export"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeFilter(
+                locationIds = null,
+                createdAt = DateInterval(
+                    from = 0,
+                    to = 2
+                ),
+                createdBy = null,
+                demolishedAt = null,
+                status = null
+            )))
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("id,čas nalezení,email nálezce,jméno nálezce,email sběrače,jmeno sběrače,cas sběru,typ zničení,počet,gps,okres,městská část,obec,zneškodněno,tým,organizace\n" +
+                    "$id,1,null,null,null,null,null,nezlikvidováno,10,13.3719999 49.7278823,Plzeň-město,Plzeň 3,Plzeň,NE,null,null", response.content)
+        }
+    }
+
+    @Test
     fun testGetSyringe() = withTestApplication(Application::module) {
         val token = loginUser(USER.email, USER.password)
         database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))

@@ -166,8 +166,8 @@ class DatabaseService(
                 CSVExportSchema(
                     id = row[SyringeTable.id]!!,
                     createdTimestamp = row[SyringeTable.createdAt]!!,
-                    createdByEmail = row[syringeCreatedByAlias.email]!!,
-                    createdByUsername = row[syringeCreatedByAlias.username]!!,
+                    createdByEmail = row[syringeCreatedByAlias.email],
+                    createdByUsername = row[syringeCreatedByAlias.username],
                     destroyedByEmail = row[syringeDemolishedByAlias.email],
                     destroyedByUsername = row[syringeDemolishedByAlias.username],
                     destroyedTimestamp = row[SyringeTable.demolishedAt],
@@ -179,7 +179,7 @@ class DatabaseService(
                     obec = row[LocationTable.obec_name]!!,
                     destroyed = if(row[SyringeTable.demolished]!!) "ANO" else "NE",
                     teamName = row[teamTableAlias.name],
-                    organizationName =row[OrganizationTable.name]!!
+                    organizationName =row[OrganizationTable.name]
                 )
             }
     }
