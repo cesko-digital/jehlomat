@@ -9,7 +9,9 @@ import { H1, fontFamilyRoboto } from 'utils/typography';
 import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
 
-interface Props {}
+interface Props {
+    trackingCode: string | null;
+}
 
 const Container = styled.div`
     display: flex;
@@ -84,7 +86,7 @@ const StyledLink = styled(Link)`
     }
 `;
 
-const Potvrzeni: FC<Props> = () => {
+const Potvrzeni: FC<Props> = ({ trackingCode }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
 
     return (
@@ -92,11 +94,11 @@ const Potvrzeni: FC<Props> = () => {
             <TextContainer>
                 <TopText>Děkujeme za vložení nálezu!</TopText>
             </TextContainer>
-            { !isLoggedIn && (
+            { !isLoggedIn && trackingCode && (
                 <>
                     <Box>
                         <TrackingText>Trasovací kód pro sledování:</TrackingText>
-                        <TrackingCode>TestC0DE</TrackingCode>
+                        <TrackingCode>{ trackingCode }</TrackingCode>
                     </Box>
                     <LinksContainer>
                         <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
