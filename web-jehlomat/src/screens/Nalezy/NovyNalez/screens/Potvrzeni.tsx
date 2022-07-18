@@ -1,12 +1,11 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { Box } from '@mui/system';
 import { useRecoilValue } from 'recoil';
 import Link from 'Components/Link';
 
 import { primary, white } from 'utils/colors';
-import { H1, H4 } from 'utils/typography';
+import { H1, fontFamilyRoboto } from 'utils/typography';
 import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
 
@@ -32,17 +31,6 @@ const TextContainer = styled.div`
     margin-bottom: 2rem;
 `;
 
-const Title = styled.h2`
-    font-size: 52px;
-    color: ${white};
-    text-align: center;
-    margin: 1rem 0;
-
-    @media (min-width: 700px) {
-        color: ${primary};
-    }
-`;
-
 const TopText = styled(H1)`
     text-align: center;
     color: ${white};
@@ -53,15 +41,25 @@ const TopText = styled(H1)`
     }
 `;
 
-const SecondaryText = styled(H4)`
+const TrackingText = styled.p`
+    ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
     margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 2;
 
     @media (min-width: 700px) {
         color: ${primary};
+        font-weight: 300;
+        line-height: 1.4;
     }
 `;
+
+const TrackingCode = styled(TrackingText)`
+    letter-spacing: 0.3em;
+`
 
 const LinksContainer = styled.div`
     width: 100%;
@@ -93,16 +91,14 @@ const Potvrzeni: FC<Props> = () => {
         <Container>
             <TextContainer>
                 <TopText>Děkujeme za vložení nálezu!</TopText>
-                <Title>jehlomat</Title>
-                <SecondaryText>Nález bude zlikvidován terénním pracovníkem.</SecondaryText>
             </TextContainer>
             { !isLoggedIn && (
                 <>
                     <Box>
-                        <SecondaryButton text="ULOŽIT NÁZEV" />
+                        <TrackingText>Trasovací kód pro sledování:</TrackingText>
+                        <TrackingCode>TestC0DE</TrackingCode>
                     </Box>
                     <LinksContainer>
-                        <StyledLink>Chci zaslat potvrzení o likvidaci nálezu</StyledLink>
                         <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
                     </LinksContainer>
                 </>
