@@ -63,7 +63,6 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-
             let data: AxiosResponse<any>;
 
             if ('id' in newSyringeInfo && newSyringeInfo.id) {
@@ -102,13 +101,13 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
 
 const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation, trackingCode }) => {
     const [currentStep] = useRecoilState(newSyringeStepState);
-    const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState)
+    const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState);
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     const isSubmitDisabled = () => {
         // Pokud je na formulari chyba, zablokujeme Submit button
         return !Object.values(newSyringeInfoError).every(error => error === undefined);
-    }
+    };
 
     switch (currentStep) {
         case StepsEnum.Start:

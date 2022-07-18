@@ -1,13 +1,16 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
+import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRecoilValue } from 'recoil';
 import Link from 'Components/Link';
 
 import { primary, white } from 'utils/colors';
-import { H1, fontFamilyRoboto } from 'utils/typography';
+import { fontFamilyRoboto } from 'utils/typography';
+import { media } from 'utils/media';
 import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
+import imageSrc from 'assets/images/finish-line.svg';
 
 interface Props {
     trackingCode: string | null;
@@ -24,7 +27,7 @@ const Container = styled.div`
 
     @media (min-width: 700px) {
         background-color: ${white};
-        padding: 3rem 1rem;
+        padding: 0 1rem 3rem;
         height: auto;
     }
 `;
@@ -33,13 +36,19 @@ const TextContainer = styled.div`
     margin-bottom: 2rem;
 `;
 
-const TopText = styled(H1)`
+const TopText = styled.h1`
+    ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
     margin: 0;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.25;
 
     @media (min-width: 700px) {
         color: ${primary};
+        font-size: 48px;
+        font-weight: 300;
     }
 `;
 
@@ -61,18 +70,18 @@ const TrackingText = styled.p`
 
 const TrackingCode = styled(TrackingText)`
     letter-spacing: 0.3em;
-`
+`;
 
 const LinksContainer = styled.div`
     width: 100%;
     display: flex;
     margin-top: 2rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     @media (min-width: 700px) {
-        margin-top: 5rem;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        margin-top: 2rem;
     }
 `;
 
@@ -88,17 +97,23 @@ const StyledLink = styled(Link)`
 
 const Potvrzeni: FC<Props> = ({ trackingCode }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
+    const isDesktop = useMediaQuery(media.gt('mobile'));
 
     return (
         <Container>
+            {isDesktop && (
+                <Box alignItems="center" pb={4}>
+                    <img src={imageSrc} height="285" alt="finish-line" />
+                </Box>
+            )}
             <TextContainer>
-                <TopText>Děkujeme za vložení nálezu!</TopText>
+                <TopText>Vložení nálezu bylo úspěšné</TopText>
             </TextContainer>
-            { !isLoggedIn && trackingCode && (
+            {!isLoggedIn && trackingCode && (
                 <>
                     <Box>
-                        <TrackingText>Trasovací kód pro sledování:</TrackingText>
-                        <TrackingCode>{ trackingCode }</TrackingCode>
+                        <TrackingText>Trasovací kód pro jeho sledování:</TrackingText>
+                        <TrackingCode>{trackingCode}</TrackingCode>
                     </Box>
                     <LinksContainer>
                         <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
