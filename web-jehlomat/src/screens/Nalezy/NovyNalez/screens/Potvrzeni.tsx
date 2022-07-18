@@ -2,11 +2,13 @@ import { FC } from 'react';
 import styled from '@emotion/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
 import { Box } from '@mui/system';
+import { useRecoilValue } from 'recoil';
 import Link from 'Components/Link';
 
 import { primary, white } from 'utils/colors';
 import { H1, H4 } from 'utils/typography';
 import { LINKS } from 'routes';
+import { isLoginValidState } from 'store/login';
 
 interface Props {}
 
@@ -85,6 +87,8 @@ const StyledLink = styled(Link)`
 `;
 
 const Potvrzeni: FC<Props> = () => {
+    const isLoggedIn = useRecoilValue(isLoginValidState);
+
     return (
         <Container>
             <TextContainer>
@@ -92,13 +96,17 @@ const Potvrzeni: FC<Props> = () => {
                 <Title>jehlomat</Title>
                 <SecondaryText>Nález bude zlikvidován terénním pracovníkem.</SecondaryText>
             </TextContainer>
-            <Box>
-                <SecondaryButton text="ULOŽIT NÁZEV" />
-            </Box>
-            <LinksContainer>
-                <StyledLink>Chci zaslat potvrzení o likvidaci nálezu</StyledLink>
-                <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
-            </LinksContainer>
+            { !isLoggedIn && (
+                <>
+                    <Box>
+                        <SecondaryButton text="ULOŽIT NÁZEV" />
+                    </Box>
+                    <LinksContainer>
+                        <StyledLink>Chci zaslat potvrzení o likvidaci nálezu</StyledLink>
+                        <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
+                    </LinksContainer>
+                </>
+            )}
         </Container>
     );
 };
