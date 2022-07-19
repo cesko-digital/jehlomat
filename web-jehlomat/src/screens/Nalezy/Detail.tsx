@@ -45,7 +45,7 @@ const state = (syringe: Syringe | undefined): string => {
     return 'Čeká na likvidaci';
 };
 
-const formatDate = (date: number | undefined): string => date ? dayjs(date * 1000).format('D. M. YYYY') : '';
+const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY') : '');
 
 const Detail = () => {
     const [loader, setLoader] = useState<Loader<Syringe>>({});
@@ -133,9 +133,17 @@ const Detail = () => {
                                     <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
                                     <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
                                     <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
-                                    <Box display="flex" alignItems="center" flexDirection="column" py={2}>
-                                        <TextButton color={primary} onClick={() => reserve(data)} text="Nález si rezervuji k pozdější likvidaci" textTransform="uppercase" textDecoration="underline" />
-                                    </Box>
+                                    {data && !data.demolished && !data.reservedBy && (
+                                        <Box display="flex" alignItems="center" flexDirection="column" py={2}>
+                                            <TextButton
+                                                color={primary}
+                                                onClick={() => reserve(data)}
+                                                text="Nález si rezervuji k pozdější likvidaci"
+                                                textTransform="uppercase"
+                                                textDecoration="underline"
+                                            />
+                                        </Box>
+                                    )}
                                 </Details>
                             }
                             right={
