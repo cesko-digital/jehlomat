@@ -12,8 +12,12 @@ const SyringeDemolishDate: FunctionComponent<SyringeDemolishDateProps> = ({ syri
         return <>{dayjs(syringe.demolishedAt * 1000).format('D. M. YYYY')}</>;
     }
 
-    if (syringe.reservedTill) {
-        return <TextMuted>rezervace do {dayjs(syringe.reservedTill * 1000).format('D. M. YYYY')}</TextMuted>;
+    if (syringe.reservedBy) {
+        if (syringe.reservedTill) {
+            return <TextMuted>rezervace do {dayjs(syringe.reservedTill * 1000).format('D. M. YYYY')}</TextMuted>;
+        } else {
+            return <TextMuted>rezervováno neomezeně</TextMuted>;
+        }
     }
 
     return <TextMuted>zatím nezlikvidováno</TextMuted>;

@@ -38,7 +38,7 @@ const Details = styled('div')(({ theme }) => ({
 const state = (syringe: Syringe | undefined): string => {
     if (!syringe) return '';
     if (syringe.demolishedAt && syringe.demolished) return 'Zlikvidováno';
-    if (syringe.reservedTill) return 'Rezervováno TP';
+    if (syringe.reservedBy) return 'Rezervováno TP';
 
     return 'Čeká na likvidaci';
 };
