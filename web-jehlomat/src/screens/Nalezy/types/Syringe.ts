@@ -12,7 +12,7 @@ export interface Syringe {
     photo?: string;
     count: number;
     note: string;
-    demolisher?: string;
+    demolisherType?: string;
     gps_coordinates: string;
     demolished: boolean;
     location: Location;
