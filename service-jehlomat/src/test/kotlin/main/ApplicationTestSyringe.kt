@@ -157,20 +157,6 @@ class ApplicationTestSyringe {
     }
 
     @Test
-    fun testExportSyringes() = withTestApplication(Application::module) {
-        val token = loginUser(ADMIN.email, ADMIN.password)
-        database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))
-
-        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/export"){
-            addHeader("Content-Type", "application/json")
-            addHeader("Authorization", "Bearer $token")
-            setBody(Json.encodeToString(syringeFilter))
-        }) {
-            assertEquals(HttpStatusCode.BadRequest, response.status())
-        }
-    }
-
-    @Test
     fun testExportSyringesByAll() = withTestApplication(Application::module) {
         val token = loginUser(ADMIN.email, ADMIN.password)
         val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
