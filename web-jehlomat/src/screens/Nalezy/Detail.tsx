@@ -43,6 +43,8 @@ const state = (syringe: Syringe | undefined): string => {
     return 'Čeká na likvidaci';
 };
 
+const formatDate = (date: number | undefined): string => date ? dayjs(date * 1000).format('D. M. YYYY') : '';
+
 const Detail = () => {
     const [loader, setLoader] = useState<Loader<Syringe>>({});
 
@@ -77,8 +79,6 @@ const Detail = () => {
     const error = loader.resp === undefined && loader.err !== undefined;
     const data: Syringe | undefined = loader.resp;
 
-    const foundAt = data?.createdAt ? new Date(data?.createdAt).toLocaleDateString() : '';
-
     return (
         <>
             <Header mobileTitle={texts.DETAIL__TITLE} />
@@ -106,7 +106,7 @@ const Detail = () => {
                                         </Box>
                                     )}
                                     <TextInput label={texts.DETAIL__SYRINGES_COUNT} value={data?.count} disabled />
-                                    <TextInput label={texts.DETAIL__DATETIME} value={foundAt} disabled />
+                                    <TextInput label={texts.DETAIL__DATETIME} value={formatDate(data?.createdAt)} disabled />
                                     <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
                                     <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
                                     <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
@@ -123,7 +123,7 @@ const Detail = () => {
                                                 <PinMenu closeButton={false} minWidth={220}>
                                                     <Info>
                                                         <Location>{data.location.obec}</Location>
-                                                        <Time>{dayjs(data.createdAt * 1000).format('D. M. YYYY')}</Time>
+                                                        <Time>{formatDate(data.createdAt)}</Time>
                                                         <State>
                                                             <PreviewSyringeState syringe={data} />
                                                         </State>
