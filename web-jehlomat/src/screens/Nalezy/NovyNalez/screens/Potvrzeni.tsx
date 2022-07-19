@@ -11,6 +11,8 @@ import { media } from 'utils/media';
 import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
 import imageSrc from 'assets/images/finish-line.svg';
+import CheckIcon from 'assets/icons/check.svg';
+import { SCheckIcon } from 'screens/RegistraceOrganizace/Dekujeme.styled';
 
 interface Props {
     trackingCode: string | null;
@@ -32,17 +34,13 @@ const Container = styled.div`
     }
 `;
 
-const TextContainer = styled.div`
-    margin-bottom: 2rem;
-`;
-
 const TopText = styled.h1`
     ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
     margin: 0;
-    font-weight: 700;
-    font-size: 32px;
+    font-weight: 400;
+    font-size: 36px;
     line-height: 1.25;
 
     @media (min-width: 700px) {
@@ -50,6 +48,10 @@ const TopText = styled.h1`
         font-size: 48px;
         font-weight: 300;
     }
+`;
+
+const TopTextSmall = styled(TopText)`
+    font-size: 30px;
 `;
 
 const TrackingText = styled.p`
@@ -94,6 +96,11 @@ const StyledLink = styled(Link)`
         color: ${primary};
     }
 `;
+const CheckIconBox = <Box py={4}>
+    <SCheckIcon>
+        <img src={CheckIcon} alt="Jehlomat" />
+    </SCheckIcon>
+</Box>;
 
 const Potvrzeni: FC<Props> = ({ trackingCode }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
@@ -102,13 +109,25 @@ const Potvrzeni: FC<Props> = ({ trackingCode }) => {
     return (
         <Container>
             {isDesktop && (
-                <Box alignItems="center" pb={4}>
-                    <img src={imageSrc} height="285" alt="finish-line" />
-                </Box>
+                <>
+                    <Box alignItems="center">
+                        <img src={imageSrc} height="285" alt="finish-line" />
+                    </Box>
+                    {CheckIconBox}
+                    <Box mb="2rem">
+                        <TopText>Vložení nálezu bylo úspěšné</TopText>
+                    </Box>
+                </>
             )}
-            <TextContainer>
-                <TopText>Vložení nálezu bylo úspěšné</TopText>
-            </TextContainer>
+            {!isDesktop && (
+                <>
+                    <Box mb="2rem">
+                        <TopText>Vložení nálezu</TopText>
+                        <TopTextSmall>bylo úspěšné</TopTextSmall>
+                    </Box>
+                    {CheckIconBox}
+                </>
+            )}
             {!isLoggedIn && trackingCode && (
                 <>
                     <Box>
