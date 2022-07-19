@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 data class CSVExportSchema(
     val id: String,
     val createdTimestamp: Long,
-    val createdByEmail: String,
-    val createdByUsername: String,
+    val createdByEmail: String?,
+    val createdByUsername: String?,
     val destroyedByEmail: String?,
     val destroyedByUsername: String?,
     val destroyedTimestamp: Long?,
@@ -19,7 +19,7 @@ data class CSVExportSchema(
     val obec: String,
     val destroyed: String,
     val teamName: String?,
-    val organizationName: String
+    val organizationName: String?
 ){
     override fun toString(): String =
         "$id,$createdTimestamp,$createdByEmail,$createdByUsername,$destroyedByEmail,$destroyedByUsername,$destroyedTimestamp,$demolishingType,$count,$gpsCoordinates,$okres,$mc,$obec,$destroyed,$teamName,$organizationName"
