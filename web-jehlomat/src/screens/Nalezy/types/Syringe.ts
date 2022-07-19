@@ -1,4 +1,4 @@
-﻿import { IUser as Person } from '../../../types';
+import { IUser as Person } from '../../../types';
 import { Location } from './Location';
 
 export interface Syringe {
@@ -17,3 +17,10 @@ export interface Syringe {
     demolished: boolean;
     location: Location;
 }
+
+export type SyringeChangeReq = Omit<Syringe, 'createdBy' | 'location' | 'reservedBy' | 'demolishedBy'> & {
+    createdById: number | undefined;
+    reservedById: number | undefined;
+    demolishedId: number | undefined;
+    locationId: number | undefined;
+};

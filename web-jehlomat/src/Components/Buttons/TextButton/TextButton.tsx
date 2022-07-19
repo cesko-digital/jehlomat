@@ -4,7 +4,8 @@ import { white } from '../../../utils/colors';
 import Typography, { TypographyProps } from '@mui/material/Typography/Typography';
 
 interface ITextButton extends ButtonHTMLAttributes<HTMLButtonElement>, Pick<TypographyProps, 'fontSize' | 'textTransform'> {
-    text: String;
+    text: string;
+    textDecoration?: string;
 }
 
 const Button = styled.button`
@@ -19,12 +20,12 @@ const Button = styled.button`
     margin-bottom: 10px;
 `;
 
-const TextButton: FC<ITextButton> = ({ text, color, fontSize,textTransform, ...props }) => {
+const TextButton: FC<ITextButton> = ({ text, color, fontSize,textTransform, textDecoration, ...props }) => {
     return (
         <Button {...props}>
             <Typography
                 {...{fontSize, textTransform}}
-                sx={{ fontWeight: 'bold', lineHeight: '18px', color: color }}>{text}</Typography>
+                sx={{ fontWeight: 500, lineHeight: '18px', color, textDecoration }}>{text}</Typography>
         </Button>
     );
 };
