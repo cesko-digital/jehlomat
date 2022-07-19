@@ -24,6 +24,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import Loading from 'screens/Nalezy/Components/Loading';
 import { userIDState } from 'store/login';
 import { PASSWORD_COMPLEXITY } from '../../utils/constants';
+import Modal from 'Components/Modal/Modal';
 
 const validationSchema = yup.object({
     email: yup.string().email('Email nemá správný formát.').required('Email je povinné pole'),
@@ -55,6 +56,7 @@ const Profile: React.FC = () => {
     const [user, setUser] = useState<IUser>();
     const [teams, setTeams] = useState<ITeam[]>([]);
     const [organization, setOrganization] = useState<IOrganizace>();
+    const [successOpen, setSuccessOpen] = useState(false);
 
     useEffect(() => {
         if (token && userId) {
@@ -89,14 +91,16 @@ const Profile: React.FC = () => {
             if (!userId) throw new Error();
             const response: AxiosResponse<any> = await API.put(apiURL.putUser(userId), editedUser);
             if (isStatusGeneralSuccess(response.status)) {
-                history.push(LINKS.USER);
+                history.push(LINKS.PROFILE);
+                setSuccessOpen(true);
             } else {
                 throw new Error();
             }
             if (values.password) {
                 const response: AxiosResponse<any> = await API.put(apiURL.setNewPassword, { userId, password: values.password });
                 if (isStatusGeneralSuccess(response.status)) {
-                    history.push(LINKS.USER);
+                    history.push(LINKS.PROFILE);
+                    setSuccessOpen(true);
                 } else {
                     throw new Error();
                 }
@@ -126,6 +130,16 @@ const Profile: React.FC = () => {
                     flexWrap: 'wrap',
                 }}
             >
+                <Modal modalHeaderText="Editace uživatele" open={successOpen} onClose={() => setSuccessOpen(false)}>
+                    <Box display="flex" flexDirection="column" justifyContent="center">
+                        <Box mb={5} mx={5}>
+                            Vaše změny byly uloženy.
+                        </Box>
+                        <Box mx="auto" mb={2}>
+                            <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
+                        </Box>
+                    </Box>
+                </Modal>
                 <Grid xs={isDesktop ? 7 : 12} item alignItems="start" container direction="column">
                     {isDesktop && (
                         <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
