@@ -27,7 +27,7 @@ const Container = styled.div`
     padding: 1rem;
     height: 75vh;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         background-color: ${white};
         padding: 0 1rem 3rem;
         height: auto;
@@ -43,7 +43,7 @@ const TopText = styled.h1`
     font-size: 36px;
     line-height: 1.25;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
         font-size: 48px;
         font-weight: 300;
@@ -63,7 +63,7 @@ const TrackingText = styled.p`
     font-size: 24px;
     line-height: 2;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
         font-weight: 300;
         line-height: 1.4;
@@ -82,7 +82,7 @@ const LinksContainer = styled.div`
     justify-content: center;
     align-items: center;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         margin-top: 2rem;
     }
 `;
@@ -92,15 +92,18 @@ const StyledLink = styled(Link)`
     margin: 0 5% 1rem;
     color: ${white};
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
     }
 `;
-const CheckIconBox = <Box py={4}>
-    <SCheckIcon>
-        <img src={CheckIcon} alt="Jehlomat" />
-    </SCheckIcon>
-</Box>;
+
+const CheckIconBox = (
+    <Box py={4}>
+        <SCheckIcon>
+            <img src={CheckIcon} alt="Jehlomat" />
+        </SCheckIcon>
+    </Box>
+);
 
 const Potvrzeni: FC<Props> = ({ trackingCode }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);

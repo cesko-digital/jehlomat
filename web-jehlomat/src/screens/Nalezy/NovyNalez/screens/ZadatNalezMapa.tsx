@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import MapControl from 'screens/Nalezy/NovyNalez/components/MapControl';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
+import { media } from 'utils/media';
 
 interface IZadatNalezMapa {
     userSelectedLocation: [number | undefined, number | undefined];
@@ -22,7 +23,7 @@ const StyledContainer = styled.div`
     width: 100%;
     height: 600px;
 
-    @media (max-width: 700px) {
+    @media ${media.lte('mobile')} {
         // compensate parent padding, nasty but easiest
         width: 100vw;
         transform: translateX(-16px);
