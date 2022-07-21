@@ -60,7 +60,7 @@ const Map = styled.div`
     height: 500px;
     flex-grow: 1;
     padding: 1em;
-    @media (max-width: 700px) {
+    @media ${media.lte('mobile')} {
         // compensate parent padding, nasty but easiest
         width: 100vw;
         height: 100vh;
@@ -76,7 +76,7 @@ const FormContainer = styled(Container)`
     padding: 1em 0 1em 0;
     width: 50%;
     height: 100%;
-    @media (max-width: 700px) {
+    @media ${media.lte('mobile')} {
         width: 100%;
         padding: 1em 1em 1em 1em;
     }
@@ -104,7 +104,7 @@ const validationSchema = yup.object({
 });
 
 const Team = () => {
-    const [location, setLocation]: ILocation[]|any[] = useState([]);
+    const [location, setLocation]: ILocation[] | any[] = useState([]);
     const [geom, setGeom]: any[] = useState([]);
     const [teamName, setTeamName] = useState('');
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
@@ -168,18 +168,22 @@ const Team = () => {
                 const response: AxiosResponse<any> = await API.get(`/organization/${user.organizationId}/users`);
                 return response.data;
             }
-        }
+        };
 
-        getLocation().then((data: any[]) => {
-            setLocation(data);
-        }).catch(() => {
-            history.push(LINKS.ERROR);
-        });
-        getMember().then((data) => {
-            setMembers(data)
-        }).catch(() => {
-            history.push(LINKS.LOGIN);
-        });
+        getLocation()
+            .then((data: any[]) => {
+                setLocation(data);
+            })
+            .catch(() => {
+                history.push(LINKS.ERROR);
+            });
+        getMember()
+            .then(data => {
+                setMembers(data);
+            })
+            .catch(() => {
+                history.push(LINKS.LOGIN);
+            });
 
         getLocation()
             .then(data => {
@@ -198,14 +202,14 @@ const Team = () => {
     }, [history, user]);
 
     useEffect(() => {
-        const checkType = (type: string, data:any) => {
+        const checkType = (type: string, data: any) => {
             switch (type.toLowerCase()) {
                 case 'multipolygon':
-                    return data.coordinates&&data.coordinates[0]&&data.coordinates[0][0]?data.coordinates[0][0]:[];
+                    return data.coordinates && data.coordinates[0] && data.coordinates[0][0] ? data.coordinates[0][0] : [];
                 case 'polygon':
-                    return data.coordinates&&data.coordinates[0]?data.coordinates[0]:[];
+                    return data.coordinates && data.coordinates[0] ? data.coordinates[0] : [];
             }
-        }
+        };
         setGeom([]);
         selectedLocation.map(async (place: any, id: number) => {
             const geometry = await getGeometry(place.type, place.id).then(data => {
@@ -420,19 +424,15 @@ const Team = () => {
                                                 disableClearable={true}
                                                 id="team-locality-select"
                                                 options={location}
-                                                getOptionLabel={(option:ILocation) => `${option.type} - ${option.name}`}
+                                                getOptionLabel={(option: ILocation) => `${option.type} - ${option.name}`}
                                                 onChange={(event, value) => {
                                                     const data = knock(selectedLocation, value);
                                                     setSelectedLocation([...data]);
                                                 }}
-                                                renderInput={
-                                                    (params) => <TextField {...params}/>
-                                                }
+                                                renderInput={params => <TextField {...params} />}
                                             />
 
-                                            <FormHelperText error={true}>
-                                                {touched.location && errors.location ? errors.location.name : undefined}
-                                            </FormHelperText>
+                                            <FormHelperText error={true}>{touched.location && errors.location ? errors.location.name : undefined}</FormHelperText>
                                         </StyledFormControl>
                                         {isMobile ? (
                                             <SecondaryButton

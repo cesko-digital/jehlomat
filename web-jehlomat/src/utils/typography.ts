@@ -54,7 +54,7 @@ export const FormItemLabel = styled.label<{ disableUppercase?: boolean }>`
     padding-bottom: 15px;
     color: grey;
     padding-bottom: 5px;
-  
+
     @media (min-width: 420px) {
         align-self: flex-start;
     }
@@ -72,7 +72,7 @@ export const FormHeading = styled.p`
     @media (min-width: 420px) {
         width: 50%;
     }
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         width: 340px;
     }
 `;

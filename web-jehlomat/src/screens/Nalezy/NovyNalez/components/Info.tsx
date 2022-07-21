@@ -21,7 +21,7 @@ const Container = styled.div`
     flex-direction: column;
     height: 100%;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         flex-direction: row;
         padding-bottom: 4rem;
     }
@@ -40,7 +40,7 @@ export const Card = styled.div<iCard>`
     padding: 1rem 0rem;
     flex-grow: 1;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         padding: 1rem 0 0.5rem;
         &:last-child {
             display: none;
@@ -59,7 +59,7 @@ const Icon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
     }
 `;
 
@@ -78,7 +78,7 @@ const MutedText = styled.p`
     font-weight: 400;
     line-height: 16.4px;
     margin: 0 0 25px;
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         display: none;
     }
 `;
@@ -90,12 +90,12 @@ const Arrow = styled.img`
     position: absolute;
     top: 140px;
     z-index: 2;
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         display: none;
     }
 `;
 
-const Info: FC<iInfo> = ({  }) => {
+const Info: FC<iInfo> = ({}) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [firstRun, setFirstRun] = useState(true);

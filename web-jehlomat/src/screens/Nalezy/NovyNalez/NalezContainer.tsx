@@ -1,11 +1,12 @@
-import React, { useCallback, ReactNode } from 'react';
+import React, { useCallback, ReactNode, useState } from 'react';
 import { FC } from 'react';
 import Box from '@mui/material/Box';
 import Container, { ContainerProps } from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { AxiosResponse } from 'axios';
 
-import { INovaJehla, isExistingSyringe, JehlaState, StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
+import { isExistingSyringe, JehlaState, StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/Nalezy/NovyNalez/components/Info';
 import Potvrzeni from 'screens/Nalezy/NovyNalez/screens/Potvrzeni';
@@ -41,11 +42,13 @@ const StepsTitleMap = new Map<StepsEnum, string>([
 const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
+    const [trackingCode, setTrackingCode] = useState<string | null>(null);
 
     const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
 
     const handleOnSubmit = () => {
         setCurrentStep(StepsEnum.Nahled);
+        setTrackingCode(null);
     };
 
     const handleOnSave = async () => {
@@ -60,8 +63,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
                 ...(count ? { count: typeof count === 'number' ? count : parseInt(count) } : {}),
             };
 
-
-            let data;
+            let data: AxiosResponse<any>;
 
             if ('id' in newSyringeInfo && newSyringeInfo.id) {
                 const { id } = newSyringeInfo;
@@ -71,9 +73,9 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
                 data = await API.post('/syringe', apiSyringe);
             }
 
-
             if (data.status > 200 && data.status < 300) {
                 setCurrentStep(StepsEnum.Potvrzeni);
+                setTrackingCode(data.data.id);
             }
         } catch (error) {
             // Error handling 101
@@ -92,20 +94,20 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
-            <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation }} />
+            <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation, trackingCode }} />
         </Box>
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation }) => {
+const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation, trackingCode }) => {
     const [currentStep] = useRecoilState(newSyringeStepState);
-    const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState)
+    const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState);
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     const isSubmitDisabled = () => {
         // Pokud je na formulari chyba, zablokujeme Submit button
         return !Object.values(newSyringeInfoError).every(error => error === undefined);
-    }
+    };
 
     switch (currentStep) {
         case StepsEnum.Start:
@@ -180,7 +182,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
         case StepsEnum.Potvrzeni:
             return (
                 <SyringeLayout sx={{ padding: 0 }}>
-                    <Potvrzeni />
+                    <Potvrzeni trackingCode={trackingCode} />
                 </SyringeLayout>
             );
         default:
@@ -199,6 +201,7 @@ interface INovyNalez {
     handleOnSave: () => void;
     handleGoToEdit: () => void;
     handleEditLocation: () => void;
+    trackingCode: string | null;
 }
 
 export interface AddSyringeLayoutProps extends Pick<ContainerProps, 'sx'> {}

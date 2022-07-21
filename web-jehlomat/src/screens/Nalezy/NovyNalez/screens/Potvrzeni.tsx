@@ -1,14 +1,22 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
+import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
+import { useRecoilValue } from 'recoil';
 import Link from 'Components/Link';
 
 import { primary, white } from 'utils/colors';
-import { H1, H4 } from 'utils/typography';
+import { fontFamilyRoboto } from 'utils/typography';
+import { media } from 'utils/media';
 import { LINKS } from 'routes';
+import { isLoginValidState } from 'store/login';
+import imageSrc from 'assets/images/finish-line.svg';
+import CheckIcon from 'assets/icons/check.svg';
+import { SCheckIcon } from 'screens/RegistraceOrganizace/Dekujeme.styled';
 
-interface Props {}
+interface Props {
+    trackingCode: string | null;
+}
 
 const Container = styled.div`
     display: flex;
@@ -19,58 +27,63 @@ const Container = styled.div`
     padding: 1rem;
     height: 75vh;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         background-color: ${white};
-        padding: 3rem 1rem;
+        padding: 0 1rem 3rem;
         height: auto;
     }
 `;
 
-const TextContainer = styled.div`
-    margin-bottom: 2rem;
-`;
-
-const Title = styled.h2`
-    font-size: 52px;
-    color: ${white};
-    text-align: center;
-    margin: 1rem 0;
-
-    @media (min-width: 700px) {
-        color: ${primary};
-    }
-`;
-
-const TopText = styled(H1)`
+const TopText = styled.h1`
+    ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
     margin: 0;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 1.25;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
+        font-size: 48px;
+        font-weight: 300;
     }
 `;
 
-const SecondaryText = styled(H4)`
+const TopTextSmall = styled(TopText)`
+    font-size: 30px;
+`;
+
+const TrackingText = styled.p`
+    ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
     margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 2;
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
+        font-weight: 300;
+        line-height: 1.4;
     }
+`;
+
+const TrackingCode = styled(TrackingText)`
+    letter-spacing: 0.3em;
 `;
 
 const LinksContainer = styled.div`
     width: 100%;
     display: flex;
     margin-top: 2rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    @media (min-width: 700px) {
-        margin-top: 5rem;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    @media ${media.gt('mobile')} {
+        margin-top: 2rem;
     }
 `;
 
@@ -79,26 +92,56 @@ const StyledLink = styled(Link)`
     margin: 0 5% 1rem;
     color: ${white};
 
-    @media (min-width: 700px) {
+    @media ${media.gt('mobile')} {
         color: ${primary};
     }
 `;
 
-const Potvrzeni: FC<Props> = () => {
+const CheckIconBox = (
+    <Box py={4}>
+        <SCheckIcon>
+            <img src={CheckIcon} alt="Jehlomat" />
+        </SCheckIcon>
+    </Box>
+);
+
+const Potvrzeni: FC<Props> = ({ trackingCode }) => {
+    const isLoggedIn = useRecoilValue(isLoginValidState);
+    const isDesktop = useMediaQuery(media.gt('mobile'));
+
     return (
         <Container>
-            <TextContainer>
-                <TopText>Děkujeme za vložení nálezu!</TopText>
-                <Title>jehlomat</Title>
-                <SecondaryText>Nález bude zlikvidován terénním pracovníkem.</SecondaryText>
-            </TextContainer>
-            <Box>
-                <SecondaryButton text="ULOŽIT NÁZEV" />
-            </Box>
-            <LinksContainer>
-                <StyledLink>Chci zaslat potvrzení o likvidaci nálezu</StyledLink>
-                <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
-            </LinksContainer>
+            {isDesktop && (
+                <>
+                    <Box alignItems="center">
+                        <img src={imageSrc} height="285" alt="finish-line" />
+                    </Box>
+                    {CheckIconBox}
+                    <Box mb="2rem">
+                        <TopText>Vložení nálezu bylo úspěšné</TopText>
+                    </Box>
+                </>
+            )}
+            {!isDesktop && (
+                <>
+                    <Box mb="2rem">
+                        <TopText>Vložení nálezu</TopText>
+                        <TopTextSmall>bylo úspěšné</TopTextSmall>
+                    </Box>
+                    {CheckIconBox}
+                </>
+            )}
+            {!isLoggedIn && trackingCode && (
+                <>
+                    <Box>
+                        <TrackingText>Trasovací kód pro jeho sledování:</TrackingText>
+                        <TrackingCode>{trackingCode}</TrackingCode>
+                    </Box>
+                    <LinksContainer>
+                        <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
+                    </LinksContainer>
+                </>
+            )}
         </Container>
     );
 };
