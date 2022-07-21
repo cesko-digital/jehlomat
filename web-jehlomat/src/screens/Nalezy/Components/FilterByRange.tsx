@@ -63,7 +63,7 @@ const FilterByRange: FunctionComponent = () => {
 
     return (
         <Filter title="Období" onReset={handleReset}>
-            <Select onChange={handleSelect}>
+            <Select value={kind} onChange={handleSelect}>
                 <option value="">&nbsp;</option>
                 <option value="DEMOLISH">Období likvidace</option>
                 <option value="FIND">Období nálezu</option>

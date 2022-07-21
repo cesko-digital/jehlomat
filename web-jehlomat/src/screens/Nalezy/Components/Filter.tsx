@@ -47,7 +47,7 @@ export const Range = styled('div')({
     '& > *': {
         width: 'calc(50% - 8px)',
 
-        '&:first-child': {
+        '&:first-of-type': {
             marginRight: '16px',
         },
     },
