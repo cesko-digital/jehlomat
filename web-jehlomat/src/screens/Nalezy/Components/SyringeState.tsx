@@ -11,7 +11,7 @@ const SyringeState: FunctionComponent<SyringeStateProps> = ({ syringe }) => {
         return <TextMuted>Zlikvidováno</TextMuted>;
     }
 
-    if (syringe.reservedTill) {
+    if (syringe.reservedBy) {
         return <TextHighlight>Rezervováno TP</TextHighlight>;
     }
 

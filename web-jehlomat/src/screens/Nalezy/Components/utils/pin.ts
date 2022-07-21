@@ -26,7 +26,7 @@ const deriveStateOf = (syringe: Syringe): SyringeState => {
         return 'DEMOLISHED';
     }
 
-    if (syringe.reservedTill) {
+    if (syringe.reservedBy) {
         return 'RESERVED';
     }
 

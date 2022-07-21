@@ -78,7 +78,7 @@ export const mock: SyringeReadModel = {
             },
             count: 1,
             note: 'note 1',
-            demolisher: 'NO',
+            demolisherType: 'NO',
             location: {
                 id: 0,
                 okres: 'CZ0323',
@@ -122,7 +122,7 @@ export const mock: SyringeReadModel = {
             },
             count: 1,
             note: 'note 1',
-            demolisher: 'NO',
+            demolisherType: 'NO',
             location: {
                 id: 0,
                 okres: 'CZ0323',
@@ -146,7 +146,7 @@ export const mock: SyringeReadModel = {
             demolished: false,
             count: 1,
             note: 'note 1',
-            demolisher: 'NO',
+            demolisherType: 'NO',
             location: {
                 id: 0,
                 okres: 'CZ0323',
