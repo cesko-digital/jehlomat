@@ -17,6 +17,7 @@ import services.*
 import utils.isValidMail
 import java.time.Instant
 
+const val MAXIMAL_RESERVATION_WIDE = 86400 * 30
 
 fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: MailerService): Route {
 
@@ -204,6 +205,38 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                         demolished = true,
                         demolishedBy = currentUser.toUserInfo(),
                         demolishedAt = now
+                    ).toFlatObject())
+                    call.respond(HttpStatusCode.NoContent)
+                }
+
+                post("/reserve") {
+                    val syringeReservedRequest = call.receive<SyringeReserveRequest>()
+                    val syringe = call.parameters["id"]?.let { it1 -> database.selectSyringeById(it1) }
+                    if (syringe == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@post
+                    }
+
+                    if (SyringeStatus.fromDbRecord(syringe) != SyringeStatus.WAITING) {
+                        call.respond(HttpStatusCode.BadRequest, "The syringe has to have waiting status to be reserved.")
+                        return@post
+                    }
+
+                    val now = Instant.now().epochSecond
+                    if (now > syringeReservedRequest.reservedTill) {
+                        call.respond(HttpStatusCode.BadRequest, "Th reservation must be in the future.")
+                        return@post
+                    }
+
+                    if (now + MAXIMAL_RESERVATION_WIDE < syringeReservedRequest.reservedTill) {
+                        call.respond(HttpStatusCode.BadRequest, "The maximal reservation is a month.")
+                        return@post
+                    }
+
+                    val currentUser = jwtManager.getLoggedInUser(call, database)
+                    database.updateSyringe(syringe.copy(
+                        reservedBy = currentUser.toUserInfo(),
+                        reservedTill = syringeReservedRequest.reservedTill
                     ).toFlatObject())
                     call.respond(HttpStatusCode.NoContent)
                 }
