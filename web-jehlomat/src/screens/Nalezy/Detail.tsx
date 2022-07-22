@@ -30,13 +30,15 @@ import apiURL from 'utils/api-url';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 import { userIDState } from 'store/login';
 
-const Details = styled('div')(({ theme }) => ({
-    marginLeft: theme.spacing(2),
+const Details = styled('div')`
+    & > * {
+        margin-bottom: ${props => props.theme.spacing(2)};
+    }
 
-    '& > *': {
-        marginBottom: theme.spacing(2),
-    },
-}));
+    @media ${media.gt('mobile')} {
+        margin-left: ${props => props.theme.spacing(2)};
+    }
+`;
 
 const state = (syringe: Syringe | undefined): string => {
     if (!syringe) return '';
@@ -143,16 +145,18 @@ const Detail = () => {
 
     return (
         <>
-            <Header mobileTitle={texts.DETAIL__TITLE} />
+            <Header mobileTitle={texts.DETAIL__TITLE} backRoute={'/nalezy'} />
 
             <Page>
                 <Container sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                    <Box mt={5} mb={2}>
-                        <TextHeader>{texts.DETAIL__TITLE}</TextHeader>
-                        <RoundButton filled={true} onClick={handleGetBack}>
-                            <BackIcon />
-                        </RoundButton>
-                    </Box>
+                    { !isMobile && (
+                        <Box mt={5} mb={2}>
+                            <TextHeader>{texts.DETAIL__TITLE}</TextHeader>
+                            <RoundButton filled={true} onClick={handleGetBack}>
+                                <BackIcon />
+                            </RoundButton>
+                        </Box>
+                    )}
                     {loading && (
                         <Box ml={5} mr={3}>
                             <Loading />
@@ -164,10 +168,10 @@ const Detail = () => {
                         </Box>
                     )}
                     {data && isMobile && (
-                        <>
+                        <Box pt={4}>
                             {DetailsCmp}
                             {MapCmp}
-                        </>
+                        </Box>
                     )}
                     {data && !isMobile && <TwoColumns left={DetailsCmp} right={MapCmp} />}
                 </Container>
