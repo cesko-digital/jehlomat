@@ -122,7 +122,7 @@ const Detail = () => {
     );
 
     const MapCmp = (
-        <Box height={443} borderRadius={2} overflow="hidden" zIndex={0}>
+        <Box height={443} borderRadius={2} overflow="hidden">
             <LeafletMap preferCanvas center={DEFAULT_POSITION} zoom={DEFAULT_ZOOM_LEVEL}>
                 {data && (
                     <Pin syringe={data}>
