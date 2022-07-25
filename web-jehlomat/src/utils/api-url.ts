@@ -19,6 +19,10 @@ class APIURL {
         return `/syringe/${syringeId}`;
     }
 
+    getSyringeInfo(syringeId: string) {
+        return `/syringe/${syringeId}/info`;
+    }
+
     getOrganizationVerification(orgId: string) {
         return `/verification/organization?orgId=${orgId}`;
     }
