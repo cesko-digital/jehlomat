@@ -10,6 +10,7 @@ import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
+import { clearApiToken } from 'config/baseURL';
 
 interface Props {
     mobileTitle: string;
@@ -23,6 +24,7 @@ export const Header = (props: Props) => {
 
     const logoutFnc = useCallback(() => {
         setToken(null);
+        clearApiToken();
     }, [setToken]);
 
     const onBack = () => {

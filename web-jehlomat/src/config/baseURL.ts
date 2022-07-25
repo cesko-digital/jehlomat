@@ -35,5 +35,9 @@ export const setApiToken = (jwt: string) => {
     return API;
 };
 
+export const clearApiToken = () => {
+    delete API.defaults.headers.common["Authorization"];
+    return API;
+};
 
 export default API;
