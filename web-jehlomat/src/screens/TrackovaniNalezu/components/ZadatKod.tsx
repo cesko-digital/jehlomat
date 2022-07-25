@@ -65,7 +65,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
-                                    const response: AxiosResponse<any> = await API.get(apiURL.getSyringe(values.kod));
+                                    const response: AxiosResponse<any> = await API.get(apiURL.getSyringeInfo(values.kod));
                                     const { status } = response;
 
                                     switch (true) {
