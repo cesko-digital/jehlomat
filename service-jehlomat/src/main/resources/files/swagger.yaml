@@ -381,6 +381,30 @@ paths:
           description: Successful operation
         '404':
           description: Syringe not found
+  /syringe/{id}/reserve:
+    post:
+      summary: Reserve syringe
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Syringe object that needs to be changed
+          required: true
+          schema:
+            type: object
+            properties:
+              reservedTill:
+                type: number
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          description: Syringe not found
   /syringe/{id}/track:
     post:
       summary: Request a syringe track code to be send to an email

@@ -192,7 +192,6 @@ class ApplicationTestSyringe {
     fun testExportSyringesCreatedByAnonymous() = withTestApplication(Application::module) {
         database.insertUser(SUPER_ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
         val token = loginUser(SUPER_ADMIN.email, SUPER_ADMIN.password)
-        val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
         val id = database.insertSyringe(defaultSyringe.copy(createdAt = 1))
 
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/export"){
@@ -462,6 +461,102 @@ class ApplicationTestSyringe {
         }
     }
 
+    @Test
+    fun testReserveSyringeOk() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) + 86400
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/reserve"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.NoContent, response.status())
+            val reserved = database.selectSyringeById(syringeId)
+            assertNotNull(reserved)
+            assertEquals(defaultUser, reserved.reservedBy)
+            assertEquals(reservedTill, reserved.reservedTill)
+        }
+    }
+
+    @Test
+    fun testReserveSyringeAlreadyReserved() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) + 86400
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, reservedBy = defaultUser, reservedTill = reservedTill))!!
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/reserve"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testReserveSyringeAnonymous() = withTestApplication(Application::module) {
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) + 86400
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/reserve"){
+            addHeader("Content-Type", "application/json")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.Unauthorized, response.status())
+        }
+    }
+
+    @Test
+    fun testReserveSyringeReservedInPast() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) - 100
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/reserve"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testReserveSyringeTooLong() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) + 86400 * 100
+        val syringeId = database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser))!!
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/$syringeId/reserve"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.BadRequest, response.status())
+        }
+    }
+
+    @Test
+    fun testReserveSyringeNotExistent() = withTestApplication(Application::module) {
+        val token = loginUser(USER.email, USER.password)
+        val reservedTill = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC) + 86400
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/abc/reserve"){
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+            setBody(Json.encodeToString(SyringeReserveRequest(
+                reservedTill = reservedTill,
+            )))
+        }) {
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
 
     fun createRequestFromDbObject(original: Syringe): SyringeCreateRequest{
         return SyringeCreateRequest(
