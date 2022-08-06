@@ -42,7 +42,7 @@ const OrganizationVerification = (props: IVerification) => {
     const isAdminVerification: boolean = props.code && props.userId ? true : false;
 
     const CONTENT_DATA__SUCCESS: IContentData = {
-        text: isAdminVerification ? 'Děkujeme za potvrzení. Niní se můžete příhlásit' : 'Organizace byla úspěšně schválena!',
+        text: isAdminVerification ? 'Děkujeme za potvrzení. Nyní se můžete příhlásit' : 'Organizace byla úspěšně schválena!',
         icon: {
             Component: CheckCircle,
             color: {
@@ -75,29 +75,35 @@ const OrganizationVerification = (props: IVerification) => {
     };
 
     const handleOrganizationConfirm = useCallback(async () => {
-        if (token) {
-            const response: AxiosResponse = isAdminVerification
-                ? await API.post(apiURL.postAdminOrganizationVerification(), { userId: props.userId, code: props.code })
-                : await API.get(apiURL.getOrganizationVerification(orgId));
-            const status = response.status;
-
-            let contentDataToSet = null;
-            if (isStatusSuccess(status)) {
-                contentDataToSet = CONTENT_DATA__SUCCESS;
-            } else if (isStatusNoPermission(status)) {
-                contentDataToSet = CONTENT_DATA__NO_PERMISSION;
-            } else if (isStatusNoContent(status) || isStatusNotFound(status)) {
-                contentDataToSet = CONTENT_DATA__NOK;
-            } else {
-                history.push('/error');
-                return;
-            }
-
-            if (contentDataToSet) {
-                setContentData(contentDataToSet);
-            }
+        let response: AxiosResponse;
+        if (isAdminVerification) {
+            response = await API.post(apiURL.postAdminOrganizationVerification(), { userId: props.userId, code: props.code });
+        } else if (token) {
+            response = await API.get(apiURL.getOrganizationVerification(orgId));
         } else {
             history.push('/error');
+            return;
+        }
+
+        const status = response.status;
+        let contentDataToSet = null;
+        if (isStatusSuccess(status)) {
+            if (isAdminVerification) {
+                history.push('/organizace/dekujeme');
+            } else {
+                contentDataToSet = CONTENT_DATA__SUCCESS;
+            }
+        } else if (isStatusNoPermission(status)) {
+            contentDataToSet = CONTENT_DATA__NO_PERMISSION;
+        } else if (isStatusNoContent(status) || isStatusNotFound(status)) {
+            contentDataToSet = CONTENT_DATA__NOK;
+        } else {
+            history.push('/error');
+            return;
+        }
+
+        if (contentDataToSet) {
+            setContentData(contentDataToSet);
         }
     }, [orgId, history, token]);
 
