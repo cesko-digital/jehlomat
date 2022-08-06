@@ -11,7 +11,7 @@ const Container = styled.div`
     position: relative;
     height: 100%;
     flex-direction: row;
-    padding-bottom: 4rem;
+    padding-bottom: 2rem;
 `;
 interface iCard {
     backgroundColor: string;
@@ -51,7 +51,7 @@ export const Card = styled.div<iCard>`
     align-items: center;
     background: ${props => props.backgroundColor};
     flex-grow: 1;
-    padding: ${size(2)};
+    padding: 10px;
 
     ${props =>
         props.active &&
@@ -110,9 +110,9 @@ const Title = styled.h6`
 const StepperContainer: FC = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
-    return (
+    return isMobile ? null : (
         <>
-            <Box minHeight={isMobile ? '100vh' : 0}>
+            <Box>
                 <Container>{children}</Container>
             </Box>
         </>

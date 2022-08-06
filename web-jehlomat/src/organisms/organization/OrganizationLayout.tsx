@@ -31,8 +31,8 @@ export function OrganizationLayout(props: PropsWithChildren<Props>) {
                 <StepperCard currentStep={step} order={0} title="zadání údajů k vytvoření účtu">
                     <IconImage src={1 <= step ? PenIcon : PenInactiveIcon} alt="vytvoření účtu" />
                 </StepperCard>
-                <StepperCard currentStep={step} order={1} title="ověření e&#8209;mailové adresy">
-                    <IconImage src={2 <= step ? MessageIcon : MessageInactiveIcon} alt="ověření e-mailové adresy" />
+                <StepperCard currentStep={step} order={1} title="ruční schválení organizace">
+                    <IconImage src={2 <= step ? MessageIcon : MessageInactiveIcon} alt="ruční schválení organizace" />
                 </StepperCard>
                 <StepperCard currentStep={step} order={2} title="úspěšné založení účtu">
                     <IconImage src={CheckInactiveIcon} alt="úspěšné založení účtu" />

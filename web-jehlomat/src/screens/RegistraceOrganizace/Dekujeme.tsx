@@ -1,28 +1,11 @@
-import React from 'react';
-import styled from '@emotion/styled';
-import { primary, textSubTitles, white } from '../../utils/colors';
+import { textSubTitles } from '../../utils/colors';
 import { media } from '../../utils/media';
 import { Typography, useMediaQuery } from '@mui/material';
-import logo from '../../assets/logo/logo-jehlomat.svg';
 import CheckIcon from '../../assets/icons/check.svg';
-import { SCheckIcon, SLogo } from './Dekujeme.styled';
+import { SCheckIcon } from './Dekujeme.styled';
 import { OrganizationLayout, RegistrationStep } from '../../organisms/organization/OrganizationLayout';
 import { Box } from '@mui/system';
-
-const Container = styled.div`
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: ${white};
-    background-color: ${primary};
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-`;
+import { MobileContainer, JehlomatLogo } from './components/MobileComponents';
 
 export default function Dekujeme() {
     const isMobile = useMediaQuery(media.lte('mobile'));
@@ -30,17 +13,17 @@ export default function Dekujeme() {
     function renderContent() {
         if (isMobile) {
             return (
-                <Container>
-                    <Typography maxWidth={190} mb={[10, 10]} variant="h5" textAlign="center" fontWeight="300">
+                <MobileContainer>
+                    <Typography maxWidth={190} mb={[10, 10]} variant="h5" textAlign="center" fontWeight="400">
                         Vaše organizace byla úspěšně zaregistrovaná!
                     </Typography>
 
-                    <SLogo src={logo} alt="Jehlomat" />
+                    <JehlomatLogo />
 
                     <SCheckIcon>
                         <img src={CheckIcon} alt="Jehlomat" />
                     </SCheckIcon>
-                </Container>
+                </MobileContainer>
             );
         }
 
