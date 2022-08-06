@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import { IContentData } from './OrganizationVerification';
 import Container from '@mui/material/Container';
 import { useMemo } from 'react';
-import { primary, white } from '../../utils/colors';
+import { primary, primaryDark, white } from '../../utils/colors';
 import { Header } from 'Components/Header/Header';
 
 interface IProps {
@@ -21,7 +21,7 @@ export const Content = (props: IProps) => {
             flexGrow: 1,
             display: 'flex',
             backgroundColor: desktop ? white : primary,
-            color: desktop ? primary : white,
+            color: desktop ? primaryDark : white,
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
@@ -35,7 +35,7 @@ export const Content = (props: IProps) => {
             <Container sx={containerStyles}>
                 {props.contentData && (
                     <>
-                        <Typography marginBottom={2} align="center" variant="h4">
+                        <Typography marginBottom={2} align="center" variant="h4" fontWeight="300">
                             {props.contentData.text}
                         </Typography>
                         <props.contentData.icon.Component sx={{ color: desktop ? props.contentData.icon.color.desktop : props.contentData.icon.color.mobile, fontSize: 80 }} />
