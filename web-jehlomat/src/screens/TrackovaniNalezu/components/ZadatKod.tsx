@@ -74,10 +74,9 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
 
                                             if (data.demolished) {
                                                 handleNewSyringeState(SyringeStateType.DESTROYED);
-                                            } else if(data.announced){
+                                            } else if (data.announced) {
                                                 handleNewSyringeState(SyringeStateType.ANNOUNCED);
-                                            }
-                                            else {
+                                            } else {
                                                 handleNewSyringeState(SyringeStateType.WAITING);
                                             }
 

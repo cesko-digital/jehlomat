@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import styled from '@emotion/styled';

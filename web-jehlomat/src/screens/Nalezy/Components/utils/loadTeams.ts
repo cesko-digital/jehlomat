@@ -1,5 +1,5 @@
-import {AxiosResponse} from "axios";
-import {API} from 'config/baseURL';
+import { AxiosResponse } from 'axios';
+import { API } from 'config/baseURL';
 
 export interface Team {
     id: number;

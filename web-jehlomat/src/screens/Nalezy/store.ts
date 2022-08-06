@@ -5,18 +5,18 @@ import { Filtering } from './types/Filtering';
 import { SortableColumn } from './types/SortableColumn';
 import { SortDirection } from './types/SortDirection';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-import {Loader} from "utils/Loader";
+import { Loader } from 'utils/Loader';
 
 export const loaderState = atom<Loader<SyringeReadModel>>({
     key: '[nalezy] loader state',
     default: {
-       resp: {
-           syringeList: [],
-           pageInfo: {
-               size: 0,
-               index: 0,
-           },
-       }
+        resp: {
+            syringeList: [],
+            pageInfo: {
+                size: 0,
+                index: 0,
+            },
+        },
     },
 });
 

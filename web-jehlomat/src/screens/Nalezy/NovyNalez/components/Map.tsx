@@ -6,7 +6,7 @@ import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/c
 import icon from 'assets/icons/marker_orange.svg';
 import 'leaflet/dist/leaflet.css';
 
-import { mapPositionState, mapUserPositionState, } from 'screens/Nalezy/NovyNalez/components/store';
+import { mapPositionState, mapUserPositionState } from 'screens/Nalezy/NovyNalez/components/store';
 import { ChangeView } from 'screens/Nalezy/NovyNalez/components/ChangeView';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -27,7 +27,6 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     const [userPosition, setUserPosition] = useRecoilState(mapUserPositionState);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [position, setPosition] = useRecoilState(mapPositionState);
-
 
     useEffect(() => {
         if (userPosition) {
@@ -51,7 +50,6 @@ const Map: FC<IMapa> = ({ children, locked }) => {
         setPosition([lat, lng]);
     }
 
-
     return (
         <Box position="relative" width="100%" height="100%">
             <MapContainer
@@ -69,7 +67,7 @@ const Map: FC<IMapa> = ({ children, locked }) => {
                 preferCanvas
             >
                 <MapCustomEvents />
-                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"  />
+                <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {markerPosition && <Marker position={markerPosition} />}
                 {userPosition && <ChangeView center={userPosition} callback={() => setUserPosition(null)} />}
                 <RealPositionContextProvider />

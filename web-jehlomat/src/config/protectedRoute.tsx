@@ -7,19 +7,19 @@ import { useRecoilValue } from 'recoil';
 import { isLoginValidState } from 'store/login';
 
 interface IRedirectSearchParams {
-  // specifies redirection URL after successfull login
-  from?: string
+    // specifies redirection URL after successfull login
+    from?: string;
 }
 
 const PrivateRoute: FC<any> = ({ from, ...rest }) => {
     const location = useLocation();
     const isLoggedIn = useRecoilValue(isLoginValidState);
-    const searchParams: IRedirectSearchParams = {}
+    const searchParams: IRedirectSearchParams = {};
 
     if (from) {
-        console.log("from", from);
-        const query = location.search?location.search:"";
-        searchParams.from = location.pathname+query;
+        console.log('from', from);
+        const query = location.search ? location.search : '';
+        searchParams.from = location.pathname + query;
     }
 
     const search = convertSearchParamsToString(searchParams as Record<string, string>);
@@ -31,7 +31,7 @@ const PrivateRoute: FC<any> = ({ from, ...rest }) => {
             to={{
                 pathname: `/${LOGIN_URL_PATH}`,
                 state: { from: location },
-                search
+                search,
             }}
         />
     );

@@ -1,6 +1,6 @@
-import {styled} from "@mui/material";
-import {size} from "utils/spacing";
+import { styled } from '@mui/material';
+import { size } from 'utils/spacing';
 
 export const Inputs = styled('div')({
-  marginBottom: size(4),
+    marginBottom: size(4),
 });

@@ -45,7 +45,7 @@ export const syringeStates: syringeStateTypes = {
         secondLine: (
             <>
                 ČEKÁ
-                <br /> na odstranění organizací 
+                <br /> na odstranění organizací
             </>
         ),
     },

@@ -1,14 +1,13 @@
 import React from 'react';
 import MaterialUpload, { FileUploadProps as MaterialProps } from 'react-material-file-upload';
 import styled from '@emotion/styled';
-import {  primaryDark } from 'utils/colors';
+import { primaryDark } from 'utils/colors';
 
 export interface FileUploadProps extends MaterialProps {}
 
 const StyledWrapper = styled.div`
     width: 100%;
-   
-  
+
     .MuiBox-root {
         width: 100%;
         box-sizing: border-box;

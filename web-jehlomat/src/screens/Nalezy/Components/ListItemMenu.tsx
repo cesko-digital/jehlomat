@@ -31,7 +31,7 @@ const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickA
 
     const onDemolishSuccess = useCallback((id: string) => {
         setLoader(loader => {
-            if(!loader.resp?.syringeList) {
+            if (!loader.resp?.syringeList) {
                 return loader;
             }
             const syringeListUpdate = loader.resp?.syringeList.map(syringe => {
@@ -46,7 +46,7 @@ const ListItemMenu: FunctionComponent<ListItemMenuProps> = ({ anchorEl, onClickA
                 resp: {
                     ...loader.resp,
                     syringeList: syringeListUpdate,
-                }
+                },
             };
         });
     }, []);

@@ -9,8 +9,8 @@ import { Header } from 'Components/Header/Header';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TwoColumns from 'Components/Layout/TwoColumns';
 import { Input, Inputs, FormTitle, TransparentForm, ButtonsContainer, Illustration } from './Components';
-import useSetNewPassword, { SetPasswordFormProps } from "./hooks/useSetNewPassword";
-import { texts } from "./SetNewPassword.texts";
+import useSetNewPassword, { SetPasswordFormProps } from './hooks/useSetNewPassword';
+import { texts } from './SetNewPassword.texts';
 
 const schema = yup.object({
     password: yup.string().matches(PASSWORD_COMPLEXITY, texts.VALIDATIONS__SYMBOLS).min(8, texts.VALIDATIONS__MIN_LENGTH).required(texts.VALIDATIONS__REQUIRED),
@@ -20,7 +20,7 @@ const schema = yup.object({
 const init: SetPasswordFormProps = {
     password: '',
     rePassword: '',
-}
+};
 
 const ResetPassword: FunctionComponent = () => {
     const isDesktop = useMediaQuery(media.gt('mobile'));

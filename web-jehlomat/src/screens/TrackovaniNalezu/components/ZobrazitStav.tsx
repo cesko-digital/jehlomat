@@ -30,10 +30,10 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState, height }) => {
                             </Typography>
                         </>
                     )}
-                    <Typography align="center" variant="body1" color={isMobile ? 'white':primary} sx={{ mb: '2rem' }}>
+                    <Typography align="center" variant="body1" color={isMobile ? 'white' : primary} sx={{ mb: '2rem' }}>
                         {syringeState.firstLine}
                     </Typography>
-                    <Typography align="center" variant="body1" color={isMobile ? 'white':primary} sx={{ mb: '2rem' }} fontSize={isMobile ? 24 : 48}>
+                    <Typography align="center" variant="body1" color={isMobile ? 'white' : primary} sx={{ mb: '2rem' }} fontSize={isMobile ? 24 : 48}>
                         {syringeState.secondLine}
                     </Typography>
                     {syringeState.hasCheckMark && (
