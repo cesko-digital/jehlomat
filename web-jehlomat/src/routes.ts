@@ -139,6 +139,7 @@ export const routes: Route[] = [
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
         protectedRoute: true,
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
