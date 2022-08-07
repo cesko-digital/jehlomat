@@ -43,7 +43,6 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
     const confirmationModal = useConfirmationModalContext();
     const [requestError, setRequestError] = useState('');
 
-
     const handleSubmit = useCallback(
         async (values: IValues) => {
             const confirmResult = await confirmationModal?.show(confirmationModalParams);
@@ -57,19 +56,19 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
             };
             const orgResponse: AxiosResponse<IOrgData | string> = await API.put(apiURL.organization, newOrganisation);
 
-            if (!isStatusSuccess(orgResponse.status) && typeof orgResponse.data === "string") {
-                return setRequestError(orgResponse.data)
+            if (!isStatusSuccess(orgResponse.status) && typeof orgResponse.data === 'string') {
+                return setRequestError(orgResponse.data);
             }
 
             const newUser = {
                 email: values.email,
-                username: user.username
+                username: user.username,
             };
 
             const userResponse: AxiosResponse<IUser | string> = await API.put(apiURL.getUserAttributes(user.id), newUser);
 
-            if (!isStatusSuccess(userResponse.status) && typeof userResponse.data === "string") {
-                return setRequestError(userResponse.data)
+            if (!isStatusSuccess(userResponse.status) && typeof userResponse.data === 'string') {
+                return setRequestError(userResponse.data);
             }
         },
         [organisation, confirmationModal, user],
@@ -117,13 +116,13 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
                             />
                         </Box>
 
-{requestError ? (
-    <Box marginBottom={2}>
-        <Typography color="#D32F2F" align="center" variant="body2">
-            {requestError}
-        </Typography>
-    </Box>
-) : null}
+                        {requestError ? (
+                            <Box marginBottom={2}>
+                                <Typography color="#D32F2F" align="center" variant="body2">
+                                    {requestError}
+                                </Typography>
+                            </Box>
+                        ) : null}
 
                         <Box display="flex" flexDirection="column" alignItems="center">
                             {isMobile ? <PrimaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} /> : <SecondaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} />}

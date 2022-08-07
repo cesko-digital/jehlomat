@@ -18,8 +18,8 @@ export const darkGrey = '#787878';
 // text
 export const textPrimary = black;
 export const textSecondary = black;
-export const textGold = '#FEAB0D';
-export const textSubTitles = '#0E766C';
+export const textGold = secondary;
+export const textSubTitles = primaryDark;
 
 export function secondaryColorVariant(variant: 'light' | 'regular' | 'dark' | 'full') {
     switch (variant) {

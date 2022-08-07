@@ -43,7 +43,7 @@ function titleForType(type: HeaderLinkType): string {
         case HeaderLinkType.Watch:
             return 'Sledovat nález';
         case HeaderLinkType.Findings:
-            return 'Nálezy'
+            return 'Nálezy';
         case HeaderLinkType.Login:
             return 'Přihlásit se';
     }

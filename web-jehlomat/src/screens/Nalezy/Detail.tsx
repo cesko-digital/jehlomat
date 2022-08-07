@@ -149,7 +149,7 @@ const Detail = () => {
 
             <Page>
                 <Container sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                    { !isMobile && (
+                    {!isMobile && (
                         <Box mt={5} mb={2}>
                             <TextHeader>{texts.DETAIL__TITLE}</TextHeader>
                             <RoundButton filled={true} onClick={handleGetBack}>

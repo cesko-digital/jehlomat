@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import LocationAgreement from 'screens/Nalezy/NovyNalez/components/LocationAgreement';
 import Map from 'screens/Nalezy/NovyNalez/components/Map';

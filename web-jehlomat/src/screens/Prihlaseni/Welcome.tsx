@@ -13,7 +13,6 @@ const Login: FC<any> = () => {
 
     const user = useRecoilValue(userState);
 
-
     return (
         <Container sx={{ height: '100vh', width: '100%' }}>
             <Grid container justifyContent="start" sx={{ height: '100%', width: '100%' }}>

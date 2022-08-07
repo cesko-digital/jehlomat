@@ -3,12 +3,12 @@ import Box from '@mui/material/Box';
 import ImageViewer from 'react-simple-image-viewer';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
-import Resizer  from 'react-image-file-resizer';
+import Resizer from 'react-image-file-resizer';
 
 import FileUpload, { FileUploadProps } from 'Components/Inputs/FileUpload/FileUpload';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
-import {dataURLtoFile} from "utils/url";
+import { dataURLtoFile } from 'utils/url';
 
 interface PhotoUploadProps extends Omit<FileUploadProps, 'onChange' | 'value'> {
     onChange: (value: string) => void;
@@ -31,8 +31,6 @@ const resizeFile = (file: File) =>
             'base64',
         );
     });
-
-
 
 export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, value }) => {
     const [files, setFiles] = useState<File[]>([]);
@@ -74,12 +72,12 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onChange, readOnly, va
     }, [files]);
 
     useEffect(() => {
-        if(value && files.length < (value?.length || 0)) {
-            const files = value.map((string, index) => dataURLtoFile(string, `${index}`))
+        if (value && files.length < (value?.length || 0)) {
+            const files = value.map((string, index) => dataURLtoFile(string, `${index}`));
 
-            setFiles(files)
+            setFiles(files);
         }
-    },  [])
+    }, []);
 
     return (
         <>

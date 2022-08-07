@@ -1,4 +1,4 @@
-import React, { useCallback, ReactNode, useState } from 'react';
+import { useCallback, ReactNode, useState } from 'react';
 import { FC } from 'react';
 import Box from '@mui/material/Box';
 import Container, { ContainerProps } from '@mui/material/Container';
@@ -13,7 +13,7 @@ import Potvrzeni from 'screens/Nalezy/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/Nalezy/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/Nalezy/NovyNalez/screens/ZadavaniNalezu';
 import { API } from 'config/baseURL';
-import { primary } from 'utils/colors';
+import { primary, primaryDark } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
 import { useMediaQuery } from '@mui/material';
@@ -24,7 +24,9 @@ import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } fr
 import MapComponent from 'screens/Nalezy/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import Stepper from 'screens/Nalezy/NovyNalez/components/Stepper';
+import { StepperContainer, StepperCard } from 'Components/Stepper/Stepper';
+import { faCheck, faEdit, faMap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
@@ -211,10 +213,15 @@ const BackButton = styled(RoundButton)`
     left: -50px;
 `;
 
+// first step is skipped on desktop, fourth step is same as third
+const stepToStepperConversion = [0, 0, 1, 1, 2];
+
 const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const history = useHistory();
     const [newSyringeInfo] = useRecoilState(newSyringeInfoState);
+    const [currentStep] = useRecoilState(newSyringeStepState);
+    const convertedCurrentStep = stepToStepperConversion[currentStep];
 
     const handleGetBack = useCallback(() => {
         history.push('/nalezy');
@@ -236,7 +243,17 @@ const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     if (!isMobile) {
         return (
             <>
-                <Stepper />
+                <StepperContainer>
+                    <StepperCard currentStep={convertedCurrentStep} order={0} title="přidat do mapy">
+                        <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
+                    </StepperCard>
+                    <StepperCard currentStep={convertedCurrentStep} order={1} title="podrobnosti o nálezu">
+                        <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
+                    </StepperCard>
+                    <StepperCard currentStep={convertedCurrentStep} order={2} title="úspěšné vložení nálezu">
+                        <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
+                    </StepperCard>
+                </StepperContainer>
                 {renderContainer(<>{children}</>)}
             </>
         );
