@@ -9,15 +9,7 @@ import { Loader } from 'utils/Loader';
 
 export const loaderState = atom<Loader<SyringeReadModel>>({
     key: '[nalezy] loader state',
-    default: {
-        resp: {
-            syringeList: [],
-            pageInfo: {
-                size: 0,
-                index: 0,
-            },
-        },
-    },
+    default: {},
 });
 
 export const paginationState = atom<PageInfo>({
