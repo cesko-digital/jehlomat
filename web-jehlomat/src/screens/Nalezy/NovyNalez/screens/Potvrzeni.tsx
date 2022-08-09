@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from '@emotion/styled';
 import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import Link from 'Components/Link';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
@@ -42,12 +42,17 @@ const Container = styled.div`
     text-align: center;
     background-color: ${primary};
     padding: 1rem;
-    height: 75vh;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
 
     @media ${media.gt('mobile')} {
         background-color: ${white};
         padding: 0 1rem 3rem;
         height: auto;
+        position: static;
     }
 `;
 
@@ -164,6 +169,10 @@ const TrackingCode: FC<TrackingCodeProps> = ({ trackingCode }) => {
 const BackHomeLink: FC = () => {
     const isDesktop = useMediaQuery(media.gt('mobile'));
     const Button = isDesktop ? PrimaryButton : SecondaryButton;
+
+    const handleOnClick = () => {
+        history.push(LINKS.FINDINGS);
+    };
 
     return (
         <Link to={LINKS.HOME}>

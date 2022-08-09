@@ -60,3 +60,5 @@ export interface INovaJehlaError {
 export type JehlaState = INovaJehla | IExistujiciJehla;
 
 export const isExistingSyringe = (variable: INovaJehla | IExistujiciJehla): variable is IExistujiciJehla => isObject(variable) && has(variable, 'id');
+
+export const isSyringeEdit = (variable: INovaJehla | IExistujiciJehla): variable is IExistujiciJehla => isExistingSyringe(variable) && variable.edit == true;
