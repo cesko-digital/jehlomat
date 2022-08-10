@@ -6,7 +6,11 @@ import { isFunction } from 'formik';
 export enum HeaderLinkType {
     AboutApp,
     CreateOrgAccount,
+    ShowOrgAccount,
+    ShowUserAccount,
+    User,
     Watch,
+    NewFind,
     Findings,
     Login,
 }
@@ -40,8 +44,16 @@ function titleForType(type: HeaderLinkType): string {
             return 'O aplikaci';
         case HeaderLinkType.CreateOrgAccount:
             return 'Založit organizaci';
+        case HeaderLinkType.ShowOrgAccount:
+            return 'Profil Organizace';       
+        case HeaderLinkType.ShowUserAccount:
+            return 'Profil Uživatele';    
+        case HeaderLinkType.User:
+            return 'Seznam uživatelů';                           
         case HeaderLinkType.Watch:
             return 'Sledovat nález';
+        case HeaderLinkType.NewFind:
+            return 'Zadat nález'            
         case HeaderLinkType.Findings:
             return 'Nálezy'
         case HeaderLinkType.Login:

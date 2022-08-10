@@ -4,12 +4,13 @@ import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
-import { LINKS, Routes } from 'routes';
+import { LINKS, LINKS_WITH_PARAMS, Routes } from 'routes';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
+import { userState } from 'store/user';
 
 interface Props {
     mobileTitle: string;
@@ -20,6 +21,7 @@ export const Header = (props: Props) => {
     const history = useHistory();
     const isLoggedIn = useRecoilValue(isLoginValidState);
     const setToken = useSetRecoilState(tokenState);
+    const loggedUser = useRecoilValue(userState);
 
     const logoutFnc = useCallback(() => {
         setToken(null);
@@ -43,6 +45,55 @@ export const Header = (props: Props) => {
         }
     };
 
+    const renderUserNavigation = () => {
+        if (isLoggedIn) {
+            if (loggedUser && loggedUser?.isAdmin) {
+                    return (
+                        <>
+                            <HeaderLink type={HeaderLinkType.NewFind} route={LINKS_WITH_PARAMS.NEW_FIND?.(0)} />
+                            <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
+                            <HeaderLink type={HeaderLinkType.User} route={LINKS.USER} />
+                            <HeaderLink type={HeaderLinkType.ShowOrgAccount} route={LINKS.PROFILE} />
+                            {renderLoginLogout()}
+                        </>
+                    )
+                
+            } else {
+                    return (
+                        <>
+                            <HeaderLink type={HeaderLinkType.NewFind} route={LINKS_WITH_PARAMS.NEW_FIND?.(0)} />
+                            <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
+                            <HeaderLink type={HeaderLinkType.ShowUserAccount} route={LINKS.PROFILE} />
+                            {renderLoginLogout()}
+                        </>
+                    ); 
+                
+            }
+        //neprihlaseny    
+        } else {
+            return (
+                    <>
+                        <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
+                        <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
+                        {renderLoginLogout()}
+                    </>
+            );
+        }
+    };
+
+
+
+    // if (loggedUser && !loggedUser?.isAdmin) {
+    //     return
+    //     <SLinkContainer>
+    //         <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
+    //         <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
+    //         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
+    //         {renderLoginLogout()}
+    //     </SLinkContainer>;
+    // }
+
+
     return (
         <>
             <SContainer>
@@ -50,10 +101,7 @@ export const Header = (props: Props) => {
                     <HeaderLogo />
                 </Link>
                 <SLinkContainer>
-                    <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
-                    <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
-                    <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
-                    {renderLoginLogout()}
+                    {renderUserNavigation()}
                 </SLinkContainer>
             </SContainer>
 
