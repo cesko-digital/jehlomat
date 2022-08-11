@@ -8,6 +8,7 @@ export enum STEPS {
 export enum SyringeStateType {
     DESTROYED = 'DESTROYED',
     RESERVED = 'RESERVED',
+    WAITING = 'WAITING',
     ANNOUNCED = 'ANNOUNCED',
     NOTFOUND = 'NOTFOUND',
 }
@@ -35,6 +36,16 @@ export const syringeStates: syringeStateTypes = {
             <>
                 REZEROVAVNÝ
                 <br /> k likvidaci
+            </>
+        ),
+    },
+    [SyringeStateType.WAITING]: {
+        hasCheckMark: true,
+        firstLine: 'nález',
+        secondLine: (
+            <>
+                ČEKÁ
+                <br /> na odstranění organizací
             </>
         ),
     },

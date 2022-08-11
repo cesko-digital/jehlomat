@@ -33,7 +33,7 @@ const ModalWrapper = styled.div<{ mobile?: boolean }>`
 `;
 
 const ModalBody = styled.div<{ mobile?: boolean }>`
-    padding-top:50px;
+    padding-top: 50px;
 `;
 
 const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {

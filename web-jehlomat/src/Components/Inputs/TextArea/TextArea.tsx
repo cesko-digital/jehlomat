@@ -29,15 +29,15 @@ const Container = styled.div`
         border: 1px solid rgba(0, 0, 0, 0.23);
         border-radius: 4px;
         resize: none;
-        
+
         &:focus {
             margin-top: 0;
             border: 2px solid ${primary};
             outline: none;
         }
-      
+
         &:disabled {
-          -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+            -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
         }
     }
 `;

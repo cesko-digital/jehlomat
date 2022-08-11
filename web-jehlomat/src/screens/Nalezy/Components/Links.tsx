@@ -51,7 +51,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSucc
             const { id } = syringe;
 
             const payload = {
-               id
+                id,
             };
 
             API.post(`/syringe/${id}/demolish`, payload)
@@ -59,7 +59,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSucc
                     if (response.status !== 204) throw new Error('Unable to update syringe finding');
 
                     setPaging(state => ({ ...state }));
-                    if(onDemolishSuccess) onDemolishSuccess(id);
+                    if (onDemolishSuccess) onDemolishSuccess(id);
                 })
                 .catch(() => {
                     confirmationModal!

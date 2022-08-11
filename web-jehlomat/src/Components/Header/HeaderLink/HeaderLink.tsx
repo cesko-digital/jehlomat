@@ -55,7 +55,7 @@ function titleForType(type: HeaderLinkType): string {
         case HeaderLinkType.NewFind:
             return 'Zadat nález'            
         case HeaderLinkType.Findings:
-            return 'Nálezy'
+            return 'Nálezy';
         case HeaderLinkType.Login:
             return 'Přihlásit se';
     }

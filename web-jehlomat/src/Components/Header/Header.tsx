@@ -11,6 +11,7 @@ import Navigator from 'Components/Navigator/Navigator';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
 import { userState } from 'store/user';
+import { clearApiToken } from 'config/baseURL';
 
 interface Props {
     mobileTitle: string;
@@ -25,6 +26,7 @@ export const Header = (props: Props) => {
 
     const logoutFnc = useCallback(() => {
         setToken(null);
+        clearApiToken();
     }, [setToken]);
 
     const onBack = () => {
@@ -80,19 +82,6 @@ export const Header = (props: Props) => {
             );
         }
     };
-
-
-
-    // if (loggedUser && !loggedUser?.isAdmin) {
-    //     return
-    //     <SLinkContainer>
-    //         <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} />
-    //         <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} />
-    //         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
-    //         {renderLoginLogout()}
-    //     </SLinkContainer>;
-    // }
-
 
     return (
         <>

@@ -6,6 +6,7 @@ const LeafletMap = styled(MapContainer)({
     flexGrow: 1,
     height: '100%',
     outline: 'none',
+    zIndex: 0,
 });
 
 export default LeafletMap;

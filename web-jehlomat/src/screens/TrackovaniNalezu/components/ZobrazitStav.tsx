@@ -5,7 +5,7 @@ import { primary, secondary, white } from 'utils/colors';
 import { CheckIcon } from 'assets/CheckIcon';
 import Box from '@mui/material/Box';
 import { ISyringeState } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
-import { useMediaQuery } from '@mui/material';
+import { Container, useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 
 interface IZobrazitStav {
@@ -17,7 +17,7 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState, height }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
 
     return (
-        <Box sx={{ height, backgroundColor: isMobile ? primary : white }}>
+        <Container maxWidth="xs" sx={{ height, display: 'flex', flexGrow: 2, justifyContent: 'center', alignItems: 'center', backgroundColor: isMobile ? primary : white }}>
             <Grid container direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
                     {isMobile && (
@@ -30,10 +30,10 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState, height }) => {
                             </Typography>
                         </>
                     )}
-                    <Typography align="center" variant="body1" color={'white'} sx={{ mb: '2rem' }}>
+                    <Typography align="center" variant="body1" color={isMobile ? 'white' : primary} sx={{ mb: '2rem' }}>
                         {syringeState.firstLine}
                     </Typography>
-                    <Typography align="center" variant="body1" color={'white'} sx={{ mb: '2rem' }} fontSize={isMobile ? 24 : 48}>
+                    <Typography align="center" variant="body1" color={isMobile ? 'white' : primary} sx={{ mb: '2rem' }} fontSize={isMobile ? 24 : 48}>
                         {syringeState.secondLine}
                     </Typography>
                     {syringeState.hasCheckMark && (
@@ -43,7 +43,7 @@ const ZobrazitStav: FC<IZobrazitStav> = ({ syringeState, height }) => {
                     )}
                 </Grid>
             </Grid>
-        </Box>
+        </Container>
     );
 };
 

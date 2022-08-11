@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { primaryDark } from '../../../utils/colors';
 import { STEPS, SyringeStateType } from 'screens/TrackovaniNalezu/TrackovaniNalezu.config';
 import API from '../../../config/baseURL';
-import { isStatusGeneralSuccess, isStatusConflictError } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusConflictError, isStatusNotFound } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 
 const validationSchema = yup.object({
@@ -65,7 +65,7 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                             validationSchema={validationSchema}
                             onSubmit={async (values, { setErrors }) => {
                                 try {
-                                    const response: AxiosResponse<any> = await API.get(apiURL.getSyringe(values.kod));
+                                    const response: AxiosResponse<any> = await API.get(apiURL.getSyringeInfo(values.kod));
                                     const { status } = response;
 
                                     switch (true) {
@@ -74,10 +74,17 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
 
                                             if (data.demolished) {
                                                 handleNewSyringeState(SyringeStateType.DESTROYED);
-                                            } else {
+                                            } else if (data.announced) {
                                                 handleNewSyringeState(SyringeStateType.ANNOUNCED);
+                                            } else {
+                                                handleNewSyringeState(SyringeStateType.WAITING);
                                             }
 
+                                            handleStepChange(STEPS.ZobrazitStav);
+                                            break;
+                                        }
+                                        case isStatusNotFound(status): {
+                                            handleNewSyringeState(SyringeStateType.NOTFOUND);
                                             handleStepChange(STEPS.ZobrazitStav);
                                             break;
                                         }

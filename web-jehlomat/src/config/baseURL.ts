@@ -1,6 +1,6 @@
 import axios from 'axios';
-const API_V1 = "/api/v1/jehlomat"
-const HOST = process.env.REACT_APP_SERVER ?? "http://localhost";
+const API_V1 = '/api/v1/jehlomat';
+const HOST = process.env.REACT_APP_SERVER ?? 'http://localhost';
 const PORT = process.env.REACT_APP_SERVER_PORT ?? 8082;
 const BASE_URL = `${HOST}:${PORT}${API_V1}`;
 
@@ -35,5 +35,9 @@ export const setApiToken = (jwt: string) => {
     return API;
 };
 
+export const clearApiToken = () => {
+    delete API.defaults.headers.common['Authorization'];
+    return API;
+};
 
 export default API;

@@ -1,10 +1,8 @@
-import React from 'react';
-import { fireEvent, render, screen, waitFor, cleanup, prettyDOM } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import RegistraceOrganizace from './RegistraceOrganizace';
 import axios from 'axios';
 import API from '../../config/baseURL';
-import { shallow } from 'enzyme';
 
 jest.mock('axios', () => {
     return {

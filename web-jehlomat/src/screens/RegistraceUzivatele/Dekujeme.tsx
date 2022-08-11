@@ -20,9 +20,9 @@ const Dekujeme = () => {
 
     useEffect(() => {
         setTimeout(() => {
-          history.push('/prihlaseni')
-        }, 5000)
-      }, []);
+            history.push('/prihlaseni');
+        }, 5000);
+    }, []);
 
     return (
         <Container sx={{ height: '100vh', width: '100%', backgroundColor: desktop ? white : primary, color: desktop ? primary : white }}>
@@ -50,7 +50,12 @@ const Dekujeme = () => {
                     </Grid>
                 </Grid>
                 <Grid container direction="column" rowSpacing={2} justifyContent="center" alignItems="center">
-                    <PrimaryButton text={'Přejít na přihlášení'} onClick={()=>{history.push('/prihlaseni')}}/>
+                    <PrimaryButton
+                        text={'Přejít na přihlášení'}
+                        onClick={() => {
+                            history.push('/prihlaseni');
+                        }}
+                    />
                 </Grid>
             </Grid>
         </Container>

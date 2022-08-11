@@ -13,6 +13,7 @@ const EditNalez = lazy(() => import('./screens/Nalezy/Edit'));
 const NahlasitNalezPolicii = lazy(() => import('./screens/Nalezy/NovyNalez/screens/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
+const CekaniNaSchvaleni = lazy(() => import('./screens/RegistraceOrganizace/CekaniNaSchvaleni'));
 const RegistraceUzivatele = lazy(() => import('./screens/RegistraceUzivatele/RegistraceUzivatele'));
 const OrganizationVerification = lazy(() => import('./screens/OrganizationVerification/OrganizationVerification'));
 const OvereniEmailu = lazy(() => import('./screens/RegistraceUzivatele/OvereniEmailu'));
@@ -43,6 +44,7 @@ export enum Routes {
     USER_SET_NEW_PASSWORD = 'USER_SET_NEW_PASSWORD',
     ORGANIZATION = 'ORGANIZATION',
     ORGANIZATION_REGISTRATION = 'ORGANIZATION_REGISTRATION',
+    ORGANIZATION_WAITING_FOR_APPROVAL = 'ORGANIZATION_WAIT_FOR_APPROVAL',
     ORGANIZATION_THANK_YOU = 'ORGANIZATION_THANK_YOU',
     PROFILE = 'PROFILE',
     NEW_FIND = 'NEW_FIND',
@@ -137,6 +139,7 @@ export const routes: Route[] = [
         Component: SeznamUzivatelu,
         path: `/${USER_URL_PATH_}`,
         protectedRoute: true,
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.ORGANIZATION_REGISTRATION,
@@ -147,6 +150,12 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_THANK_YOU,
         Component: DekujemeOrganizace,
         path: `/${ORGANIZATION_URL_PATH}/dekujeme`,
+        redirectOnLogout: true,
+    },
+    {
+        id: Routes.ORGANIZATION_WAITING_FOR_APPROVAL,
+        Component: CekaniNaSchvaleni,
+        path: `/${ORGANIZATION_URL_PATH}/cekani-na-schvaleni`,
         redirectOnLogout: true,
     },
     {

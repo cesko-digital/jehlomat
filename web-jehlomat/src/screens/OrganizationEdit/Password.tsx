@@ -54,7 +54,7 @@ export const Password: FC<IProps> = ({ data: { user } }) => {
 
     const handleSubmit = useCallback(
         async (values: IValues, { resetForm }) => {
-            setRequestError("");
+            setRequestError('');
             const confirmResult = await confirmationModal?.show(confirmationModalParams);
             if (!confirmResult || confirmResult === 'cancel') {
                 return;
@@ -66,7 +66,7 @@ export const Password: FC<IProps> = ({ data: { user } }) => {
             };
             const response: AxiosResponse<string> = await API.put(apiURL.getUserPassword(user.id), passwordBody);
             if (!isStatusSuccess(response.status)) {
-                return setRequestError(response.data)
+                return setRequestError(response.data);
             }
             resetForm();
         },

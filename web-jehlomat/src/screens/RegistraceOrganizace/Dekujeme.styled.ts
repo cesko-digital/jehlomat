@@ -13,8 +13,3 @@ export const SCheckIcon = styled.div`
     margin-right: auto;
     margin-left: auto;
 `;
-
-export const SLogo = styled.img`
-    margin-bottom: ${size(22)};
-    min-width: ${size(72)};
-`;

@@ -37,7 +37,7 @@ const Table: FunctionComponent<TableProps> = ({ loader }) => {
     const error = loader.resp === undefined && loader.err !== undefined;
     const loaded = loader.resp !== undefined;
     const data = loader.resp?.syringeList || [];
-    const pageInfo = loader.resp?.pageInfo || { size:0, index: 0 };
+    const pageInfo = loader.resp?.pageInfo || { size: 0, index: 0 };
 
     const handleSort = (column: SortableColumn) => () => setSort(state => sort(state, column));
 

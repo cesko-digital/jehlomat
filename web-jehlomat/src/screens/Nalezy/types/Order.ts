@@ -1,4 +1,4 @@
-import {SortableColumn} from "./SortableColumn";
+import { SortableColumn } from './SortableColumn';
 
 export interface Order {
     column: SortableColumn;

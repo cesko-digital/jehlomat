@@ -88,13 +88,15 @@ export default function RegistrationForm() {
                             case isStatusGeneralSuccess(status): {
                                 setValue(values.email);
                                 //for all success response;
-                                history.push(LINKS.ORGANIZATION_THANK_YOU, { email: values.email });
+                                history.push(LINKS.ORGANIZATION_WAIT_FOR_APPROVAL, { email: values.email });
                                 break;
                             }
                             case isStatusConflictError(status): {
                                 //for validation error;
-                                const fieldName = response.data.fieldName;
-                                setErrors({ [fieldName]: response.data.status });
+                                // TODO - after API is fixed, change back to the commented version
+                                // const fieldName = response.data.fieldName ?? "email";
+                                // setErrors({ [fieldName]: response.data.message });
+                                setErrors({ email: response.data + ' TODO: ceka se na upravu API, aby vracelo pole, ktereho se error tyka. Vsechny hlasky se zatim pripinaji k e-mailu.' });
                                 break;
                             }
                             default: {
