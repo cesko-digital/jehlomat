@@ -7,6 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.Role
+import model.ValidationErrorResponse
 import model.user.*
 import org.mindrot.jbcrypt.BCrypt
 import services.*
@@ -75,10 +76,10 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
                 val request = call.receive<UserRegistrationRequest>()
                 when {
                     (!request.email.isValidMail()) -> {
-                        call.respond(HttpStatusCode.BadRequest, "Wrong E-mail format.")
+                        call.respond(HttpStatusCode.BadRequest, ValidationErrorResponse("email", "Chybný formát e-mailu."))
                     }
                     databaseInstance.selectUserByEmail(request.email) != null -> {
-                        call.respond(HttpStatusCode.Conflict, "E-mail already taken")
+                        call.respond(HttpStatusCode.Conflict, ValidationErrorResponse("email", "Zadaný e-mail je již obsazený."))
                     }
                     else -> {
                         val verificationCode = RandomIdGenerator.generateRegistrationCode()

@@ -432,6 +432,10 @@ class ApplicationTest {
             setBody(Json.encodeToString(UserRegistrationRequest(USER.email)))
         }) {
             assertEquals(HttpStatusCode.Conflict, response.status())
+            assertEquals("""{
+  "fieldName" : "email",
+  "status" : "Zadaný e-mail je již obsazený."
+}""", response.content)
         }
     }
 
