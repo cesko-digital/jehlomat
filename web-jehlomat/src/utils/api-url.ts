@@ -6,6 +6,7 @@ class APIURL {
     team = '/team';
     setNewPassword = '/password-reset/save';
     testResetPassword = '/password-reset/test-code';
+    sendResetPassword = '/password-reset/send-code';
 
     getUserPassword(userId: string | number) {
         return `${this.user}/${userId}/password`;

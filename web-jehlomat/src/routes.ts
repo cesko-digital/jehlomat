@@ -1,5 +1,7 @@
 import Layout from './Components/Layout/Layout';
 import { lazy, ComponentType, LazyExoticComponent } from 'react';
+import ZapomenuteHeslo from 'screens/ZapomenuteHeslo/zapomenuteHeslo';
+import ZapomenuteHesloPotvrzeni from 'screens/ZapomenuteHeslo/zapomenuteHesloPotvrzeni';
 
 const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
@@ -58,6 +60,7 @@ export enum Routes {
     DISPOSAL_INSTRUCTIONS = 'DISPOSAL_INSTRUCTIONS',
     POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
+    FORGOTTEN_PASSWORD_SUCCESS = 'FORGOTTEN_PASSWORD_SUCCESS',
     ABOUT = 'ABOUT',
     FAQ = 'FAQ',
     CONTACT = 'CONTACT',
@@ -262,6 +265,13 @@ export const routes: Route[] = [
         id: Routes.FORGOTTEN_PASSWORD,
         Component: LandingPage,
         path: '/zapomenute-heslo',
+        AdditionalComponents: ZapomenuteHeslo,
+    },
+    {
+        id: Routes.FORGOTTEN_PASSWORD_SUCCESS,
+        Component: LandingPage,
+        path: '/zapomenute-heslo-potvrzeni',
+        AdditionalComponents: ZapomenuteHesloPotvrzeni,
     },
     {
         id: Routes.USER_THANK_YOU,
