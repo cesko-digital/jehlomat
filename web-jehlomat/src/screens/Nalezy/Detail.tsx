@@ -4,7 +4,6 @@ import { TileLayer } from 'react-leaflet';
 import dayjs from 'dayjs';
 import { Alert, Box, Container, useMediaQuery } from '@mui/material';
 import { styled } from '@mui/system';
-import { useRecoilValue } from 'recoil';
 import Page from 'screens/Nalezy/Components/Page';
 import { Header } from 'Components/Header/Header';
 import TwoColumns from 'Components/Layout/TwoColumns';
@@ -17,7 +16,7 @@ import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { primary } from 'utils/colors';
 import { media } from 'utils/media';
 import { Loader } from 'utils/Loader';
-import { Syringe, SyringeChangeReq } from 'screens/Nalezy/types/Syringe';
+import { Syringe } from 'screens/Nalezy/types/Syringe';
 import { isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
@@ -28,7 +27,6 @@ import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
-import { userIDState } from 'store/login';
 
 const Details = styled('div')`
     & > * {
@@ -56,7 +54,6 @@ const Detail = () => {
 
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
-    const userId = useRecoilValue(userIDState);
 
     const load = useCallback(() => {
         API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
@@ -84,20 +81,10 @@ const Detail = () => {
 
     const reserve = async (data: Syringe | undefined) => {
         if (data) {
-            // TODO replace /syringe endpoint with simplified /syringe/{ID}/reserve endpoint if available
-            const changeData = {
-                ...data,
-                createdById: data.createdBy?.id,
-                reservedById: userId,
-                locationId: data.location?.id,
-            };
-            delete changeData.createdBy;
-            // @ts-ignore
-            delete changeData.location;
-            delete changeData.reservedBy;
-            delete changeData.demolishedBy;
-
-            await API.put('/syringe', changeData as unknown as SyringeChangeReq);
+            // TODO Add UI to select reservation duration, currently 1 month is used
+            await API.post(`/syringe/${data.id}/reserve`, {
+                reservedTill: dayjs().add(1, 'month').subtract(1, 'day').unix(),
+            });
             await load();
         }
     };
