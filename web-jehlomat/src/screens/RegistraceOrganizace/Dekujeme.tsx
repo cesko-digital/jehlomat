@@ -5,7 +5,7 @@ import CheckIcon from '../../assets/icons/check.svg';
 import { SCheckIcon } from './Dekujeme.styled';
 import { OrganizationLayout, RegistrationStep } from '../../organisms/organization/OrganizationLayout';
 import { Box } from '@mui/system';
-import { MobileContainer, JehlomatLogo } from './components/MobileComponents';
+import { MobileContainer, JehlomatLogo } from 'Components/MobileComponents/MobileComponents';
 
 export default function Dekujeme() {
     const isMobile = useMediaQuery(media.lte('mobile'));
