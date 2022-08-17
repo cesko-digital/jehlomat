@@ -209,18 +209,20 @@ const EditaceUzivatele: React.FC = () => {
                                     }}
                                 </Formik>
                             </SectionWrapper>
-                            <SectionWrapper>
-                                <TextButtonWrapper>
-                                    <TextButton
-                                        className="text-button"
-                                        fontSize={18}
-                                        color={primary}
-                                        text={isDesktop ? 'Odstranit uživatele z organizace' : 'Odstranit uživatele'}
-                                        onClick={removeUserFromOrganization}
-                                        textTransform="uppercase"
-                                    />
-                                </TextButtonWrapper>
-                            </SectionWrapper>
+                            {loggedUser && loggedUser?.id.toString() !== userId && (
+                                <SectionWrapper>
+                                    <TextButtonWrapper>
+                                        <TextButton
+                                            className="text-button"
+                                            fontSize={18}
+                                            color={primary}
+                                            text={isDesktop ? 'Odstranit uživatele z organizace' : 'Odstranit uživatele'}
+                                            onClick={removeUserFromOrganization}
+                                            textTransform="uppercase"
+                                        />
+                                    </TextButtonWrapper>
+                                </SectionWrapper>
+                            )}
                         </>
                     )}
                 </Grid>
