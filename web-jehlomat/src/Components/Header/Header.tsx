@@ -27,6 +27,7 @@ export const Header = (props: Props) => {
     const logoutFnc = useCallback(() => {
         setToken(null);
         clearApiToken();
+        history.push('/');
     }, [setToken]);
 
     const onBack = () => {
