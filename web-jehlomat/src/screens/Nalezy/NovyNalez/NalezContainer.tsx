@@ -37,13 +37,14 @@ const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Mapa, 'Zadejte nález na mapě'],
     [StepsEnum.Info, 'Info'],
     [StepsEnum.Nahled, 'Náhled stříkačky'],
-    [StepsEnum.Potvrzeni, 'Potvrzení stříkačky'],
+    [StepsEnum.Potvrzeni, ''],
 ]);
 
 const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
     const [trackingCode, setTrackingCode] = useState<string | null>(null);
+    const [teamAvailable, setTeamAvailable] = useState(true);
 
     const resetCurrentStep = useResetRecoilState(newSyringeStepState);
     const resetSyringeInfo = useResetRecoilState(newSyringeInfoState);
@@ -89,8 +90,10 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
             }
 
             if (data.status > 200 && data.status < 300) {
+                console.log(data);
                 setCurrentStep(StepsEnum.Potvrzeni);
                 setTrackingCode(data.data.id);
+                setTeamAvailable(data.data.teamAvailable);
             }
         } catch (error) {
             // Error handling 101
@@ -107,14 +110,14 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     }, [setCurrentStep]);
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <>
             <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
-            <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation, trackingCode }} />
-        </Box>
+            <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation, trackingCode, teamAvailable }} />
+        </>
     );
 };
 
-const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation, trackingCode }) => {
+const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOnSave, handleOnSubmit, handleGoToEdit, handleEditLocation, trackingCode, teamAvailable }) => {
     const [currentStep] = useRecoilState(newSyringeStepState);
     const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState);
     const isMobile = useMediaQuery(media.lte('mobile'));
@@ -197,7 +200,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
         case StepsEnum.Potvrzeni:
             return (
                 <SyringeLayout sx={{ padding: 0 }}>
-                    <Potvrzeni trackingCode={trackingCode} />
+                    <Potvrzeni trackingCode={trackingCode} teamAvailable={teamAvailable} />
                 </SyringeLayout>
             );
         default:
@@ -217,6 +220,7 @@ interface INovyNalez {
     handleGoToEdit: () => void;
     handleEditLocation: () => void;
     trackingCode: string | null;
+    teamAvailable: boolean;
 }
 
 export interface AddSyringeLayoutProps extends Pick<ContainerProps, 'sx'> {}

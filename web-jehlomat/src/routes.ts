@@ -12,7 +12,7 @@ const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/Organizat
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
 const Detail = lazy(() => import('./screens/Nalezy/Detail'));
 const EditNalez = lazy(() => import('./screens/Nalezy/Edit'));
-const NahlasitNalezPolicii = lazy(() => import('./screens/Nalezy/NovyNalez/screens/NotifyPolice'));
+const NahlasitNalezPolicii = lazy(() => import('./screens/Navody/NotifyPolice'));
 const DekujemeOrganizace = lazy(() => import('./screens/RegistraceOrganizace/Dekujeme'));
 const RegistraceOrganizace = lazy(() => import('./screens/RegistraceOrganizace/RegistraceOrganizace'));
 const CekaniNaSchvaleni = lazy(() => import('./screens/RegistraceOrganizace/CekaniNaSchvaleni'));
@@ -28,7 +28,7 @@ const PridatUzivatele = lazy(() => import('./screens/RegistraceUzivatele/PridatU
 const ErrorPage = lazy(() => import('./screens/ErrorPage/ErrorPage'));
 const TrackovaniNalezu = lazy(() => import('./screens/TrackovaniNalezu/TrackovaniNalezu'));
 const LandingPage = lazy(() => import('./screens/LandingPage'));
-const NavodLikvidace = lazy(() => import('./screens/NavodLikvidace/NavodLikvidace'));
+const NavodLikvidace = lazy(() => import('./screens/Navody/NavodLikvidace'));
 const About = lazy(() => import('./screens/AboutPage'));
 const Contact = lazy(() => import('./screens/ContactPage'));
 const FAQPage = lazy(() => import('./screens/FAQ'));
@@ -58,7 +58,6 @@ export enum Routes {
     TRACKING_FIND = 'TRACKING_FIND',
     WELCOME = 'WELCOME',
     DISPOSAL_INSTRUCTIONS = 'DISPOSAL_INSTRUCTIONS',
-    POLICE_ASSISTANCE = 'POLICE_ASSISTANCE',
     FORGOTTEN_PASSWORD = 'FORGOTTEN_PASSWORD',
     FORGOTTEN_PASSWORD_SUCCESS = 'FORGOTTEN_PASSWORD_SUCCESS',
     ABOUT = 'ABOUT',
@@ -225,12 +224,6 @@ export const routes: Route[] = [
         AdditionalComponents: Layout,
     },
     {
-        id: Routes.FINDINGS_NOTIFY_POLICE,
-        Component: NahlasitNalezPolicii,
-        path: `/${FINDINGS_URL_PATH}/nahlasit-nalez-policii`,
-        AdditionalComponents: Layout,
-    },
-    {
         id: Routes.FINDING_DETAILS,
         Component: Detail,
         path: `/${FINDINGS_URL_PATH}/detail/:id`,
@@ -260,7 +253,11 @@ export const routes: Route[] = [
         Component: NavodLikvidace,
         path: '/navod-likvidace',
     },
-
+    {
+        id: Routes.FINDINGS_NOTIFY_POLICE,
+        Component: NahlasitNalezPolicii,
+        path: `/nahlasit-nalez-policii`,
+    },
     {
         id: Routes.FORGOTTEN_PASSWORD,
         Component: LandingPage,

@@ -4,7 +4,7 @@ import { media } from '../../utils/media';
 import { useMediaQuery } from '@mui/material';
 import { OrganizationLayout, RegistrationStep } from '../../organisms/organization/OrganizationLayout';
 import { Box } from '@mui/system';
-import { MobileContainer, JehlomatLogo } from './components/MobileComponents';
+import { MobileContainer, JehlomatLogo } from '../../Components/MobileComponents/MobileComponents';
 
 const Title = styled.h3`
     font-size: 48px;
@@ -15,11 +15,7 @@ const Title = styled.h3`
     color: ${textSubTitles};
 `;
 
-interface WithIsMobile {
-    isMobile: boolean;
-}
-
-const InfoText = styled.p<WithIsMobile>`
+const InfoText = styled.p`
     font-size: 24px;
     line-height: 28px;
     max-width: 500px;
@@ -28,25 +24,19 @@ const InfoText = styled.p<WithIsMobile>`
     letter-spacing: 0em;
     font-weight: 300;
 
-    ${props =>
-        props.isMobile &&
-        `
+    @media ${media.lte('mobile')} {
         color: ${white};
         font-weight: 400;
-    `}
+    }
 `;
 
-const Text = () => {
-    const isMobile = useMediaQuery(media.lte('mobile'));
-
-    return (
-        <>
-            <InfoText isMobile={isMobile}>Nyní Vaší registraci schválíme. Pro vaši bezpečnost schvalujeme každou organizaci ručně. Může nám to chvíli trvat.</InfoText>
-            <InfoText isMobile={isMobile}>Po schválení dostanete potvrzovací e-mail.</InfoText>
-            <InfoText isMobile={isMobile}>Děkujeme za trpělivost!</InfoText>
-        </>
-    );
-};
+const Text = () => (
+    <>
+        <InfoText>Nyní Vaší registraci schválíme. Pro vaši bezpečnost schvalujeme každou organizaci ručně. Může nám to chvíli trvat.</InfoText>
+        <InfoText>Po schválení dostanete potvrzovací e-mail.</InfoText>
+        <InfoText>Děkujeme za trpělivost!</InfoText>
+    </>
+);
 
 export default function CekaniNaSchvaleni() {
     const isMobile = useMediaQuery(media.lte('mobile'));

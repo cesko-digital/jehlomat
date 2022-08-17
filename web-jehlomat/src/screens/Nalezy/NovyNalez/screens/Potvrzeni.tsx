@@ -4,24 +4,41 @@ import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRecoilValue } from 'recoil';
 import Link from 'Components/Link';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
+import imageSrc from 'assets/images/finish-line.svg';
 
-import { primary, white } from 'utils/colors';
+import { primary, white, textSubTitles } from 'utils/colors';
 import { fontFamilyRoboto } from 'utils/typography';
 import { media } from 'utils/media';
 import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
-import imageSrc from 'assets/images/finish-line.svg';
 import CheckIcon from 'assets/icons/check.svg';
 import { SCheckIcon } from 'screens/RegistraceOrganizace/Dekujeme.styled';
+import { MobileContainer, JehlomatLogoNoMargin } from 'Components/MobileComponents/MobileComponents';
 
-interface Props {
+interface PotvrzeniProps {
     trackingCode: string | null;
+    teamAvailable: boolean;
+}
+
+interface TeamAvailableProps {
+    teamAvailable: boolean;
+}
+
+interface TrackingCodeProps {
+    trackingCode: string | null;
+}
+
+interface MobileLoggedInProps {
+    isMobileLoggedIn?: boolean;
 }
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     text-align: center;
     background-color: ${primary};
     padding: 1rem;
@@ -38,20 +55,27 @@ const TopText = styled.h1`
     ${fontFamilyRoboto}
     text-align: center;
     color: ${white};
-    margin: 0;
+    margin: 2rem 0;
     font-weight: 400;
-    font-size: 36px;
+    font-size: 18px;
     line-height: 1.25;
 
     @media ${media.gt('mobile')} {
-        color: ${primary};
+        color: ${textSubTitles};
         font-size: 48px;
         font-weight: 300;
+        margin: 1em 0;
     }
 `;
 
-const TopTextSmall = styled(TopText)`
-    font-size: 30px;
+const LoggedInMobileText = styled.p`
+    ${fontFamilyRoboto}
+    text-align: center;
+    color: ${white};
+    margin: 3rem 0;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.5;
 `;
 
 const TrackingText = styled.p`
@@ -59,18 +83,34 @@ const TrackingText = styled.p`
     text-align: center;
     color: ${white};
     margin: 0;
+    margin-bottom: 15px;
     font-weight: 700;
     font-size: 24px;
-    line-height: 2;
+    line-height: 28px;
 
     @media ${media.gt('mobile')} {
-        color: ${primary};
+        color: ${textSubTitles};
         font-weight: 300;
         line-height: 1.4;
     }
 `;
 
-const TrackingCode = styled(TrackingText)`
+const MessageParagraph = styled(TrackingText)`
+    margin: 2em 0;
+    padding: 0 2rem;
+    max-width: 350px;
+    font-size: 18px;
+    font-weight: 400;
+
+    @media ${media.gt('mobile')} {
+        margin: 1em 0;
+        padding: 0;
+        max-width: 500px;
+        font-size: 24px;
+    }
+`;
+
+const TrackingCodeText = styled(TrackingText)`
     letter-spacing: 0.3em;
 `;
 
@@ -91,59 +131,153 @@ const StyledLink = styled(Link)`
     width: 40%;
     margin: 0 5% 1rem;
     color: ${white};
+    text-transform: uppercase;
 
     @media ${media.gt('mobile')} {
         color: ${primary};
     }
 `;
 
-const CheckIconBox = (
-    <Box py={4}>
+const CheckIconBox: FC<MobileLoggedInProps> = ({ isMobileLoggedIn = false }) => (
+    <Box py={isMobileLoggedIn ? 2 : 4} mb={isMobileLoggedIn ? 6 : 0}>
         <SCheckIcon>
             <img src={CheckIcon} alt="Jehlomat" />
         </SCheckIcon>
     </Box>
 );
 
-const Potvrzeni: FC<Props> = ({ trackingCode }) => {
+const MessageText: FC<TeamAvailableProps> = ({ teamAvailable }) => (
+    <>{teamAvailable ? 'Nález bude zlikvidován terénním pracovníkem.' : 'V tomto místě nepůsobí terénní pracovníci, můžete nález zlikvidovat sami, nebo ho ohlásit na Městskou policii.'}</>
+);
+
+const TrackingCode: FC<TrackingCodeProps> = ({ trackingCode }) => {
+    return (
+        <>
+            <Box>
+                <TrackingText>Trasovací kód pro jeho sledování:</TrackingText>
+                <TrackingCodeText>{trackingCode}</TrackingCodeText>
+            </Box>
+        </>
+    );
+};
+
+const BackHomeLink: FC = () => {
+    const isDesktop = useMediaQuery(media.gt('mobile'));
+    const Button = isDesktop ? PrimaryButton : SecondaryButton;
+
+    return (
+        <Link to={LINKS.HOME}>
+            <Button text="Zpět na domovskou stránku" />
+        </Link>
+    );
+};
+
+const Links: FC<TeamAvailableProps> = ({ teamAvailable }) => {
+    const isDesktop = useMediaQuery(media.gt('mobile'));
+    const Button = isDesktop ? PrimaryButton : SecondaryButton;
+
+    return (
+        <LinksContainer>
+            {teamAvailable && <BackHomeLink />}
+
+            {!teamAvailable && (
+                <>
+                    <Link to={LINKS.FINDINGS_NOTIFY_POLICE}>
+                        <Button text="Nález ohlásím městské policii" />
+                    </Link>
+
+                    <br />
+                    <br />
+
+                    <StyledLink to={LINKS.DISPOSAL_INSTRUCTIONS}>
+                        Chci nález
+                        <br /> zlikvidovat sám
+                    </StyledLink>
+                </>
+            )}
+        </LinksContainer>
+    );
+};
+
+const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
     const isDesktop = useMediaQuery(media.gt('mobile'));
 
-    return (
-        <Container>
-            {isDesktop && (
-                <>
-                    <Box alignItems="center">
-                        <img src={imageSrc} height="285" alt="finish-line" />
-                    </Box>
-                    {CheckIconBox}
-                    <Box mb="2rem">
-                        <TopText>Vložení nálezu bylo úspěšné</TopText>
-                    </Box>
-                </>
-            )}
-            {!isDesktop && (
-                <>
-                    <Box mb="2rem">
-                        <TopText>Vložení nálezu</TopText>
-                        <TopTextSmall>bylo úspěšné</TopTextSmall>
-                    </Box>
-                    {CheckIconBox}
-                </>
-            )}
-            {!isLoggedIn && trackingCode && (
-                <>
-                    <Box>
-                        <TrackingText>Trasovací kód pro jeho sledování:</TrackingText>
-                        <TrackingCode>{trackingCode}</TrackingCode>
-                    </Box>
-                    <LinksContainer>
-                        <StyledLink to={LINKS.FINDINGS_NOTIFY_POLICE}>Chci nález zlikvidovat sám</StyledLink>
-                    </LinksContainer>
-                </>
-            )}
-        </Container>
-    );
+    if (isLoggedIn) {
+        if (isDesktop) {
+            return (
+                <Container>
+                    <img src={imageSrc} height="285" alt="finish-line" />
+
+                    <CheckIconBox />
+
+                    <TopText>Vložení nálezu bylo úspěšné.</TopText>
+
+                    {teamAvailable && <TrackingCode trackingCode={trackingCode} />}
+                    <br />
+                    <br />
+                    <BackHomeLink />
+                </Container>
+            );
+        } else {
+            return (
+                <MobileContainer>
+                    <LoggedInMobileText>
+                        Zvládli jste to!
+                        <br />
+                        <br />
+                        Váš nález na
+                    </LoggedInMobileText>
+
+                    <JehlomatLogoNoMargin />
+
+                    <LoggedInMobileText>byl zadán bez problémů!</LoggedInMobileText>
+
+                    <CheckIconBox isMobileLoggedIn />
+
+                    <BackHomeLink />
+                </MobileContainer>
+            );
+        }
+    } else {
+        if (isDesktop) {
+            return (
+                <Container>
+                    <TopText>Děkujeme za vložení nálezu.</TopText>
+
+                    <MessageParagraph>
+                        <MessageText teamAvailable={teamAvailable} />
+                    </MessageParagraph>
+
+                    {teamAvailable && <TrackingCode trackingCode={trackingCode} />}
+
+                    <Links teamAvailable={teamAvailable} />
+                </Container>
+            );
+        } else {
+            return (
+                <MobileContainer>
+                    <TopText>
+                        Děkujeme za vložení nálezu
+                        <br />
+                        do aplikace
+                    </TopText>
+
+                    <JehlomatLogoNoMargin />
+
+                    <CheckIconBox />
+
+                    <MessageParagraph>
+                        <MessageText teamAvailable={teamAvailable} />
+                    </MessageParagraph>
+
+                    {teamAvailable && <TrackingCode trackingCode={trackingCode} />}
+
+                    <Links teamAvailable={teamAvailable} />
+                </MobileContainer>
+            );
+        }
+    }
 };
 
 export default Potvrzeni;

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { primary, white } from 'utils/colors';
 import logo from 'assets/logo/logo-jehlomat.svg';
 import { size } from 'utils/spacing';
+import { FC } from 'react';
 
 export const MobileContainer = styled.div`
     display: flex;
@@ -18,11 +19,18 @@ export const MobileContainer = styled.div`
     left: 0;
 `;
 
-const SLogo = styled.img`
-    margin-bottom: ${size(22)};
+const SNoMarginLogo = styled.img`
     min-width: ${size(72)};
 `;
 
-export const JehlomatLogo = () => {
+const SLogo = styled(SNoMarginLogo)`
+    margin-bottom: ${size(22)};
+`;
+
+export const JehlomatLogo: FC = () => {
     return <SLogo src={logo} alt="Jehlomat" />;
+};
+
+export const JehlomatLogoNoMargin: FC = () => {
+    return <SNoMarginLogo src={logo} alt="Jehlomat" />;
 };
