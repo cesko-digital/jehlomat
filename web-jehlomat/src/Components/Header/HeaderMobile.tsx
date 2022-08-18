@@ -25,9 +25,7 @@ export const HeaderMobile: FC = () => {
             <s.LinkContainer>
                 <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION} mobile={true} />
                 <s.LineVertical />
-                <HeaderLink mobile={true}>
-                    <Navigator route={Routes.TRACKING_FIND}>Sledovat nález</Navigator>
-                </HeaderLink>
+                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true}/>
             </s.LinkContainer>
             <s.LineHorizontal />
 
