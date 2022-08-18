@@ -33,7 +33,7 @@ import { useHistory } from 'react-router-dom';
 import { styled } from '@mui/system';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
-    [StepsEnum.Start, 'Start přidání nálezu'],
+    [StepsEnum.Start, 'Postup přidání nálezu'],
     [StepsEnum.Mapa, 'Zadejte nález na mapě'],
     [StepsEnum.Info, 'Info'],
     [StepsEnum.Nahled, 'Náhled stříkačky'],
@@ -88,7 +88,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
             } else {
                 data = await API.post('/syringe', apiSyringe);
             }
-
+            console.log('Nalez', data);
             if (data.status > 200 && data.status < 300) {
                 console.log(data);
                 setCurrentStep(StepsEnum.Potvrzeni);
@@ -138,7 +138,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
             );
         case StepsEnum.Info:
             return (
-                <SyringeLayout sx={{ paddingTop: '2rem' }}>
+                <SyringeLayout sx={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
                             <PrimaryButton text="Uložit" disabled={isSubmitDisabled()} onClick={handleOnSubmit} type="button" />
@@ -170,7 +170,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
             );
         case StepsEnum.Nahled:
             return (
-                <SyringeLayout sx={{ paddingTop: '2rem' }}>
+                <SyringeLayout sx={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
                             <Box display="flex" justifyContent="center" flexDirection="column">
