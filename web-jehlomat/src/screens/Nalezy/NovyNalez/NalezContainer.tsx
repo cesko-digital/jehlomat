@@ -31,6 +31,8 @@ import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 import { useHistory } from 'react-router-dom';
 import { styled } from '@mui/system';
+import { LINKS } from 'routes';
+import { isLoginValidState } from 'store/login';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Start, 'Postup přidání nálezu'],
@@ -49,6 +51,9 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     const resetCurrentStep = useResetRecoilState(newSyringeStepState);
     const resetSyringeInfo = useResetRecoilState(newSyringeInfoState);
     const resetMapPosition = useResetRecoilState(mapPositionState);
+
+    const isLoggedIn = useRecoilValue(isLoginValidState);
+
 
     // Always reset to the defaults on unmount
     useEffect(
@@ -111,7 +116,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
 
     return (
         <>
-            <Header mobileTitle={StepsTitleMap.get(currentStep) || ''} />
+            <Header backRoute={!isLoggedIn?LINKS.HOME:undefined} mobileTitle={StepsTitleMap.get(currentStep) || ''} />
             <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation, trackingCode, teamAvailable }} />
         </>
     );
