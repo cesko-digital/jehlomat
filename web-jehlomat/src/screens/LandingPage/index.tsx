@@ -49,7 +49,7 @@ const LandingPage = () => {
                             history.push(LINKS_WITH_PARAMS.NEW_FIND?.(0));
                         }}
                     />
-                    <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: isLoggedIn ? '92px' : '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
+                    <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: isLoggedIn ? '92px' : '56px',mb: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
                         Jehlomat.cz je online nástroj, sloužící terénním pracovníkům a veřejnosti ke hlášení nálezů odhozených injekčních stříkaček a následně k jejich odborné likvidaci
                     </Typography>
                 </Grid>

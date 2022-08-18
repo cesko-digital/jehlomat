@@ -13,10 +13,6 @@ export const FormWrapper = styled.form`
     align-items: stretch;
     flex-direction: column;
     width: 100%;
-
-    @media ${media.lte('mobile')} {
-        padding-top: 100px;
-    }
 `;
 
 export const FormItem = styled.div`

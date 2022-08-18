@@ -9,6 +9,8 @@ import 'leaflet/dist/leaflet.css';
 import { mapPositionState, mapUserPositionState } from 'screens/Nalezy/NovyNalez/components/store';
 import { ChangeView } from 'screens/Nalezy/NovyNalez/components/ChangeView';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -27,6 +29,8 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     const [userPosition, setUserPosition] = useRecoilState(mapUserPositionState);
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [position, setPosition] = useRecoilState(mapPositionState);
+    const isMobile = useMediaQuery(media.lte('mobile'));
+
 
     useEffect(() => {
         if (userPosition) {
@@ -51,12 +55,12 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     }
 
     return (
-        <Box position="relative" width="100%" height="100%">
+        <Box position="relative" width="100%" height="100%" paddingBottom={isMobile?'':'32px'}>
             <MapContainer
                 center={position || userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
                 scrollWheelZoom={false}
-                style={{ width: `100%`, height: `95%`, zIndex: 1 }}
+                style={{ width: `100%`, height: `100%`, zIndex: 1 }}
                 whenCreated={map => {
                     handleMapCenterChange(map, setMarkerPosition);
                 }}
@@ -71,7 +75,7 @@ const Map: FC<IMapa> = ({ children, locked }) => {
                 {markerPosition && <Marker position={markerPosition} />}
                 {userPosition && <ChangeView center={userPosition} callback={() => setUserPosition(null)} />}
                 <RealPositionContextProvider />
-                <ZoomControl position="bottomright" />
+                <ZoomControl position="topright" />
             </MapContainer>
             {children}
         </Box>
