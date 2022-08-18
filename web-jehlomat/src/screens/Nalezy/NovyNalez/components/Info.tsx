@@ -110,7 +110,7 @@ const Info: FC<iInfo> = ({}) => {
 
     return (
         <>
-            <Box minHeight={isMobile ? '100vh' : 0}>
+            <Box minHeight={isMobile ? '100%' : 0}>
                 <Container>
                     <Card backgroundColor="#BFE3E0">
                         <Icon>

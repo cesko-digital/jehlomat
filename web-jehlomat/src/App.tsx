@@ -1,5 +1,5 @@
 import React, { FC, Suspense, useRef } from 'react';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { routes } from 'routes';
@@ -16,6 +16,7 @@ import { ConfirmationModalProvider } from 'providers/ConfirmationModalProvider';
 
 import PrivateRoute from 'config/protectedRoute';
 import OnLogoutRoute from './config/onLogoutRoute';
+import { media } from 'utils/media';
 const Router: FC = () => (
     <HashRouter>
         <Switch>
@@ -68,9 +69,10 @@ const Providers: FC = ({ children }) => {
 };
 
 const App: FC = ({ children }) => {
+    const isMobile = useMediaQuery(media.lte('mobile'));
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: isMobile?'':'100vh' }}>
                 <Providers>
                     <LoginAlert />
                     <Router />
