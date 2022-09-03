@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Alert, Box } from '@mui/material';
 import { Loader } from 'utils/Loader';
@@ -7,7 +7,6 @@ import { isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
-import { H1 } from 'utils/typography';
 
 import NalezContainer from 'screens/Nalezy/NovyNalez/NalezContainer';
 import { useRecoilState } from 'recoil';
@@ -15,8 +14,6 @@ import { newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNal
 import texts from 'screens/Nalezy/texts';
 import Link from 'Components/Link';
 import { LINKS } from 'routes';
-import RoundButton from 'screens/Nalezy/Components/RoundButton';
-import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 
 const Edit = () => {
     const [loader, setLoader] = useState<Loader<Syringe>>({});
