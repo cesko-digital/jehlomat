@@ -16,6 +16,8 @@ import { isLoginValidState } from 'store/login';
 import CheckIcon from 'assets/icons/check.svg';
 import { SCheckIcon } from 'screens/RegistraceOrganizace/Dekujeme.styled';
 import { MobileContainer, JehlomatLogoNoMargin } from 'Components/MobileComponents/MobileComponents';
+import { newSyringeInfoState } from 'screens/Nalezy/NovyNalez/components/store';
+import { isSyringeEdit } from '../components/types';
 
 interface PotvrzeniProps {
     trackingCode: string | null;
@@ -32,6 +34,10 @@ interface TrackingCodeProps {
 
 interface MobileLoggedInProps {
     isMobileLoggedIn?: boolean;
+}
+
+interface IsEditProps {
+    isEdit: boolean;
 }
 
 const Container = styled.div`
@@ -166,17 +172,13 @@ const TrackingCode: FC<TrackingCodeProps> = ({ trackingCode }) => {
     );
 };
 
-const BackHomeLink: FC = () => {
+const BackLink: FC<IsEditProps> = ({ isEdit }) => {
     const isDesktop = useMediaQuery(media.gt('mobile'));
     const Button = isDesktop ? PrimaryButton : SecondaryButton;
 
-    const handleOnClick = () => {
-        history.push(LINKS.FINDINGS);
-    };
-
     return (
-        <Link to={LINKS.HOME}>
-            <Button text="Zpět na domovskou stránku" />
+        <Link to={isEdit ? LINKS.FINDINGS : LINKS.HOME}>
+            <Button text={isEdit ? 'Zpět na nálezy' : 'Zpět na domovskou stránku'} />
         </Link>
     );
 };
@@ -187,7 +189,7 @@ const Links: FC<TeamAvailableProps> = ({ teamAvailable }) => {
 
     return (
         <LinksContainer>
-            {teamAvailable && <BackHomeLink />}
+            {teamAvailable && <BackLink isEdit={false} />}
 
             {!teamAvailable && (
                 <>
@@ -210,6 +212,8 @@ const Links: FC<TeamAvailableProps> = ({ teamAvailable }) => {
 
 const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
+    const [newSyringeInfo] = useRecoilState(newSyringeInfoState);
+    const isEdit = isSyringeEdit(newSyringeInfo);
     const isDesktop = useMediaQuery(media.gt('mobile'));
 
     if (isLoggedIn) {
@@ -220,12 +224,12 @@ const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
 
                     <CheckIconBox />
 
-                    <TopText>Vložení nálezu bylo úspěšné.</TopText>
+                    <TopText>{isEdit ? 'Úprava nálezu byla úspěšná' : 'Vložení nálezu bylo úspěšné'}</TopText>
 
                     {teamAvailable && <TrackingCode trackingCode={trackingCode} />}
                     <br />
                     <br />
-                    <BackHomeLink />
+                    <BackLink isEdit={isEdit} />
                 </Container>
             );
         } else {
@@ -240,11 +244,11 @@ const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
 
                     <JehlomatLogoNoMargin />
 
-                    <LoggedInMobileText>byl zadán bez problémů!</LoggedInMobileText>
+                    <LoggedInMobileText>{isEdit ? 'byl úspěšně upraven.' : 'byl zadán bez problémů!'}</LoggedInMobileText>
 
                     <CheckIconBox isMobileLoggedIn />
 
-                    <BackHomeLink />
+                    <BackLink isEdit={isEdit} />
                 </MobileContainer>
             );
         }
