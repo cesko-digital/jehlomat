@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { AxiosResponse } from 'axios';
 
-import { isExistingSyringe, JehlaState, StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
+import { isSyringeEdit, JehlaState, StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { Header } from 'Components/Header/Header';
 import Info from 'screens/Nalezy/NovyNalez/components/Info';
 import Potvrzeni from 'screens/Nalezy/NovyNalez/screens/Potvrzeni';
@@ -17,6 +17,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import { LINKS } from 'routes';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { mapPositionState, newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
@@ -31,7 +32,6 @@ import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 import { useHistory } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { LINKS } from 'routes';
 import { isLoginValidState } from 'store/login';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
@@ -53,7 +53,6 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     const resetMapPosition = useResetRecoilState(mapPositionState);
 
     const isLoggedIn = useRecoilValue(isLoginValidState);
-
 
     // Always reset to the defaults on unmount
     useEffect(
@@ -116,7 +115,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
 
     return (
         <>
-            <Header backRoute={!isLoggedIn?LINKS.HOME:undefined} mobileTitle={StepsTitleMap.get(currentStep) || ''} />
+            <Header backRoute={!isLoggedIn ? LINKS.HOME : undefined} mobileTitle={StepsTitleMap.get(currentStep) || ''} />
             <NovyNalez {...{ newSyringeInfo, handleInputChange, handleOnSubmit, handleOnSave, handleGoToEdit, handleEditLocation, trackingCode, teamAvailable }} />
         </>
     );
@@ -126,6 +125,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
     const [currentStep] = useRecoilState(newSyringeStepState);
     const newSyringeInfoError = useRecoilValue(newSyringeInfoErrorState);
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const isEdit = isSyringeEdit(newSyringeInfo);
 
     const isSubmitDisabled = () => {
         // Pokud je na formulari chyba, zablokujeme Submit button
@@ -158,13 +158,13 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                                         </Typography>
                                     </Box>
                                     <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                                        <PrimaryButton text="Uložit" disabled={isSubmitDisabled()} onClick={handleOnSubmit} />
+                                        <PrimaryButton text="Pokračovat" disabled={isSubmitDisabled()} onClick={handleOnSubmit} />
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item sm={6} maxHeight={700}>
                                     <MapComponent locked>
                                         <FloatinButtonContainer>
-                                            <SecondaryButton text="Editovat místo" onClick={handleEditLocation} />
+                                            <SecondaryButton text="Upravit místo" onClick={handleEditLocation} />
                                         </FloatinButtonContainer>
                                     </MapComponent>
                                 </Grid>
@@ -179,7 +179,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                     {isMobile ? (
                         <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} handleEditLocation={handleEditLocation} readOnly>
                             <Box display="flex" justifyContent="center" flexDirection="column">
-                                <PrimaryButton text={isExistingSyringe(newSyringeInfo) && newSyringeInfo.edit ? 'Uložit' : 'Dokončit'} onClick={handleOnSave} />
+                                <PrimaryButton text={isEdit ? 'Uložit' : 'Dokončit'} onClick={handleOnSave} />
                                 <Box display="flex" mt={3} justifyContent="center">
                                     <TextButton fontSize={18} color={primary} text="Editovat nález" onClick={handleGoToEdit} textTransform="uppercase" />
                                 </Box>
@@ -190,7 +190,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                             <Grid container spacing={2}>
                                 <Grid item md={6}>
                                     <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange} readOnly>
-                                        <PrimaryButton text={isExistingSyringe(newSyringeInfo) && newSyringeInfo.edit ? 'Uložit' : 'Dokončit'} onClick={handleOnSave} type="button" />
+                                        <PrimaryButton text={isEdit ? 'Uložit' : 'Dokončit'} onClick={handleOnSave} type="button" />
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item md={6} maxHeight={700}>
@@ -244,16 +244,15 @@ const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
     const [newSyringeInfo] = useRecoilState(newSyringeInfoState);
     const [currentStep] = useRecoilState(newSyringeStepState);
     const convertedCurrentStep = stepToStepperConversion[currentStep];
+    const isEdit = isSyringeEdit(newSyringeInfo);
 
-    const handleGetBack = useCallback(() => {
-        history.push('/nalezy');
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const handleGetBack = () => {
+        history.push(LINKS.FINDINGS);
+    };
 
     const renderContainer = (child: ReactNode) => (
         <Container maxWidth="lg" sx={{ flexGrow: 1, position: 'relative', ...sx }} id="content-container">
-            {isExistingSyringe(newSyringeInfo) && (
+            {isEdit && (
                 <BackButton filled={true} onClick={handleGetBack}>
                     <BackIcon />
                 </BackButton>
@@ -266,13 +265,13 @@ const SyringeLayout: FC<AddSyringeLayoutProps> = ({ children, sx }) => {
         return (
             <>
                 <StepperContainer>
-                    <StepperCard currentStep={convertedCurrentStep} order={0} title="přidat do mapy">
+                    <StepperCard currentStep={convertedCurrentStep} order={0} title={isEdit ? 'upravit místo' : 'přidat do mapy'}>
                         <FontAwesomeIcon icon={faMap} size="2x" color={primaryDark} />
                     </StepperCard>
                     <StepperCard currentStep={convertedCurrentStep} order={1} title="podrobnosti o nálezu">
                         <FontAwesomeIcon icon={faEdit} size="2x" color={primaryDark} />
                     </StepperCard>
-                    <StepperCard currentStep={convertedCurrentStep} order={2} title="úspěšné vložení nálezu">
+                    <StepperCard currentStep={convertedCurrentStep} order={2} title={isEdit ? 'úspěšná úprava nálezu' : 'úspěšné vložení nálezu'}>
                         <FontAwesomeIcon icon={faCheck} size="2x" color={primaryDark} />
                     </StepperCard>
                 </StepperContainer>

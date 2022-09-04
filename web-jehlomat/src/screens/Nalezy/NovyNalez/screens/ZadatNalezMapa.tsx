@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import LocationAgreement from 'screens/Nalezy/NovyNalez/components/LocationAgreement';
 import Map from 'screens/Nalezy/NovyNalez/components/Map';
 import { LatLngExpression } from 'leaflet';
-import { isExistingSyringe, JehlaState } from 'screens/Nalezy/NovyNalez/components/types';
+import { isSyringeEdit, JehlaState } from 'screens/Nalezy/NovyNalez/components/types';
 import { StepsEnum } from 'screens/Nalezy/NovyNalez/components/types';
 import { mapPositionState, mapUserPositionState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -43,6 +43,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
     const setCurrentStep = useSetRecoilState(newSyringeStepState);
     const [syringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
     const mapPosition = useRecoilValue(mapPositionState);
+    const isEdit = isSyringeEdit(syringeInfo);
 
     useEffect(() => {
         if (!!userSelectedLocation[0] && !!userSelectedLocation[1]) {
@@ -105,7 +106,7 @@ const ZadatNalezMapa: FC<IZadatNalezMapa> = ({ userSelectedLocation }) => {
                 <LocationAgreement visible={modalVisible!} handleAllowGeolocation={handleAllowGeolocation} handleDenyGeolocation={handleDenyGeolocation} locationState={locationState} />
                 <MapControl />
                 <FloatinButtonContainer>
-                    <PrimaryButton text={`${isExistingSyringe(syringeInfo) && syringeInfo.edit ? 'Editovat' : 'Vložit'} místo`} onClick={onAddPlaceClick} />
+                    <PrimaryButton text={`${isEdit ? 'Uložit' : 'Vložit'} místo`} onClick={onAddPlaceClick} />
                 </FloatinButtonContainer>
             </Map>
         </StyledContainer>
