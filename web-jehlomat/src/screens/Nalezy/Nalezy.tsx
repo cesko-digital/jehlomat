@@ -23,6 +23,7 @@ import HorizontalContainer from 'screens/Nalezy/Components/HorizontalContainer';
 import Page from 'screens/Nalezy/Components/Page';
 import { filteringState, loaderState, paginationState, sortingState } from 'screens/Nalezy/store';
 import { Filtering } from './types/Filtering';
+import { LINKS } from 'routes';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
@@ -128,10 +129,10 @@ const Nalezy: FunctionComponent = () => {
                     </Filters>
                 )}
                 <Switch>
-                    <Route path={`${match.path}/`} exact={true}>
+                    <Route path={LINKS.FINDINGS} exact={true}>
                         <Table loader={loader} />
                     </Route>
-                    <Route path={`${match.path}/mapa/`} exact={true}>
+                    <Route path={LINKS.FINDINGS_MAPA} exact={true}>
                         <Map loader={loader} />
                     </Route>
                 </Switch>
