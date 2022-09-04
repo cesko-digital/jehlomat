@@ -21,7 +21,8 @@ fun Route.userApi(databaseInstance: DatabaseService, jwtManager: JwtManager, mai
         authenticate(JWT_CONFIG_NAME) {
             get {
                 val loggedInUser = jwtManager.getLoggedInUser(call, databaseInstance)
-                call.respond(HttpStatusCode.OK, loggedInUser.toUserDetail())
+                val isSuperAdmin = PermissionService.isUserSuperAdmin(loggedInUser)
+                call.respond(HttpStatusCode.OK, loggedInUser.toUserDetail(isSuperAdmin))
             }
 
             get("/{id}") {

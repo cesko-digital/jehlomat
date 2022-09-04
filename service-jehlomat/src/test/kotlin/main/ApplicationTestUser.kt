@@ -102,7 +102,8 @@ class ApplicationTest {
   "status" : """" + USER.status + """",
   "organizationId" : """ + defaultOrgId + """,
   "teamId" : """ + defaultTeamId + """,
-  "isAdmin" : false
+  "isAdmin" : false,
+  "isSuperAdmin" : false
 }""",
                 response.content
             )

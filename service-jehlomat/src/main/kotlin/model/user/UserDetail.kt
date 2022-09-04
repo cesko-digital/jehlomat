@@ -10,5 +10,6 @@ data class UserDetail(
     val status: UserStatus,
     val organizationId: Int,
     val teamId: Int?,
-    val isAdmin: Boolean
+    val isAdmin: Boolean,
+    val isSuperAdmin: Boolean
 )

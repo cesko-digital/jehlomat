@@ -832,6 +832,9 @@ definitions:
       isAdmin:
         type: boolean
         example: true
+      isSuperAdmin:
+        type: boolean
+        example: true
   UserAttr:
     type: object
     properties:

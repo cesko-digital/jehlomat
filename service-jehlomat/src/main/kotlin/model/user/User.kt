@@ -30,6 +30,6 @@ fun User.toUserInfo(includeEmail: Boolean = false) = UserInfo(
     isAdmin = isAdmin
 )
 
-fun User.toUserDetail() = UserDetail(
-    id, email, username, status, organizationId, teamId, isAdmin
+fun User.toUserDetail(isSuperAdmin: Boolean) = UserDetail(
+    id, email, username, status, organizationId, teamId, isAdmin, isSuperAdmin
 )
