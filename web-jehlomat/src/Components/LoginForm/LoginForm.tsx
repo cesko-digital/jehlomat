@@ -120,7 +120,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     );
 };
 
-function getRedirectionLink(search: string, defaultLink = LINKS.WELCOME) {
+function getRedirectionLink(search: string, defaultLink = LINKS.PROFILE) {
     const searchMap = convertSearchStringToMap(search);
     const fromLink = searchMap.get('from');
     return fromLink || defaultLink;
