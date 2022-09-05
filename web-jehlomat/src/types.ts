@@ -17,6 +17,7 @@ export interface IUser {
     teamId: number | undefined;
     isAdmin: boolean;
     verified?: boolean;
+    isSuperAdmin?: boolean;
 }
 
 export interface IUserEdited {

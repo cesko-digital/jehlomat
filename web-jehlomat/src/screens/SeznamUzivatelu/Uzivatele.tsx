@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { greyLight } from '../../utils/colors';
-import { TableRow, UserCount, UsersTable } from './styled';
+import { UserCount } from './styled';
 import { IUser } from 'types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -9,6 +9,7 @@ import { useHistory } from 'react-router';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import TabulkaUzivatelu from './TabulkaUzivatelu';
+import { Table, TableRow } from 'Components/TableComponents/TableComponents';
 
 interface IProps {
     users: IUser[];
@@ -22,7 +23,7 @@ const Uzivatele: FC<IProps> = ({ users }) => {
         return (
             <>
                 <UserCount>uživatelů ({users.length})</UserCount>
-                <UsersTable className="mobile">
+                <Table className="mobile">
                     <tbody>
                         {users.map(user => (
                             <TableRow key={user.id}>
@@ -39,7 +40,7 @@ const Uzivatele: FC<IProps> = ({ users }) => {
                             </TableRow>
                         ))}
                     </tbody>
-                </UsersTable>
+                </Table>
             </>
         );
     }
