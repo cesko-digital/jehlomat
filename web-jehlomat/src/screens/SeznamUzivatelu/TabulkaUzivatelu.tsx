@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import { greyLight } from '../../utils/colors';
-import { TableRow, UsersTable } from './styled';
 import { IOrganizace, ITeam, IUser } from 'types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -14,6 +13,7 @@ import API from 'config/baseURL';
 import { SortableColumn, sortingState, columnSortingDirection, sortUsers } from './store';
 import { sort } from './helper';
 import SortableHeading from 'screens/Nalezy/Components/SortableHeading';
+import { Table, TableRow } from 'Components/TableComponents/TableComponents';
 
 interface IProps {
     users: IUser[];
@@ -43,7 +43,7 @@ const TabulkaUzivatelu: FC<IProps> = ({ users }) => {
     }, [loggedUser?.organizationId]);
 
     return (
-        <UsersTable>
+        <Table>
             <thead>
                 <tr>
                     <th></th>
@@ -84,7 +84,7 @@ const TabulkaUzivatelu: FC<IProps> = ({ users }) => {
                     </TableRow>
                 ))}
             </tbody>
-        </UsersTable>
+        </Table>
     );
 };
 
