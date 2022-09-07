@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextInput from 'Components/Inputs/TextInput';
-import { useSetRecoilState } from 'recoil';
+import { useMediaQuery } from '@mui/material';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Form, Formik } from 'formik';
 import { AxiosResponse } from 'axios';
@@ -16,6 +17,9 @@ import { convertSearchStringToMap } from 'utils/url';
 import { isStatusGeneralSuccess, isStatusUnauthorized } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import { tokenState } from 'store/login';
+import { media } from 'utils/media';
+import { userState } from 'store/user';
+import { IUser } from 'types';
 
 interface LoginFormProps {}
 
@@ -39,6 +43,8 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     const { isModalVisible, closeModal } = useContext(ModalContext);
     const { search } = useLocation();
     const setToken = useSetRecoilState(tokenState);
+    const isMobile = useMediaQuery(media.lte('mobile'));
+    const loggedUser = useRecoilValue(userState);
 
     return (
         <>
@@ -60,7 +66,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                 if (token) {
                                     setToken(token);
                                     if (isModalVisible) closeModal();
-                                    const link = getRedirectionLink(search);
+                                    const link = getRedirectionLink(search, isMobile, loggedUser);
                                     history.push(link);
                                 }
                                 break;
@@ -120,10 +126,13 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     );
 };
 
-function getRedirectionLink(search: string, defaultLink = LINKS.WELCOME) {
+function getRedirectionLink(search: string, isMobile: boolean, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
     const fromLink = searchMap.get('from');
-    return fromLink || defaultLink;
+    if (isMobile && loggedUser?.isAdmin) {
+        return LINKS.USER;
+    }
+    return fromLink || LINKS.HOME;
 }
 
 export default LoginForm;
