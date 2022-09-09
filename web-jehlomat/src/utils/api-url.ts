@@ -36,6 +36,10 @@ class APIURL {
         return `${this.user}/${userId}`;
     }
 
+    getCurrentUser() {
+        return `${this.user}`;
+    }
+
     getUsersInOrganization(orgId: string | number) {
         return `${this.organization}/${orgId}/users`;
     }

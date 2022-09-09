@@ -16,12 +16,12 @@ export const SetLogin: FC = () => {
     const history = useHistory();
 
     useEffect(() => {
-        if (token && userId) {
+        if (token) {
             // set token to authorized instance
             setApiToken(token);
 
             const getUser = async (token: string) => {
-                const response: AxiosResponse<IUser> = await API.get(apiURL.getUser(userId));
+                const response: AxiosResponse<IUser> = await API.get(apiURL.getCurrentUser());
                 return response.data;
             };
 
@@ -36,7 +36,7 @@ export const SetLogin: FC = () => {
         }
         // disable because of history var, should be handled better tho
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, userId, setUser]);
+    }, [token, setUser]);
 
     return null;
 };
