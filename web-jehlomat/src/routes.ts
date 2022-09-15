@@ -218,7 +218,7 @@ export const routes: Route[] = [
     {
         id: Routes.NEW_FIND,
         Component: NovyNalez,
-        path: (step?: 0 | 1 | 2 | 3 | 4) => `/${FINDINGS_URL_PATH}/novy-nalez${step ? `?step=${step}` : ''}`,
+        path: `/${FINDINGS_URL_PATH}/novy-nalez`,
         AdditionalComponents: Layout,
     },
     {
