@@ -129,14 +129,11 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
 function getRedirectionLink(search: string, isMobile: boolean, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
     const fromLink = searchMap.get('from');
-    if (isMobile && loggedUser?.isSuperAdmin) {
-        return LINKS.ABOUT; //TODO link to organization list
+    if (loggedUser?.isSuperAdmin) {
+        return LINKS.ORGANIZATIONS;
     }
-    if (isMobile && loggedUser?.isAdmin) {
+    if (loggedUser?.isAdmin) {
         return LINKS.USER;
-    }
-    if (isMobile) {
-        return LINKS.FINDINGS;
     }
     return fromLink || LINKS.FINDINGS;
 }
