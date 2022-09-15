@@ -46,7 +46,7 @@ const LandingPage = () => {
                         text={isLoggedIn ? 'zadat nález' : 'zadat nález ANONYMNĚ'}
                         type="button"
                         onClick={() => {
-                            history.push(LINKS.NEW_FIND);
+                            history.push(LINKS.NEW_FIND_INIT);
                         }}
                     />
                     <Typography

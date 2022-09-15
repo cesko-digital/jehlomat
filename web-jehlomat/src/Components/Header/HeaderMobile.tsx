@@ -35,7 +35,7 @@ export const HeaderMobile: FC = () => {
                 <TextButton
                     text={'Zadat nález anonymně'}
                     onClick={() => {
-                        history.push(LINKS.NEW_FIND);
+                        history.push(LINKS.NEW_FIND_INIT);
                     }}
                 />
             </div>

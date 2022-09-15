@@ -53,7 +53,7 @@ export const Header = (props: Props) => {
             if (loggedUser && loggedUser?.isAdmin) {
                 return (
                     <>
-                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND} />
+                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND_INIT} />
                         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
                         <HeaderLink type={HeaderLinkType.User} route={LINKS.USER} />
                         <HeaderLink type={HeaderLinkType.ShowOrgAccount} route={LINKS.PROFILE} />
@@ -63,7 +63,7 @@ export const Header = (props: Props) => {
             } else {
                 return (
                     <>
-                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND} />
+                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND_INIT} />
                         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
                         <HeaderLink type={HeaderLinkType.ShowUserAccount} route={LINKS.PROFILE} />
                         {renderLoginLogout()}

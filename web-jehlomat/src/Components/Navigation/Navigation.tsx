@@ -22,7 +22,7 @@ const Navigation: FC = () => {
                 <SecondaryNavigationButton route={LINKS.FINDINGS} selected={location.pathname === LINKS.FINDINGS} type={NavigationButtonType.SyringeList} />
                 <SecondaryNavigationButton route={LINKS.USER} selected={location.pathname === LINKS.USER} type={NavigationButtonType.Users} />
             </s.LeftBar>
-            <Link to={LINKS.NEW_FIND}>
+            <Link to={LINKS.NEW_FIND_INIT}>
                 <s.PrimaryBar>
                     <PrimaryNavigationButton />
                 </s.PrimaryBar>
