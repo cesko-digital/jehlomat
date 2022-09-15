@@ -24,6 +24,10 @@ class APIURL {
         return `/syringe/${syringeId}/info`;
     }
 
+    getOrganizationList() {
+        return this.organization;
+    }
+
     getOrganizationVerification(orgId: string) {
         return `/verification/organization?orgId=${orgId}`;
     }

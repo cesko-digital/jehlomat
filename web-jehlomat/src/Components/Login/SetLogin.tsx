@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { tokenState, userIDState } from 'store/login';
+import { tokenState } from 'store/login';
 import { userState } from 'store/user';
 import { useHistory } from 'react-router-dom';
 import { IUser } from 'types';
@@ -12,7 +12,6 @@ import apiURL from 'utils/api-url';
 export const SetLogin: FC = () => {
     const token = useRecoilValue(tokenState);
     const setUser = useSetRecoilState(userState);
-    const userId = useRecoilValue(userIDState);
     const history = useHistory();
 
     useEffect(() => {

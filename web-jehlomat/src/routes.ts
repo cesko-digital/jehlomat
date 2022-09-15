@@ -33,6 +33,7 @@ const About = lazy(() => import('./screens/AboutPage'));
 const Contact = lazy(() => import('./screens/ContactPage'));
 const FAQPage = lazy(() => import('./screens/FAQ'));
 const OrganizationAdminVerification = lazy(() => import('./screens/OrganizationAdminVerification/OrganizationAdminVerification'));
+const SeznamOrganizaci = lazy(() => import('./screens/OrganizaceSeznam/OrganizaceSeznam'));
 
 export enum Routes {
     HOME = 'HOME',
@@ -48,6 +49,7 @@ export enum Routes {
     ORGANIZATION_REGISTRATION = 'ORGANIZATION_REGISTRATION',
     ORGANIZATION_WAITING_FOR_APPROVAL = 'ORGANIZATION_WAIT_FOR_APPROVAL',
     ORGANIZATION_THANK_YOU = 'ORGANIZATION_THANK_YOU',
+    ORGANIZATIONS = 'ORGANIZATIONS',
     PROFILE = 'PROFILE',
     NEW_FIND = 'NEW_FIND',
     FINDINGS = 'FINDINGS',
@@ -171,6 +173,14 @@ export const routes: Route[] = [
         id: Routes.ORGANIZATION_ADMIN_CONFIRMATION,
         Component: OrganizationAdminVerification,
         path: `/${ORGANIZATION_URL_PATH}/admin/povoleni/`,
+    },
+    {
+        id: Routes.ORGANIZATIONS,
+        Component: SeznamOrganizaci,
+        path: `/${ORGANIZATION_URL_PATH}/seznam`,
+        protectedRoute: true,
+        from: true,
+        exact: true,
     },
     {
         id: Routes.ORGANIZATION_EDIT,
