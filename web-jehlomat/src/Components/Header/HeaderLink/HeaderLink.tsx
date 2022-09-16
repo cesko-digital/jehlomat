@@ -13,6 +13,7 @@ export enum HeaderLinkType {
     NewFind,
     Findings,
     Login,
+    Organizations,
 }
 
 export interface IHeaderLink {
@@ -43,20 +44,22 @@ function titleForType(type: HeaderLinkType): string {
         case HeaderLinkType.AboutApp:
             return 'O aplikaci';
         case HeaderLinkType.CreateOrgAccount:
-            return 'Založit organizaci';
+            return 'Registrovat organizaci';
         case HeaderLinkType.ShowOrgAccount:
-            return 'Profil Organizace';       
+            return 'Moje Organizace';
         case HeaderLinkType.ShowUserAccount:
-            return 'Profil Uživatele';    
+            return 'Profil';
         case HeaderLinkType.User:
-            return 'Seznam uživatelů';                           
+            return 'Uživatelé';
         case HeaderLinkType.Watch:
             return 'Sledovat nález';
         case HeaderLinkType.NewFind:
-            return 'Zadat nález'            
+            return 'Zadat nález';
         case HeaderLinkType.Findings:
             return 'Nálezy';
         case HeaderLinkType.Login:
             return 'Přihlásit se';
+        case HeaderLinkType.Organizations:
+            return 'Seznam organizací';
     }
 }
