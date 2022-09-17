@@ -4,7 +4,7 @@ import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
-import { LINKS, LINKS_WITH_PARAMS, ORGANIZATION_URL_PATH, Routes } from 'routes';
+import { LINKS, ORGANIZATION_URL_PATH, Routes } from 'routes';
 import { white } from 'utils/colors';
 import { ChevronLeft } from '@mui/icons-material';
 import Navigator from 'Components/Navigator/Navigator';
@@ -62,7 +62,7 @@ export const Header = (props: Props) => {
             } else if (loggedUser && loggedUser?.isAdmin) {
                 return (
                     <>
-                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS_WITH_PARAMS.NEW_FIND?.(0)} />
+                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND_INIT} />
                         <HeaderLink type={HeaderLinkType.User} route={LINKS.USER} />
                         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
                         <HeaderLink type={HeaderLinkType.ShowOrgAccount} route={`/${ORGANIZATION_URL_PATH}/${loggedUser.organizationId}`} />
@@ -73,7 +73,7 @@ export const Header = (props: Props) => {
             } else {
                 return (
                     <>
-                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS_WITH_PARAMS.NEW_FIND?.(0)} />
+                        <HeaderLink type={HeaderLinkType.NewFind} route={LINKS.NEW_FIND_INIT} />
                         <HeaderLink type={HeaderLinkType.Findings} route={LINKS.FINDINGS} />
                         <HeaderLink type={HeaderLinkType.ShowUserAccount} route={LINKS.PROFILE} />
                         {renderLoginLogout()}

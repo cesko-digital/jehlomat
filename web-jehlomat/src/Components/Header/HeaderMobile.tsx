@@ -4,9 +4,8 @@ import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import SecondaryButton from '../Buttons/SecondaryButton/SecondaryButton';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import TextButton from '../Buttons/TextButton/TextButton';
-import { LINKS, LINKS_WITH_PARAMS, Routes } from 'routes';
+import { LINKS } from 'routes';
 import { Link, useHistory } from 'react-router-dom';
-import Navigator from 'Components/Navigator/Navigator';
 
 export const HeaderMobile: FC = () => {
     const history = useHistory();
@@ -25,7 +24,7 @@ export const HeaderMobile: FC = () => {
             <s.LinkContainer>
                 <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} mobile={true} />
                 <s.LineVertical />
-                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true}/>
+                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true} />
             </s.LinkContainer>
             <s.LineHorizontal />
 
@@ -36,7 +35,7 @@ export const HeaderMobile: FC = () => {
                 <TextButton
                     text={'Zadat nález anonymně'}
                     onClick={() => {
-                        history.push(LINKS_WITH_PARAMS.NEW_FIND?.(0));
+                        history.push(LINKS.NEW_FIND_INIT);
                     }}
                 />
             </div>

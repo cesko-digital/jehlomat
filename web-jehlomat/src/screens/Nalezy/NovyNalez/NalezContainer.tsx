@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Container, { ContainerProps } from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -19,8 +19,8 @@ import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { LINKS } from 'routes';
 
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { mapPositionState, newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
 import MapComponent from 'screens/Nalezy/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
@@ -48,21 +48,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [trackingCode, setTrackingCode] = useState<string | null>(null);
     const [teamAvailable, setTeamAvailable] = useState(true);
 
-    const resetCurrentStep = useResetRecoilState(newSyringeStepState);
-    const resetSyringeInfo = useResetRecoilState(newSyringeInfoState);
-    const resetMapPosition = useResetRecoilState(mapPositionState);
-
     const isLoggedIn = useRecoilValue(isLoginValidState);
-
-    // Always reset to the defaults on unmount
-    useEffect(
-        () => () => {
-            resetCurrentStep();
-            resetSyringeInfo();
-            resetMapPosition();
-        },
-        [],
-    );
 
     const handleInputChange = (key: string, value: string | number) => setNewSyringeInfo({ ...newSyringeInfo, [key]: value });
 

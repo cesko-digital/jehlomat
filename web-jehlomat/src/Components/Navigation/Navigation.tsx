@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import * as s from './NavigationStyles';
 import { NavigationButtonType, PrimaryNavigationButton, SecondaryNavigationButton } from './NavigationButton';
 import { Link, useLocation } from 'react-router-dom';
-import { LINKS, LINKS_WITH_PARAMS, ORGANIZATION_URL_PATH } from 'routes';
+import { LINKS, ORGANIZATION_URL_PATH } from 'routes';
 import { css, GlobalStyles } from '@mui/styled-engine';
 import { useRecoilValue } from 'recoil';
 import { userState } from 'store/user';
@@ -53,7 +53,7 @@ const Navigation: FC = () => {
                 `}
             />
             <s.LeftBar>{renderUserNavigation()}</s.LeftBar>
-            <Link to={LINKS_WITH_PARAMS.NEW_FIND?.(0)}>
+            <Link to={LINKS.NEW_FIND_INIT}>
                 <s.PrimaryBar>
                     <PrimaryNavigationButton />
                 </s.PrimaryBar>
