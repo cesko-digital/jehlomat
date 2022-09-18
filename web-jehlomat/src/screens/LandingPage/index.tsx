@@ -6,7 +6,7 @@ import { darkGrey, primaryDark } from '../../utils/colors';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
 import { useHistory } from 'react-router-dom';
-import { LINKS_WITH_PARAMS } from 'routes';
+import { LINKS } from 'routes';
 import { useRecoilValue } from 'recoil';
 import { isLoginValidState } from 'store/login';
 
@@ -46,11 +46,17 @@ const LandingPage = () => {
                         text={isLoggedIn ? 'zadat nález' : 'zadat nález ANONYMNĚ'}
                         type="button"
                         onClick={() => {
-                            history.push(LINKS_WITH_PARAMS.NEW_FIND?.(0));
+                            history.push(LINKS.NEW_FIND_INIT);
                         }}
                     />
-                    <Typography align="left" variant="body1" color={darkGrey} fontSize="20px" lineHeight="30px" sx={{ mt: isLoggedIn ? '92px' : '56px', mb: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}>
-
+                    <Typography
+                        align="left"
+                        variant="body1"
+                        color={darkGrey}
+                        fontSize="20px"
+                        lineHeight="30px"
+                        sx={{ mt: isLoggedIn ? '92px' : '56px', mb: '56px', maxWidth: '420px', letterSpacing: '0.25px' }}
+                    >
                         Jehlomat.cz je online nástroj, sloužící terénním pracovníkům a veřejnosti ke hlášení nálezů odhozených injekčních stříkaček a následně k jejich odborné likvidaci
                     </Typography>
                 </Grid>

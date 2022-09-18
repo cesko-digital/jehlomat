@@ -126,6 +126,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     );
 };
 
+
 function getRedirectionLink(search: string, isMobile: boolean, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
     const fromLink = searchMap.get('from');

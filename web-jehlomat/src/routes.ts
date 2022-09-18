@@ -7,6 +7,7 @@ const Prihlaseni = lazy(() => import('./screens/Prihlaseni/Prihlaseni'));
 const Welcome = lazy(() => import('./screens/Prihlaseni/Welcome')); // Temp welcome
 const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('screens/Nalezy/NovyNalez/NalezContainer'));
+const NovyNalezInit = lazy(() => import('screens/Nalezy/NovyNalez/NovyNalezInit'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
 const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/OrganizationEdit'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
@@ -51,8 +52,10 @@ export enum Routes {
     ORGANIZATION_THANK_YOU = 'ORGANIZATION_THANK_YOU',
     ORGANIZATIONS = 'ORGANIZATIONS',
     PROFILE = 'PROFILE',
+    NEW_FIND_INIT = 'NEW_FIND_INIT',
     NEW_FIND = 'NEW_FIND',
     FINDINGS = 'FINDINGS',
+    FINDINGS_MAPA = 'FINDINGS_MAPA',
     FINDING_DETAILS = 'FINDING_DETAILS',
     FINDINGS_NOTIFY_POLICE = 'FINDINGS_NOTIFY_POLICE',
     EDIT_FINDING = 'EDIT_FINDING',
@@ -216,9 +219,14 @@ export const routes: Route[] = [
         path: '/profil',
     },
     {
+        id: Routes.NEW_FIND_INIT,
+        Component: NovyNalezInit,
+        path: `/${FINDINGS_URL_PATH}/novy-nalez-init`,
+    },
+    {
         id: Routes.NEW_FIND,
         Component: NovyNalez,
-        path: (step?: 0 | 1 | 2 | 3 | 4) => `/${FINDINGS_URL_PATH}/novy-nalez${step ? `?step=${step}` : ''}`,
+        path: `/${FINDINGS_URL_PATH}/novy-nalez`,
         AdditionalComponents: Layout,
     },
     {
@@ -244,6 +252,13 @@ export const routes: Route[] = [
         id: Routes.EDIT_FINDING,
         Component: EditNalez,
         path: `/${FINDINGS_URL_PATH}/edit/:id`,
+        exact: true,
+        AdditionalComponents: Layout,
+    },
+    {
+        id: Routes.FINDINGS_MAPA,
+        Component: Nalezy,
+        path: `/${FINDINGS_URL_PATH}/mapa`,
         exact: true,
         AdditionalComponents: Layout,
     },
