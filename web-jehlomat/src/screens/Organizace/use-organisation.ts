@@ -24,7 +24,7 @@ export const useOrganisation = (onError?: TErrorCallback) => {
             if (isStatusSuccess(userResponse.status)) {
                 const orgResponse: AxiosResponse<IOrgData> = await API.get(apiURL.getOrganization(orgId));
                 if (isStatusSuccess(orgResponse.status)) {
-                    if (userResponse.data.organizationId.toString() !== orgId?.toString() || !userResponse.data.isAdmin) {
+                    if (!userResponse.data.isSuperAdmin && (userResponse.data.organizationId.toString() !== orgId?.toString() || !userResponse.data.isAdmin)) {
                         return onError?.('not-admin');
                     }
                     return {
