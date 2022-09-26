@@ -11,15 +11,10 @@ import PrimaryButton from '../Buttons/PrimaryButton/PrimaryButton';
 import * as yup from 'yup';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ItemContainer } from './LoginForm.styles';
-import { LINKS } from 'routes';
 import { ModalContext } from 'Components/Navigator/Navigator';
-import { convertSearchStringToMap } from 'utils/url';
 import { isStatusGeneralSuccess, isStatusUnauthorized } from 'utils/payload-status';
 import apiURL from 'utils/api-url';
 import { tokenState } from 'store/login';
-import { media } from 'utils/media';
-import { userState } from 'store/user';
-import { IUser } from 'types';
 
 interface LoginFormProps {}
 
@@ -41,10 +36,7 @@ const validationSchema = yup.object({
 export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
     const { isModalVisible, closeModal } = useContext(ModalContext);
-    const { search } = useLocation();
     const setToken = useSetRecoilState(tokenState);
-    const isMobile = useMediaQuery(media.lte('mobile'));
-    const loggedUser = useRecoilValue(userState);
 
     return (
         <>
@@ -66,8 +58,8 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                 if (token) {
                                     setToken(token);
                                     if (isModalVisible) closeModal();
-                                    const link = getRedirectionLink(search, isMobile, loggedUser);
-                                    history.push(link);
+                                    //const link = getRedirectionLink(search, isMobile, loggedUser);
+                                    history.push('/');
                                 }
                                 break;
                             }
@@ -125,18 +117,5 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
         </>
     );
 };
-
-
-function getRedirectionLink(search: string, isMobile: boolean, loggedUser: IUser | null) {
-    const searchMap = convertSearchStringToMap(search);
-    const fromLink = searchMap.get('from');
-    if (loggedUser?.isSuperAdmin) {
-        return LINKS.ORGANIZATIONS;
-    }
-    if (loggedUser?.isAdmin) {
-        return LINKS.USER;
-    }
-    return fromLink || LINKS.FINDINGS;
-}
 
 export default LoginForm;
