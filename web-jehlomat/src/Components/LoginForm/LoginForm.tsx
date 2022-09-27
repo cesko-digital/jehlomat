@@ -38,7 +38,6 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     const { isModalVisible, closeModal } = useContext(ModalContext);
     const setToken = useSetRecoilState(tokenState);
     const { search } = useLocation();
-
     return (
         <>
             <Formik
@@ -62,6 +61,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                     //const link = getRedirectionLink(search, isMobile, loggedUser);
                                     history.push({
                                         pathname: '/',
+                                        search: search,
                                         state: { from:  search}
                                       });
                                 }

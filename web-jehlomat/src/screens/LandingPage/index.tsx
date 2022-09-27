@@ -33,7 +33,6 @@ const LandingPage = () => {
     const user = useRecoilValue(userState);
     const { search } = useLocation();
 
-
     if(user){
         const redirection = getRedirectionLink(search, user);
         return (
