@@ -37,6 +37,7 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
     const history = useHistory();
     const { isModalVisible, closeModal } = useContext(ModalContext);
     const setToken = useSetRecoilState(tokenState);
+    const { search } = useLocation();
 
     return (
         <>
@@ -59,7 +60,10 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
                                     setToken(token);
                                     if (isModalVisible) closeModal();
                                     //const link = getRedirectionLink(search, isMobile, loggedUser);
-                                    history.push('/');
+                                    history.push({
+                                        pathname: '/',
+                                        state: { from:  search}
+                                      });
                                 }
                                 break;
                             }
