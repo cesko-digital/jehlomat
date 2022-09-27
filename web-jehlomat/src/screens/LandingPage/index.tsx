@@ -15,6 +15,7 @@ import { userState } from 'store/user';
 
 function getRedirectionLink(search: string, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
+    console.log("from", searchMap);
     const fromLink = searchMap.get('from');
     if (fromLink===null && loggedUser?.isSuperAdmin) {
         return LINKS.ORGANIZATIONS;
