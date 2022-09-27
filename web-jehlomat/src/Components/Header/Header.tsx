@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
@@ -23,11 +23,17 @@ export const Header = (props: Props) => {
     const isLoggedIn = useRecoilValue(isLoginValidState);
     const setToken = useSetRecoilState(tokenState);
     const loggedUser = useRecoilValue(userState);
+    const setUser = useSetRecoilState(userState);
+
 
     const logoutFnc = useCallback(() => {
         setToken(null);
         clearApiToken();
-        history.push('/');
+        setUser(null);
+        history.push({
+            pathname: '/',
+            state: { from: '/' }
+          });
     }, [setToken]);
 
     const onBack = () => {
