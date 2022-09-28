@@ -108,7 +108,7 @@ export const routes: Route[] = [
     {
         id: Routes.USER_SET_NEW_PASSWORD,
         Component: SetNewPassword,
-        path: `/${USER_URL_PATH_}/nove-heslo`,
+        path: `/${USER_URL_PATH_}/heslo`,
     },
     {
         id: Routes.USER_NEW,
