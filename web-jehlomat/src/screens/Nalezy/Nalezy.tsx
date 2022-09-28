@@ -24,6 +24,7 @@ import Page from 'screens/Nalezy/Components/Page';
 import { filteringState, loaderState, paginationState, sortingState } from 'screens/Nalezy/store';
 import { Filtering } from './types/Filtering';
 import { LINKS } from 'routes';
+import FilterByLocation from './Components/FilterByLocation';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
@@ -122,6 +123,7 @@ const Nalezy: FunctionComponent = () => {
                 {filters && (
                     <Filters>
                         <HorizontalContainer>
+                            <FilterByLocation />
                             <FilterByRange />
                             <FilterByReporter />
                             <FilterByState />
