@@ -42,7 +42,6 @@ const ResetPassword: FunctionComponent = () => {
                                         value={values.password}
                                         name="password"
                                         type="password"
-                                        placeholder={texts.INPUT__PASS__PLACEHOLDER}
                                         label={texts.INPUT__PASS__LABEL}
                                         required={true}
                                         error={touched.password && errors.password ? errors.password : undefined}
@@ -53,7 +52,6 @@ const ResetPassword: FunctionComponent = () => {
                                         value={values.rePassword}
                                         type="password"
                                         name="rePassword"
-                                        placeholder={texts.INPUT__RE_PASS__PLACEHOLDER}
                                         label={texts.INPUT__RE_PASS__LABEL}
                                         required={true}
                                         error={touched.rePassword && errors.rePassword ? errors.rePassword : undefined}
