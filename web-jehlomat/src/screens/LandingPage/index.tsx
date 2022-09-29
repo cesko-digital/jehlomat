@@ -6,7 +6,7 @@ import { darkGrey, primaryDark } from '../../utils/colors';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton/PrimaryButton';
 import { media } from '../../utils/media';
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
-import { LINKS } from 'routes';
+import { LINKS, ORGANIZATION_URL_PATH } from 'routes';
 import { useRecoilValue } from 'recoil';
 import { isLoginValidState } from 'store/login';
 import { convertSearchStringToMap } from 'utils/url';
@@ -15,13 +15,12 @@ import { userState } from 'store/user';
 
 function getRedirectionLink(search: string, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
-    console.log('from', searchMap);
     const fromLink = searchMap.get('from');
     if (fromLink === null && loggedUser?.isSuperAdmin) {
         return LINKS.ORGANIZATIONS;
     }
-    if (fromLink === null && loggedUser?.isAdmin) {
-        return LINKS.USER;
+    if (fromLink === null && loggedUser?.isAdmin && loggedUser?.organizationId) {
+        return `${ORGANIZATION_URL_PATH}/${loggedUser.organizationId}`;
     }
     return fromLink || LINKS.FINDINGS;
 }

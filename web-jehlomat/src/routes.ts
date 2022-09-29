@@ -108,7 +108,7 @@ export const routes: Route[] = [
     {
         id: Routes.USER_SET_NEW_PASSWORD,
         Component: SetNewPassword,
-        path: `/${USER_URL_PATH_}/nove-heslo`,
+        path: `/${USER_URL_PATH_}/heslo`,
     },
     {
         id: Routes.USER_NEW,
@@ -123,6 +123,7 @@ export const routes: Route[] = [
         path: `/${USER_URL_PATH_}/upravit/:userId`,
         protectedRoute: true,
         title: 'Editace uživatele',
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.USER_VALIDATION,
@@ -190,6 +191,7 @@ export const routes: Route[] = [
         path: `/${ORGANIZATION_URL_PATH}/edit/:orgId?`,
         protectedRoute: true,
         from: true,
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.ORGANIZATION,
@@ -197,6 +199,7 @@ export const routes: Route[] = [
         path: `/${ORGANIZATION_URL_PATH}/:orgId?`,
         protectedRoute: true,
         from: true,
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.TEAM,
@@ -216,6 +219,7 @@ export const routes: Route[] = [
         id: Routes.PROFILE,
         Component: Profil,
         path: '/profil',
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.NEW_FIND_INIT,
