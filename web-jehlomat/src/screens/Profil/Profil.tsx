@@ -189,29 +189,32 @@ const Profile: React.FC = () => {
                                                         error={Boolean(errors.username) ? errors.username : undefined}
                                                     />
                                                     <TextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                                                    {teams.length &&
-                                                        teams.map(team => {
-                                                            return (
-                                                                <>
-                                                                    <Label htmlFor="teamName">Tým</Label>
-                                                                    <OutlinedInput
-                                                                        value={team.name}
-                                                                        type="text"
-                                                                        name="teamName"
-                                                                        endAdornment={
-                                                                            <InputAdornment position="end">
-                                                                                <IconButton edge="end">
-                                                                                    <Link to={`team/edit/${team.id}`} style={{ all: 'unset' }}>
-                                                                                        <EditIcon style={{ color: '#0E766C' }} />
-                                                                                    </Link>
-                                                                                </IconButton>
-                                                                            </InputAdornment>
-                                                                        }
-                                                                        disabled
-                                                                    />
-                                                                </>
-                                                            );
-                                                        })}
+                                                    {teams.length && (
+                                                        <>
+                                                            <Label>Tým</Label>
+                                                            {teams.map(team => {
+                                                                return (
+                                                                    <>
+                                                                        <OutlinedInput
+                                                                            value={team.name}
+                                                                            type="text"
+                                                                            name="teamName"
+                                                                            endAdornment={
+                                                                                <InputAdornment position="end">
+                                                                                    <IconButton edge="end">
+                                                                                        <Link to={`team/edit/${team.id}`} style={{ all: 'unset' }}>
+                                                                                            <EditIcon style={{ color: '#0E766C' }} />
+                                                                                        </Link>
+                                                                                    </IconButton>
+                                                                                </InputAdornment>
+                                                                            }
+                                                                            disabled
+                                                                        />
+                                                                    </>
+                                                                );
+                                                            })}
+                                                        </>
+                                                    )}
                                                     {/* <TextInput
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
