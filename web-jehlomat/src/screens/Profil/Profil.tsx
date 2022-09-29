@@ -1,4 +1,5 @@
-import { Grid, Container, Box } from '@mui/material';
+import { Grid, Container, Box, OutlinedInput, InputAdornment, IconButton, useMediaQuery, Paper } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { Header } from 'Components/Header/Header';
 import imageSrc from 'assets/images/empty-state.svg';
 import { Formik, Form, FormikHelpers } from 'formik';
@@ -10,10 +11,9 @@ import { useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
 import { AxiosResponse } from 'axios';
 import { IOrganizace, ITeam, IUser } from 'types';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { LINKS } from 'routes';
 import apiURL from 'utils/api-url';
-import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { userState } from 'store/user';
 import { AccessDenied } from 'screens/Organizace/403';
@@ -25,6 +25,7 @@ import Loading from 'screens/Nalezy/Components/Loading';
 import { userIDState } from 'store/login';
 import { PASSWORD_COMPLEXITY } from '../../utils/constants';
 import Modal from 'Components/Modal/Modal';
+import { Label } from 'Components/Inputs/shared';
 
 const validationSchema = yup.object({
     email: yup.string().email('Email nemá správný formát.').required('Email je povinné pole'),
@@ -188,7 +189,29 @@ const Profile: React.FC = () => {
                                                         error={Boolean(errors.username) ? errors.username : undefined}
                                                     />
                                                     <TextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                                                    <TextInput value={teams && values.teamId ? teams?.[values?.teamId]?.name || '' : ''} type="text" name="teamId" label="Tým" disabled />
+                                                    {teams.length &&
+                                                        teams.map(team => {
+                                                            return (
+                                                                <>
+                                                                    <Label htmlFor="teamName">Tým</Label>
+                                                                    <OutlinedInput
+                                                                        value={team.name}
+                                                                        type="text"
+                                                                        name="teamName"
+                                                                        endAdornment={
+                                                                            <InputAdornment position="end">
+                                                                                <IconButton edge="end">
+                                                                                    <Link to={`team/edit/${team.id}`} style={{ all: 'unset' }}>
+                                                                                        <EditIcon style={{ color: '#0E766C' }} />
+                                                                                    </Link>
+                                                                                </IconButton>
+                                                                            </InputAdornment>
+                                                                        }
+                                                                        disabled
+                                                                    />
+                                                                </>
+                                                            );
+                                                        })}
                                                     {/* <TextInput
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -200,9 +223,16 @@ const Profile: React.FC = () => {
                                                         error={touched.password && Boolean(errors.password) ? errors.password : undefined}
                                                     /> */}
                                                 </Box>
-                                                <ButtonWrapper>
-                                                    <PrimaryButton id="submit" text="ULOŽIT" type="submit" disabled={!isValid} />
-                                                </ButtonWrapper>
+                                                <Paper elevation={0} style={{ marginBottom: '40px' }}>
+                                                    <ButtonWrapper>
+                                                        <Link to="team/novy">
+                                                            <PrimaryButton text="Přidat tým" disabled={!isValid} />
+                                                        </Link>
+                                                    </ButtonWrapper>
+                                                    <ButtonWrapper>
+                                                        <PrimaryButton id="submit" text="ULOŽIT" type="submit" disabled={!isValid} />
+                                                    </ButtonWrapper>
+                                                </Paper>
                                             </Form>
                                         );
                                     }}
