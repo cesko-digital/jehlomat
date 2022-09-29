@@ -15,14 +15,14 @@ import { userState } from 'store/user';
 
 function getRedirectionLink(search: string, loggedUser: IUser | null) {
     const searchMap = convertSearchStringToMap(search);
-    console.log("from", searchMap);
+    console.log('from', searchMap);
     const fromLink = searchMap.get('from');
-    if (fromLink===null && loggedUser?.isSuperAdmin) {
+    if (fromLink === null && loggedUser?.isSuperAdmin) {
         return LINKS.ORGANIZATIONS;
     }
-    if (fromLink===null &&loggedUser?.isAdmin) {
+    if (fromLink === null && loggedUser?.isAdmin) {
         return LINKS.USER;
-    } 
+    }
     return fromLink || LINKS.FINDINGS;
 }
 
@@ -33,21 +33,18 @@ const LandingPage = () => {
     const user = useRecoilValue(userState);
     const { search } = useLocation();
 
-
-    if(user){
+    if (user) {
         const redirection = getRedirectionLink(search, user);
-        return (
-            <Redirect to={redirection} />
-        )
+        return <Redirect to={redirection} />;
     } else {
         if (isMobile) {
             return <HeaderMobile />;
         }
-    
+
         return (
             <>
                 <Header mobileTitle="" />
-    
+
                 <Container
                     maxWidth="lg"
                     sx={{

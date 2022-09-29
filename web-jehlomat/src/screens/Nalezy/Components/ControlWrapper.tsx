@@ -5,7 +5,7 @@ const GREEN_LIGHT = 'rgba(14, 118, 108, 0.2)';
 
 interface WrapperProps {
     active?: boolean;
-    style?: {}
+    style?: {};
 }
 
 const ControlWrapper = styled('label', {
@@ -40,7 +40,7 @@ const ControlWrapper = styled('label', {
         },
 
         '&:focus-within': { ...highlighted },
-        ...style
+        ...style,
     };
 });
 

@@ -3,15 +3,14 @@ import { API } from 'config/baseURL';
 export enum LocationType {
     OKRES,
     OBEC,
-    MC
+    MC,
 }
 
 export type Location = {
-    id: string,
-    name: string,
-    type: LocationType
-}
-
+    id: string;
+    name: string;
+    type: LocationType;
+};
 
 const loadLocations = async () => {
     const url = `/location/all`;
