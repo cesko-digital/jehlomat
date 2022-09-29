@@ -21,16 +21,13 @@ const Navigation: FC = () => {
                 </>
             );
         } else if (loggedUser && loggedUser.isAdmin) {
+            const organizationUrl = `/${ORGANIZATION_URL_PATH}/${loggedUser.organizationId}`;
             return (
                 <>
                     <SecondaryNavigationButton route={LINKS.USER} selected={location.pathname === LINKS.USER} type={NavigationButtonType.Users} />
                     <SecondaryNavigationButton route={LINKS.FINDINGS} selected={location.pathname === LINKS.FINDINGS} type={NavigationButtonType.SyringeList} />
                     <SecondaryNavigationButton route={LINKS.PROFILE} selected={location.pathname === LINKS.PROFILE} type={NavigationButtonType.Profile} />
-                    <SecondaryNavigationButton
-                        route={`/${ORGANIZATION_URL_PATH}/${loggedUser.organizationId}`}
-                        selected={location.pathname === LINKS.ORGANIZATION}
-                        type={NavigationButtonType.Organization}
-                    />
+                    <SecondaryNavigationButton route={organizationUrl} selected={location.pathname === organizationUrl} type={NavigationButtonType.Organization} />
                 </>
             );
         }
