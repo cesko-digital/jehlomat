@@ -5,11 +5,12 @@ const GREEN_LIGHT = 'rgba(14, 118, 108, 0.2)';
 
 interface WrapperProps {
     active?: boolean;
+    style?: {}
 }
 
 const ControlWrapper = styled('label', {
     shouldForwardProp: prop => prop !== 'active',
-})<WrapperProps>(({ active }) => {
+})<WrapperProps>(({ active, style }) => {
     const highlighted = {
         outline: 'none',
         borderColor: GREEN,
@@ -39,6 +40,7 @@ const ControlWrapper = styled('label', {
         },
 
         '&:focus-within': { ...highlighted },
+        ...style
     };
 });
 
