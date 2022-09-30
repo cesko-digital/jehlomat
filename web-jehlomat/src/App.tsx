@@ -72,7 +72,7 @@ const App: FC = ({ children }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: isMobile?'':'100vh' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: isMobile ? '' : '100vh' }}>
                 <Providers>
                     <LoginAlert />
                     <Router />

@@ -25,15 +25,14 @@ export const Header = (props: Props) => {
     const loggedUser = useRecoilValue(userState);
     const setUser = useSetRecoilState(userState);
 
-
     const logoutFnc = useCallback(() => {
         setToken(null);
         clearApiToken();
         setUser(null);
         history.push({
             pathname: '/',
-            state: { from: '/' }
-          });
+            state: { from: '/' },
+        });
     }, [setToken]);
 
     const onBack = () => {

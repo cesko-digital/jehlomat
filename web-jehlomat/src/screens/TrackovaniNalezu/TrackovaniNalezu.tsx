@@ -20,7 +20,6 @@ const TrackovaniNalezu: FC<Props> = () => {
     const height = isMobile ? '100vh' : 'auto';
     const isLoggedIn = useRecoilValue(isLoginValidState);
 
-
     const handleOnClickBack = () => {
         history.goBack();
     };
@@ -44,7 +43,7 @@ const TrackovaniNalezu: FC<Props> = () => {
 
     return (
         <>
-            <Header backRoute={!isLoggedIn?LINKS.HOME:undefined} mobileTitle="Stav nálezu" />
+            <Header backRoute={!isLoggedIn ? LINKS.HOME : undefined} mobileTitle="Stav nálezu" />
             {renderContent()}
         </>
     );

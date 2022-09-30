@@ -31,7 +31,6 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     const [position, setPosition] = useRecoilState(mapPositionState);
     const isMobile = useMediaQuery(media.lte('mobile'));
 
-
     useEffect(() => {
         if (userPosition) {
             setMarkerPosition(userPosition);
@@ -55,7 +54,7 @@ const Map: FC<IMapa> = ({ children, locked }) => {
     }
 
     return (
-        <Box position="relative" width="100%" height="100%" paddingBottom={isMobile?'':'32px'}>
+        <Box position="relative" width="100%" height="100%" paddingBottom={isMobile ? '' : '32px'}>
             <MapContainer
                 center={position || userPosition || DEFAULT_POSITION}
                 zoom={DEFAULT_ZOOM_LEVEL}
