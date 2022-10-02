@@ -189,7 +189,7 @@ const Profile: React.FC = () => {
                                                         error={Boolean(errors.username) ? errors.username : undefined}
                                                     />
                                                     <TextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                                                    {teams.length && (
+                                                    {teams.length ? (
                                                         <>
                                                             <Label>Tým</Label>
                                                             {teams.map(team => {
@@ -214,7 +214,7 @@ const Profile: React.FC = () => {
                                                                 );
                                                             })}
                                                         </>
-                                                    )}
+                                                    ) : ""}
                                                     {/* <TextInput
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
