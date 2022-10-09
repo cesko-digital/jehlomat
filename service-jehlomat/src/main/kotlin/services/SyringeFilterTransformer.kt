@@ -1,16 +1,12 @@
 package services
 
 import api.LocationTable
-import api.OrganizationTable
 import api.SyringeTable
 import api.UserTable
 import model.*
 import model.location.LocationId
 import model.location.LocationType
-import model.syringe.SyringeFilter
-import model.syringe.SyringeFinder
-import model.syringe.SyringeFinderType
-import model.syringe.SyringeStatus
+import model.syringe.*
 import org.ktorm.dsl.*
 import org.ktorm.schema.Column
 import org.ktorm.schema.ColumnDeclaring
@@ -22,14 +18,19 @@ private val ALWAYS_TRUE: ColumnDeclaring<Boolean> = SyringeTable.id.isNotNull()
 class SyringeFilterTransformer {
 
     companion object {
-        fun filterToDsl(filter: SyringeFilter, createdByUserAlias: UserTable, organizationId: Int?=null): ColumnDeclaring<Boolean>{
+        fun filterToDsl(
+            filter: SyringeFilter,
+            createdByUserAlias: UserTable,
+            reservedByUserAlias: UserTable,
+            roleLimitation: SyringeRoleLimitation
+        ): ColumnDeclaring<Boolean>{
             var result = ALWAYS_TRUE
             result = transformLocationIds(result, filter.locationIds)
             result = transformDateInterval(result, SyringeTable.createdAt, filter.createdAt)
             result = transformCreatedBy(result, filter.createdBy, createdByUserAlias)
             result = transformDateInterval(result, SyringeTable.demolishedAt, filter.demolishedAt)
             result = transformStatus(result, filter.status)
-            result = transformOrganizationIds(result, organizationId)
+            result = roleLimitation.addLimitation(result, createdByUserAlias, reservedByUserAlias)
 
             return result
         }
@@ -124,16 +125,6 @@ class SyringeFilterTransformer {
             }
 
             return result
-        }
-
-        private fun transformOrganizationIds(
-            filter: ColumnDeclaring<Boolean>,
-            organizationId: Int?
-        ): ColumnDeclaring<Boolean> {
-            if (organizationId == null) {
-                return filter
-            }
-            return filter and (OrganizationTable.organizationId eq organizationId)
         }
     }
 }
