@@ -47,7 +47,7 @@ const AddUserForm: FC<Props> = () => {
 
                         switch (true) {
                             case /2[0-9][0-9]/g.test(status.toString()): {
-                                history.push('/uzivatel/dekujeme');
+                                history.push(`/uzivatel/validace/${values.email}`);
                                 break;
                             }
                             case status === 409: {
