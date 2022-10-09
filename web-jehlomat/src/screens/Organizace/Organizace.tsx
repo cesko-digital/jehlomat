@@ -1,27 +1,41 @@
-import { useMediaQuery } from '@mui/material';
-import { FC, useCallback, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import { Box, Container as MUIContainer, Typography } from '@mui/material';
+import { Header } from 'Components/Header/Header';
+import { useState, useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useRecoilValue } from 'recoil';
-import { ORGANIZATION_URL_PATH } from 'routes';
+import { AccessDenied } from 'screens/Organizace/403';
+import { OrganisationNotFound } from 'screens/Organizace/404';
+import { IData, TErrorCallback, useOrganisation } from 'screens/Organizace/use-organisation';
 import { tokenState } from 'store/login';
-import { media } from 'utils/media';
-import { AccessDenied } from './403';
-import { OrganisationNotFound } from './404';
-import { DesktopContent } from './DesktopContent';
-import { MobileContent } from './MobileContent';
-import { IData, TErrorCallback, useOrganisation } from './use-organisation';
+import { primaryDark } from 'utils/colors';
+import { GeneralInformation } from './GeneralInformation';
+import { Password } from './Password';
 
 interface IRouteParams {
     orgId?: string;
 }
 
-const Organizace: FC = () => {
+export const Wrapper = styled(MUIContainer)`
+    flex-grow: 1;
+    margin-bottom: 62px;
+`;
+
+export const Title = styled(Typography)`
+    color: ${primaryDark};
+    font-size: 24px;
+    line-height: 28px;
+    margin: 62px 0 72px;
+`;
+
+const PAGE_TITLE ='Moje organizace';
+
+const Organizace = () => {
     const [notFound, setNotFound] = useState(false);
     const [noPermission, setNoPermission] = useState(false);
     const [data, setData] = useState<IData>();
     const token = useRecoilValue(tokenState);
     const history = useHistory();
-    const isMobile = useMediaQuery(media.lte('mobile'));
     const { orgId } = useParams<IRouteParams>();
 
     const handleError: TErrorCallback = useCallback(
@@ -53,10 +67,6 @@ const Organizace: FC = () => {
         fetchMyAPI();
     }, []);
 
-    const handleEditClick = useCallback(() => {
-        history.push(`/${ORGANIZATION_URL_PATH}/edit/${data?.organisation.id}`);
-    }, [history, data]);
-
     if (notFound) {
         return <OrganisationNotFound />;
     }
@@ -65,11 +75,22 @@ const Organizace: FC = () => {
         return <AccessDenied />;
     }
 
-    if (!data) {
-        return null;
-    }
-
-    return isMobile ? <MobileContent onEditClick={handleEditClick} data={data} /> : <DesktopContent onEditClick={handleEditClick} data={data} />;
+    return (
+        <>
+            <Header mobileTitle="" />
+            <Wrapper>
+                <Title variant="h1">{PAGE_TITLE}</Title>
+                <Box alignItems="flex-start" gap={[0, 10, 20]} flexDirection={['column', 'row']} display="flex">
+                    {data ? (
+                        <>
+                            <GeneralInformation data={data} />
+                            <Password data={data} />
+                        </>
+                    ) : null}
+                </Box>
+            </Wrapper>
+        </>
+    );
 };
 
 export default Organizace;
