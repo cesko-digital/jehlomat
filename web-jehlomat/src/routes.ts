@@ -9,7 +9,6 @@ const Profil = lazy(() => import('./screens/Profil/Profil'));
 const NovyNalez = lazy(() => import('screens/Nalezy/NovyNalez/NalezContainer'));
 const NovyNalezInit = lazy(() => import('screens/Nalezy/NovyNalez/NovyNalezInit'));
 const Organizace = lazy(() => import('./screens/Organizace/Organizace'));
-const OrganizationEdit = lazy(() => import('./screens/OrganizationEdit/OrganizationEdit'));
 const Nalezy = lazy(() => import('./screens/Nalezy/Nalezy'));
 const Detail = lazy(() => import('./screens/Nalezy/Detail'));
 const EditNalez = lazy(() => import('./screens/Nalezy/Edit'));
@@ -184,14 +183,6 @@ export const routes: Route[] = [
         protectedRoute: true,
         from: true,
         exact: true,
-    },
-    {
-        id: Routes.ORGANIZATION_EDIT,
-        Component: OrganizationEdit,
-        path: `/${ORGANIZATION_URL_PATH}/edit/:orgId?`,
-        protectedRoute: true,
-        from: true,
-        AdditionalComponents: Layout,
     },
     {
         id: Routes.ORGANIZATION,
