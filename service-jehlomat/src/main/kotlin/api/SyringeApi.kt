@@ -29,7 +29,10 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 val requestedPageInfo = request.pageInfo.ensureValidity()
                 val requestedOrdering = request.ordering.ensureValidity(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
 
-                val filteredSyringes = database.selectSyringes(request.filter, requestedPageInfo, requestedOrdering)
+                val loggedInUser = jwtManager.getLoggedInUser(call, database)
+                val roles = PermissionService.determineRoles(loggedInUser, loggedInUser)
+                val roleLimitation = SyringeRoleLimitation(database, roles, loggedInUser);
+                val filteredSyringes = database.selectSyringes(request.filter, roleLimitation, requestedPageInfo, requestedOrdering)
 
                 val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)
                 val pageInfo = PageInfoResult(requestedPageInfo.index, requestedPageInfo.size, hasMoreRecords)
@@ -45,14 +48,8 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 }
 
                 val request = call.receive<SyringeFilter>()
-
-                val organizationId = if (roles.contains(Role.SuperAdmin)) {
-                    null
-                } else {
-                    loggedInUser.organizationId
-                }
-
-                val output = database.selectSyringes(request, organizationId).joinToString("\n") { it.toString() }
+                val roleLimitation = SyringeRoleLimitation(database, roles, loggedInUser)
+                val output = database.selectSyringes(request, roleLimitation).joinToString("\n") { it.toString() }
 
                 call.response.header(
                     HttpHeaders.ContentDisposition,

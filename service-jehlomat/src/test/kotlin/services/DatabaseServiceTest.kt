@@ -1,14 +1,12 @@
 package services
 
+import main.SUPER_ADMIN
 import main.team
 import model.*
 import model.location.Location
 import model.location.LocationId
 import model.location.LocationType
-import model.syringe.SyringeFilter
-import model.syringe.SyringeFinder
-import model.syringe.SyringeFinderType
-import model.syringe.SyringeStatus
+import model.syringe.*
 import model.team.Team
 import model.user.User
 import model.user.UserStatus
@@ -16,7 +14,6 @@ import model.user.toUserInfo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.ktorm.expression.UnaryExpressionType
 import org.mindrot.jbcrypt.BCrypt
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -140,7 +137,7 @@ class DatabaseServiceTest {
             status = SyringeStatus.WAITING
         )
 
-        val selectedSyringes = database.selectSyringes(syringeFilter, defaultOrgId)
+        val selectedSyringes = database.selectSyringes(syringeFilter, SyringeRoleLimitation(database, setOf(Role.OrgAdmin), user))
         assertEquals(
             listOf(
                 CSVExportSchema(
@@ -175,13 +172,16 @@ class DatabaseServiceTest {
         val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
         database.insertSyringe(syringeToCreate)
 
-        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
-            locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
-            createdAt = DateInterval(1, 2),
-            createdBy = null,
-            demolishedAt=null,
-            status = SyringeStatus.WAITING
-        ), null))
+        assertEquals(listOf(), database.selectSyringes(
+            SyringeFilter(
+                locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
+                createdAt = DateInterval(1, 2),
+                createdBy = null,
+                demolishedAt=null,
+                status = SyringeStatus.WAITING
+            ),
+            SyringeRoleLimitation(database, setOf(Role.SuperAdmin), SUPER_ADMIN)
+        ))
     }
 
     @Test
@@ -195,13 +195,16 @@ class DatabaseServiceTest {
         val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
         database.insertSyringe(syringeToCreate)
 
-        assertEquals(listOf(), database.selectSyringes(SyringeFilter(
-            locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
-            createdAt = DateInterval(0, 1),
-            createdBy = SyringeFinder(0, SyringeFinderType.USER),
-            demolishedAt = null,
-            status = SyringeStatus.WAITING
-        ), null))
+        assertEquals(listOf(), database.selectSyringes(
+            SyringeFilter(
+                locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
+                createdAt = DateInterval(0, 1),
+                createdBy = SyringeFinder(0, SyringeFinderType.USER),
+                demolishedAt = null,
+                status = SyringeStatus.WAITING
+            ),
+            SyringeRoleLimitation(database, setOf(Role.SuperAdmin), SUPER_ADMIN)
+        ))
     }
 
     @Test

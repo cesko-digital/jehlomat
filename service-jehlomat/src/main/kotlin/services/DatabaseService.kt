@@ -130,8 +130,14 @@ class DatabaseService(
             .map(mapSyringeRow)
     }
 
-    fun selectSyringes(filter: SyringeFilter, pageInfo: PageInfo, orderByList: List<OrderByDefinition<OrderBySyringeColumn>>): List<Syringe> {
-        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias)
+    fun selectSyringes(filter: SyringeFilter,
+                       roleLimitation: SyringeRoleLimitation,
+                       pageInfo: PageInfo,
+                       orderByList: List<OrderByDefinition<OrderBySyringeColumn>>
+    ): List<Syringe> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(
+            filter, syringeCreatedByAlias, syringeReservedByAlias, roleLimitation
+        )
 
         return syringeSelectCommonQuery
             .where { filterDsl }
@@ -142,8 +148,10 @@ class DatabaseService(
             .map(mapSyringeRow)
     }
 
-    fun selectSyringes(filter: SyringeFilter, organizationId: Int?): List<CSVExportSchema> {
-        val filterDsl = SyringeFilterTransformer.filterToDsl(filter, syringeCreatedByAlias, organizationId)
+    fun selectSyringes(filter: SyringeFilter, roleLimitation: SyringeRoleLimitation): List<CSVExportSchema> {
+        val filterDsl = SyringeFilterTransformer.filterToDsl(
+            filter, syringeCreatedByAlias, syringeReservedByAlias, roleLimitation
+        )
 
         val selectColumns: MutableList<ColumnDeclaring<*>> = mutableListOf()
         selectColumns.addAll(SyringeTable.columns)
@@ -156,6 +164,7 @@ class DatabaseService(
         return databaseInstance.from(SyringeTable)
             .innerJoin(LocationTable, LocationTable.id eq SyringeTable.locationId)
             .leftJoin(syringeCreatedByAlias, syringeCreatedByAlias.userId eq SyringeTable.createdBy)
+            .leftJoin(syringeReservedByAlias, syringeReservedByAlias.userId eq SyringeTable.reservedBy)
             .leftJoin(syringeDemolishedByAlias, syringeDemolishedByAlias.userId eq SyringeTable.demolishedBy)
             .leftJoin(OrganizationTable, syringeCreatedByAlias.organizationId eq OrganizationTable.organizationId)
             .leftJoin(teamTableAlias, teamTableAlias.teamId eq syringeCreatedByAlias.teamId)
