@@ -110,6 +110,7 @@ const Team = () => {
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
     const [selectedMembers, setSelectedMembers]: any[] = useState([]);
+    const [selectedMembersToDelete, setSelectedMembersToDelete]: any[] = useState([]);
     const user = useRecoilValue(userState);
     const isMobile = useMediaQuery(media.lte('mobile'));
     const [showModal, setShowModal] = useState(false);
@@ -125,8 +126,6 @@ const Team = () => {
     const titleText = path.pathname.includes('edit') ? 'Editace teamu' : 'Přidat nový tým';
 
     const history = useHistory();
-
-    //console.log(teamId, path)
 
     const getGeometry = async (type: string, id: string) => {
         const response: AxiosResponse<any> = await API.get(`/location/geometry?type=${type}&id=${id}`);
@@ -144,11 +143,11 @@ const Team = () => {
     const removeMembers = (item: any) => {
         const data = selectedMembers;
         _.remove(data, {
-            id: item,
+            id: item.id,
         });
+        setSelectedMembersToDelete([...selectedMembersToDelete, item]);
         setSelectedMembers([...data]);
     };
-
     function knock(arr: Array<any>, val: any) {
         var data = _.remove(arr, function (n) {
             return n.id !== val.id;
@@ -295,15 +294,26 @@ const Team = () => {
             if (!confirmResult || confirmResult === 'cancel') {
                 return;
             }
+            const allMembers = [...selectedMembersToDelete, ...selectedMembers];
+            allMembers.map(async (user: IUser) => {
+                let userEdited: IUserEdited = _.cloneDeep(user);
+                delete userEdited.teamId;
+                delete userEdited.id;
+                delete userEdited.organizationId;
+                delete userEdited.isAdmin;
+                delete userEdited.verified;
+                await API.put(`/user/${user.id}/attributes`, userEdited);
+            });
+            setSelectedMembers([])
+            setSelectedMembersToDelete([])
             const response: AxiosResponse<any> = await API.delete(apiURL.deleteTeamFromOrganization(teamId));
             if (isStatusGeneralSuccess(response.status)) {
-                // redirect to home page until because no better option now
-                history.push(LINKS.HOME);
+                history.push(LINKS.PROFILE);
             } else {
                 throw new Error();
             }
         } catch (error: any) {
-            history.push(LINKS.ERROR);
+            history.push(LINKS.ERROR)
         }
     };
 
@@ -352,26 +362,40 @@ const Team = () => {
                                         } else {
                                             teamResponse = await API.post(`/team`, team);
                                         }
-
                                         switch (true) {
                                             case isStatusGeneralSuccess(teamResponse.status): {
-                                                selectedMembers.map(async (user: IUser) => {
-                                                    let userEdited: IUserEdited = _.cloneDeep(user);
-                                                    delete userEdited.id;
-                                                    delete userEdited.organizationId;
-                                                    delete userEdited.isAdmin;
-                                                    delete userEdited.verified;
-                                                    if (teamResponse.data && teamResponse.data.id) {
-                                                        userEdited.teamId = teamResponse.data.id;
+                                                if (selectedMembersToDelete.length > 0) {
+                                                    selectedMembersToDelete.map(async (user: IUser) => {
+                                                        let userEdited: IUserEdited = _.cloneDeep(user);
+                                                        delete userEdited.teamId;
+                                                        delete userEdited.id;
+                                                        delete userEdited.organizationId;
+                                                        delete userEdited.isAdmin;
+                                                        delete userEdited.verified;
                                                         const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
                                                         isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
-                                                    }
-                                                    if (teamId) {
-                                                        userEdited.teamId = teamId;
-                                                        const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
-                                                        isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
-                                                    }
-                                                });
+                                                    });
+                                                }
+                                                if (selectedMembers.length > 0) {
+                                                    selectedMembers.map(async (user: IUser) => {
+                                                        let userEdited: IUserEdited = _.cloneDeep(user);
+                                                        delete userEdited.id;
+                                                        delete userEdited.organizationId;
+                                                        delete userEdited.isAdmin;
+                                                        delete userEdited.verified;
+                                                        if (teamResponse.data && teamResponse.data.id) {
+                                                            userEdited.teamId = teamResponse.data.id;
+                                                            const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                            isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
+                                                        }
+                                                        if (teamId) {
+                                                            userEdited.teamId = teamId;
+                                                            const userResponse: AxiosResponse<any> = await API.put(`/user/${user.id}/attributes`, userEdited);
+                                                            isStatusGeneralSuccess(userResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
+                                                        }
+                                                    });
+                                                }
+                                                isStatusGeneralSuccess(teamResponse.status) ? setConfirmModal(true) : history.push(LINKS.ERROR);
                                                 break;
                                             }
                                             case isStatusConflictError(teamResponse.status): {
@@ -382,7 +406,7 @@ const Team = () => {
                                             default: {
                                                 if (geoLocation.length === 0) {
                                                     //location empty validation error
-                                                    setErrors({ location: { id: '', name: 'Zvolte jiný název teamu. Název teamu již existuje!', type: '' } });
+                                                    setErrors({ location: { id: '', name: 'Území týmu je povinné pole', type: '' } });
                                                 } else {
                                                     history.push(LINKS.ERROR);
                                                 }
@@ -424,12 +448,17 @@ const Team = () => {
                                                 disableClearable={true}
                                                 id="team-locality-select"
                                                 options={location}
-                                                getOptionLabel={(option: ILocation) => `${option.type} - ${option.name}`}
                                                 onChange={(event, value) => {
                                                     const data = knock(selectedLocation, value);
                                                     setSelectedLocation([...data]);
                                                 }}
+                                                getOptionLabel={(option: ILocation) => `${option.type} - ${option.name}`}
                                                 renderInput={params => <TextField {...params} />}
+                                                renderOption={(props, option: ILocation, state) => (
+                                                    <li {...props} key={option.id}>
+                                                        {`${option.type} - ${option.name}`}
+                                                    </li>
+                                                )}
                                             />
 
                                             <FormHelperText error={true}>{touched.location && errors.location ? errors.location.name : undefined}</FormHelperText>
@@ -474,7 +503,7 @@ const Team = () => {
                                         </StyledFormControl>
                                         <SelectList>
                                             {selectedMembers.map((member: any, id: number) => {
-                                                return <Item key={id} id={member.id} name={member.username} remove={removeMembers}></Item>;
+                                                return <Item key={id} id={member.id} name={member.username} remove={() => removeMembers(member)}></Item>;
                                             })}
                                         </SelectList>
                                         <PrimaryButton
@@ -484,19 +513,13 @@ const Team = () => {
                                             disabled={!isValid}
                                             style={{ maxWidth: '250px', marginBottom: '24px' }}
                                         />
-                                        {isEdit && (
-                                            <TextButton
-                                                fontSize={18}
-                                                color={primary}
-                                                text={isMobile ? 'Odstranit tým' : 'Odstranit tým z organizace'}
-                                                onClick={removeTeamFromOrganization}
-                                                textTransform="uppercase"
-                                            />
-                                        )}
                                     </Form>
                                 );
                             }}
                         </Formik>
+                        {isEdit && (
+                            <TextButton fontSize={18} color={primary} text={isMobile ? 'Odstranit tým' : 'Odstranit tým z organizace'} onClick={removeTeamFromOrganization} textTransform="uppercase" />
+                        )}
                     </FormContainer>
                     <BasicMap borderRadius="10px" display={isMobile ? false : true} />
                 </Container>
@@ -522,7 +545,7 @@ const Team = () => {
                         text="ok"
                         onClick={() => {
                             setConfirmModal(false);
-                            history.push('/team/');
+                            history.push(LINKS.PROFILE);
                         }}
                     />
                 </Container>

@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
 
     return (
         <>
-            <Header mobileTitle="Profil uživatele" />
+            <Header mobileTitle={loggedUser?.isAdmin ? "Profil organizace" : "Profil uživatele"} />
             <Container
                 maxWidth="lg"
                 sx={{
@@ -144,7 +144,7 @@ const Profile: React.FC = () => {
                 <Grid xs={isDesktop ? 7 : 12} item alignItems="start" container direction="column">
                     {isDesktop && (
                         <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
-                            Editace uživatele
+                            Profil organizace
                         </PageHeading>
                     )}
                     {user && (
