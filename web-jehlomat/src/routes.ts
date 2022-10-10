@@ -127,7 +127,7 @@ export const routes: Route[] = [
     {
         id: Routes.USER_VALIDATION,
         Component: OvereniEmailu,
-        path: `/${USER_URL_PATH_}/validace`,
+        path: `/${USER_URL_PATH_}/validace/:email`,
     },
     {
         id: Routes.USER_REGISTRATION,
