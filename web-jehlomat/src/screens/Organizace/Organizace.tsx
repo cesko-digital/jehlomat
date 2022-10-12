@@ -11,6 +11,7 @@ import { tokenState } from 'store/login';
 import { primaryDark } from 'utils/colors';
 import { GeneralInformation } from './GeneralInformation';
 import { Password } from './Password';
+import { Team } from './Team';
 
 interface IRouteParams {
     orgId?: string;
@@ -80,11 +81,12 @@ const Organizace = () => {
             <Header mobileTitle="" />
             <Wrapper>
                 <Title variant="h1">{PAGE_TITLE}</Title>
-                <Box alignItems="flex-start" gap={[0, 10, 20]} flexDirection={['column', 'row']} display="flex">
+                <Box alignItems="flex-start" gap={[0, 5, 10]} flexDirection={['column', 'row']} display="flex" flexWrap="wrap">
                     {data ? (
                         <>
                             <GeneralInformation data={data} />
                             <Password data={data} />
+                            <Team />
                         </>
                     ) : null}
                 </Box>

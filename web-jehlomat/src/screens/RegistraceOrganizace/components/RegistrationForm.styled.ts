@@ -9,7 +9,7 @@ export const SContainer = styled.div`
     border-radius: ${size(3)};
 
     width: 100%;
-    max-width: ${size(166 - 13 * 2)};
+    max-width: ${size(166 - 30 * 2)};
     min-width: ${size(40)};
 
     @media ${media.gt('mobile')} {
