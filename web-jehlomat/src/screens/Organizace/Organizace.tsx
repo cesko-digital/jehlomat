@@ -13,8 +13,6 @@ import { GeneralInformation } from './GeneralInformation';
 import { Password } from './Password';
 import { Team } from './Team';
 import Masonry from '@mui/lab/Masonry';
-import { media } from 'utils/media';
-
 interface IRouteParams {
     orgId?: string;
 }
@@ -77,7 +75,7 @@ const Organizace = () => {
     if (noPermission) {
         return <AccessDenied />;
     }
-
+    console.log(data)
     return (
         <>
             <Header mobileTitle="" />
@@ -88,7 +86,7 @@ const Organizace = () => {
                         <>
                                 <GeneralInformation data={data} />
                                 <Password data={data} />
-                                <Team />
+                                <Team data={data} />
                         </>
                     ) : <div></div>}
                 </Masonry>
