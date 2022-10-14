@@ -288,7 +288,7 @@ const Team = () => {
             }
             const confirmResult = await confirmationModal?.show({
                 title: `Odstranit tým ${teamName} z organizace?`,
-                confirmText: 'Odstranit?',
+                confirmText: 'Odstranit',
                 cancelText: 'Zrušit',
             });
             if (!confirmResult || confirmResult === 'cancel') {
