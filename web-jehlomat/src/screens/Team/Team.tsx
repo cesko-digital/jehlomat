@@ -304,16 +304,16 @@ const Team = () => {
                 delete userEdited.verified;
                 await API.put(`/user/${user.id}/attributes`, userEdited);
             });
-            setSelectedMembers([])
-            setSelectedMembersToDelete([])
+            setSelectedMembers([]);
+            setSelectedMembersToDelete([]);
             const response: AxiosResponse<any> = await API.delete(apiURL.deleteTeamFromOrganization(teamId));
             if (isStatusGeneralSuccess(response.status)) {
-                history.push(LINKS.PROFILE);
+                history.push(`/organizace/${user?.organizationId}`);
             } else {
                 throw new Error();
             }
         } catch (error: any) {
-            history.push(LINKS.ERROR)
+            history.push(LINKS.ERROR);
         }
     };
 
@@ -517,9 +517,17 @@ const Team = () => {
                                 );
                             }}
                         </Formik>
-                        {isEdit && (
-                            <TextButton fontSize={18} color={primary} text={isMobile ? 'Odstranit tým' : 'Odstranit tým z organizace'} onClick={removeTeamFromOrganization} textTransform="uppercase" />
-                        )}
+                        <Box display="flex" flexDirection="column" alignItems="center" width="100%">
+                            {isEdit && (
+                                <TextButton
+                                    fontSize={18}
+                                    color={primary}
+                                    text={isMobile ? 'Odstranit tým' : 'Odstranit tým z organizace'}
+                                    onClick={removeTeamFromOrganization}
+                                    textTransform="uppercase"
+                                />
+                            )}
+                        </Box>
                     </FormContainer>
                     <BasicMap borderRadius="10px" display={isMobile ? false : true} />
                 </Container>
@@ -545,7 +553,7 @@ const Team = () => {
                         text="ok"
                         onClick={() => {
                             setConfirmModal(false);
-                            history.push(LINKS.PROFILE);
+                            history.push(`/organizace/${user?.organizationId}`);
                         }}
                     />
                 </Container>

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Box, Container as MUIContainer, Grid, Typography } from '@mui/material';
+import { Container as MUIContainer, Typography } from '@mui/material';
 import { Header } from 'Components/Header/Header';
 import { useState, useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
