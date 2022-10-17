@@ -1,8 +1,10 @@
 package services
 
+import api.LocationTable
 import api.SyringeTable
 import api.UserTable
 import model.Role
+import model.location.Location
 import model.user.User
 import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
@@ -43,7 +45,7 @@ class SyringeRoleLimitation(val databaseService: DatabaseService, roles: Set<Rol
         reservedByUserAlias: UserTable
     ): ColumnDeclaring<Boolean> {
         val orgTeams = databaseService.selectTeamsByOrganizationId(user.organizationId)
-        val orgLocationIds = orgTeams.flatMap { team -> team.locations }.map { location -> location.id }
+        val orgLocations = orgTeams.flatMap { team -> team.locations }
 
         val limitation = (
             // created by org members
@@ -57,7 +59,7 @@ class SyringeRoleLimitation(val databaseService: DatabaseService, roles: Set<Rol
             )
         )
 
-        if (orgLocationIds.isEmpty()) {
+        if (orgLocations.isEmpty()) {
             return limitation
         } else {
             return (
@@ -67,7 +69,7 @@ class SyringeRoleLimitation(val databaseService: DatabaseService, roles: Set<Rol
                     (SyringeTable.reservedTill.isNull() or (SyringeTable.reservedTill less LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)))
                     and SyringeTable.demolishedAt.isNull()
                     and SyringeTable.createdBy.isNull()
-                    and SyringeTable.locationId.inList(orgLocationIds)
+                    and createLocationQuery(orgLocations)
                 )
             )
         }
@@ -77,15 +79,15 @@ class SyringeRoleLimitation(val databaseService: DatabaseService, roles: Set<Rol
         // created by current user
         val createdByCurrentUser = (createdByUserAlias.userId eq user.id)
 
-        var teamLocationIds: List<Int>? = null
+        var teamLocations: List<Location>? = null
         if (user.teamId != null) {
             val team = databaseService.selectTeamById(user.teamId)
             if (team != null) {
-                teamLocationIds = team.locations.map { location -> location.id }
+                teamLocations = team.locations
             }
         }
 
-        if (teamLocationIds != null && teamLocationIds.isNotEmpty()) {
+        if (teamLocations != null && teamLocations.isNotEmpty()) {
             return (
                 createdByCurrentUser
                 // from anonymous users and still waiting and not assigned to anyone in their team locations
@@ -93,11 +95,28 @@ class SyringeRoleLimitation(val databaseService: DatabaseService, roles: Set<Rol
                     (SyringeTable.reservedTill.isNull() or (SyringeTable.reservedTill less LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)))
                     and SyringeTable.demolishedAt.isNull()
                     and SyringeTable.createdBy.isNull()
-                    and SyringeTable.locationId.inList(teamLocationIds)
+                    and createLocationQuery(teamLocations)
                 )
             )
         } else {
             return createdByCurrentUser
         }
+    }
+
+    private fun createLocationQuery(locations: List<Location>): ColumnDeclaring<Boolean> {
+        val okresIdList = locations.map { l -> l.okres }.toList()
+        var query: ColumnDeclaring<Boolean> = LocationTable.okres.inList(okresIdList)
+
+        val obecIdList = locations.mapNotNull { l -> l.obec }.toList()
+        if (obecIdList.isNotEmpty()) {
+            query = query or (LocationTable.obec.isNotNull() and LocationTable.obec.inList(obecIdList))
+        }
+
+        val mestskaCastIdList = locations.mapNotNull { l -> l.mestkaCast }.toList()
+        if (mestskaCastIdList.isNotEmpty()) {
+            query = query or (LocationTable.mestka_cast.isNotNull() and LocationTable.mestka_cast.inList(mestskaCastIdList))
+        }
+
+        return query
     }
 }

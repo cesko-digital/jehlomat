@@ -65,12 +65,14 @@ class SyringeRoleLimitationTest {
 
         val limitation = SyringeRoleLimitation(database, setOf(Role.OrgAdmin), USER.copy(organizationId = defaultOrgId))
         val sqlPair = generateSql(limitation.addLimitation(SyringeTable.id.isNotNull(), createdByAlias, reservedByAlias), database)
-        Assert.assertEquals("select * from syringes where (((\"createdByAliasName\".organization_id = ?) or ((((syringes.reserved_till >= ?) and (\"reservedByAliasName\".organization_id = ?)) and (syringes.demolished_by is null)) and (syringes.created_by is null))) or (((((syringes.reserved_till is null) or (syringes.reserved_till < ?)) and (syringes.demolished_at is null)) and (syringes.created_by is null)) and (syringes.location_id in (?)))) and (syringes.id is not null) ", sqlPair.first)
+        Assert.assertEquals("select * from syringes where (((\"createdByAliasName\".organization_id = ?) or ((((syringes.reserved_till >= ?) and (\"reservedByAliasName\".organization_id = ?)) and (syringes.demolished_by is null)) and (syringes.created_by is null))) or (((((syringes.reserved_till is null) or (syringes.reserved_till < ?)) and (syringes.demolished_at is null)) and (syringes.created_by is null)) and (((locations.okres in (?)) or ((locations.obec is not null) and (locations.obec in (?)))) or ((locations.mestka_cast is not null) and (locations.mestka_cast in (?)))))) and (syringes.id is not null) ", sqlPair.first)
         Assert.assertEquals(defaultOrgId, sqlPair.second[0].value)
         valueIsAlmostNow(sqlPair.second[1].value as Long)
         Assert.assertEquals(defaultOrgId, sqlPair.second[2].value)
         valueIsAlmostNow(sqlPair.second[3].value as Long)
-        Assert.assertEquals(defaultLocation.id, sqlPair.second[4].value)
+        Assert.assertEquals(defaultLocation.okres, sqlPair.second[4].value)
+        Assert.assertEquals(defaultLocation.obec, sqlPair.second[5].value)
+        Assert.assertEquals(defaultLocation.mestkaCast, sqlPair.second[6].value)
     }
 
     @Test
@@ -93,9 +95,11 @@ class SyringeRoleLimitationTest {
 
         val limitation = SyringeRoleLimitation(database, setOf(Role.UserOwner), USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId))
         val sqlPair = generateSql(limitation.addLimitation(SyringeTable.id.isNotNull(), createdByAlias, reservedByAlias), database)
-        Assert.assertEquals("select * from syringes where ((\"createdByAliasName\".user_id = ?) or (((((syringes.reserved_till is null) or (syringes.reserved_till < ?)) and (syringes.demolished_at is null)) and (syringes.created_by is null)) and (syringes.location_id in (?)))) and (syringes.id is not null) ", sqlPair.first)
+        Assert.assertEquals("select * from syringes where ((\"createdByAliasName\".user_id = ?) or (((((syringes.reserved_till is null) or (syringes.reserved_till < ?)) and (syringes.demolished_at is null)) and (syringes.created_by is null)) and (((locations.okres in (?)) or ((locations.obec is not null) and (locations.obec in (?)))) or ((locations.mestka_cast is not null) and (locations.mestka_cast in (?)))))) and (syringes.id is not null) ", sqlPair.first)
         Assert.assertEquals(USER.id, sqlPair.second[0].value)
         valueIsAlmostNow(sqlPair.second[1].value as Long)
-        Assert.assertEquals(defaultLocation.id, sqlPair.second[2].value)
+        Assert.assertEquals(defaultLocation.okres, sqlPair.second[2].value)
+        Assert.assertEquals(defaultLocation.obec, sqlPair.second[3].value)
+        Assert.assertEquals(defaultLocation.mestkaCast, sqlPair.second[4].value)
     }
 }
