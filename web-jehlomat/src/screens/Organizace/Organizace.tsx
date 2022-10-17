@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Box, Container as MUIContainer, Typography } from '@mui/material';
+import { Container as MUIContainer, Typography } from '@mui/material';
 import { Header } from 'Components/Header/Header';
 import { useState, useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -11,7 +11,8 @@ import { tokenState } from 'store/login';
 import { primaryDark } from 'utils/colors';
 import { GeneralInformation } from './GeneralInformation';
 import { Password } from './Password';
-
+import { Team } from './Team';
+import Masonry from '@mui/lab/Masonry';
 interface IRouteParams {
     orgId?: string;
 }
@@ -28,7 +29,7 @@ export const Title = styled(Typography)`
     margin: 62px 0 72px;
 `;
 
-const PAGE_TITLE ='Moje organizace';
+const PAGE_TITLE = 'Moje organizace';
 
 const Organizace = () => {
     const [notFound, setNotFound] = useState(false);
@@ -74,20 +75,21 @@ const Organizace = () => {
     if (noPermission) {
         return <AccessDenied />;
     }
-
+    console.log(data)
     return (
         <>
             <Header mobileTitle="" />
             <Wrapper>
                 <Title variant="h1">{PAGE_TITLE}</Title>
-                <Box alignItems="flex-start" gap={[0, 10, 20]} flexDirection={['column', 'row']} display="flex">
+                <Masonry columns={{md: 2}} spacing={8}>
                     {data ? (
                         <>
-                            <GeneralInformation data={data} />
-                            <Password data={data} />
+                                <GeneralInformation data={data} />
+                                <Password data={data} />
+                                <Team data={data} />
                         </>
-                    ) : null}
-                </Box>
+                    ) : <div></div>}
+                </Masonry>
             </Wrapper>
         </>
     );

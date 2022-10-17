@@ -1,5 +1,4 @@
-import { Grid, Container, Box, OutlinedInput, InputAdornment, IconButton, useMediaQuery, Paper } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Grid, Container, Box, useMediaQuery, Paper } from '@mui/material';
 import { Header } from 'Components/Header/Header';
 import imageSrc from 'assets/images/empty-state.svg';
 import { Formik, Form, FormikHelpers } from 'formik';
@@ -10,8 +9,8 @@ import { tokenState } from 'store/login';
 import { useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
 import { AxiosResponse } from 'axios';
-import { IOrganizace, ITeam, IUser } from 'types';
-import { Link, useHistory } from 'react-router-dom';
+import { IOrganizace, IUser } from 'types';
+import { useHistory } from 'react-router-dom';
 import { LINKS } from 'routes';
 import apiURL from 'utils/api-url';
 import { media } from 'utils/media';
@@ -25,7 +24,6 @@ import Loading from 'screens/Nalezy/Components/Loading';
 import { userIDState } from 'store/login';
 import { PASSWORD_COMPLEXITY } from '../../utils/constants';
 import Modal from 'Components/Modal/Modal';
-import { Label } from 'Components/Inputs/shared';
 
 const validationSchema = yup.object({
     email: yup.string().email('Email nemá správný formát.').required('Email je povinné pole'),
@@ -55,7 +53,6 @@ const Profile: React.FC = () => {
     const loggedUser = useRecoilValue(userState);
 
     const [user, setUser] = useState<IUser>();
-    const [teams, setTeams] = useState<ITeam[]>([]);
     const [organization, setOrganization] = useState<IOrganizace>();
     const [successOpen, setSuccessOpen] = useState(false);
 
@@ -67,8 +64,6 @@ const Profile: React.FC = () => {
                     const userResponse: AxiosResponse<IUser> = await API.get(apiURL.getUser(userId));
                     setUser(userResponse.data);
                     if (userResponse.data.organizationId) {
-                        const teamsInOrganization: AxiosResponse<ITeam[]> = await API.get(apiURL.getTeamsInOrganization(userResponse.data.organizationId));
-                        setTeams(teamsInOrganization.data);
                         const organizationInfo: AxiosResponse<IOrganizace> = await API.get(apiURL.getOrganization(userResponse.data.organizationId));
                         setOrganization(organizationInfo.data);
                     } else {
@@ -121,7 +116,7 @@ const Profile: React.FC = () => {
 
     return (
         <>
-            <Header mobileTitle={loggedUser?.isAdmin ? "Profil organizace" : "Profil uživatele"} />
+            <Header mobileTitle={loggedUser?.isAdmin ? 'Profil organizace' : 'Profil uživatele'} />
             <Container
                 maxWidth="lg"
                 sx={{
@@ -189,32 +184,6 @@ const Profile: React.FC = () => {
                                                         error={Boolean(errors.username) ? errors.username : undefined}
                                                     />
                                                     <TextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                                                    {teams.length ? (
-                                                        <>
-                                                            <Label>Tým</Label>
-                                                            {teams.map(team => {
-                                                                return (
-                                                                    <>
-                                                                        <OutlinedInput
-                                                                            value={team.name}
-                                                                            type="text"
-                                                                            name="teamName"
-                                                                            endAdornment={
-                                                                                <InputAdornment position="end">
-                                                                                    <IconButton edge="end">
-                                                                                        <Link to={`team/edit/${team.id}`} style={{ all: 'unset' }}>
-                                                                                            <EditIcon style={{ color: '#0E766C' }} />
-                                                                                        </Link>
-                                                                                    </IconButton>
-                                                                                </InputAdornment>
-                                                                            }
-                                                                            disabled
-                                                                        />
-                                                                    </>
-                                                                );
-                                                            })}
-                                                        </>
-                                                    ) : ""}
                                                     {/* <TextInput
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -227,11 +196,6 @@ const Profile: React.FC = () => {
                                                     /> */}
                                                 </Box>
                                                 <Paper elevation={0} style={{ marginBottom: '40px' }}>
-                                                    <ButtonWrapper>
-                                                        <Link to="team/novy">
-                                                            <PrimaryButton text="Přidat tým" disabled={!isValid} />
-                                                        </Link>
-                                                    </ButtonWrapper>
                                                     <ButtonWrapper>
                                                         <PrimaryButton id="submit" text="ULOŽIT" type="submit" disabled={!isValid} />
                                                     </ButtonWrapper>
