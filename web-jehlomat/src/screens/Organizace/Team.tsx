@@ -30,17 +30,6 @@ export const Team: FC<props> = ({ data }) => {
                                 type="text"
                                 name="teamName"
                                 fullWidth
-                                label={
-                                    <Typography
-                                        sx={{
-                                            visibility: 'visible',
-                                            marginTop: '35px',
-                                            fontSize: '0.85rem',
-                                        }}
-                                    >
-                                        {/* TODO get number of team members from BE */}x členů
-                                    </Typography>
-                                }
                                 sx={{
                                     backgroundColor: '#ffffff38',
                                     '& .MuiOutlinedInput-notchedOutline': {
@@ -53,7 +42,6 @@ export const Team: FC<props> = ({ data }) => {
                                         ...(!isMobile && {
                                             WebkitTextFillColor: '#fff!important',
                                         }),
-                                        padding: '8px 14px 25px 14px',
                                     },
                                 }}
                                 endAdornment={
