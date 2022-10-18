@@ -75,7 +75,6 @@ const Organizace = () => {
     if (noPermission) {
         return <AccessDenied />;
     }
-    console.log(data)
     return (
         <>
             <Header mobileTitle="" />

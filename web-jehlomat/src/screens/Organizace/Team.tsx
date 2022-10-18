@@ -24,9 +24,9 @@ export const Team: FC<props> = ({ data }) => {
             <Box display="flex" flexDirection="column" alignItems="center" gap={2} mb={5}>
                 {data.teams.length ? data.teams.map((team: ITeam) => {
                     return (
-                        <>
                             <OutlinedInput
                                 value={team.name}
+                                key={team.id}
                                 type="text"
                                 name="teamName"
                                 fullWidth
@@ -55,7 +55,6 @@ export const Team: FC<props> = ({ data }) => {
                                 }
                                 disabled
                             />
-                        </>
                     );
                 }) : "Žádný tým" }
             </Box>
