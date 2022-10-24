@@ -85,7 +85,7 @@ export const GeneralInformation: FC<IProps> = ({ data: { organisation, user } })
     return (
         <SContainer>
             <Typography mb={4} variant="h6" textAlign="center">
-                Obecná informace
+                Obecné informace
             </Typography>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                 {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => (
