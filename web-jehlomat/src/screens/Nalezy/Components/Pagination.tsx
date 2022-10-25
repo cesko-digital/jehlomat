@@ -24,9 +24,8 @@ interface PaginationProps {
 
 const Pagination: FunctionComponent<PaginationProps> = ({ paging }) => {
     const setPaging = useSetRecoilState(paginationState);
-
-    const handlePrevious = () => setPaging(state => ({ ...state, index: Math.max(0, state.index - 1) }));
-    const handleNext = () => setPaging(state => ({ ...state, index: state.index + 1 }));
+    const handlePrevious = () => setPaging(state => ({ ...state, index: Math.max(0, state.index - state.size) }));
+    const handleNext = () => setPaging(state => ({ ...state, index: state.index + state.size }));
 
     return (
         <Controls>
