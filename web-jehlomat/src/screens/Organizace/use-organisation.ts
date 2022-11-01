@@ -15,7 +15,7 @@ export interface IOrgData {
 export interface IData {
     user: IUser;
     organisation: IOrgData;
-    teams: ITeam[];
+    teams: ITeam[] | null;
 }
 
 export const useOrganisation = (onError?: TErrorCallback) => {
@@ -36,6 +36,11 @@ export const useOrganisation = (onError?: TErrorCallback) => {
                             teams: [...teamsResponse.data],
                         };
                     }
+                    return {
+                        organisation: { ...orgResponse.data },
+                        user: { ...userResponse.data },
+                        teams: null,
+                    };
                 } else if (isStatusNotFound(orgResponse.status)) {
                     onError?.('not-found');
                 } else {
