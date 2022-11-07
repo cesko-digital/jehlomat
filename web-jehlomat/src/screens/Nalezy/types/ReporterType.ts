@@ -1,1 +1,1 @@
-export type ReporterType = 'USER' | 'TEAM' | '';
+export type ReporterType = 'USER' | 'TEAM' | 'ORGANIZATION' |'';

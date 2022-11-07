@@ -8,14 +8,17 @@ import loadTeams, { Team } from './utils/loadTeams';
 import { ReporterType } from '../types/ReporterType';
 import { filteringState } from '../store';
 import { Filtering } from '../types/Filtering';
+import { IOrganizace } from 'types';
+import loadOrganizations from './utils/loadOrganizations';
 
 interface SelectData {
     users: Array<User>;
     teams: Array<Team>;
+    organizations?: Array<IOrganizace>;
 }
 
 const FilterByReporter: FunctionComponent = () => {
-    const [items, setItems] = useState<SelectData>({ users: [], teams: [] });
+    const [items, setItems] = useState<SelectData>({ users: [], teams: [], organizations: [] });
     const [type, setType] = useState<ReporterType | ''>('');
     const [id, setId] = useState<number | undefined>();
 
@@ -42,15 +45,22 @@ const FilterByReporter: FunctionComponent = () => {
             return filter;
         });
     }, [setFilter]);
-
     useEffect(() => {
         if (!user || !user.isAdmin) return;
 
+        let response: SelectData;
+
         Promise.all([loadUsers(user.organizationId), loadTeams(user.organizationId)]).then(
-            ([users, teams]) => setItems({ users, teams }),
+            ([users, teams]) => (response = { users, teams }),
             () => console.warn('Loading failed'),
         );
+
+        if (user.isSuperAdmin) {
+            Promise.resolve(loadOrganizations()).then((organizations) => setItems({ ...response, organizations }));
+        }
     }, [user]);
+
+    console.log(items);
 
     useEffect(() => filters(type, id), [filters, type, id]);
 
@@ -72,6 +82,7 @@ const FilterByReporter: FunctionComponent = () => {
 
     const hasTeams = type === 'TEAM' && items.teams.length > 0;
     const hasUsers = type === 'USER' && items.users.length > 0;
+    const hasOrganizations = items.organizations && type === 'ORGANIZATION' && items.organizations.length > 0;
 
     return (
         <Filter title="Zadavatel nálezu" onReset={handleReset}>
@@ -79,8 +90,9 @@ const FilterByReporter: FunctionComponent = () => {
                 <option value="">&nbsp;</option>
                 <option value="TEAM">Tým</option>
                 <option value="USER">Jednotlivec</option>
+                {user?.isSuperAdmin && <option value="ORGANIZATION">Organizace</option>}
             </Select>
-            <Select value={id} disabled={!type || !(hasTeams || hasUsers)} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setId(+e.target.value)}>
+            <Select value={id} disabled={!type || !(hasTeams || hasUsers || hasOrganizations)} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setId(+e.target.value)}>
                 {type === 'TEAM' && (
                     <>
                         <option value="">&nbsp;</option>
@@ -99,6 +111,17 @@ const FilterByReporter: FunctionComponent = () => {
                                 {username}
                             </option>
                         ))}
+                    </>
+                )}
+                {type === 'ORGANIZATION' && (
+                    <>
+                        <option value="">&nbsp;</option>
+                        {items.organizations &&
+                            items.organizations.map(({ id, name }) => (
+                                <option key={id} value={id}>
+                                    {name}
+                                </option>
+                            ))}
                     </>
                 )}
             </Select>
