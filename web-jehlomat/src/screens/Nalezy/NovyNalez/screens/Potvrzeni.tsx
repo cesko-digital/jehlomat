@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
@@ -18,6 +18,7 @@ import { SCheckIcon } from 'screens/RegistraceOrganizace/Dekujeme.styled';
 import { MobileContainer, JehlomatLogoNoMargin } from 'Components/MobileComponents/MobileComponents';
 import { newSyringeInfoState } from 'screens/Nalezy/NovyNalez/components/store';
 import { isSyringeEdit } from '../components/types';
+import { useHistory } from 'react-router';
 
 interface PotvrzeniProps {
     trackingCode: string | null;
@@ -211,10 +212,19 @@ const Links: FC<TeamAvailableProps> = ({ teamAvailable }) => {
 };
 
 const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
+    const history = useHistory();
     const isLoggedIn = useRecoilValue(isLoginValidState);
     const [newSyringeInfo] = useRecoilState(newSyringeInfoState);
     const isEdit = isSyringeEdit(newSyringeInfo);
     const isDesktop = useMediaQuery(media.gt('mobile'));
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setTimeout(() => {
+                history.push(LINKS.FINDINGS);
+            }, 3000);
+        }
+    }, [isLoggedIn, history]);
 
     if (isLoggedIn) {
         if (isDesktop) {
