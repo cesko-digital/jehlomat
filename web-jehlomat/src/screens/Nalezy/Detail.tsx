@@ -28,7 +28,13 @@ import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
+import { IOrganizace, ITeam } from 'types';
+import { AxiosResponse } from 'axios';
 
+interface SyringeDetails extends Syringe {
+    organization?: IOrganizace | undefined;
+    team?: ITeam | undefined;
+}
 
 const Details = styled('div')`
     & > * {
@@ -51,23 +57,32 @@ const state = (syringe: Syringe | undefined): string => {
 const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY') : '');
 
 const Detail = () => {
-    const [loader, setLoader] = useState<Loader<Syringe>>({});
+    const [loader, setLoader] = useState<Loader<SyringeDetails>>({});
     const isMobile = useMediaQuery(media.lte('mobile'));
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
-    const load = useCallback(() => {
-        API.get<Syringe>(apiURL.readSyringeDetails(id)).then(
-            resp => {
-                if (!isStatusSuccess(resp.status)) {
-                    setLoader({ err: 'Unable load details' });
-                    return;
-                }
-                // console.log(resp.data.photo)
-                setLoader({ resp: resp.data });
-            },
-            () => setLoader({ err: 'Unable load details' }),
-        );
+    const load = useCallback(async () => {
+        let syringeDetailsResponse: AxiosResponse<Syringe> | undefined;
+        try {
+            syringeDetailsResponse = await API.get<Syringe>(apiURL.readSyringeDetails(id));
+
+            if (!isStatusSuccess(syringeDetailsResponse.status)) {
+                throw new Error();
+            }
+        } catch (error) {
+            setLoader({ err: 'Unable load details' });
+        }
+        const orgId: number | undefined = syringeDetailsResponse?.data.createdBy?.organizationId;
+        const teamId = syringeDetailsResponse?.data.createdBy?.teamId;
+        const organization: AxiosResponse<IOrganizace> = await API.get<IOrganizace>(apiURL.getOrganization(orgId));
+        const teams: AxiosResponse<ITeam[]> = await API.get<ITeam[]>(apiURL.getTeamsInOrganization(orgId));
+        const team: ITeam | undefined = teams.data.find((team: ITeam) => team.id === teamId);
+        if (syringeDetailsResponse) {
+            setLoader({ resp: { ...syringeDetailsResponse?.data, team: team, organization: { ...organization.data } } });
+        }
     }, [id]);
+
+    console.log(loader);
 
     useEffect(() => {
         load();
@@ -91,12 +106,13 @@ const Detail = () => {
 
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
-    const data: Syringe | undefined = error ? undefined : loader.resp;
-    
-    const arrayOfPict: string[] = data?.photo?.replaceAll(']','').replaceAll('[','').replaceAll('"','').split(',')!
+    const data: SyringeDetails | undefined = error ? undefined : loader.resp;
+
+    const arrayOfPict: string[] = data?.photo?.replaceAll(']', '').replaceAll('[', '').replaceAll('"', '').split(',')!;
     const filterPicOfArray = arrayOfPict?.filter(function (el) {
-        return el !== "data:image/jpeg;base64";
-    })
+        return el !== 'data:image/jpeg;base64';
+    });
+
     const DetailsCmp = (
         <Details>
             <TextInput label={texts.DETAIL__SYRINGES_COUNT} value={data?.count} disabled />
@@ -104,39 +120,38 @@ const Detail = () => {
             <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
             <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
             <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
-         
-            {data?.photo?.length! > 0 &&
-            <Box mt={2} width="100%">
+            {data?.createdBy?.username && <TextInput label={texts.DETAIL__USER} value={data?.createdBy?.username} disabled />}
+            {data?.team?.name && <TextInput label={texts.DETAIL__TEAM} value={data?.team?.name} disabled />}
+            {data?.organization?.name && <TextInput label={texts.DETAIL__ORGANIZATION} value={data?.organization?.name} disabled />}
+
+            {data?.photo?.length! > 0 && (
+                <Box mt={2} width="100%">
                     <Box
                         sx={{ overflowX: 'scroll', border: '1px solid rgba(0, 0, 0, 0.23)', padding: '16px 14px', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}
                         display="flex"
                         alignItems="flex-start"
                     >
-            {filterPicOfArray?.map((pic, index) =>(
-            <Box
-                                    component="img"
-                                    src={`data:image/jpeg;base64,${pic}`}
-                                    width={isMobile ? 150 : 400}
-                                    mr={2}
-                                    // sx={{
-                                    //     transition: '.1s all',
-                                    //     '&:hover': { transform: 'scale(1.05)', cursor: 'pointer' },
-                                    // }}
-                                    key={index}
-                                />
-                                ))}
-            
+                        {filterPicOfArray?.map((pic, index) => (
+                            <Box
+                                component="img"
+                                src={`data:image/jpeg;base64,${pic}`}
+                                width={isMobile ? 150 : 400}
+                                mr={2}
+                                // sx={{
+                                //     transition: '.1s all',
+                                //     '&:hover': { transform: 'scale(1.05)', cursor: 'pointer' },
+                                // }}
+                                key={index}
+                            />
+                        ))}
                     </Box>
-
-                    </Box>      
-}
+                </Box>
+            )}
             {data && !data.demolished && !data.reservedBy && (
                 <Box display="flex" alignItems="center" flexDirection="column" py={2}>
                     <TextButton color={primary} onClick={() => reserve(data)} text="Nález si rezervuji k pozdější likvidaci" textTransform="uppercase" textDecoration="underline" />
                 </Box>
             )}
-
-
         </Details>
     );
 
