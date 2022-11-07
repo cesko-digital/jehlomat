@@ -18,6 +18,9 @@ const texts = {
     DETAIL__NOTE: 'Poznámka',
     DETAIL__STATE: 'Stav nálezu',
     DETAIL__BACK: 'Zpět na seznam',
+    DETAIL__USER: 'Zadavatel',
+    DETAIL__TEAM: 'Tým',
+    DETAIL__ORGANIZATION: 'Organizace',
     ACTIONS__DEMOLISH__ERROR: 'Nález nebylo možné označit v systému jako zlikvidovaný.',
 };
 
