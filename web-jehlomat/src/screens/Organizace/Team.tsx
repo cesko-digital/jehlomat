@@ -22,41 +22,43 @@ export const Team: FC<props> = ({ data }) => {
                 Tým
             </Typography>
             <Box display="flex" flexDirection="column" alignItems="center" gap={2} mb={5}>
-                {data.teams.length ? data.teams.map((team: ITeam) => {
-                    return (
-                            <OutlinedInput
-                                value={team.name}
-                                key={team.id}
-                                type="text"
-                                name="teamName"
-                                fullWidth
-                                sx={{
-                                    backgroundColor: '#ffffff38',
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        ...(!isMobile && { border: 'none' }),
-                                    },
-                                }}
-                                inputProps={{
-                                    sx: {
-                                        WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)!important',
-                                        ...(!isMobile && {
-                                            WebkitTextFillColor: '#fff!important',
-                                        }),
-                                    },
-                                }}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton edge="end">
-                                            <Link to={`/team/edit/${team.id}`} style={{ all: 'unset' }}>
-                                                <EditIcon style={{ ...(!isMobile && { color: '#fff' }) }} />
-                                            </Link>
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                disabled
-                            />
-                    );
-                }) : "Žádný tým" }
+                {data.teams?.length
+                    ? data.teams.map((team: ITeam) => {
+                          return (
+                              <OutlinedInput
+                                  value={team.name}
+                                  key={team.id}
+                                  type="text"
+                                  name="teamName"
+                                  fullWidth
+                                  sx={{
+                                      backgroundColor: '#ffffff38',
+                                      '& .MuiOutlinedInput-notchedOutline': {
+                                          ...(!isMobile && { border: 'none' }),
+                                      },
+                                  }}
+                                  inputProps={{
+                                      sx: {
+                                          WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)!important',
+                                          ...(!isMobile && {
+                                              WebkitTextFillColor: '#fff!important',
+                                          }),
+                                      },
+                                  }}
+                                  endAdornment={
+                                      <InputAdornment position="end">
+                                          <IconButton edge="end">
+                                              <Link to={`/team/edit/${team.id}`} style={{ all: 'unset' }}>
+                                                  <EditIcon style={{ ...(!isMobile && { color: '#fff' }) }} />
+                                              </Link>
+                                          </IconButton>
+                                      </InputAdornment>
+                                  }
+                                  disabled
+                              />
+                          );
+                      })
+                    : 'Žádný tým'}
             </Box>
             <Box display="flex" flexDirection="column" alignItems="center">
                 <Link to="/team/novy">{isMobile ? <PrimaryButton text="Přidat tým" /> : <SecondaryButton text="Přidat tým" />}</Link>

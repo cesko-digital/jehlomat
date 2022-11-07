@@ -29,8 +29,6 @@ export const Title = styled(Typography)`
     margin: 62px 0 72px;
 `;
 
-const PAGE_TITLE = 'Moje organizace';
-
 const Organizace = () => {
     const [notFound, setNotFound] = useState(false);
     const [noPermission, setNoPermission] = useState(false);
@@ -66,7 +64,7 @@ const Organizace = () => {
             }
         }
         fetchMyAPI();
-    }, []);
+    }, [getOrganisation, orgId, token]);
 
     if (notFound) {
         return <OrganisationNotFound />;
@@ -79,15 +77,17 @@ const Organizace = () => {
         <>
             <Header mobileTitle="" />
             <Wrapper>
-                <Title variant="h1">{PAGE_TITLE}</Title>
-                <Masonry columns={{md: 2}} spacing={8}>
+                <Title variant="h1">{data?.user.organizationId.toString() === orgId ? 'Moje organizace' : 'Detail organizace'}</Title>
+                <Masonry columns={{ md: 2 }} spacing={8}>
                     {data ? (
                         <>
-                                <GeneralInformation data={data} />
-                                <Password data={data} />
-                                <Team data={data} />
+                            <GeneralInformation data={data} />
+                            <Password data={data} />
+                            {data.teams && <Team data={data} />}
                         </>
-                    ) : <div></div>}
+                    ) : (
+                        <div></div>
+                    )}
                 </Masonry>
             </Wrapper>
         </>
