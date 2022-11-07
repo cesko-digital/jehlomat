@@ -144,7 +144,7 @@ const NovyNalez: FC<INovyNalez> = ({ newSyringeInfo, handleInputChange, handleOn
                                         </Typography>
                                     </Box>
                                     <ZadavaniNalezu syringeInfo={newSyringeInfo} onInputChange={handleInputChange}>
-                                        <PrimaryButton text="Pokračovat" disabled={isSubmitDisabled()} onClick={handleOnSubmit} />
+                                        <PrimaryButton text="Uložit" disabled={isSubmitDisabled()} onClick={handleOnSubmit} />
                                     </ZadavaniNalezu>
                                 </Grid>
                                 <Grid item sm={6} maxHeight={700}>
