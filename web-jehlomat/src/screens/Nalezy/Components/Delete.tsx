@@ -49,20 +49,29 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe }) => {
 
     const setFilter = useSetRecoilState(filteringState);
 
-    const handleConfirm = useCallback(() => {
-        API.delete(`/syringe/${syringe.id}`)
-            .then((response: AxiosResponse) => {
-                if (response.status !== 200) throw new Error('Unable to delete syringe');
+    const handleOpenModal = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.stopPropagation();
+        setOpen(true);
+    };
 
-                setOpen(false);
-                setFilter(state => ({ ...state }));
-            })
-            .catch(e => console.warn(e));
-    }, [setFilter, syringe]);
+    const handleConfirm = useCallback(
+        (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+            API.delete(`/syringe/${syringe.id}`)
+                .then((response: AxiosResponse) => {
+                    if (response.status !== 200) throw new Error('Unable to delete syringe');
+
+                    setOpen(false);
+                    setFilter(state => ({ ...state }));
+                })
+                .catch(e => console.warn(e));
+        },
+        [setFilter, syringe],
+    );
 
     return (
         <>
-            <Link className="danger" onClick={() => setOpen(true)}>
+            <Link className="danger" onClick={event => handleOpenModal(event)}>
                 <span>Smazat</span>
                 <DeleteIcon style={{ width: '20px', height: '20px' }} />
             </Link>
