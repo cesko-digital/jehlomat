@@ -14,7 +14,7 @@ import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import { primary } from 'utils/colors';
+import { primary, secondary } from 'utils/colors';
 import { media } from 'utils/media';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
@@ -30,6 +30,12 @@ import apiURL from 'utils/api-url';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 import { IOrganizace, ITeam } from 'types';
 import { AxiosResponse } from 'axios';
+import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
+import { useRecoilValue } from 'recoil';
+import { userState } from 'store/user';
+import { LINKS } from 'routes';
+import ModalPrimary from '../../Components/ModalPrimary/ModalPrimary';
+import { CheckIcon } from 'assets/CheckIcon';
 
 interface SyringeDetails extends Syringe {
     organization?: IOrganizace | undefined;
@@ -58,6 +64,8 @@ const formatDate = (date: number | undefined): string => (date ? dayjs(date * 10
 
 const Detail = () => {
     const [loader, setLoader] = useState<Loader<SyringeDetails>>({});
+    const [newStatus, setNewStatus] = useState<string>('');
+    const loggedUser = useRecoilValue(userState);
     const isMobile = useMediaQuery(media.lte('mobile'));
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
@@ -82,8 +90,6 @@ const Detail = () => {
         }
     }, [id]);
 
-    console.log(loader);
-
     useEffect(() => {
         load();
     }, [load]);
@@ -104,6 +110,36 @@ const Detail = () => {
         }
     };
 
+    const cancelReservation = async (data: Syringe | undefined) => {
+        if (!data) {
+            return;
+        }
+        try {
+            const response: AxiosResponse<any> = await API.put('/syringe', {
+                id: data.id,
+                createdAt: data.createdAt,
+                createdById: data.createdBy?.id,
+                reservedTill: null,
+                reservedById: null,
+                demolishedAt: data.demolishedAt,
+                demolisherType: data.demolisherType,
+                photo: data.photo,
+                count: data.count,
+                note: data.note,
+                gps_coordinates: data.gps_coordinates,
+                demolished: data.demolished,
+                locationId: data.location.id,
+            });
+            if (response.status !== 200) {
+                throw new Error();
+            }
+            await load();
+            setNewStatus('Čeká na likvidaci');
+        } catch (err) {
+            history.push(LINKS.ERROR);
+        }
+    };
+
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
     const data: SyringeDetails | undefined = error ? undefined : loader.resp;
@@ -112,7 +148,6 @@ const Detail = () => {
     const filterPicOfArray = arrayOfPict?.filter(function (el) {
         return el !== 'data:image/jpeg;base64';
     });
-
     const DetailsCmp = (
         <Details>
             <TextInput label={texts.DETAIL__SYRINGES_COUNT} value={data?.count} disabled />
@@ -152,6 +187,21 @@ const Detail = () => {
                     <TextButton color={primary} onClick={() => reserve(data)} text="Nález si rezervuji k pozdější likvidaci" textTransform="uppercase" textDecoration="underline" />
                 </Box>
             )}
+
+            {data?.reservedBy?.id && (loggedUser?.isAdmin || loggedUser?.id === data?.createdBy?.id) && (
+                <Box display="flex" alignItems="center" flexDirection="column" py={2}>
+                    <PrimaryButton text="Zrušit rezervaci nálezu" onClick={() => cancelReservation(data)} />
+                </Box>
+            )}
+            <ModalPrimary open={!!newStatus} newStatus={newStatus} onClose={() => setNewStatus('')}>
+                <span className="text">Stav nálezu na</span>
+                <span className="title">jehlomat.cz</span>
+                <span className="text">byl změněn na</span>
+                <span className="newStatus">"{newStatus}"</span>
+                <Box sx={{ width: 70, height: 70, backgroundColor: secondary, borderRadius: '100%', color: 'white' }}>
+                    <CheckIcon />
+                </Box>
+            </ModalPrimary>
         </Details>
     );
 
