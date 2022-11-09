@@ -49,9 +49,9 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe }) => {
 
     const setFilter = useSetRecoilState(filteringState);
 
-    const handleOpenModal = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleModalState = (event: React.MouseEvent<Element, MouseEvent>, state: boolean) => {
         event.stopPropagation();
-        setOpen(true);
+        setOpen(state);
     };
 
     const handleConfirm = useCallback(
@@ -71,13 +71,13 @@ const Delete: FunctionComponent<DeleteProps> = ({ syringe }) => {
 
     return (
         <>
-            <Link className="danger" onClick={event => handleOpenModal(event)}>
+            <Link className="danger" onClick={event => handleModalState(event, true)}>
                 <span>Smazat</span>
                 <DeleteIcon style={{ width: '20px', height: '20px' }} />
             </Link>
-            <Modal modalHeaderText="Potvrďte výmaz" open={open} onClose={() => setOpen(false)}>
+            <Modal modalHeaderText="Potvrďte výmaz" open={open} onClose={(event) => handleModalState(event, false)}>
                 <Box display="flex" flexDirection="column" justifyContent="center">
-                    <Box mb={5} mx={5}>
+                    <Box mb={5} mx={5} sx={{textAlign: "center"}}>
                         Opravdu si přejete smazat nahlášený nález?
                     </Box>
                     <Box mx="auto" mb={2}>
