@@ -14,7 +14,7 @@ import TextHeader from 'screens/Nalezy/Components/TextHeader';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from 'screens/Nalezy/NovyNalez/constants';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
-import { primary, secondary } from 'utils/colors';
+import { lightGreen, lightOrange, primary, secondary } from 'utils/colors';
 import { media } from 'utils/media';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
@@ -58,6 +58,12 @@ const state = (syringe: Syringe | undefined): string => {
     if (syringe.reservedBy) return 'Rezervováno TP';
 
     return 'Čeká na likvidaci';
+};
+
+const getStateStyle = (syringe: Syringe | undefined): object => {
+    if (syringe?.reservedBy) return { backgroundColor: lightGreen, borderRadius: '4px' };
+    if (!syringe?.demolished) return { backgroundColor: lightOrange, borderRadius: '4px' };
+    return {};
 };
 
 const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY') : '');
@@ -154,7 +160,7 @@ const Detail = () => {
             <TextInput label={texts.DETAIL__DATETIME} value={formatDate(data?.createdAt)} disabled />
             <TextInput label={texts.DETAIL__PLACE} value={data?.location?.obec} disabled />
             <TextInput label={texts.DETAIL__NOTE} value={data?.note} disabled />
-            <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled />
+            <TextInput label={texts.DETAIL__STATE} value={state(data)} disabled inputProps={{ style: getStateStyle(data) }} />
             {data?.createdBy?.username && <TextInput label={texts.DETAIL__USER} value={data?.createdBy?.username} disabled />}
             {data?.team?.name && <TextInput label={texts.DETAIL__TEAM} value={data?.team?.name} disabled />}
             {data?.organization?.name && <TextInput label={texts.DETAIL__ORGANIZATION} value={data?.organization?.name} disabled />}
