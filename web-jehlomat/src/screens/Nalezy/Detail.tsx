@@ -28,7 +28,7 @@ import { Info, Location, PinMenu, State, Time } from 'screens/Nalezy/Components/
 import API from 'config/baseURL';
 import apiURL from 'utils/api-url';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
-import { IOrganizace, ITeam } from 'types';
+import { IOrganizace, ITeam, SyringeStatus } from 'types';
 import { AxiosResponse } from 'axios';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import { useRecoilValue } from 'recoil';
@@ -54,10 +54,10 @@ const Details = styled('div')`
 
 const state = (syringe: Syringe | undefined): string => {
     if (!syringe) return '';
-    if (syringe.demolishedAt && syringe.demolished) return 'Zlikvidováno';
-    if (syringe.reservedBy) return 'Rezervováno TP';
+    if (syringe.demolishedAt && syringe.demolished) return SyringeStatus.Zlikvidovan;
+    if (syringe.reservedBy) return SyringeStatus.Rezervovan;
 
-    return 'Čeká na likvidaci';
+    return SyringeStatus.CekaNaLikvitaci;
 };
 
 const getStateStyle = (syringe: Syringe | undefined): object => {
@@ -113,6 +113,7 @@ const Detail = () => {
                 reservedTill: dayjs().add(1, 'month').subtract(1, 'day').unix(),
             });
             await load();
+            setNewStatus(SyringeStatus.Rezervovan);
         }
     };
 
@@ -140,7 +141,7 @@ const Detail = () => {
                 throw new Error();
             }
             await load();
-            setNewStatus('Čeká na likvidaci');
+            setNewStatus(SyringeStatus.CekaNaLikvitaci);
         } catch (err) {
             history.push(LINKS.ERROR);
         }
