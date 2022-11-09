@@ -18,7 +18,7 @@ import { lightGreen, lightOrange, primary, secondary } from 'utils/colors';
 import { media } from 'utils/media';
 import { Loader } from 'utils/Loader';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
-import { isStatusSuccess } from 'utils/payload-status';
+import { isStatusGeneralSuccess, isStatusSuccess } from 'utils/payload-status';
 import Loading from 'screens/Nalezy/Components/Loading';
 import Pin from 'screens/Nalezy/Components/Pin';
 import PreviewSyringeState from 'screens/Nalezy//Components/SyringeState';
@@ -36,6 +36,7 @@ import { userState } from 'store/user';
 import { LINKS } from 'routes';
 import ModalPrimary from '../../Components/ModalPrimary/ModalPrimary';
 import { CheckIcon } from 'assets/CheckIcon';
+import Confirmation from '../../Components/Confirmation/Confirmation';
 
 interface SyringeDetails extends Syringe {
     organization?: IOrganizace | undefined;
@@ -52,6 +53,17 @@ const Details = styled('div')`
     }
 `;
 
+const ConfirmationText = styled('p')`
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin: 0;
+`;
+
+const ConfirmationButton = styled('div')`
+    margin-top: 6rem;
+    margin-bottom: 1rem;
+`;
+
 const state = (syringe: Syringe | undefined): string => {
     if (!syringe) return '';
     if (syringe.demolishedAt && syringe.demolished) return SyringeStatus.Zlikvidovan;
@@ -61,9 +73,10 @@ const state = (syringe: Syringe | undefined): string => {
 };
 
 const getStateStyle = (syringe: Syringe | undefined): object => {
+    if (!syringe || syringe.demolished) return {};
+    debugger;
     if (syringe?.reservedBy) return { backgroundColor: lightGreen, borderRadius: '4px' };
-    if (!syringe?.demolished) return { backgroundColor: lightOrange, borderRadius: '4px' };
-    return {};
+    return { backgroundColor: lightOrange, borderRadius: '4px' };
 };
 
 const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY') : '');
@@ -71,6 +84,7 @@ const formatDate = (date: number | undefined): string => (date ? dayjs(date * 10
 const Detail = () => {
     const [loader, setLoader] = useState<Loader<SyringeDetails>>({});
     const [newStatus, setNewStatus] = useState<string>('');
+    const [showDestroyConfirmation, setShowDestroyConfirmation] = useState<boolean>(false);
     const loggedUser = useRecoilValue(userState);
     const isMobile = useMediaQuery(media.lte('mobile'));
     const history = useHistory();
@@ -137,11 +151,28 @@ const Detail = () => {
                 demolished: data.demolished,
                 locationId: data.location.id,
             });
-            if (response.status !== 200) {
+            if (!isStatusGeneralSuccess(response.status)) {
                 throw new Error();
             }
             await load();
             setNewStatus(SyringeStatus.CekaNaLikvitaci);
+        } catch (err) {
+            history.push(LINKS.ERROR);
+        }
+    };
+
+    const demolishSyringe = async (data: Syringe | undefined) => {
+        if (!data) {
+            return;
+        }
+        try {
+            const response: AxiosResponse<any> = await API.post(`/syringe/${data.id}/demolish`);
+            if (!isStatusGeneralSuccess(response.status)) {
+                throw new Error();
+            }
+            await load();
+            setNewStatus(SyringeStatus.Zlikvidovan);
+            setShowDestroyConfirmation(false);
         } catch (err) {
             history.push(LINKS.ERROR);
         }
@@ -189,6 +220,13 @@ const Detail = () => {
                     </Box>
                 </Box>
             )}
+
+            {(data?.reservedBy?.id === loggedUser?.id || (!data?.reservedBy?.id && !data?.demolished)) && (
+                <Box display="flex" alignItems="center" flexDirection="column" py={2}>
+                    <PrimaryButton text="Zlikviduji nález ihned" onClick={() => setShowDestroyConfirmation(true)} />
+                </Box>
+            )}
+
             {data && !data.demolished && !data.reservedBy && (
                 <Box display="flex" alignItems="center" flexDirection="column" py={2}>
                     <TextButton color={primary} onClick={() => reserve(data)} text="Nález si rezervuji k pozdější likvidaci" textTransform="uppercase" textDecoration="underline" />
@@ -200,7 +238,7 @@ const Detail = () => {
                     <PrimaryButton text="Zrušit rezervaci nálezu" onClick={() => cancelReservation(data)} />
                 </Box>
             )}
-            <ModalPrimary open={!!newStatus} newStatus={newStatus} onClose={() => setNewStatus('')}>
+            <ModalPrimary open={!!newStatus} onClose={() => setNewStatus('')}>
                 <span className="text">Stav nálezu na</span>
                 <span className="title">jehlomat.cz</span>
                 <span className="text">byl změněn na</span>
@@ -209,6 +247,14 @@ const Detail = () => {
                     <CheckIcon />
                 </Box>
             </ModalPrimary>
+
+            <Confirmation open={showDestroyConfirmation}>
+                <ConfirmationText>Prosím potvrďte likvidaci injekční stříkačky</ConfirmationText>
+                <ConfirmationButton>
+                    <PrimaryButton text="Nález je zlikvidován" onClick={() => demolishSyringe(data)} />
+                </ConfirmationButton>
+                <TextButton text="Zpět na nález" onClick={() => setShowDestroyConfirmation(false)} color={primary} textTransform="uppercase" fontSize={18} />
+            </Confirmation>
         </Details>
     );
 
