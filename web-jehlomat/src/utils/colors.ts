@@ -15,6 +15,9 @@ export const grey = '#787878';
 export const greyLight = '#E0E0E0';
 export const darkGrey = '#787878';
 
+export const lightGreen = '#2FA69A';
+export const lightOrange = '#FFD37F';
+
 // text
 export const textPrimary = black;
 export const textSecondary = black;
