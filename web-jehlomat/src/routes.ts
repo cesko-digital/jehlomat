@@ -183,6 +183,7 @@ export const routes: Route[] = [
         protectedRoute: true,
         from: true,
         exact: true,
+        AdditionalComponents: Layout,
     },
     {
         id: Routes.ORGANIZATION,
