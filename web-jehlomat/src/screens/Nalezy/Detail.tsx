@@ -74,7 +74,6 @@ const state = (syringe: Syringe | undefined): string => {
 
 const getStateStyle = (syringe: Syringe | undefined): object => {
     if (!syringe || syringe.demolished) return {};
-    debugger;
     if (syringe?.reservedBy) return { backgroundColor: lightGreen, borderRadius: '4px' };
     return { backgroundColor: lightOrange, borderRadius: '4px' };
 };
@@ -89,6 +88,7 @@ const Detail = () => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const history = useHistory();
     const { id } = useParams<{ id: string }>();
+
     const load = useCallback(async () => {
         let syringeDetailsResponse: AxiosResponse<Syringe> | undefined;
         try {
@@ -102,9 +102,17 @@ const Detail = () => {
         }
         const orgId: number | undefined = syringeDetailsResponse?.data.createdBy?.organizationId;
         const teamId = syringeDetailsResponse?.data.createdBy?.teamId;
-        const organization: AxiosResponse<IOrganizace> = await API.get<IOrganizace>(apiURL.getOrganization(orgId));
-        const teams: AxiosResponse<ITeam[]> = await API.get<ITeam[]>(apiURL.getTeamsInOrganization(orgId));
-        const team: ITeam | undefined = teams.data.find((team: ITeam) => team.id === teamId);
+        let organization: AxiosResponse<IOrganizace> = { data: {} } as AxiosResponse<IOrganizace>;
+        let teams: AxiosResponse<ITeam[]>;
+        let team: ITeam | undefined;
+
+        if (orgId) {
+            organization = await API.get<IOrganizace>(apiURL.getOrganization(orgId));
+        }
+        if (teamId) {
+            teams = await API.get<ITeam[]>(apiURL.getTeamsInOrganization(orgId));
+            team = teams.data.find((team: ITeam) => team.id === teamId);
+        }
         if (syringeDetailsResponse) {
             setLoader({ resp: { ...syringeDetailsResponse?.data, team: team, organization: { ...organization.data } } });
         }
