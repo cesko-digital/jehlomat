@@ -11,12 +11,12 @@ import { PASSWORD_COMPLEXITY } from 'utils/constants';
 import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import { AxiosResponse } from 'axios';
 import API from 'config/baseURL';
-import { IData } from 'screens/Organizace/use-organisation';
 import apiURL from 'utils/api-url';
 import { isStatusSuccess } from 'utils/payload-status';
+import { IUser } from 'types';
 
 interface IProps {
-    data: IData;
+    user: IUser;
 }
 
 interface IValues {
@@ -47,7 +47,7 @@ const validationSchema = yup.object({
     passwordConfirm: yup.string().oneOf([yup.ref('newPassword'), null], 'Hesla musí být stejná'),
 });
 
-export const Password: FC<IProps> = ({ data: { user } }) => {
+const Password: FC<IProps> = ({ user }) => {
     const isMobile = useMediaQuery(media.lte('mobile'));
     const confirmationModal = useConfirmationModalContext();
     const [requestError, setRequestError] = useState('');
@@ -134,3 +134,5 @@ export const Password: FC<IProps> = ({ data: { user } }) => {
         </SContainer>
     );
 };
+
+export default Password;
