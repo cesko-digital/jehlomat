@@ -33,7 +33,12 @@ const ModalWrapper = styled.div<{ mobile?: boolean }>`
 `;
 
 const ModalBody = styled.div<{ mobile?: boolean }>`
-    padding-top: 150px;
+    padding-top: 50px;
+    ${props =>
+        props.mobile &&
+        `
+        padding-top: 150px;
+    `}
 `;
 
 const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
@@ -51,7 +56,7 @@ const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
                         icon={<CloseIcon sx={{ color: white, fontSize: 25 }} />}
-                        onIconClick={(event) => {
+                        onIconClick={event => {
                             onClose(event);
                         }}
                     >
