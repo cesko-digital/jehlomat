@@ -7,7 +7,7 @@ import MuiModal, { ModalProps } from '@mui/material/Modal';
 import TitleBar from '../../Components/Navigation/TitleBar';
 import CloseIcon from '@mui/icons-material/Close';
 
-type CloseFunction = () => void;
+type CloseFunction = (event: React.MouseEvent<Element, MouseEvent>) => void;
 
 interface Props extends Pick<ModalProps, 'open'> {
     modalHeaderText?: string;
@@ -33,7 +33,7 @@ const ModalWrapper = styled.div<{ mobile?: boolean }>`
 `;
 
 const ModalBody = styled.div<{ mobile?: boolean }>`
-    padding-top: 50px;
+    padding-top: 150px;
 `;
 
 const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
@@ -51,8 +51,8 @@ const Modal: FC<Props> = ({ children, modalHeaderText, open, onClose }) => {
                 <ModalWrapper mobile={isMobile}>
                     <TitleBar
                         icon={<CloseIcon sx={{ color: white, fontSize: 25 }} />}
-                        onIconClick={() => {
-                            onClose();
+                        onIconClick={(event) => {
+                            onClose(event);
                         }}
                     >
                         {modalHeaderText}
