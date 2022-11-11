@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { primary } from '../../utils/colors';
+import { primary, white } from '../../utils/colors';
 import { media } from '../../utils/media';
 import { size } from '../../utils/spacing';
 import { fontFamilyRoboto } from '../../utils/typography';
@@ -36,3 +36,12 @@ export const SMobileContainer = styled.div`
         display: none;
     }
 `;
+
+export const SMobileLinks = styled.div`
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    z-index: 999;
+    color: ${white}
+    `
+

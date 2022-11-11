@@ -55,7 +55,7 @@ const SeznamUzivatelu: FC = () => {
 
     return (
         <>
-            <Header mobileTitle="Uživatelé" />
+            <Header loginButton mobileTitle="Uživatelé" />
             <LayoutWrapper>
                 <Container>
                     <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">

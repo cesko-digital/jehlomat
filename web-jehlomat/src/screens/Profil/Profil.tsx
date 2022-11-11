@@ -116,7 +116,7 @@ const Profile: React.FC = () => {
 
     return (
         <>
-            <Header mobileTitle={loggedUser?.isAdmin ? 'Profil organizace' : 'Profil uživatele'} />
+            <Header loginButton mobileTitle={loggedUser?.isAdmin ? 'Profil organizace' : 'Profil uživatele'} />
             <Container
                 maxWidth="lg"
                 sx={{

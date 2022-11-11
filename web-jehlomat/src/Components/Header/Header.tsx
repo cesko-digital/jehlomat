@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
-import { SContainer, SLinkContainer, SMobileContainer } from './HeaderStyles';
+import { SContainer, SLinkContainer, SMobileContainer, SMobileLinks } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
 import TitleBar from '../Navigation/TitleBar';
@@ -12,8 +12,11 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
 import { userState } from 'store/user';
 import { clearApiToken } from 'config/baseURL';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
 
 interface Props {
+    loginButton?: boolean;
     mobileTitle: string;
     backRoute?: string;
 }
@@ -24,6 +27,7 @@ export const Header = (props: Props) => {
     const setToken = useSetRecoilState(tokenState);
     const loggedUser = useRecoilValue(userState);
     const setUser = useSetRecoilState(userState);
+    const isMobile = useMediaQuery(media.lte('mobile'));
 
     const logoutFnc = useCallback(() => {
         setToken(null);
@@ -40,7 +44,6 @@ export const Header = (props: Props) => {
             history.push(props.backRoute);
         }
     };
-
     const renderLoginLogout = () => {
         if (isLoggedIn) {
             return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
@@ -107,9 +110,12 @@ export const Header = (props: Props) => {
             </SContainer>
 
             <SMobileContainer>
-                <TitleBar icon={props.backRoute && <ChevronLeft sx={{ color: white, fontSize: 40 }} />} onIconClick={() => onBack()}>
+                <TitleBar  icon={props.backRoute && <ChevronLeft sx={{ color: white, fontSize: 40 }} />} onIconClick={() => onBack()}>
                     {props.mobileTitle}
                 </TitleBar>
+                {props.loginButton && <SMobileLinks>
+                    {renderLoginLogout()}
+                </SMobileLinks>}
             </SMobileContainer>
         </>
     );
