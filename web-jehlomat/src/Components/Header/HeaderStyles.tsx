@@ -38,10 +38,10 @@ export const SMobileContainer = styled.div`
 `;
 
 export const SMobileLinks = styled.div`
-    position: absolute;
+    position: fixed;
     top: 15px;
-    right: 10px;
+    right: 0;
     z-index: 999;
-    color: ${white}
-    `
+    color: ${white};
+`;
 
