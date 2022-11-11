@@ -47,7 +47,7 @@ const FilterByState: FunctionComponent = () => {
                 <option value="">&nbsp;</option>
                 <option value="DEMOLISHED">Zlikvidováno</option>
                 <option value="WAITING">Čeká na likvidaci</option>
-                <option value="RESERVED">Rezervováno TP</option>
+                <option value="RESERVED">Rezervováno</option>
             </Select>
         </Filter>
     );
