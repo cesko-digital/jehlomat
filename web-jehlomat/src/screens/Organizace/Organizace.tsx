@@ -10,7 +10,6 @@ import { IData, TErrorCallback, useOrganisation } from 'screens/Organizace/use-o
 import { tokenState } from 'store/login';
 import { primaryDark } from 'utils/colors';
 import { GeneralInformation } from './GeneralInformation';
-import { Password } from './Password';
 import { Team } from './Team';
 import Masonry from '@mui/lab/Masonry';
 interface IRouteParams {
@@ -82,7 +81,6 @@ const Organizace = () => {
                     {data ? (
                         <>
                             <GeneralInformation data={data} />
-                            <Password data={data} />
                             {data.teams && <Team data={data} />}
                         </>
                     ) : (

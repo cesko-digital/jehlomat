@@ -1,60 +1,39 @@
-import { Grid, Container, Box, useMediaQuery, Paper } from '@mui/material';
+import { Container, Box, useMediaQuery, styled } from '@mui/material';
 import { Header } from 'Components/Header/Header';
-import imageSrc from 'assets/images/empty-state.svg';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as yup from 'yup';
-import { ButtonWrapper, PageHeading, SectionWrapper } from './styled';
+import { PageHeading } from './styled';
 import { useEffect, useState } from 'react';
-import { tokenState } from 'store/login';
-import { useRecoilValue } from 'recoil';
-import { API } from 'config/baseURL';
-import { AxiosResponse } from 'axios';
-import { IOrganizace, IUser } from 'types';
-import { useHistory } from 'react-router-dom';
-import { LINKS } from 'routes';
-import apiURL from 'utils/api-url';
 import { media } from 'utils/media';
-import { userState } from 'store/user';
-import { AccessDenied } from 'screens/Organizace/403';
-import { isStatusGeneralSuccess } from 'utils/payload-status';
 import { primaryDark } from 'utils/colors';
-import TextInput from 'Components/Inputs/TextInput';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
-import Loading from 'screens/Nalezy/Components/Loading';
-import { userIDState } from 'store/login';
-import { PASSWORD_COMPLEXITY } from '../../utils/constants';
 import Modal from 'Components/Modal/Modal';
+import Masonry from '@mui/lab/Masonry';
+import { tokenState, userIDState } from 'store/login';
+import { IOrganizace, IUser } from 'types';
+import { useRecoilValue } from 'recoil';
+import { AxiosResponse } from 'axios';
+import { useHistory } from 'react-router';
+import { LINKS } from 'routes';
+import API from 'config/baseURL';
+import apiURL from 'utils/api-url';
+import Loading from 'screens/Nalezy/Components/Loading';
+import GeneralInformation from './GeneralInformation';
+import Password from './Password';
+import { userState } from 'store/user';
 
-const validationSchema = yup.object({
-    email: yup.string().email('Email nemá správný formát.').required('Email je povinné pole'),
-    username: yup.string().required('Uživatelské jméno je povinné pole'),
-    password: yup.string().matches(PASSWORD_COMPLEXITY, 'Heslo musí obsahovat číslo, velké a malé písmeno').min(8, 'Heslo musí být 8 znaků dlouhé'),
-});
-
-interface IValues {
-    email: string;
-    username: string;
-    organizationId: number;
-    teamId: number | undefined;
-    password: string;
-}
-
-interface EditedUser {
-    email: string;
-    username: string;
-    password?: string;
-}
+export const Wrapper = styled(Container)`
+    flex-grow: 1;
+    margin-bottom: 62px;
+`;
 
 const Profile: React.FC = () => {
     const token = useRecoilValue(tokenState);
-    const history = useHistory();
-    const isDesktop = useMediaQuery(media.gt('mobile'));
     const userId = useRecoilValue(userIDState);
-    const loggedUser = useRecoilValue(userState);
-
+    const isDesktop = useMediaQuery(media.gt('mobile'));
+    const history = useHistory();
     const [user, setUser] = useState<IUser>();
     const [organization, setOrganization] = useState<IOrganizace>();
     const [successOpen, setSuccessOpen] = useState(false);
+    const loggedUser = useRecoilValue(userState);
 
     useEffect(() => {
         if (token && userId) {
@@ -77,41 +56,8 @@ const Profile: React.FC = () => {
         }
     }, [history, token, userId]);
 
-    const onSubmit = async (values: IValues, { setErrors }: FormikHelpers<IValues>) => {
-        try {
-            const editedUser: EditedUser = {
-                email: values.email,
-                username: values.username,
-            };
-
-            if (!userId) throw new Error();
-            const response: AxiosResponse<any> = await API.put(apiURL.putUser(userId), editedUser);
-            if (isStatusGeneralSuccess(response.status)) {
-                history.push(LINKS.PROFILE);
-                setSuccessOpen(true);
-            } else {
-                throw new Error();
-            }
-            if (values.password) {
-                const response: AxiosResponse<any> = await API.put(apiURL.setNewPassword, { userId, password: values.password });
-                if (isStatusGeneralSuccess(response.status)) {
-                    history.push(LINKS.PROFILE);
-                    setSuccessOpen(true);
-                } else {
-                    throw new Error();
-                }
-            }
-        } catch (error: any) {
-            history.push(LINKS.ERROR);
-        }
-    };
-
     if (!user) {
         return <Loading />;
-    }
-
-    if (loggedUser && !loggedUser?.isAdmin) {
-        return <AccessDenied />;
     }
 
     return (
@@ -135,87 +81,24 @@ const Profile: React.FC = () => {
                             <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
                         </Box>
                     </Box>
+                    <Box mx="auto" mb={2}>
+                        <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
+                    </Box>
                 </Modal>
-                <Grid xs={isDesktop ? 7 : 12} item alignItems="start" container direction="column">
-                    {isDesktop && (
-                        <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
-                            Profil organizace
-                        </PageHeading>
-                    )}
-                    {user && (
-                        <>
-                            <SectionWrapper className={isDesktop ? '' : 'mobile'}>
-                                <Formik
-                                    initialValues={{
-                                        email: user.email,
-                                        username: user.username,
-                                        organizationId: user.organizationId,
-                                        teamId: user.teamId,
-                                        password: '',
-                                    }}
-                                    validationSchema={validationSchema}
-                                    onSubmit={onSubmit}
-                                    enableReinitialize
-                                >
-                                    {({ handleSubmit, touched, handleChange, handleBlur, values, errors, isValid }) => {
-                                        return (
-                                            <Form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                                                <Box display="flex" flexDirection="column" gap={0} mb={4}>
-                                                    <TextInput
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={values.email}
-                                                        type="text"
-                                                        name="email"
-                                                        placeholder="Email"
-                                                        label="E-mail"
-                                                        required
-                                                        error={Boolean(errors.email) ? errors.email : undefined}
-                                                    />
-                                                    <TextInput
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={values.username}
-                                                        type="text"
-                                                        name="username"
-                                                        placeholder="Uživatelské jméno"
-                                                        label="Uživatelské jméno"
-                                                        required
-                                                        error={Boolean(errors.username) ? errors.username : undefined}
-                                                    />
-                                                    <TextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                                                    {/* <TextInput
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={values.password}
-                                                        type="password"
-                                                        name="password"
-                                                        placeholder=""
-                                                        label="Heslo*"
-                                                        error={touched.password && Boolean(errors.password) ? errors.password : undefined}
-                                                    /> */}
-                                                </Box>
-                                                <Paper elevation={0} style={{ marginBottom: '40px' }}>
-                                                    <ButtonWrapper>
-                                                        <PrimaryButton id="submit" text="ULOŽIT" type="submit" disabled={!isValid} />
-                                                    </ButtonWrapper>
-                                                </Paper>
-                                            </Form>
-                                        );
-                                    }}
-                                </Formik>
-                            </SectionWrapper>
-                        </>
-                    )}
-                </Grid>
+                </Container>
+            <Wrapper>
                 {isDesktop && (
-                    <Grid xs={5} item alignItems="center" container>
-                        <img src={imageSrc} width="100%" alt="profile" />
-                    </Grid>
+                    <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
+                        Profil uživatele
+                    </PageHeading>
                 )}
-            </Container>
+                <Masonry columns={{ md: 2 }} spacing={8}>
+                    <GeneralInformation user={user} organization={organization} setSuccessOpen={setSuccessOpen} />
+                    <Password user={user} />
+                </Masonry>
+            </Wrapper>
         </>
-    );
+    )
 };
 
 export default Profile;

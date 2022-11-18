@@ -54,6 +54,6 @@ export interface IOrganizace {
 
 export enum SyringeStatus {
     CekaNaLikvitaci = 'Čeká na likvidaci',
-    Rezervovan = 'Rezervováno TP',
+    Rezervovan = 'Rezervováno',
     Zlikvidovan = 'Zlikvidováno',
 }
