@@ -98,7 +98,7 @@ const Nalezy: FunctionComponent = () => {
 
     return (
         <>
-            <Header mobileTitle="Seznam zadaných nálezů" />
+            <Header loginButton mobileTitle="Seznam zadaných nálezů" />
 
             <Page>
                 <Container>

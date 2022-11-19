@@ -74,7 +74,7 @@ const Organizace = () => {
     }
     return (
         <>
-            <Header mobileTitle="" />
+            <Header loginButton mobileTitle={data?.user.organizationId.toString() === orgId ? 'Moje organizace' : 'Detail organizace'} />
             <Wrapper>
                 <Title variant="h1">{data?.user.organizationId.toString() === orgId ? 'Moje organizace' : 'Detail organizace'}</Title>
                 <Masonry columns={{ md: 2 }} spacing={8}>

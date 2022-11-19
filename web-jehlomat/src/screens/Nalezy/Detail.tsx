@@ -290,7 +290,7 @@ const Detail = () => {
 
     return (
         <>
-            <Header mobileTitle={texts.DETAIL__TITLE} backRoute={'/nalezy'} />
+            <Header loginButton mobileTitle={texts.DETAIL__TITLE} backRoute={'/nalezy'} />
 
             <Page>
                 <Container sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>

@@ -52,7 +52,7 @@ const OrganizaceSeznam: FC = () => {
 
     return (
         <>
-            <Header mobileTitle="Organizace" />
+            <Header loginButton mobileTitle="Organizace" />
             <LayoutWrapper>
                 <Container>
                     <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">

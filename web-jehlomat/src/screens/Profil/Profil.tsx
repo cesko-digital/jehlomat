@@ -18,6 +18,7 @@ import apiURL from 'utils/api-url';
 import Loading from 'screens/Nalezy/Components/Loading';
 import GeneralInformation from './GeneralInformation';
 import Password from './Password';
+import { userState } from 'store/user';
 
 export const Wrapper = styled(Container)`
     flex-grow: 1;
@@ -32,6 +33,7 @@ const Profile: React.FC = () => {
     const [user, setUser] = useState<IUser>();
     const [organization, setOrganization] = useState<IOrganizace>();
     const [successOpen, setSuccessOpen] = useState(false);
+    const loggedUser = useRecoilValue(userState);
 
     useEffect(() => {
         if (token && userId) {
@@ -60,17 +62,30 @@ const Profile: React.FC = () => {
 
     return (
         <>
-            <Header mobileTitle="Profil uživatele" />
-            <Modal modalHeaderText="Editace uživatele" open={successOpen} onClose={() => setSuccessOpen(false)}>
-                <Box display="flex" flexDirection="column" justifyContent="center">
-                    <Box mb={5} mx={5}>
-                        Vaše změny byly uloženy.
+            <Header loginButton mobileTitle={loggedUser?.isAdmin ? 'Profil organizace' : 'Profil uživatele'} />
+            <Container
+                maxWidth="lg"
+                sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                }}
+            >
+                <Modal modalHeaderText="Editace uživatele" open={successOpen} onClose={() => setSuccessOpen(false)}>
+                    <Box display="flex" flexDirection="column" justifyContent="center">
+                        <Box mb={5} mx={5}>
+                            Vaše změny byly uloženy.
+                        </Box>
+                        <Box mx="auto" mb={2}>
+                            <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
+                        </Box>
                     </Box>
                     <Box mx="auto" mb={2}>
                         <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
                     </Box>
-                </Box>
-            </Modal>
+                </Modal>
+                </Container>
             <Wrapper>
                 {isDesktop && (
                     <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
@@ -83,7 +98,7 @@ const Profile: React.FC = () => {
                 </Masonry>
             </Wrapper>
         </>
-    );
+    )
 };
 
 export default Profile;
