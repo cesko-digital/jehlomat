@@ -13,9 +13,6 @@ import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import _ from 'lodash';
 import Box from '@mui/material/Box';
-import { MapContainer, Polygon, TileLayer, useMap } from 'react-leaflet';
-import { DEFAULT_POSITION, DEFAULT_ZOOM_LEVEL } from '../Nalezy/NovyNalez/constants';
-import 'leaflet/dist/leaflet.css';
 import { Label } from 'Components/Inputs/shared';
 import { primary } from 'utils/colors';
 import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
@@ -23,18 +20,13 @@ import MapModal from './components/MapModal';
 import { LINKS } from 'routes';
 import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-status';
 import { useHistory, useLocation, useParams } from 'react-router';
-import { IUser, IUserEdited } from 'types';
+import { IUser, IUserEdited, ILocation } from 'types';
 import ConfirmModal from './components/ConfirmModal';
 import { userState } from 'store/user';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
 import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import apiURL from 'utils/api-url';
-
-interface ILocation {
-    id: string;
-    type: string;
-    name?: string;
-}
+import BasicMap from 'Components/BasicMap/BasicMap';
 
 interface ITeam {
     id?: string;
@@ -52,21 +44,6 @@ interface IRouteParams {
     teamId?: string;
 }
 
-const Map = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    height: 500px;
-    flex-grow: 1;
-    padding: 1em;
-    @media ${media.lte('mobile')} {
-        // compensate parent padding, nasty but easiest
-        width: 100vw;
-        height: 100vh;
-        padding: 0em;
-    }
-`;
 const FormContainer = styled(Container)`
     display: flex;
     flex-direction: column;
@@ -105,7 +82,6 @@ const validationSchema = yup.object({
 
 const Team = () => {
     const [location, setLocation]: ILocation[] | any[] = useState([]);
-    const [geom, setGeom]: any[] = useState([]);
     const [teamName, setTeamName] = useState('');
     const [selectedLocation, setSelectedLocation]: any[] = useState([]);
     const [members, setMembers] = useState([]);
@@ -126,11 +102,6 @@ const Team = () => {
     const titleText = path.pathname.includes('edit') ? 'Editace teamu' : 'Přidat nový tým';
 
     const history = useHistory();
-
-    const getGeometry = async (type: string, id: string) => {
-        const response: AxiosResponse<any> = await API.get(`/location/geometry?type=${type}&id=${id}`);
-        return response.data;
-    };
 
     const removeLocation = (item: any) => {
         const data = selectedLocation;
@@ -201,29 +172,6 @@ const Team = () => {
     }, [history, user]);
 
     useEffect(() => {
-        const checkType = (type: string, data: any) => {
-            switch (type.toLowerCase()) {
-                case 'multipolygon':
-                    return data.coordinates && data.coordinates[0] && data.coordinates[0][0] ? data.coordinates[0][0] : [];
-                case 'polygon':
-                    return data.coordinates && data.coordinates[0] ? data.coordinates[0] : [];
-            }
-        };
-        setGeom([]);
-        selectedLocation.map(async (place: any, id: number) => {
-            const geometry = await getGeometry(place.type, place.id).then(data => {
-                const transformGeom: any[] = [];
-                //GEOMETRY TRANSFORMATION
-                checkType(data.type, data).forEach((coordinate: any) => {
-                    transformGeom.push([coordinate[1], coordinate[0]]);
-                });
-                return transformGeom;
-            });
-            setGeom((geom: any) => [...geom, geometry]);
-        });
-    }, [selectedLocation]);
-
-    useEffect(() => {
         if (isEdit && location.length > 0) {
             API.get<ITeamResponse>(`/team/${teamId}`).then(response => {
                 if (isStatusGeneralSuccess(response.status)) {
@@ -243,41 +191,6 @@ const Team = () => {
             });
         }
     }, [isEdit, location, history, teamId]);
-
-    function GetBoundary() {
-        const map = useMap();
-        if (geom.length > 0) {
-            map.fitBounds(geom);
-        }
-        return null;
-    }
-
-    function BasicMap(props: { display: boolean; borderRadius: string }) {
-        const show = props.display ? 'block' : 'none';
-        const label = props.display ? 'none' : 'block';
-        return (
-            <Map id="map-container" style={{ display: show }}>
-                <Label style={{ display: label }}>Oblast na mapě</Label>
-                <Box position="relative" width="100%" height="100%">
-                    <MapContainer
-                        center={DEFAULT_POSITION}
-                        zoom={DEFAULT_ZOOM_LEVEL}
-                        scrollWheelZoom={false}
-                        style={{ width: `100%`, height: `100%`, zIndex: 1, borderRadius: props.borderRadius }}
-                        dragging={true}
-                        doubleClickZoom={true}
-                        preferCanvas
-                    >
-                        <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        {geom.map((geometry: any, id: any) => {
-                            return <Polygon key={id} pathOptions={{ color: 'purple' }} positions={geometry} />;
-                        })}
-                        <GetBoundary />
-                    </MapContainer>
-                </Box>
-            </Map>
-        );
-    }
 
     const initialValues = useMemo(() => ({ name: teamName, location: { id: '', name: '', type: '' }, member: '' }), [teamName]);
 
@@ -529,11 +442,11 @@ const Team = () => {
                             )}
                         </Box>
                     </FormContainer>
-                    <BasicMap borderRadius="10px" display={isMobile ? false : true} />
+                    <BasicMap borderRadius={10} display={isMobile ? false : true} location={selectedLocation} />
                 </Container>
             </Container>
             <MapModal open={showModal} close={hideModal}>
-                <BasicMap borderRadius="0px" display={true} />
+                <BasicMap location={selectedLocation} />
             </MapModal>
             <ConfirmModal isEdit={isEdit} open={confirmModal} close={setConfirmModal}>
                 <Container
