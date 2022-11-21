@@ -57,3 +57,9 @@ export enum SyringeStatus {
     Rezervovan = 'Rezervováno',
     Zlikvidovan = 'Zlikvidováno',
 }
+
+export interface ILocation {
+    id: string;
+    type: string;
+    name?: string;
+}

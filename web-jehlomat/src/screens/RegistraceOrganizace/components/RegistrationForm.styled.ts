@@ -7,6 +7,7 @@ import { media } from 'utils/media';
 
 export const SContainer = styled.div`
     border-radius: ${size(3)};
+    margin-bottom: 2rem;
 
     width: 100%;
     max-width: ${size(166 - 13 * 2)};
