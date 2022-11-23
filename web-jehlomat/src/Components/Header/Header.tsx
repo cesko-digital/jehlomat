@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { SContainer, SLinkContainer, SMobileContainer, SMobileLinks } from './HeaderStyles';
 import { HeaderLink, HeaderLinkType } from './HeaderLink/HeaderLink';
 import { HeaderLogo } from './HeaderLogo/HeaderLogo';
@@ -12,8 +12,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
 import { userState } from 'store/user';
 import { clearApiToken } from 'config/baseURL';
-import { useMediaQuery } from '@mui/material';
-import { media } from 'utils/media';
 
 interface Props {
     loginButton?: boolean;
@@ -27,17 +25,16 @@ export const Header = (props: Props) => {
     const setToken = useSetRecoilState(tokenState);
     const loggedUser = useRecoilValue(userState);
     const setUser = useSetRecoilState(userState);
-    const isMobile = useMediaQuery(media.lte('mobile'));
 
-    const logoutFnc = useCallback(() => {
+    const logoutFnc = useCallback(async () => {
         setToken(null);
         clearApiToken();
-        setUser(null);
+        await setUser(null);
         history.push({
             pathname: '/',
             state: { from: '/' },
         });
-    }, [setToken]);
+    }, [history, setToken, setUser]);
 
     const onBack = () => {
         if (props.backRoute) {
@@ -110,12 +107,10 @@ export const Header = (props: Props) => {
             </SContainer>
 
             <SMobileContainer>
-                <TitleBar  icon={props.backRoute && <ChevronLeft sx={{ color: white, fontSize: 40 }} />} onIconClick={() => onBack()}>
+                <TitleBar icon={props.backRoute && <ChevronLeft sx={{ color: white, fontSize: 40 }} />} onIconClick={() => onBack()}>
                     {props.mobileTitle}
                 </TitleBar>
-                {props.loginButton && <SMobileLinks>
-                    {renderLoginLogout()}
-                </SMobileLinks>}
+                {props.loginButton && <SMobileLinks>{renderLoginLogout()}</SMobileLinks>}
             </SMobileContainer>
         </>
     );
