@@ -81,11 +81,8 @@ const Profile: React.FC = () => {
                             <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
                         </Box>
                     </Box>
-                    <Box mx="auto" mb={2}>
-                        <PrimaryButton type="button" text="Pokračovat" onClick={() => setSuccessOpen(false)} />
-                    </Box>
                 </Modal>
-                </Container>
+            </Container>
             <Wrapper>
                 {isDesktop && (
                     <PageHeading align="left" variant="h1" color={primaryDark} sx={{ mt: '80px', mb: '86px', ml: '97px' }}>
@@ -98,7 +95,7 @@ const Profile: React.FC = () => {
                 </Masonry>
             </Wrapper>
         </>
-    )
+    );
 };
 
 export default Profile;
