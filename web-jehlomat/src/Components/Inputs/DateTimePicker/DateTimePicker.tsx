@@ -1,13 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import MaterialPicker, { DateTimePickerProps as MaterialPickerProps } from '@mui/lab/DateTimePicker';
 import TextField from '@mui/material/TextField';
 
 interface Props extends Omit<MaterialPickerProps, 'renderInput' | 'rawValue' | 'openPicker' | 'onChange'> {
-    onChange: (id: number) => void;
+    onChange: (id: number | string) => void;
     value: number; // unix
     required?: boolean;
+    error?: string | undefined;
 }
 
 export const StyledMaterialPicker = styled.div`
@@ -19,20 +20,28 @@ export const StyledMaterialPicker = styled.div`
     }
 `;
 
-export const DateTimePicker: React.FC<Props> = ({ value, onChange, ...restProps }) => {
+export const DateTimePicker: React.FC<Props> = ({ value, onChange,  ...restProps }) => {
     const memoizedValue = useMemo(() => dayjs.unix(value), [value]);
+    const [datePickerError, setDatePickerError] = useState(false);
+
 
     return (
         <StyledMaterialPicker>
             <MaterialPicker
-                renderInput={props => <TextField {...props} fullWidth required={restProps.required} />}
+                renderInput={props => (
+                    <TextField {...props} error={Boolean(restProps.error)} helperText={restProps.error} fullWidth required={restProps.required} />
+                )}
                 value={memoizedValue}
                 cancelText="Zrušit"
                 clearText="Vymazat"
                 todayText="Dnes"
                 toolbarTitle="Vyberte datum a čas"
-                onChange={newValue => {
-                    newValue && onChange((newValue as any).unix());
+                onChange={(newValue, keyboardInputValue) => {
+                    if (keyboardInputValue) {
+                        onChange(keyboardInputValue)
+                        return
+                    }
+                    newValue && onChange((newValue as any));
                 }}
                 {...restProps}
             />

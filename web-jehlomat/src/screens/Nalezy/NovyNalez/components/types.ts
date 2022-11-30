@@ -55,6 +55,7 @@ export interface IExistujiciJehla extends Omit<INovaJehla, 'count' | 'photo'>, S
 }
 export interface INovaJehlaError {
     count?: string;
+    date?: string;
 }
 
 export type JehlaState = INovaJehla | IExistujiciJehla;

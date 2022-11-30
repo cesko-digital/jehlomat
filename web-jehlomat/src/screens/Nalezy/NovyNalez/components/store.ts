@@ -30,5 +30,6 @@ export const newSyringeInfoErrorState = atom<INovaJehlaError>({
     key: 'newSyringeInfoError',
     default: {
         count: undefined,
+        date: undefined,
     },
 });
