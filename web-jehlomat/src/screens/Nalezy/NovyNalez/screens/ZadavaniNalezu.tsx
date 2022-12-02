@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 import syringe from 'assets/icons/syringe.svg';
 import event from 'assets/icons/event.svg';
@@ -21,6 +21,7 @@ import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { newSyringeInfoErrorState, newSyringeInfoState } from 'screens/Nalezy/NovyNalez/components/store';
+import { validateDate } from '@mui/lab/internal/pickers/date-utils';
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
@@ -67,6 +68,16 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
         }
     };
 
+    const validateDate = (value: string | number) => {
+        const newValue = dayjs(value, 'DD.MM.YYYY HH:mm', true);
+        if (newValue.isValid()) {
+            onInputChange('datetime', newValue.unix());
+            setNewSyringeInfoError({ ...newSyringeInfoError, date: undefined });
+            return;
+        }
+        setNewSyringeInfoError({ ...newSyringeInfoError, date: 'Datum musí být ve formátu DD-MM-YYYY HH:MM' });
+    };
+
     return (
         <>
             <FormWrapper>
@@ -90,8 +101,9 @@ const ZadavaniNalezu: FC<Props> = ({ syringeInfo, onInputChange, readOnly, child
                         required
                         value={datetime || currentTime.unix()}
                         maxDateTime={currentTime}
+                        error={newSyringeInfoError.date}
                         onChange={newValue => {
-                            newValue && onInputChange('datetime', newValue);
+                            validateDate(newValue);
                         }}
                         toolbarTitle="Vyberte datum a čas nálezu"
                         disabled={readOnly}
