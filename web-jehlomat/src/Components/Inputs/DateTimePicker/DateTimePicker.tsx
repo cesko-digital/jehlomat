@@ -22,14 +22,13 @@ export const StyledMaterialPicker = styled.div`
 
 export const DateTimePicker: React.FC<Props> = ({ value, onChange,  ...restProps }) => {
     const memoizedValue = useMemo(() => dayjs.unix(value), [value]);
-    const [datePickerError, setDatePickerError] = useState(false);
 
 
     return (
         <StyledMaterialPicker>
             <MaterialPicker
                 renderInput={props => (
-                    <TextField {...props} error={Boolean(restProps.error)} helperText={restProps.error} fullWidth required={restProps.required} />
+                    <TextField {...props} error={Boolean(restProps.error)} helperText={restProps.error} fullWidth required={restProps.required} onChange={(event) => onChange(event.target.value)} />
                 )}
                 value={memoizedValue}
                 cancelText="Zrušit"
