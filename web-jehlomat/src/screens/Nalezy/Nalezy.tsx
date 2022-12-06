@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState, useCallback, useRef } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
-import { useLocation, matchPath, useRouteMatch } from 'react-router';
-import { Box, Container } from '@mui/material';
+import { useLocation, matchPath } from 'react-router';
+import { Box, Container, useMediaQuery } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { AxiosResponse } from 'axios';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -25,13 +25,13 @@ import { filteringState, loaderState, paginationState, sortingState } from 'scre
 import { Filtering } from './types/Filtering';
 import { LINKS } from 'routes';
 import FilterByLocation from './Components/FilterByLocation';
+import { media } from 'utils/media';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
     const [filters, setFilters] = useState(false);
     const history = useHistory();
     const location = useLocation();
-    const match = useRouteMatch();
 
     const sorting = useRecoilValue(sortingState);
     const filtering = useRecoilValue(filteringState);
@@ -42,6 +42,7 @@ const Nalezy: FunctionComponent = () => {
 
     const isMap = isMapMatch?.isExact;
     const isTable = isTableMatch?.isExact;
+    const isMobile = useMediaQuery(media.lte('mobile'));
 
     const [exportUrl, setExportUrl] = useState<string | undefined>();
     const [exportErrorMessage, setExportErrorMessage] = useState<string | null>(null);
@@ -98,21 +99,23 @@ const Nalezy: FunctionComponent = () => {
 
     return (
         <>
-            <Header loginButton mobileTitle="Seznam zadaných nálezů" />
+            <Header loginButton mobileTitle={isMapMatch ? 'Mapa zadaných nálezů' : 'Seznam zadaných nálezů'} />
 
             <Page>
-                <Container>
-                    <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
-                        <TextHeader>Seznam zadaných nálezů</TextHeader>
-                        <Controls>
-                            <Button onClick={exportFiltered}>Export</Button>
-                            <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />
-                            <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
-                            {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
-                            {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
-                        </Controls>
-                    </Box>
-                </Container>
+                {!isMobile && (
+                    <Container>
+                        <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+                            <TextHeader>Seznam zadaných nálezů</TextHeader>
+                            <Controls>
+                                <Button onClick={exportFiltered}>Export</Button>
+                                <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />
+                                <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
+                                {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
+                                {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
+                            </Controls>
+                        </Box>
+                    </Container>
+                )}
                 {exportErrorMessage && (
                     <Container>
                         <Box my={2}>
