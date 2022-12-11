@@ -15,8 +15,6 @@ import _ from 'lodash';
 import Box from '@mui/material/Box';
 import { Label } from 'Components/Inputs/shared';
 import { primary } from 'utils/colors';
-import SecondaryButton from 'Components/Buttons/SecondaryButton/SecondaryButton';
-import MapModal from './components/MapModal';
 import { LINKS } from 'routes';
 import { isStatusConflictError, isStatusGeneralSuccess } from 'utils/payload-status';
 import { useHistory, useLocation, useParams } from 'react-router';
@@ -89,11 +87,8 @@ const Team = () => {
     const [selectedMembersToDelete, setSelectedMembersToDelete]: any[] = useState([]);
     const user = useRecoilValue(userState);
     const isMobile = useMediaQuery(media.lte('mobile'));
-    const [showModal, setShowModal] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
-    const hideModal = useCallback(() => {
-        setShowModal(false);
-    }, []);
+
     const { teamId } = useParams<IRouteParams>();
     const path = useLocation();
     const confirmationModal = useConfirmationModalContext();
@@ -376,17 +371,6 @@ const Team = () => {
 
                                             <FormHelperText error={true}>{touched.location && errors.location ? errors.location.name : undefined}</FormHelperText>
                                         </StyledFormControl>
-                                        {isMobile ? (
-                                            <SecondaryButton
-                                                id="submit"
-                                                text="Lokalita na mapě"
-                                                type="button"
-                                                style={{ fontWeight: 100 }}
-                                                onClick={() => {
-                                                    setShowModal(true);
-                                                }}
-                                            />
-                                        ) : null}
                                         <SelectList>
                                             {selectedLocation.map((place: any, id: number) => {
                                                 return <Item key={id} id={place.id} name={`${place.type} - ${place.name}`} remove={removeLocation} />;
@@ -445,9 +429,6 @@ const Team = () => {
                     <BasicMap borderRadius={10} display={isMobile ? false : true} location={selectedLocation} />
                 </Container>
             </Container>
-            <MapModal open={showModal} close={hideModal}>
-                <BasicMap location={selectedLocation} />
-            </MapModal>
             <ConfirmModal isEdit={isEdit} open={confirmModal} close={setConfirmModal}>
                 <Container
                     sx={{
