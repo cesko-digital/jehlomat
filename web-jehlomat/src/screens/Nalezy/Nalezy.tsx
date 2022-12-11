@@ -95,20 +95,20 @@ const Nalezy: FunctionComponent = () => {
                 setLoader({ err: e });
                 console.warn(e);
             });
-    }, [sorting, filtering, paging]);
+    }, [sorting, filtering, paging, setLoader]);
 
     return (
         <>
             <Header loginButton mobileTitle={isMapMatch ? 'Mapa zadaných nálezů' : 'Seznam zadaných nálezů'} />
 
             <Page>
+                <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />
                 {!isMobile && (
                     <Container>
                         <Box mt={5} mb={2} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                             <TextHeader>Seznam zadaných nálezů</TextHeader>
                             <Controls>
                                 <Button onClick={exportFiltered}>Export</Button>
-                                <a href={exportUrl} download="export.csv" ref={exportRef} style={{ display: 'none' }} />
                                 <Button onClick={() => setFilters(s => !s)}>Filtrovat</Button>
                                 {isTable && <DarkButton onClick={() => history.push('/nalezy/mapa')}>Mapa</DarkButton>}
                                 {isMap && <DarkButton onClick={() => history.push('/nalezy')}>Seznam</DarkButton>}
@@ -138,7 +138,7 @@ const Nalezy: FunctionComponent = () => {
                         <Table loader={loader} />
                     </Route>
                     <Route path={LINKS.FINDINGS_MAPA} exact={true}>
-                        <Map loader={loader} />
+                        <Map loader={loader} onExport={exportFiltered} />
                     </Route>
                 </Switch>
             </Page>
