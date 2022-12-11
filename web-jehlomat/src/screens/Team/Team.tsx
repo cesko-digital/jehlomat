@@ -5,7 +5,7 @@ import { media } from '../../utils/media';
 import { Formik, Form } from 'formik';
 import TextInput from '../../Components/Inputs/TextInput/TextInput';
 import * as yup from 'yup';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { API } from '../../config/baseURL';
 import { AxiosResponse } from 'axios';
 import Item from './Item';
@@ -75,7 +75,7 @@ const SelectList = styled.ul`
 `;
 
 const validationSchema = yup.object({
-    name: yup.string().required('Název Teamu je povinné pole'),
+    name: yup.string().required('Název týmu je povinné pole'),
 });
 
 const Team = () => {
@@ -94,7 +94,7 @@ const Team = () => {
     const confirmationModal = useConfirmationModalContext();
     const isEdit: boolean = path.pathname.includes('edit') ? true : false;
 
-    const titleText = path.pathname.includes('edit') ? 'Editace teamu' : 'Přidat nový tým';
+    const titleText = path.pathname.includes('edit') ? 'Editace týmu' : 'Přidat nový tým';
 
     const history = useHistory();
 
@@ -308,7 +308,7 @@ const Team = () => {
                                             }
                                             case isStatusConflictError(teamResponse.status): {
                                                 //for validation error;
-                                                setErrors({ name: 'Zvolte jiný název teamu. Název teamu již existuje!' });
+                                                setErrors({ name: 'Zvolte jiný název týmu. Název týmu již existuje!' });
                                                 break;
                                             }
                                             default: {
@@ -343,8 +343,8 @@ const Team = () => {
                                                 value={values.name}
                                                 type="text"
                                                 name="name"
-                                                placeholder="Název Teamu *"
-                                                label="Jméno teamu"
+                                                placeholder="Název týmu *"
+                                                label="Jméno týmu"
                                                 required={true}
                                                 error={touched.name && Boolean(errors.name) ? errors.name : undefined}
                                             />
@@ -403,27 +403,13 @@ const Team = () => {
                                                 return <Item key={id} id={member.id} name={member.username} remove={() => removeMembers(member)}></Item>;
                                             })}
                                         </SelectList>
-                                        <PrimaryButton
-                                            id="submit"
-                                            text={isEdit ? 'UPRAVIT TEAM' : 'PŘIDAT TEAM'}
-                                            type="submit"
-                                            disabled={!isValid}
-                                            style={{ maxWidth: '250px', marginBottom: '24px' }}
-                                        />
+                                        <PrimaryButton id="submit" text={isEdit ? 'UPRAVIT TÝM' : 'PŘIDAT TÝM'} type="submit" disabled={!isValid} style={{ maxWidth: '250px', marginBottom: '24px' }} />
                                     </Form>
                                 );
                             }}
                         </Formik>
                         <Box display="flex" flexDirection="column" alignItems="center" width="100%">
-                            {isEdit && (
-                                <TextButton
-                                    fontSize={18}
-                                    color={primary}
-                                    text={isMobile ? 'Odstranit tým' : 'Odstranit tým z organizace'}
-                                    onClick={removeTeamFromOrganization}
-                                    textTransform="uppercase"
-                                />
-                            )}
+                            {isEdit && <TextButton fontSize={18} color={primary} text="Odstranit tým" onClick={removeTeamFromOrganization} textTransform="uppercase" />}
                         </Box>
                     </FormContainer>
                     <BasicMap borderRadius={10} display={isMobile ? false : true} location={selectedLocation} />
@@ -442,7 +428,7 @@ const Team = () => {
                         padding: 0,
                     }}
                 >
-                    <div style={{ width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center' }}>{isEdit ? 'Úprava teamu probehla úspěšně!' : 'Založení teamu probehlo úspěšně!'}</div>
+                    <div style={{ width: '100%', marginTop: '15px', marginBottom: '15px', textAlign: 'center' }}>{isEdit ? 'Úprava týmu proběhla úspěšně!' : 'Založení týmuu proběhlo úspěšně!'}</div>
                     <PrimaryButton
                         text="ok"
                         onClick={() => {
