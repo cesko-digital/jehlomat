@@ -78,7 +78,7 @@ const getStateStyle = (syringe: Syringe | undefined): object => {
     return { backgroundColor: lightOrange, borderRadius: '4px' };
 };
 
-const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY') : '');
+const formatDate = (date: number | undefined): string => (date ? dayjs(date * 1000).format('D. M. YYYY hh:mm') : '');
 
 const Detail = () => {
     const [loader, setLoader] = useState<Loader<SyringeDetails>>({});
