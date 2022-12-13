@@ -160,6 +160,52 @@ class DatabaseServiceTest {
                 )
             ), selectedSyringes)
     }
+    @Test
+    fun testSelectSyringesOnlyFromAUser() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.locations?.first()!!
+        val user1 = User(0, "email", "password", "Franta Pepa 1", UserStatus.ACTIVE, "", defaultOrgId, null, false)
+        val user2 = User(0, "email", "password", "Franta Pepa 2", UserStatus.ACTIVE, "", defaultOrgId, null, false)
+        val userId1 = database.insertUser(user1)
+        val userInfo1 = user1.copy(id = userId1).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo1, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        val syringeId = database.insertSyringe(syringeToCreate)
+
+        val syringeFilter = SyringeFilter(
+            locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
+            createdAt = DateInterval(0, 1),
+            createdBy = SyringeFinder(userId1, SyringeFinderType.USER),
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        )
+
+        val selectedSyringes1 = database.selectSyringes(syringeFilter, SyringeRoleLimitation(database, setOf(Role.UserOwner), user1))
+        assertEquals(
+            listOf(
+                CSVExportSchema(
+                    syringeId!!,
+                    0,
+                    user1.email,
+                    user1.username,
+                    null,
+                    null,
+                    null,
+                    "nálezce",
+                    syringeToCreate.count,
+                    syringeToCreate.gps_coordinates,
+                    "Plzeň-město",
+                    "Plzeň 3",
+                    "Plzeň",
+                    "NE",
+                    null,
+                    "defaultOrgName"
+                )
+            ), selectedSyringes1)
+
+        val selectedSyringes2 = database.selectSyringes(syringeFilter, SyringeRoleLimitation(database, setOf(Role.UserOwner), user2))
+        assertEquals(listOf(), selectedSyringes2)
+    }
 
     @Test
     fun testSelectSyringesBySuperAdminButDateNotMatches() {
