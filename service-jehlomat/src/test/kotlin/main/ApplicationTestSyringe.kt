@@ -161,13 +161,12 @@ class ApplicationTestSyringe {
         val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
 
         val user2 = ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = false, email = "email1@example.org")
-        val userId2 = database.insertUser(user2)
-        val user2Info = user2.copy(id = userId2).toUserInfo()
+        database.insertUser(user2)
 
-        val token = loginUser(USER.email, USER.password)
+        val token = loginUser(user2.email, user2.password)
 
         with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/search"){
-            database.insertSyringe(defaultSyringe.copy(createdBy = user2Info, demolishedBy = user2Info, demolishedAt = localSec))
+            database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, demolishedBy = defaultUser, demolishedAt = localSec))
             addHeader("Content-Type", "application/json")
             addHeader("Authorization", "Bearer $token")
 
@@ -179,14 +178,8 @@ class ApplicationTestSyringe {
                             from = 0,
                             to = Long.MAX_VALUE
                         ),
-                        createdBy = SyringeFinder(
-                            id = defaultUserId,
-                            type = SyringeFinderType.USER
-                        ),
-                        demolishedAt = DateInterval(
-                            from = 0,
-                            to = Long.MAX_VALUE
-                        ),
+                        createdBy = null,
+                        demolishedAt = null,
                         SyringeStatus.DEMOLISHED
                     ),
                     ordering = listOf()

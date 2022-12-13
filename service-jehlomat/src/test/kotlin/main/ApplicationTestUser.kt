@@ -501,8 +501,7 @@ class ApplicationTest {
     @Test
     fun testDeleteUserNotActive() = withTestApplication(Application::module) {
         val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = defaultTeamId, status = UserStatus.NOT_VERIFIED))
-        val user = database.selectUserById(userId)
-
+        database.selectUserById(userId)
 
         database.insertUser(USER.copy(organizationId = defaultOrgId, teamId = null, isAdmin = true, email = "org@cesko.digital", username = "org admin"))
         val token = loginUser("org@cesko.digital", USER.password)
