@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { Marker, TileLayer, useMap, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import dayjs from 'dayjs';
@@ -15,10 +15,11 @@ import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/PinMenu';
 import styled from '@emotion/styled';
 import RoundButton from '../../../Components/Buttons/RoundButton/RoundButton';
-// import filterIcon from 'assets/icons/filter.svg';
+import filterIcon from 'assets/icons/filter.svg';
 import downloadIcon from 'assets/icons/download.svg';
 import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
+import FilterMobile from './FilterMobile';
 
 import 'leaflet/dist/leaflet.css';
 
@@ -44,6 +45,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onExport }) => {
     const error = loader.resp === undefined && loader.err !== undefined;
     const data = loader.resp?.syringeList || [];
     const isMobile = useMediaQuery(media.lte('mobile'));
+    const [showFilter, setShowFilter] = useState(false);
 
     useEffect(() => {
         if (!error) return;
@@ -101,9 +103,9 @@ const Map: FunctionComponent<MapProps> = ({ loader, onExport }) => {
                 <Markers />
                 {isMobile && (
                     <MapControlsWrapper>
-                        {/* <RoundButton onClick={() => {}}>
+                        <RoundButton onClick={() => setShowFilter(true)}>
                             <img src={filterIcon} alt="filtrovat" />
-                        </RoundButton> */}
+                        </RoundButton>
                         <RoundButton onClick={onExport}>
                             <img src={downloadIcon} alt="stahnout" />
                         </RoundButton>
@@ -111,6 +113,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onExport }) => {
                 )}
                 <ZoomControl position="topright" />
             </LeafletMap>
+            {showFilter && <FilterMobile onClose={() => setShowFilter(false)} />}
         </>
     );
 };
