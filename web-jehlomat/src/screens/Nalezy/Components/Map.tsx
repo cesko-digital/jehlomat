@@ -14,7 +14,7 @@ import Links from 'screens/Nalezy/Components/Links';
 import LeafletMap from 'screens/Nalezy/Components/LeafletMap';
 import { PinMenu, Info, Location, Time, State } from 'screens/Nalezy/Components/PinMenu';
 import styled from '@emotion/styled';
-import RoundButton from '../../../Components/Buttons/RoundButton/RoundButton';
+import RoundButton from 'Components/Buttons/RoundButton/RoundButton';
 import filterIcon from 'assets/icons/filter.svg';
 import downloadIcon from 'assets/icons/download.svg';
 import { useMediaQuery } from '@mui/material';
@@ -107,7 +107,7 @@ const Map: FunctionComponent<MapProps> = ({ loader, onExport }) => {
                             <img src={filterIcon} alt="filtrovat" />
                         </RoundButton>
                         <RoundButton onClick={onExport}>
-                            <img src={downloadIcon} alt="stahnout" />
+                            <img src={downloadIcon} alt="stáhnout" />
                         </RoundButton>
                     </MapControlsWrapper>
                 )}

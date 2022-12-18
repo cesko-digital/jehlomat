@@ -17,6 +17,7 @@ const Backdrop = styled.div`
     padding: 7em 2em;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
+    z-index: 100;
 `;
 
 const Wrapper = styled.div`

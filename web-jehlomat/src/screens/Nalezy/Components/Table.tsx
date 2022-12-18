@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Container } from '@mui/material';
-import { styled } from '@mui/system';
+import { Container, useMediaQuery } from '@mui/material';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
 import { SortableColumn } from 'screens/Nalezy/types/SortableColumn';
 import { Loader } from 'utils/Loader';
@@ -15,23 +14,31 @@ import { columnSortingDirection, sortingState } from 'screens/Nalezy/store';
 import texts from 'screens/Nalezy/texts';
 import sort from 'screens/Nalezy/hooks/utils/sort';
 import Pagination from './Pagination';
+import { media } from 'utils/media';
+import styled from '@emotion/styled';
 
 interface TableProps {
     loader: Loader<SyringeReadModel>;
 }
 
-const Wrapper = styled('table')({
-    borderCollapse: 'separate',
-    borderSpacing: '0 10px',
-    width: '100%',
-});
+const Wrapper = styled.table`
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+`;
 
-const Header = styled('tr')({
-    width: '100%',
-});
+const Header = styled.tr<{ mobile?: boolean }>`
+    width: 100%;
+
+    ${props =>
+        props.mobile &&
+        `display: none;
+    `}
+`;
 
 const Table: FunctionComponent<TableProps> = ({ loader }) => {
     const setSort = useSetRecoilState(sortingState);
+    const isMobile = useMediaQuery(media.lte('mobile'));
 
     const loading = loader.resp === undefined && loader.err === undefined;
     const error = loader.resp === undefined && loader.err !== undefined;
@@ -45,7 +52,7 @@ const Table: FunctionComponent<TableProps> = ({ loader }) => {
         <Container>
             <Wrapper>
                 <thead>
-                    <Header>
+                    <Header mobile={isMobile}>
                         <Heading />
                         <SortableHeading direction={useRecoilValue(columnSortingDirection('TOWN'))} onClick={handleSort('TOWN')}>
                             {texts.TABLE__COLUMNS__CITY}

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState, useCallback, useRef } from 'react';
+import { FunctionComponent, useEffect, useState, useCallback, useRef } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useLocation, matchPath } from 'react-router';
 import { Box, Container, useMediaQuery } from '@mui/material';
@@ -8,7 +8,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { API } from 'config/baseURL';
 import { Header } from 'Components/Header/Header';
 import { SyringeReadModel } from 'screens/Nalezy/types/SyringeReadModel';
-
 import FilterByRange from 'screens/Nalezy/Components/FilterByRange';
 import FilterByReporter from 'screens/Nalezy/Components/FilterByReporter';
 import FilterByState from 'screens/Nalezy/Components/FilterByState';
@@ -26,6 +25,8 @@ import { Filtering } from './types/Filtering';
 import { LINKS } from 'routes';
 import FilterByLocation from './Components/FilterByLocation';
 import { media } from 'utils/media';
+import MobileActions from './Components/MobileActions';
+import FilterMobile from './Components/FilterMobile';
 
 const Nalezy: FunctionComponent = () => {
     const [loader, setLoader] = useRecoilState(loaderState);
@@ -123,18 +124,22 @@ const Nalezy: FunctionComponent = () => {
                         </Box>
                     </Container>
                 )}
-                {filters && (
-                    <Filters>
-                        <HorizontalContainer>
-                            <FilterByLocation />
-                            <FilterByRange />
-                            <FilterByReporter />
-                            <FilterByState />
-                        </HorizontalContainer>
-                    </Filters>
-                )}
+                {filters &&
+                    (isMobile ? (
+                        <FilterMobile onClose={() => setFilters(false)} />
+                    ) : (
+                        <Filters>
+                            <HorizontalContainer>
+                                <FilterByLocation />
+                                <FilterByRange />
+                                <FilterByReporter />
+                                <FilterByState />
+                            </HorizontalContainer>
+                        </Filters>
+                    ))}
                 <Switch>
                     <Route path={LINKS.FINDINGS} exact={true}>
+                        {isMobile && <MobileActions onFilter={() => setFilters(true)} onExport={exportFiltered} />}
                         <Table loader={loader} />
                     </Route>
                     <Route path={LINKS.FINDINGS_MAPA} exact={true}>
