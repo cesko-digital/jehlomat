@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { styled } from '@mui/system';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 import ListItemMenu from 'screens/Nalezy/Components/ListItemMenu';
 import RoundButton from 'screens/Nalezy/Components/RoundButton';
@@ -12,6 +12,8 @@ import Row from 'screens/Nalezy/Components/Row';
 
 import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
 import { ReactComponent as SyringeIcon } from 'assets/icons/syringe-line.svg';
+import { media } from 'utils/media';
+import menuIcon from 'assets/icons/menuIcon.svg';
 
 interface SyringeRowProps {
     syringe: Syringe;
@@ -26,6 +28,7 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
     const [edit, setEdit] = useState<Syringe | null>();
 
     const history = useHistory();
+    const isMobile = useMediaQuery(media.lte('mobile'));
 
     const handleOpenActions = (syringe: Syringe) => (ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.stopPropagation();
@@ -33,6 +36,32 @@ const SyringeRow: FunctionComponent<SyringeRowProps> = ({ syringe }) => {
         setAnchorEl(ev.currentTarget);
         setEdit(syringe);
     };
+
+    if (isMobile) {
+        return (
+            <Row syringe={syringe} onClick={() => history.push(`/nalezy/detail/${syringe.id}`)}>
+                <td>
+                    <SyringeIcon />
+                </td>
+                <td>
+                    <div>
+                        {syringe.location.okresName ?? syringe.location.okresName}, {dayjs(syringe.createdAt * 1000).format('D. M. YYYY')}
+                        <div>
+                            <SyringeState syringe={syringe} />
+                        </div>
+                    </div>
+                </td>
+                <Right>
+                    <Box mr={1}>
+                        <RoundButton onClick={handleOpenActions(syringe)} transparent>
+                            <img src={menuIcon} alt="menu" />
+                        </RoundButton>
+                        <ListItemMenu open={Boolean(anchorEl) && edit?.id === syringe.id} anchorEl={anchorEl!} onClickAway={() => setAnchorEl(null)} syringe={syringe} />
+                    </Box>
+                </Right>
+            </Row>
+        );
+    }
 
     return (
         <Row syringe={syringe} onClick={() => history.push(`/nalezy/detail/${syringe.id}`)}>

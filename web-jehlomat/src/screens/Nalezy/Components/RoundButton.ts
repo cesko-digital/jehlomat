@@ -2,11 +2,12 @@ import { styled } from '@mui/system';
 
 interface RoundButtonProps {
     filled?: boolean;
+    transparent?: boolean;
 }
 
 const RoundButton = styled('button', {
-    shouldForwardProp: prop => prop !== 'filled',
-})<RoundButtonProps>(({ filled }) => ({
+    shouldForwardProp: prop => prop !== 'filled' && prop !== 'transparent',
+})<RoundButtonProps>(({ filled, transparent }) => ({
     alignItems: 'center',
     background: 'white',
     border: '1px solid transparent',
@@ -40,6 +41,11 @@ const RoundButton = styled('button', {
         cursor: 'not-allowed',
         pointerEvents: 'none',
     },
+    ...(transparent
+        ? {
+              background: 'transparent',
+          }
+        : {}),
 }));
 
 export default RoundButton;

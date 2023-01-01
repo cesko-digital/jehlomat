@@ -12,6 +12,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoginValidState, tokenState } from 'store/login';
 import { userState } from 'store/user';
 import { clearApiToken } from 'config/baseURL';
+import { useMediaQuery } from '@mui/material';
+import { media } from 'utils/media';
+import logoutIcon from 'assets/icons/logout.svg';
+import styled from '@emotion/styled';
+
+const MobileLogoutIcon = styled.img`
+    margin-top: -6px;
+`;
 
 interface Props {
     loginButton?: boolean;
@@ -21,6 +29,8 @@ interface Props {
 
 export const Header = (props: Props) => {
     const history = useHistory();
+    const isMobile = useMediaQuery(media.lte('mobile'));
+
     const isLoggedIn = useRecoilValue(isLoginValidState);
     const setToken = useSetRecoilState(tokenState);
     const loggedUser = useRecoilValue(userState);
@@ -43,7 +53,7 @@ export const Header = (props: Props) => {
     };
     const renderLoginLogout = () => {
         if (isLoggedIn) {
-            return <HeaderLink onClick={logoutFnc}>Odhlásit</HeaderLink>;
+            return <HeaderLink onClick={logoutFnc}>{isMobile ? <MobileLogoutIcon src={logoutIcon} alt="Odhlásit" width={30} /> : 'Odhlásit'}</HeaderLink>;
         } else {
             return (
                 <HeaderLink>
