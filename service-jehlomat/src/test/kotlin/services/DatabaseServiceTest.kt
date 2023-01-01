@@ -15,6 +15,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mindrot.jbcrypt.BCrypt
+import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -28,8 +30,8 @@ class DatabaseServiceTest {
     @Before
     fun beforeEach() {
         database.cleanSyringes()
-        database.cleanTeams()
         database.cleanUsers()
+        database.cleanTeams()
         database.cleanOrganizations()
         database.cleanLocation()
         defaultOrgId = database.insertOrganization(Organization(0, "defaultOrgName", true))
@@ -38,8 +40,8 @@ class DatabaseServiceTest {
     @After
     fun afterEach() {
         database.cleanSyringes()
-        database.cleanTeams()
         database.cleanUsers()
+        database.cleanTeams()
         database.cleanOrganizations()
         database.cleanLocation()
     }
@@ -159,6 +161,58 @@ class DatabaseServiceTest {
                     "defaultOrgName"
                 )
             ), selectedSyringes)
+    }
+    @Test
+    fun testSelectSyringesOnlyFromAUser() {
+        val teamId = database.insertTeam(team.copy(organizationId = defaultOrgId))
+        val selectTeamById = database.selectTeamById(teamId)
+        val loc = selectTeamById?.locations?.first()!!
+        val user = User(0, "email", "password", "Franta Pepa 1", UserStatus.ACTIVE, "", defaultOrgId, teamId, false)
+        val userId = database.insertUser(user)
+        val userInfo = user.copy(id = userId).toUserInfo()
+        val syringeToCreate = Syringe("", 0, userInfo, null, null, null, null,Demolisher.USER,"", 1, "", "", loc, false)
+        val syringeId = database.insertSyringe(syringeToCreate)
+
+        val user2 = User(1, "email1", "password", "Franta Pepa 2", UserStatus.ACTIVE, "", defaultOrgId, teamId, false)
+        val userId2 = database.insertUser(user2)
+        val user2WithId = user2.copy(id = userId2)
+
+        val syringeFilter = SyringeFilter(
+            locationIds = setOf(LocationId(loc.mestkaCast.toString(), LocationType.MC)),
+            createdAt = DateInterval(0, LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)),
+            createdBy = SyringeFinder(userId, SyringeFinderType.USER),
+            demolishedAt=null,
+            status = SyringeStatus.WAITING
+        )
+
+        val selectedSyringes = database.selectSyringes(syringeFilter, SyringeRoleLimitation(database, setOf(Role.UserOwner), user.copy(id=userId)))
+        assertEquals(
+            listOf(
+                CSVExportSchema(
+                    syringeId!!,
+                    0,
+                    user.email,
+                    user.username,
+                    null,
+                    null,
+                    null,
+                    "nálezce",
+                    syringeToCreate.count,
+                    syringeToCreate.gps_coordinates,
+                    "Plzeň-město",
+                    "Plzeň 3",
+                    "Plzeň",
+                    "NE",
+                    "name",
+                    "defaultOrgName"
+                )
+            ), selectedSyringes)
+
+        val selectedSyringes2 = database.selectSyringes(
+            syringeFilter.copy(createdBy = SyringeFinder(userId2, SyringeFinderType.USER)),
+            SyringeRoleLimitation(database, setOf(Role.UserOwner), user2WithId)
+        )
+        assertEquals(listOf(), selectedSyringes2)
     }
 
     @Test

@@ -680,7 +680,7 @@ class DatabaseService(
             else -> throw RuntimeException("Unsupported table ${table.tableName} for the geolocation")
         }
 
-        return databaseInstance.useConnection { conn ->
+        databaseInstance.useConnection { conn ->
             val sql =
                 conn.prepareStatement("SELECT ST_AsGeoJSON(ST_GeomFromWKB(wkb_geometry)) FROM ${table.tableName} where $idColumn = ?")
             when (table) {

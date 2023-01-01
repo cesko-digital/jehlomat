@@ -157,6 +157,50 @@ class ApplicationTestSyringe {
     }
 
     @Test
+    fun testSyringesFilterByAllDifferentUser() = withTestApplication(Application::module) {
+        val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
+
+        val user2 = ADMIN.copy(organizationId = defaultOrgId, teamId = defaultTeamId, isAdmin = false, email = "email1@example.org")
+        database.insertUser(user2)
+
+        val token = loginUser(user2.email, user2.password)
+
+        with(handleRequest(HttpMethod.Post, "$SYRINGE_API_PATH/search"){
+            database.insertSyringe(defaultSyringe.copy(createdBy = defaultUser, demolishedBy = defaultUser, demolishedAt = localSec))
+            addHeader("Content-Type", "application/json")
+            addHeader("Authorization", "Bearer $token")
+
+            val json = Json.encodeToString(
+                searchFilterRequest.copy(
+                    filter = SyringeFilter(
+                        locationIds = setOf(LocationId(defaultLocation.mestkaCast.toString(), LocationType.MC)),
+                        createdAt = DateInterval(
+                            from = 0,
+                            to = Long.MAX_VALUE
+                        ),
+                        createdBy = null,
+                        demolishedAt = null,
+                        SyringeStatus.DEMOLISHED
+                    ),
+                    ordering = listOf()
+                )
+            )
+            setBody(json)
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+
+            val responseJson = response.content?.replace(" ", "")?.replace("\n", "")
+
+            assertEquals(
+                Json.encodeToString(SyringeFilterResponse(
+                    listOf(),
+                    PageInfoResult(0, 10, false)
+                )).replace(" ", ""),
+                responseJson)
+        }
+    }
+
+    @Test
     fun testExportSyringesByAll() = withTestApplication(Application::module) {
         val token = loginUser(ADMIN.email, ADMIN.password)
         val localSec = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)

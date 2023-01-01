@@ -404,7 +404,7 @@ class TeamTest {
     @Test
     fun testDeleteTeamNotEmpty() = withTestApplication(Application::module) {
         val teamId1 = database.insertTeam(TEAM.copy(organizationId = defaultOrgId))
-        val userId = database.insertUser(USER.copy(organizationId = defaultOrgId, email = "email2", username = "user2", teamId = teamId1))
+        database.insertUser(USER.copy(organizationId = defaultOrgId, email = "email2", username = "user2", teamId = teamId1))
 
         val token = loginUser(USER.email, USER.password)
         with(handleRequest(HttpMethod.Delete, "$TEAM_API_PATH/$teamId1"){
