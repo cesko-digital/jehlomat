@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
         // compensate parent padding, nasty but easiest
         width: 100vw;
         transform: translateX(-16px);
-        height: 100vh;
+        height: calc(100vh - 56px);
     }
 `;
 
