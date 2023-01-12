@@ -30,8 +30,15 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
                 val requestedOrdering = request.ordering.ensureValidity(OrderByDefinition(OrderBySyringeColumn.CREATED_AT, OrderByDirection.DESC))
 
                 val loggedInUser = jwtManager.getLoggedInUser(call, database)
-                val roles = PermissionService.determineRoles(loggedInUser, loggedInUser)
-                val roleLimitation = SyringeRoleLimitation(database, roles, loggedInUser);
+
+                // a users needs to see all organizations syringes
+                val roles = if (loggedInUser.isAdmin) {
+                    mutableSetOf(Role.SuperAdmin)
+                } else {
+                    mutableSetOf(Role.OrgAdmin)
+                }
+
+                val roleLimitation = SyringeRoleLimitation(database, roles, loggedInUser)
                 val filteredSyringes = database.selectSyringes(request.filter, roleLimitation, requestedPageInfo, requestedOrdering)
 
                 val hasMoreRecords = (filteredSyringes.size > requestedPageInfo.size)

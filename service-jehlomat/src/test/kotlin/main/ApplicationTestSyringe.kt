@@ -188,15 +188,13 @@ class ApplicationTestSyringe {
             setBody(json)
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-
-            val responseJson = response.content?.replace(" ", "")?.replace("\n", "")
-
+            val actualSyringes = database.selectSyringes()
             assertEquals(
                 Json.encodeToString(SyringeFilterResponse(
-                    listOf(),
+                    listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser, demolishedAt = localSec, demolishedBy = defaultUser)),
                     PageInfoResult(0, 10, false)
                 )).replace(" ", ""),
-                responseJson)
+                response.content?.replace(" ", "")?.replace("\n", ""))
         }
     }
 
