@@ -16,6 +16,8 @@ import { userState } from 'store/user';
 import { isStatusGeneralSuccess } from 'utils/payload-status';
 import { userIDState } from 'store/login';
 import { IOrganizace, IUser } from 'types';
+import ChipList from '../Team/ChipList';
+import Item from 'screens/Team/Item';
 
 const validationSchema = yup.object({
     email: yup.string().email('Email nemá správný formát.').required('Email je povinné pole'),
@@ -110,6 +112,9 @@ const GeneralInformation: FC<IProps> = ({ user, organization, setSuccessOpen }) 
                                 error={Boolean(errors.username) ? errors.username : undefined}
                             />
                             <STextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
+                            <ChipList label="Týmy">
+                                <Item id="1" name="test" />
+                            </ChipList>
                         </Box>
 
                         <Box display="flex" flexDirection="column" alignItems="center">
