@@ -711,12 +711,38 @@ class DatabaseService(
         }
     }
 
-    private fun selectLocation(gpsCoordinates: String): Location? {
+    private fun selectLocation(gpsCoordinates: String): List<Int>? {
         val town = getObec(gpsCoordinates)
         val locality = getMC(gpsCoordinates)
-        val district = getOkres(gpsCoordinates)
+        val district = getOkres(gpsCoordinates) ?: return null
 
-        return selectLocation(district?.id, town?.id?.toInt(), locality?.id?.toInt())
+        var filter = (LocationTable.okres eq district.id)
+
+        if (town != null) {
+            filter = filter and (LocationTable.obec eq town.id.toInt())
+        }
+
+        if (locality != null) {
+            filter = filter and (LocationTable.mestka_cast eq locality.id.toInt())
+        }
+
+        val location = databaseInstance.from(LocationTable)
+            .select()
+            .where { filter }
+            .map { row -> mapLocationRow(row) }
+            .firstOrNull()
+
+        // kontrola prekryvu okresu s mestem
+        val districtOverlay = databaseInstance.from(LocationTable)
+            .select()
+            .where((LocationTable.okres eq location!!.okres) and (LocationTable.obec eq Int.MIN_VALUE))
+            .map { row -> mapLocationRow(row) }
+            .firstOrNull()
+
+        val locations = mutableListOf(location.id)
+        if (districtOverlay != null)
+            locations.add(districtOverlay.id)
+        return locations
     }
 
     private fun selectLocation(okres: String?, obec: Int?, mc: Int?): Location? {
@@ -726,16 +752,16 @@ class DatabaseService(
 
         var filter = (LocationTable.okres eq okres)
 
-        if (obec != null) {
-            filter = filter and (LocationTable.obec eq obec)
+        filter = if (obec != null) {
+            filter and (LocationTable.obec eq obec)
         } else {
-            filter = filter and (LocationTable.obec eq Int.MIN_VALUE)
+            filter and (LocationTable.obec eq Int.MIN_VALUE)
         }
 
-        if (mc != null) {
-            filter = filter and (LocationTable.mestka_cast eq mc)
+        filter = if (mc != null) {
+            filter and (LocationTable.mestka_cast eq mc)
         } else {
-            filter = filter and (LocationTable.mestka_cast eq Int.MIN_VALUE)
+            filter and (LocationTable.mestka_cast eq Int.MIN_VALUE)
         }
 
         return selectLocationInner(filter)
@@ -845,19 +871,19 @@ class DatabaseService(
     }
 
     fun resolveTeamsInLocation(gpsCoordinates: String): Set<Team> {
-        val location = selectLocation(gpsCoordinates) ?: return setOf()
+        val locations = selectLocation(gpsCoordinates) ?: return setOf()
 
         val teamIds = databaseInstance
             .from(TeamLocationTable)
             .select(TeamLocationTable.teamId)
-            .where { TeamLocationTable.locationId eq location.id }
+            .where { TeamLocationTable.locationId inList locations }
             .map { row -> row.getInt(1) }
             .toHashSet()
 
-        if (teamIds.isNotEmpty()) {
-            return selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
+        return if (teamIds.isNotEmpty()) {
+            selectTeamsByCondition { TeamTable.teamId inList teamIds }.toHashSet()
         } else {
-            return emptySet()
+            emptySet()
         }
     }
 
