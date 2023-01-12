@@ -102,3 +102,30 @@ CREATE TABLE public.syringes(
     CONSTRAINT fk_location FOREIGN KEY(location_id)
         REFERENCES locations(location_id)
 );
+
+
+CREATE TABLE public.syringes_no_location(
+    id VARCHAR(8) PRIMARY KEY,
+    created_at BIGINT NOT NULL,
+    created_by INT,
+    reserved_till BIGINT,
+    reserved_by INT,
+    demolished_at BIGINT,
+    demolished_by INT,
+    demolisher_type TEXT NOT NULL,
+    photo TEXT,
+    count_ INT NOT NULL,
+    note TEXT,
+    gps_coordinates TEXT NOT NULL,
+    demolished BOOLEAN NOT NULL,
+    kod_lau1 TEXT,
+    kod_mc INT,
+    kod_lau2 INT,
+
+    CONSTRAINT fk_created_by_user FOREIGN KEY(created_by)
+        REFERENCES users(user_id),
+    CONSTRAINT fk_reserved_by_user FOREIGN KEY(reserved_by)
+        REFERENCES users(user_id),
+    CONSTRAINT fk_demolished_by_user FOREIGN KEY(demolished_by)
+        REFERENCES users(user_id)
+);

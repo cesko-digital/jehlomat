@@ -139,3 +139,212 @@ Before commit to git please run `npm run fix` and `npm run lint`. Feel free to c
 Before merging PR to master, the check to test code is required. For both FE and BE.
 
 There is an extra action to ignore this test check for changes outside of project. `.github/workflows/test_ignore_outside_projects.yml`
+
+# Database migration 
+
+Steps how to migrate from old Jehlomat DB (MySQL) to new Jehlomat DB (PostreSQL)
+
+1) Install MySQL on your local computer
+2) Download old Jehlomat dump from 
+3) Add 
+```
+CREATE DATABASE IF NOT EXISTS jehlomat_migration;
+USE jehlomat_migration;
+```
+to the beginning of the file `2022-03-03_jehlomat-cz.sql`
+
+4) Load old data:
+```shell
+mysql -u <USER> < 2022-03-03_jehlomat-cz.sql
+```
+6) Migrate organizations - run command in MySQL client on old Jehlomat data
+```
+USE jehlomat_migration;
+select id, name, true from user INTO OUTFILE 'organization.tsv' FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n';
+```
+7) Import data to new schema - run command in PostreSQL client to import organizations to new schema
+```
+\COPY organizations FROM 'organization.tsv' DELIMITER E'\t' CSV;
+```
+8) Migrate users as admins - run command in MySQL client on old Jehlomat data
+```
+USE jehlomat_migration;
+select id as user_id, username as email, username as username, password as password, true as verified, '' as verification_code, id as organization_id, 'NULL' as team_id, false as is_admin from user INTO OUTFILE 'users.tsv' FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n';
+```
+
+9) Run script migration/transform_users.py on MySQL dump users.tsv
+
+```
+python3 migration/transform_users.py users.tsv
+```
+
+10) Import data to new schema - run command in PostreSQL client to import organizations to new schema
+```
+psql -h localhost -p 5432 -U jehlomat -d jehlomat
+\COPY users FROM 'users_transformed.tsv' DELIMITER E'\t' CSV NULL 'NULL';
+```
+
+11) Migrate occurrences, create temporary table - run command in MySQL client on old Jehlomat data
+
+```
+USE jehlomat_migration;
+CREATE TABLE occurrence (
+  id INT NOT NULL PRIMARY KEY ,
+  user_id INT NOT NULL,
+  count INT NOT NULL,
+  latitude double precision NOT NULL,
+  longitude double precision NOT NULL,
+  note TEXT,
+  created TIMESTAMP NOT NULL
+);
+```
+
+12) Migrate occurrences, export data to occurrence.tsv - run command in MySQL client on old Jehlomat data
+```
+USE jehlomat_migration;
+select 
+	id as id,
+	user_id as user_id,
+	count as count,
+	latitude as latitude,
+	longitude as longitude,
+	IFNULL(note,"") as note,
+	created as created
+from occurrence INTO OUTFILE 'occurrence.tsv' FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n';
+```
+
+13) Remove quotes to correct CSV
+
+remove \" on line: "Nalezená použitá injekční jehla ... ,, Na Číně\" v ČB."
+and
+remove \" on line:  "Park u kostela, prostřední !květináče\""
+
+14) Import data to temporary table - run command in PostreSQL client
+
+```
+\COPY occurrence FROM '/Users/radekludacka/Downloads/occurrence.tsv' DELIMITER E'\t' CSV NULL 'NULL';
+```
+
+15) Import locations - run command in PostreSQL client to import organizations to new schema
+
+```roomsql
+INSERT INTO locations (
+    okres,
+    okres_name,
+    obec,
+    obec_name,
+    mestka_cast,
+    mestka_cast_name
+)
+SELECT
+    okres_table.kod_lau1 as okres,
+    okres_table.nazev_lau1 as okres_name,
+    obec_table.kod_lau2::int as obec,
+    obec_table.nazev_lau2 as obec_name,
+    COALESCE(kod_mc::int, -2147483648) as mestka_cast,
+    COALESCE(nazev_mc, '') as mestka_cast_name
+FROM (
+    SELECT
+        *,
+        POINT(longitude, latitude)::geometry as geom
+    FROM
+        occurrence
+) as o
+JOIN sph_okres okres_table ON ST_Within(o.geom, okres_table.wkb_geometry)
+LEFT JOIN sph_mc ON ST_Within(o.geom, sph_mc.wkb_geometry)
+JOIN sph_obec obec_table ON ST_Within(o.geom, obec_table.wkb_geometry)
+ON CONFLICT (okres, obec, mestka_cast) DO NOTHING
+;
+```
+
+16) Import occurrences to temporary table with geometries - run command in PostreSQL client
+```roomsql
+INSERT INTO syringes_no_location (
+    id,
+    created_at,
+    created_by,
+    reserved_till,
+    reserved_by,
+    demolished_at,
+    demolished_by,
+    demolisher_type,
+    photo,
+    count_,
+    note,
+    gps_coordinates,
+    demolished,
+    kod_lau1,
+    kod_mc,
+    kod_lau2
+)
+SELECT
+    substring(md5(random()::text), 0, 8) as id,
+    extract(epoch from created) as created_at,
+    user_id as created_by,
+    extract(epoch from created) as reserved_till,
+    user_id as reserved_by,
+    extract(epoch from created) as demolished_at,
+    user_id as demolished_by,
+    'USER' as demolisher_type,
+    '' as photo,
+    count as count_,
+    note as note,
+    CONCAT(latitude, ' ', longitude) as gps_coordinates,
+    true as demolished,
+    okres_table.kod_lau1 as kod_lau1,
+    sph_mc.kod_mc::int as kod_mc,
+    obec_table.kod_lau2::int as kod_lau2
+FROM (
+    SELECT
+        *,
+        POINT(longitude, latitude)::geometry as geom
+    FROM
+        occurrence
+) as o
+JOIN sph_okres okres_table ON ST_Within(o.geom, okres_table.wkb_geometry)
+JOIN sph_obec obec_table ON ST_Within(o.geom, obec_table.wkb_geometry)
+LEFT JOIN sph_mc ON ST_Within(o.geom, sph_mc.wkb_geometry)
+;
+```
+
+16) Import occurrences to temporary table with geometries
+
+```roomsql
+INSERT INTO syringes (
+    id,
+    created_at,
+    created_by,
+    reserved_till,
+    reserved_by,
+    demolished_at,
+    demolished_by,
+    demolisher_type,
+    photo,
+    count_,
+    note,
+    gps_coordinates,
+    demolished,
+    location_id
+)
+SELECT
+    id,
+    created_at,
+    created_by,
+    reserved_till,
+    reserved_by,
+    demolished_at,
+    demolished_by,
+    demolisher_type,
+    photo,
+    count_,
+    note,
+    gps_coordinates,
+    demolished,
+    loc.location_id as location_id
+FROM syringes_no_location as o
+JOIN locations loc ON (
+    o.kod_lau1 = loc.okres
+    AND COALESCE(o.kod_mc, -2147483648) = loc.mestka_cast
+    AND o.kod_lau2 = loc.obec
+);
+```
