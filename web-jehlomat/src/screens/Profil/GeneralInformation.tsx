@@ -15,7 +15,7 @@ import { media } from 'utils/media';
 import { userState } from 'store/user';
 import { isStatusGeneralSuccess } from 'utils/payload-status';
 import { userIDState } from 'store/login';
-import { IOrganizace, IUser } from 'types';
+import { IOrganizace, ITeam, IUser } from 'types';
 import ChipList from '../Team/ChipList';
 import Item from 'screens/Team/Item';
 
@@ -41,9 +41,10 @@ interface IProps {
     user: IUser;
     organization: IOrganizace | undefined;
     setSuccessOpen: (successOpen: boolean) => void;
+    teams: ITeam[];
 }
 
-const GeneralInformation: FC<IProps> = ({ user, organization, setSuccessOpen }) => {
+const GeneralInformation: FC<IProps> = ({ user, organization, setSuccessOpen, teams }) => {
     const history = useHistory();
     const isMobile = useMediaQuery(media.lte('mobile'));
     const userId = useRecoilValue(userIDState);
@@ -112,11 +113,8 @@ const GeneralInformation: FC<IProps> = ({ user, organization, setSuccessOpen }) 
                                 error={Boolean(errors.username) ? errors.username : undefined}
                             />
                             <STextInput value={organization?.name || ''} type="text" name="organization" placeholder="Organizace" label="Organizace" disabled />
-                            <ChipList label="Týmy">
-                                <Item id="1" name="test" />
-                            </ChipList>
+                            <ChipList label="Týmy">{teams.length > 0 ? teams.map(team => <Item name={team.name} id={team.id.toString()} />) : <Typography>{'- Žádný tým'}</Typography>}</ChipList>
                         </Box>
-
                         <Box display="flex" flexDirection="column" alignItems="center">
                             {isMobile ? <PrimaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} /> : <SecondaryButton id="submit" text="Uložit" type="submit" disabled={!isValid} />}
                         </Box>

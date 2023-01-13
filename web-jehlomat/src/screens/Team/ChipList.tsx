@@ -3,7 +3,6 @@ import { FC } from 'react';
 import styled from '@emotion/styled';
 import {Stack} from '@mui/material'
 import { size } from 'utils/spacing';
-import { media } from 'utils/media';
 import { white } from 'utils/colors';
 
 interface Props {

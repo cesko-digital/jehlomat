@@ -14,7 +14,7 @@ export interface IUser {
     email: string;
     username: string;
     organizationId: number;
-    teamId: number | undefined;
+    teamId: any; // change when BE will respond with array of teamIds
     isAdmin: boolean;
     verified?: boolean;
     isSuperAdmin?: boolean;

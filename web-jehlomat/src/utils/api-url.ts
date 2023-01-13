@@ -68,7 +68,7 @@ class APIURL {
         return `${this.user}/${userId}`;
     }
 
-    deleteTeamFromOrganization(teamId: string | number) {
+    deleteOrGetTeamFromOrganization(teamId: string | number) {
         return `${this.team}/${teamId}`;
     }
 }

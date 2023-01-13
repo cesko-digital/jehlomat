@@ -214,7 +214,7 @@ const Team = () => {
             });
             setSelectedMembers([]);
             setSelectedMembersToDelete([]);
-            const response: AxiosResponse<any> = await API.delete(apiURL.deleteTeamFromOrganization(teamId));
+            const response: AxiosResponse<any> = await API.delete(apiURL.deleteOrGetTeamFromOrganization(teamId));
             if (isStatusGeneralSuccess(response.status)) {
                 history.push(`/organizace/${user?.organizationId}`);
             } else {

@@ -1,6 +1,6 @@
 import { Chip } from '@mui/material';
 import styled from '@emotion/styled';
-import { secondaryColorVariant, white } from 'utils/colors';
+import { secondaryColorVariant } from 'utils/colors';
 
 const ChipParent = styled.li`
     margin: 0;
