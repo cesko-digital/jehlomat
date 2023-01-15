@@ -97,6 +97,13 @@ export MAILJET_PRIVATE_KEY=fdd479b47c4af6e4d46bb07bf889432d
 7. `../gradlew shadowJar`  # builds launchable jar with all dependencies
 8. `java -jar build/libs/service-jehlomat-all.jar -config=./src/test/resources/application.conf`  # launch application https://ktor.io/docs/configurations.html#command-line
 
+## Graphic tool for database connection
+There is a lot of graphic tools for database connection. It depends on your preferences which one you want to use. I can recommend [pgAdmin](https://www.pgadmin.org/)(web application), [DBeaver](https://dbeaver.io/)(desktop application).
+In any case, you'll need to know database host, port, username, password and database name.
+There are many tutorials on the internet on how to install the tools and connect to the database.
+1. DBeaver [tutorial](https://hevodata.com/learn/dbeaver-postgresql/)
+2. pgAdmin [tutorial](https://medium.com/@malexmad/how-to-use-pgadmin-a9addc7ff46c)
+
 ## Most common errors
 
 ### Kotlin could not find the required JDK tools in the Java installation  used by Gradle. Make sure Gradle is running on a JDK, not JRE.
