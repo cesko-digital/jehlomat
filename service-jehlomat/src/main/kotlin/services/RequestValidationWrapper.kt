@@ -6,6 +6,7 @@ import io.ktor.response.*
 import model.password.PasswordReset
 import model.password.PasswordResetStatus
 import model.user.User
+import services.PermissionService.Companion.isUserSuperAdmin
 import java.time.Instant
 
 private const val PASSWORD_RESET_LIFESPAN_SEC = 7200
@@ -55,10 +56,10 @@ class RequestValidationWrapper {
             }
 
             val loggedInUser = jwtManager.getLoggedInUser(appCall, database)
-            if (loggedInUser.organizationId != id) {
+            if (loggedInUser.organizationId != id && !isUserSuperAdmin(loggedInUser)) {
                 appCall.respond(
                     HttpStatusCode.Forbidden,
-                    "Only a member of the organization can view its objects."
+                    "Only a member of the organization or super admin can view its objects."
                 )
                 return false
             }
