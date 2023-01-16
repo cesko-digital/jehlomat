@@ -95,10 +95,18 @@ fun Route.syringeApi(database: DatabaseService, jwtManager: JwtManager, mailer: 
             post {
                 val syringeRequest = call.receive<SyringeCreateRequest>()
 
-                val userCreatedBy = jwtManager.getLoggedInUserOptional(call, database)
                 val location = database.selectOrInsertLocation(syringeRequest.gps_coordinates)
 
-                val syringe = syringeRequest.toSyringe(location, userCreatedBy?.toUserInfo())
+                val userCreatedBy = jwtManager.getLoggedInUserOptional(call, database)
+                var syringe = syringeRequest.toSyringe(location, userCreatedBy?.toUserInfo())
+                if (userCreatedBy != null) {
+                   syringe = syringe.copy(
+                        demolished = true,
+                        demolisherType = Demolisher.USER,
+                        demolishedBy = userCreatedBy.toUserInfo(),
+                        demolishedAt = Instant.now().epochSecond
+                    )
+                }
                 val syringeId = database.insertSyringe(syringe)
                 if (syringeId == null) {
                     call.respond(

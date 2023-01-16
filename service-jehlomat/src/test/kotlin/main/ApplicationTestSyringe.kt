@@ -405,7 +405,16 @@ class ApplicationTestSyringe {
   "id" : """" + actualSyringes[0].id + """",
   "teamAvailable" : true
 }""", response.content)
-            assertEquals(listOf(defaultSyringe.copy(id=actualSyringes[0].id, createdBy = defaultUser)), actualSyringes)
+            val syringeCopy = defaultSyringe.copy(
+                id=actualSyringes[0].id,
+                createdBy = defaultUser,
+                demolished = true,
+                demolishedBy = defaultUser,
+                demolisherType = Demolisher.USER,
+                demolishedAt = actualSyringes.first().demolishedAt)
+            assertEquals(
+                syringeCopy,
+                actualSyringes.first())
 
             val org = database.selectOrganizationById(defaultOrgId)
             verify(exactly = 1) { mailerMock.sendSyringeFinding(org!!, USER.email, actualSyringes[0].id) }
