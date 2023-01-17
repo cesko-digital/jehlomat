@@ -7,7 +7,6 @@ For backend setup, please [read backend readme](./service-jehlomat/README.md#run
 
 For frontend setup, please [read frontend readme](./web-jehlomat/README.md#getting-started-with-create-react-app).
 
-Please follow for frontend setup.
 
 ### License
 ```
