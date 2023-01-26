@@ -8,7 +8,7 @@ import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import Modal from 'Components/Modal/Modal';
 import Masonry from '@mui/lab/Masonry';
 import { tokenState, userIDState } from 'store/login';
-import { IOrganizace, IUser } from 'types';
+import { IOrganizace, ITeam, IUser } from 'types';
 import { useRecoilValue } from 'recoil';
 import { AxiosResponse } from 'axios';
 import { useHistory } from 'react-router';
@@ -32,6 +32,7 @@ const Profile: React.FC = () => {
     const history = useHistory();
     const [user, setUser] = useState<IUser>();
     const [organization, setOrganization] = useState<IOrganizace>();
+    const [teams, setTeams] = useState<ITeam[]>([]);
     const [successOpen, setSuccessOpen] = useState(false);
     const loggedUser = useRecoilValue(userState);
 
@@ -42,6 +43,19 @@ const Profile: React.FC = () => {
                     if (!userId) throw new Error();
                     const userResponse: AxiosResponse<IUser> = await API.get(apiURL.getUser(userId));
                     setUser(userResponse.data);
+                    if (userResponse.data.teamId) {
+                        // change when BE will respond with array of teamIds
+                        if (typeof userResponse.data.teamId === 'number') {
+                            const teamInfo: AxiosResponse<ITeam> = await API.get(apiURL.deleteOrGetTeamFromOrganization(userResponse.data.teamId));
+                            setTeams([...teams, teamInfo.data]);
+                        }
+                        if (Array.isArray(userResponse.data.teamId)) {
+                            userResponse.data.teamId.map(async (teamId: number) => {
+                                const teamInfo: AxiosResponse<ITeam> = await API.get(apiURL.deleteOrGetTeamFromOrganization(teamId));
+                                setTeams([...teams, teamInfo.data]);
+                            });
+                        }
+                    }
                     if (userResponse.data.organizationId) {
                         const organizationInfo: AxiosResponse<IOrganizace> = await API.get(apiURL.getOrganization(userResponse.data.organizationId));
                         setOrganization(organizationInfo.data);
@@ -90,7 +104,7 @@ const Profile: React.FC = () => {
                     </PageHeading>
                 )}
                 <Masonry columns={{ md: 2 }} spacing={8}>
-                    <GeneralInformation user={user} organization={organization} setSuccessOpen={setSuccessOpen} />
+                    <GeneralInformation user={user} organization={organization} setSuccessOpen={setSuccessOpen} teams={teams} />
                     <Password user={user} />
                 </Masonry>
             </Wrapper>
