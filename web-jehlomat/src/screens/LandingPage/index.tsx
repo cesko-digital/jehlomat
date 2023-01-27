@@ -22,7 +22,7 @@ function getRedirectionLink(search: string, loggedUser: IUser | null) {
     if (fromLink === null && loggedUser?.isAdmin && loggedUser?.organizationId) {
         return `${ORGANIZATION_URL_PATH}/${loggedUser.organizationId}`;
     }
-    return fromLink || LINKS.NEW_FIND_INIT;
+    return fromLink || LINKS.FINDINGS_MAPA;
 }
 
 const LandingPage = () => {
