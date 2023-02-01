@@ -25,7 +25,7 @@ import 'leaflet/dist/leaflet.css';
 
 const MapControlsWrapper = styled.div`
     position: absolute;
-    top: 1em;
+    top: 4em;
     left: 1em;
     z-index: 1000;
     display: flex;
@@ -101,18 +101,18 @@ const Map: FunctionComponent<MapProps> = ({ loader, onExport }) => {
                 <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <Bounds />
                 <Markers />
-                {isMobile && (
-                    <MapControlsWrapper>
-                        <RoundButton onClick={() => setShowFilter(true)}>
-                            <img src={filterIcon} alt="filtrovat" />
-                        </RoundButton>
-                        <RoundButton onClick={onExport}>
-                            <img src={downloadIcon} alt="stáhnout" />
-                        </RoundButton>
-                    </MapControlsWrapper>
-                )}
                 <ZoomControl position="topright" />
             </LeafletMap>
+            {isMobile && (
+                <MapControlsWrapper>
+                    <RoundButton onClick={() => setShowFilter(true)}>
+                        <img src={filterIcon} alt="filtrovat" />
+                    </RoundButton>
+                    <RoundButton onClick={onExport}>
+                        <img src={downloadIcon} alt="stáhnout" />
+                    </RoundButton>
+                </MapControlsWrapper>
+            )}
             {showFilter && <FilterMobile onClose={() => setShowFilter(false)} />}
         </>
     );

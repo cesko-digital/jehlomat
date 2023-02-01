@@ -7,7 +7,6 @@ const LeafletMap = styled(MapContainer)({
     height: '100%',
     outline: 'none',
     zIndex: 0,
-    position: 'relative',
 });
 
 export default LeafletMap;
