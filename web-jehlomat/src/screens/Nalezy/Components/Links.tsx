@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useCallback } from 'react';
 import { AxiosResponse } from 'axios';
-import dayjs from 'dayjs';
 import { styled } from '@mui/system';
 import { Syringe } from 'screens/Nalezy/types/Syringe';
 
@@ -15,7 +14,7 @@ import { paginationState } from 'screens/Nalezy/store';
 import { useConfirmationModalContext } from 'context/confirmation-modal-context';
 import texts from 'screens/Nalezy/texts';
 import { useHistory } from 'react-router';
-import { LINKS, LINKS_WITH_PARAMS } from 'routes';
+import { LINKS } from 'routes';
 
 const List = styled('ul')({
     margin: 0,
@@ -43,6 +42,7 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSucc
     const setPaging = useSetRecoilState(paginationState);
     const confirmationModal = useConfirmationModalContext();
     const history = useHistory();
+    const loggedUser = useRecoilValue(userState);
 
     const handleDemolish = useCallback(
         (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -90,12 +90,14 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSucc
                     <SyringeIcon style={{ width: '20px', height: '20px' }} />
                 </ActionButton>
             </li>
-            <li>
-                <ActionButton onClick={handleEdit}>
-                    <span>Upravit</span>
-                    <EditIcon style={{ width: '20px', height: '20px' }} />
-                </ActionButton>
-            </li>
+            {(loggedUser?.isAdmin || loggedUser?.isSuperAdmin || loggedUser?.id === syringe.createdBy?.id) && (
+                <li>
+                    <ActionButton onClick={handleEdit}>
+                        <span>Upravit</span>
+                        <EditIcon style={{ width: '20px', height: '20px' }} />
+                    </ActionButton>
+                </li>
+            )}
             <li>
                 <Delete syringe={syringe} />
             </li>
