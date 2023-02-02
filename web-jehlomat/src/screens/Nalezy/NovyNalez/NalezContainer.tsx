@@ -11,7 +11,7 @@ import Info from 'screens/Nalezy/NovyNalez/components/Info';
 import Potvrzeni from 'screens/Nalezy/NovyNalez/screens/Potvrzeni';
 import ZadatNalezMapa from 'screens/Nalezy/NovyNalez/screens/ZadatNalezMapa';
 import ZadavaniNalezu from 'screens/Nalezy/NovyNalez/screens/ZadavaniNalezu';
-import { API } from 'config/baseURL';
+import { API, clearApiToken } from 'config/baseURL';
 import { primary, primaryDark } from 'utils/colors';
 import PrimaryButton from 'Components/Buttons/PrimaryButton/PrimaryButton';
 import TextButton from 'Components/Buttons/TextButton/TextButton';
@@ -19,7 +19,7 @@ import { useMediaQuery } from '@mui/material';
 import { media } from 'utils/media';
 import { LINKS } from 'routes';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { newSyringeInfoErrorState, newSyringeInfoState, newSyringeStepState } from 'screens/Nalezy/NovyNalez/components/store';
 import MapComponent from 'screens/Nalezy/NovyNalez/components/Map';
 import { FloatinButtonContainer } from 'screens/Nalezy/NovyNalez/components/styled';
@@ -32,7 +32,7 @@ import RoundButton from 'screens/Nalezy/Components/RoundButton';
 import { ReactComponent as BackIcon } from 'assets/icons/chevron-left.svg';
 import { useHistory } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { isLoginValidState } from 'store/login';
+import { isLoginValidState, tokenState } from 'store/login';
 
 const StepsTitleMap = new Map<StepsEnum, string>([
     [StepsEnum.Start, 'Postup přidání nálezu'],
@@ -47,6 +47,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
     const [trackingCode, setTrackingCode] = useState<string | null>(null);
     const [teamAvailable, setTeamAvailable] = useState(true);
+    const setToken = useSetRecoilState(tokenState);
 
     const isLoggedIn = useRecoilValue(isLoginValidState);
 
@@ -58,6 +59,10 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     };
 
     const handleOnSave = async () => {
+        if (!isLoggedIn) {
+            setToken(null);
+            clearApiToken();
+        }
         try {
             const { lat, lng, datetime, count, info, photo } = newSyringeInfo;
 
