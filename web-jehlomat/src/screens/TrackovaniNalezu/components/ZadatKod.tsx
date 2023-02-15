@@ -72,9 +72,9 @@ const ZadatKod: FC<IZadatKod> = ({ onClickBack, handleStepChange, handleNewSyrin
                                         case isStatusGeneralSuccess(status): {
                                             const { data } = response;
 
-                                            if (data.demolished) {
-                                                handleNewSyringeState(SyringeStateType.DESTROYED);
-                                            } else if (data.announced) {
+                                            if (data.status === SyringeStateType.DEMOLISHED) {
+                                                handleNewSyringeState(SyringeStateType.DEMOLISHED);
+                                            } else if (data.status === SyringeStateType.ANNOUNCED) {
                                                 handleNewSyringeState(SyringeStateType.ANNOUNCED);
                                             } else {
                                                 handleNewSyringeState(SyringeStateType.WAITING);
