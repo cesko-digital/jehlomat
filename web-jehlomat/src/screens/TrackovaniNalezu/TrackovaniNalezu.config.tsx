@@ -6,7 +6,7 @@ export enum STEPS {
 }
 
 export enum SyringeStateType {
-    DESTROYED = 'DESTROYED',
+    DEMOLISHED = 'DEMOLISHED',
     RESERVED = 'RESERVED',
     WAITING = 'WAITING',
     ANNOUNCED = 'ANNOUNCED',
@@ -24,7 +24,7 @@ export type syringeStateTypes = {
 };
 
 export const syringeStates: syringeStateTypes = {
-    [SyringeStateType.DESTROYED]: {
+    [SyringeStateType.DEMOLISHED]: {
         hasCheckMark: true,
         firstLine: 'nález byl úspěšně',
         secondLine: 'ZLIKVIDOVÁN',
