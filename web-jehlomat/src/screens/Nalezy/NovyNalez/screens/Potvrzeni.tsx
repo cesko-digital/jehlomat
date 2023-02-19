@@ -236,7 +236,6 @@ const Potvrzeni: FC<PotvrzeniProps> = ({ trackingCode, teamAvailable }) => {
 
                     <TopText>{isEdit ? 'Úprava nálezu byla úspěšná' : 'Vložení nálezu bylo úspěšné'}</TopText>
 
-                    {teamAvailable && <TrackingCode trackingCode={trackingCode} />}
                     <br />
                     <br />
                     <BackLink isEdit={isEdit} />
