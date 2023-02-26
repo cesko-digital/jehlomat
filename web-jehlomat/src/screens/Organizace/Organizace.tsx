@@ -45,6 +45,14 @@ const ShowMapButtonWrapper = styled.div`
     margin-bottom: 2rem;
 `;
 
+const MapaPusobeniWrapper = styled.div`
+    margin-top: -94px;
+
+    .leaflet-container {
+        border-radius: 0 !important;
+    }
+`;
+
 const Organizace = () => {
     const [notFound, setNotFound] = useState(false);
     const [noPermission, setNoPermission] = useState(false);
@@ -149,7 +157,9 @@ const Organizace = () => {
                 )}
                 {data?.teams && !isDesktop && (
                     <Modal modalHeaderText={'Mapa působení organizace'} open={showModal} onClose={hideModal}>
-                        <MapaPusobeni data={data?.teams} />
+                        <MapaPusobeniWrapper>
+                            <MapaPusobeni data={data?.teams} />
+                        </MapaPusobeniWrapper>
                     </Modal>
                 )}
             </Wrapper>
