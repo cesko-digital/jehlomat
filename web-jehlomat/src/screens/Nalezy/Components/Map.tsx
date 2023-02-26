@@ -27,7 +27,7 @@ const MapControlsWrapper = styled.div`
     position: absolute;
     top: 4em;
     left: 1em;
-    z-index: 1000;
+    z-index: 100;
     display: flex;
     flex-direction: column;
 

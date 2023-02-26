@@ -10,7 +10,7 @@ export const Wrapper = styled.section`
 
 export const FormWrapper = styled.form`
     display: flex;
-    align-items: stretch;
+    align-items: center;
     flex-direction: column;
     width: 100%;
 `;

@@ -88,7 +88,7 @@ const AddUserForm: FC<Props> = () => {
                         <FormItemDescription green sm>
                             Na danou adresu bude zaslán registrační odkaz <TextNewline mobile={isMobile} /> pro nového uživatele.
                         </FormItemDescription>
-                        <Box sx={{ mt: isMobile ? '9rem' : '3rem', mb: '1rem' }}>
+                        <Box sx={{ mt: '3rem', mb: '1rem', display: 'flex', justifyContent: 'center' }}>
                             <PrimaryButton text="Přidat" type="submit" disabled={!isValid} />
                         </Box>
                     </FormWrapper>
