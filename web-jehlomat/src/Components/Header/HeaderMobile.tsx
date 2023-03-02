@@ -34,6 +34,7 @@ export const HeaderMobile: FC = () => {
             <div>
                 <TextButton
                     text={'Zadat nález anonymně'}
+                    textDecoration="underline"
                     onClick={() => {
                         history.push(LINKS.NEW_FIND_INIT);
                     }}
