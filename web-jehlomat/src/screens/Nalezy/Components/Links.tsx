@@ -84,12 +84,14 @@ const Links: FunctionComponent<LinksProps> = ({ syringe, onClose, onDemolishSucc
 
     return (
         <List>
-            <li>
-                <ActionButton onClick={handleDemolish}>
-                    <span>Zlikvidovat nález</span>
-                    <SyringeIcon style={{ width: '20px', height: '20px' }} />
-                </ActionButton>
-            </li>
+            {!syringe.demolished && (
+                <li>
+                    <ActionButton onClick={handleDemolish}>
+                        <span>Zlikvidovat nález</span>
+                        <SyringeIcon style={{ width: '20px', height: '20px' }} />
+                    </ActionButton>
+                </li>
+            )}
             {(loggedUser?.isAdmin || loggedUser?.isSuperAdmin || loggedUser?.id === syringe.createdBy?.id) && (
                 <li>
                     <ActionButton onClick={handleEdit}>
