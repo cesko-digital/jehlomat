@@ -21,9 +21,10 @@ export interface IHeaderLink {
     route?: string;
     mobile?: boolean;
     onClick?: () => void;
+    underline?: boolean;
 }
 
-export const HeaderLink: FC<IHeaderLink> = ({ type, children, route, mobile, onClick }) => {
+export const HeaderLink: FC<IHeaderLink> = ({ type, children, route, mobile, onClick, underline = false }) => {
     let history = useHistory();
 
     return (
@@ -34,7 +35,9 @@ export const HeaderLink: FC<IHeaderLink> = ({ type, children, route, mobile, onC
                 isFunction(onClick) && onClick();
             }}
         >
-            <s.Link mobile={mobile}>{type ? titleForType(type) : children}</s.Link>
+            <s.Link mobile={mobile} style={{ textDecoration: underline ? 'underline' : 'initial' }}>
+                {type ? titleForType(type) : children}
+            </s.Link>
         </s.Container>
     );
 };
