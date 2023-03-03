@@ -22,9 +22,9 @@ export const HeaderMobile: FC = () => {
                 </SecondaryButton>
             </s.ButtonContainer>
             <s.LinkContainer>
-                <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} mobile={true} />
+                <HeaderLink type={HeaderLinkType.CreateOrgAccount} route={LINKS.ORGANIZATION_REGISTRATION} mobile={true} underline />
                 <s.LineVertical />
-                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true} />
+                <HeaderLink type={HeaderLinkType.Watch} route={LINKS.TRACKING_FIND} mobile={true} underline />
             </s.LinkContainer>
             <s.LineHorizontal />
 
