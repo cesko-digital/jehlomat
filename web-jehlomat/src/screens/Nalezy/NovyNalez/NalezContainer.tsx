@@ -46,7 +46,7 @@ const NalezContainer: FC<{ edit?: boolean }> = () => {
     const [currentStep, setCurrentStep] = useRecoilState(newSyringeStepState);
     const [newSyringeInfo, setNewSyringeInfo] = useRecoilState(newSyringeInfoState);
     const [trackingCode, setTrackingCode] = useState<string | null>(null);
-    const [teamAvailable, setTeamAvailable] = useState(true);
+    const [teamAvailable, setTeamAvailable] = useState(false);
     const setToken = useSetRecoilState(tokenState);
 
     const isLoggedIn = useRecoilValue(isLoginValidState);
